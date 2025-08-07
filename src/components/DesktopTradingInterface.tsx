@@ -12,8 +12,12 @@ import {
   MoreHorizontal,
   Wallet,
   BarChart3,
-  DollarSign
+  DollarSign,
+  Wifi,
+  WifiOff
 } from "lucide-react";
+import TradingViewChart from "./TradingViewChart";
+import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -30,29 +34,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const [size, setSize] = useState("");
   const [leverage, setLeverage] = useState("1");
 
-  // Mock orderbook data
-  const orderbook = {
-    asks: [
-      { price: currentPrice * 1.001, size: "12.45", total: "12.45" },
-      { price: currentPrice * 1.002, size: "8.92", total: "21.37" },
-      { price: currentPrice * 1.003, size: "15.67", total: "37.04" },
-      { price: currentPrice * 1.004, size: "22.11", total: "59.15" },
-      { price: currentPrice * 1.005, size: "18.88", total: "78.03" },
-      { price: currentPrice * 1.006, size: "31.22", total: "109.25" },
-      { price: currentPrice * 1.007, size: "9.45", total: "118.70" },
-      { price: currentPrice * 1.008, size: "27.89", total: "146.59" },
-    ],
-    bids: [
-      { price: currentPrice * 0.999, size: "15.23", total: "15.23" },
-      { price: currentPrice * 0.998, size: "11.87", total: "27.10" },
-      { price: currentPrice * 0.997, size: "23.45", total: "50.55" },
-      { price: currentPrice * 0.996, size: "19.67", total: "70.22" },
-      { price: currentPrice * 0.995, size: "8.91", total: "79.13" },
-      { price: currentPrice * 0.994, size: "34.56", total: "113.69" },
-      { price: currentPrice * 0.993, size: "12.34", total: "126.03" },
-      { price: currentPrice * 0.992, size: "16.78", total: "142.81" },
-    ]
-  };
+  // Real Binance orderbook data
+  const { orderBook, isConnected, error } = useBinanceOrderbook(symbol, 15);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -61,42 +44,24 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     }).format(price);
   };
 
-  const formatSize = (size: string) => {
-    return parseFloat(size).toFixed(2);
+  const formatSize = (size: number | string) => {
+    return parseFloat(size.toString()).toFixed(4);
+  };
+
+  const calculateSpread = () => {
+    if (!orderBook?.asks?.length || !orderBook?.bids?.length) return "0.000";
+    const bestAsk = orderBook.asks[orderBook.asks.length - 1]?.price || 0;
+    const bestBid = orderBook.bids[0]?.price || 0;
+    return ((bestAsk - bestBid) / bestBid * 100).toFixed(3);
   };
 
   return (
     <div className="flex h-full">
       {/* Main Chart Area */}
       <div className="flex-1 flex flex-col">
-        {/* Chart Container */}
-        <div className="flex-1 bg-card/20 border border-border/20 rounded-lg m-2 relative">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <BarChart3 className="mx-auto h-20 w-20 text-primary/30" />
-              <div>
-                <h3 className="text-xl font-semibold text-muted-foreground">Advanced Trading Chart</h3>
-                <p className="text-muted-foreground">Professional {symbol}/USD chart kommer här</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Chart Controls */}
-          <div className="absolute top-4 left-4 flex gap-2">
-            <Badge variant="secondary" className="bg-background/80 backdrop-blur-sm">1D</Badge>
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">4H</Badge>
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">1H</Badge>
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">15m</Badge>
-          </div>
-          
-          <div className="absolute top-4 right-4 flex gap-2">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm">
-              <Settings className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
+        {/* TradingView Chart Container */}
+        <div className="flex-1 m-2 relative">
+          <TradingViewChart symbol={symbol} currentPrice={currentPrice} />
         </div>
 
         {/* Bottom Panels */}
@@ -158,11 +123,21 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           <Card className="h-full bg-card/40">
             <div className="p-3 border-b border-border/20">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold text-sm">Order Book</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-sm">Order Book</h3>
+                  {isConnected ? (
+                    <Wifi className="h-3 w-3 text-success" />
+                  ) : (
+                    <WifiOff className="h-3 w-3 text-destructive" />
+                  )}
+                </div>
                 <div className="text-xs text-muted-foreground">
-                  Spread: {((currentPrice * 0.001 - currentPrice * 0.999) / currentPrice * 100).toFixed(3)}%
+                  Spread: {calculateSpread()}%
                 </div>
               </div>
+              {error && (
+                <div className="text-xs text-destructive mt-1">{error}</div>
+              )}
             </div>
             
             <div className="h-full overflow-hidden">
@@ -175,13 +150,17 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               
               {/* Asks (Sell orders) */}
               <div className="space-y-0.5 p-2">
-                {orderbook.asks.reverse().map((ask, i) => (
+                {orderBook?.asks?.map((ask, i) => (
                   <div key={i} className="grid grid-cols-3 text-xs hover:bg-destructive/5 py-0.5 cursor-pointer">
                     <span className="text-destructive font-mono">{formatPrice(ask.price)}</span>
                     <span className="text-right font-mono">{formatSize(ask.size)}</span>
                     <span className="text-right font-mono text-muted-foreground">{formatSize(ask.total)}</span>
                   </div>
-                ))}
+                )) || (
+                  <div className="text-center text-muted-foreground text-xs py-4">
+                    Loading orderbook...
+                  </div>
+                )}
               </div>
               
               {/* Current Price */}
@@ -199,13 +178,17 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               
               {/* Bids (Buy orders) */}
               <div className="space-y-0.5 p-2">
-                {orderbook.bids.map((bid, i) => (
+                {orderBook?.bids?.map((bid, i) => (
                   <div key={i} className="grid grid-cols-3 text-xs hover:bg-success/5 py-0.5 cursor-pointer">
                     <span className="text-success font-mono">{formatPrice(bid.price)}</span>
                     <span className="text-right font-mono">{formatSize(bid.size)}</span>
                     <span className="text-right font-mono text-muted-foreground">{formatSize(bid.total)}</span>
                   </div>
-                ))}
+                )) || (
+                  <div className="text-center text-muted-foreground text-xs py-4">
+                    Loading orderbook...
+                  </div>
+                )}
               </div>
             </div>
           </Card>
