@@ -15,61 +15,87 @@ const CryptoPriceTicker = () => {
   const [cryptoPrices, setCryptoPrices] = useState<CryptoPrice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastFetch, setLastFetch] = useState<number>(0);
   const isMobile = useIsMobile();
 
+  // Cache och rate limiting - hämta bara var 3:e minut
+  const CACHE_DURATION = 3 * 60 * 1000; // 3 minuter
+  const API_DELAY = 1000; // 1 sekund mellan requests för att respektera rate limits
+
   const fetchCryptoPrices = async () => {
+    const now = Date.now();
+    
+    // Kontrollera cache - hämta bara om mer än 3 minuter har gått
+    if (now - lastFetch < CACHE_DURATION && cryptoPrices.length > 0) {
+      console.log('Använder cachad data, nästa uppdatering om:', Math.round((CACHE_DURATION - (now - lastFetch)) / 1000), 'sekunder');
+      return;
+    }
+
     try {
       setError(null);
       
-      // Hämta direkt från Binance API för realtidsdata
-      const response = await fetch('https://api.binance.com/api/v3/ticker/24hr');
-      
-      if (!response.ok) {
-        throw new Error(`Binance API error: ${response.status}`);
-      }
-
-      const allTickers = await response.json();
-      
-      // Symboler vi vill visa
-      const symbols = [
-        'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT', 'SOLUSDT',
-        'DOTUSDT', 'AVAXUSDT', 'LINKUSDT', 'UNIUSDT', 'DOGEUSDT',
-        'SHIBUSDT', 'MATICUSDT', 'LTCUSDT', 'XRPUSDT'
+      // CoinGecko coin IDs för våra kryptovalutor
+      const coinIds = [
+        'bitcoin', 'ethereum', 'binancecoin', 'cardano', 'solana',
+        'polkadot', 'avalanche-2', 'chainlink', 'uniswap', 'dogecoin',
+        'shiba-inu', 'matic-network', 'litecoin', 'ripple'
       ];
 
-      // Kryptovalutornas namn
-      const cryptoNames: { [key: string]: string } = {
-        'BTCUSDT': 'Bitcoin',
-        'ETHUSDT': 'Ethereum', 
-        'BNBUSDT': 'Binance Coin',
-        'ADAUSDT': 'Cardano',
-        'SOLUSDT': 'Solana',
-        'DOTUSDT': 'Polkadot',
-        'AVAXUSDT': 'Avalanche',
-        'LINKUSDT': 'Chainlink',
-        'UNIUSDT': 'Uniswap',
-        'DOGEUSDT': 'Dogecoin',
-        'SHIBUSDT': 'Shiba Inu',
-        'MATICUSDT': 'Polygon',
-        'LTCUSDT': 'Litecoin',
-        'XRPUSDT': 'XRP'
+      // Kryptovalutornas namn och symboler
+      const cryptoInfo: { [key: string]: { name: string; symbol: string } } = {
+        'bitcoin': { name: 'Bitcoin', symbol: 'BTC' },
+        'ethereum': { name: 'Ethereum', symbol: 'ETH' },
+        'binancecoin': { name: 'Binance Coin', symbol: 'BNB' },
+        'cardano': { name: 'Cardano', symbol: 'ADA' },
+        'solana': { name: 'Solana', symbol: 'SOL' },
+        'polkadot': { name: 'Polkadot', symbol: 'DOT' },
+        'avalanche-2': { name: 'Avalanche', symbol: 'AVAX' },
+        'chainlink': { name: 'Chainlink', symbol: 'LINK' },
+        'uniswap': { name: 'Uniswap', symbol: 'UNI' },
+        'dogecoin': { name: 'Dogecoin', symbol: 'DOGE' },
+        'shiba-inu': { name: 'Shiba Inu', symbol: 'SHIB' },
+        'matic-network': { name: 'Polygon', symbol: 'MATIC' },
+        'litecoin': { name: 'Litecoin', symbol: 'LTC' },
+        'ripple': { name: 'XRP', symbol: 'XRP' }
       };
 
-      // Filtrera och formatera data
-      const filteredPrices = symbols.map(symbol => {
-        const ticker = allTickers.find((t: any) => t.symbol === symbol);
-        if (!ticker) return null;
+      // Rate limiting - vänta en sekund innan request
+      await new Promise(resolve => setTimeout(resolve, API_DELAY));
 
+      // Hämta från CoinGecko API (gratis endpoint)
+      const coinsParam = coinIds.join(',');
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinsParam}&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`CoinGecko API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Formatera data
+      const formattedPrices: CryptoPrice[] = coinIds.map(coinId => {
+        const coinData = data[coinId];
+        if (!coinData) return null;
+
+        const info = cryptoInfo[coinId];
         return {
-          symbol: symbol.replace('USDT', ''),
-          name: cryptoNames[symbol] || symbol.replace('USDT', ''),
-          price: parseFloat(ticker.price),
-          change24h: parseFloat(ticker.priceChangePercent),
-          lastUpdated: new Date().toISOString()
+          symbol: info.symbol,
+          name: info.name,
+          price: coinData.usd,
+          change24h: coinData.usd_24h_change || 0,
+          lastUpdated: new Date(coinData.last_updated_at * 1000).toISOString()
         };
-      }).filter(Boolean);
+      }).filter(Boolean) as CryptoPrice[];
 
-      setCryptoPrices(filteredPrices);
+      setCryptoPrices(formattedPrices);
+      setLastFetch(now);
+      console.log('Prisdata uppdaterad från CoinGecko, nästa uppdatering om 3 minuter');
       
     } catch (err) {
       console.error('Error fetching crypto prices:', err);
@@ -98,8 +124,8 @@ const CryptoPriceTicker = () => {
     // Hämta prisdata initialt
     fetchCryptoPrices();
     
-    // Uppdatera prisdata var 30:e sekund
-    const interval = setInterval(fetchCryptoPrices, 30000);
+    // Uppdatera prisdata var 3:e minut (med cache-kontroll)
+    const interval = setInterval(fetchCryptoPrices, CACHE_DURATION);
     
     return () => clearInterval(interval);
   }, []);
