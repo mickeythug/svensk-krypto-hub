@@ -9,7 +9,7 @@ const SocialMediaSection = () => {
     {
       name: "Telegram",
       icon: MessageCircle,
-      description: "Gå med i vårt huvudchat för dagliga diskussioner",
+      description: "Ställ frågor, lär dig, få gratis krypto-information och hjälp. Vi hjälps åt att hitta möjligheter tillsammans!",
       members: "3.2k",
       link: "#",
       color: "text-blue-400",
@@ -18,7 +18,7 @@ const SocialMediaSection = () => {
     {
       name: "TikTok",
       icon: Video,
-      description: "Följ våra senaste krypto-tips och analyser",
+      description: "Följ våra senaste krypto-tips, analyser och utbildningsinnehåll",
       members: "15k",
       link: "#",
       color: "text-pink-400",
@@ -27,38 +27,11 @@ const SocialMediaSection = () => {
     {
       name: "Twitter/X",
       icon: Twitter,
-      description: "Håll dig uppdaterad med senaste nyheterna",
+      description: "Håll dig uppdaterad med senaste nyheterna och marknadsanalyser",
       members: "8.5k",
       link: "#",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
-    },
-    {
-      name: "Instagram",
-      icon: Instagram,
-      description: "Se våra visuella guider och infografik",
-      members: "5.1k",
-      link: "#",
-      color: "text-purple-400",
-      bgColor: "bg-purple-400/10"
-    },
-    {
-      name: "YouTube",
-      icon: Youtube,
-      description: "Djupgående analyser och utbildningsvideos",
-      members: "12k",
-      link: "#",
-      color: "text-red-500",
-      bgColor: "bg-red-500/10"
-    },
-    {
-      name: "Discord",
-      icon: Users,
-      description: "Privat community för avancerade diskussioner",
-      members: "2.8k",
-      link: "#",
-      color: "text-indigo-400",
-      bgColor: "bg-indigo-400/10"
     }
   ];
 
@@ -69,9 +42,12 @@ const SocialMediaSection = () => {
           <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             FÖLJ OSS ÖVERALLT
           </h2>
-          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Gå med i vårt växande community på alla sociala plattformar. 
-            Var än du befinner dig online, vi är där för att hjälpa dig på din krypto-reja.
+          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-6'}`}>
+            Vi tänker bli den största krypto-communityn i Sverige! Gå med i våra sociala kanaler där vi hjälps åt att hitta möjligheter tillsammans. 
+            En gemenskap med ett och samma mål - att växa och lära inom krypto.
+          </p>
+          <p className={`font-display ${isMobile ? 'text-sm' : 'text-base'} text-muted-foreground/80 max-w-2xl mx-auto`}>
+            Hör alltid av dig på Telegram för frågor, lärande och gratis krypto-information. Vi hjälps åt!
           </p>
         </div>
 
@@ -119,7 +95,7 @@ const SocialMediaSection = () => {
                 <Users className="h-8 w-8" />
               </div>
               <div className="text-left text-primary-foreground">
-                <p className="font-crypto font-bold text-2xl">50,000+</p>
+                <p className="font-crypto font-bold text-2xl">26,700+</p>
                 <p className="font-display text-sm opacity-90">Totala följare över alla plattformar</p>
               </div>
             </div>
