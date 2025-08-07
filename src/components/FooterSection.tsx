@@ -44,15 +44,15 @@ const FooterSection = () => {
                 className="h-[400px] w-auto mb-4 drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
               />
               <h3 className="font-crypto text-xl font-bold mb-2">
-                <span className="text-primary">CR</span>
+                <span style={{ color: '#12E19F' }}>CR</span>
                 <span className="text-white">Y</span>
-                <span className="text-primary">P</span>
+                <span style={{ color: '#12E19F' }}>P</span>
                 <span className="text-white">TO</span>
                 <span className="text-white"> </span>
                 <span className="text-white">NET</span>
-                <span className="text-primary">W</span>
+                <span style={{ color: '#12E19F' }}>W</span>
                 <span className="text-white">OR</span>
-                <span className="text-primary">K</span>
+                <span style={{ color: '#12E19F' }}>K</span>
                 <span className="text-white"> </span>
                 <span className="text-muted-foreground">SWEDEN</span>
               </h3>

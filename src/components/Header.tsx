@@ -58,15 +58,15 @@ const Header = () => {
             />
             <div className="hidden md:block">
               <h1 className="font-crypto text-lg font-bold">
-                <span className="text-primary">CR</span>
+                <span style={{ color: '#12E19F' }}>CR</span>
                 <span className="text-white">Y</span>
-                <span className="text-primary">P</span>
+                <span style={{ color: '#12E19F' }}>P</span>
                 <span className="text-white">TO</span>
                 <span className="text-white"> </span>
                 <span className="text-white">NET</span>
-                <span className="text-primary">W</span>
+                <span style={{ color: '#12E19F' }}>W</span>
                 <span className="text-white">OR</span>
-                <span className="text-primary">K</span>
+                <span style={{ color: '#12E19F' }}>K</span>
               </h1>
               <p className="font-crypto text-xs text-muted-foreground">
                 SWEDEN
@@ -125,15 +125,15 @@ const Header = () => {
                   />
                   <div>
                     <h1 className="font-crypto text-sm font-bold">
-                      <span className="text-primary">CR</span>
+                      <span style={{ color: '#12E19F' }}>CR</span>
                       <span className="text-white">Y</span>
-                      <span className="text-primary">P</span>
+                      <span style={{ color: '#12E19F' }}>P</span>
                       <span className="text-white">TO</span>
                       <span className="text-white"> </span>
                       <span className="text-white">NET</span>
-                      <span className="text-primary">W</span>
+                      <span style={{ color: '#12E19F' }}>W</span>
                       <span className="text-white">OR</span>
-                      <span className="text-primary">K</span>
+                      <span style={{ color: '#12E19F' }}>K</span>
                     </h1>
                     <p className="font-crypto text-xs text-muted-foreground">
                       SWEDEN
