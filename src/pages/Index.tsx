@@ -15,14 +15,14 @@ const Index = () => {
       <CryptoPriceTicker />
       <HeroSection />
       <SocialMediaSection />
-      <div id="market">
+      <div id="market" className="scroll-mt-20">
         <MarketOverview />
       </div>
       <MemeTokenSection />
-      <div id="news">
+      <div id="news" className="scroll-mt-20">
         <NewsSection />
       </div>
-      <div id="community">
+      <div id="community" className="scroll-mt-20">
         <CommunitySection />
       </div>
       <FooterSection />

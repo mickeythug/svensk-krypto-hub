@@ -243,21 +243,21 @@ const NewsPage = () => {
       <Header />
       
       <main className="pt-20 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Enhanced Header Section */}
-          <div className="mb-10">
+        <div className="container mx-auto px-4 max-w-7xl">
+          {/* Enhanced Header Section - Fixed spacing */}
+          <div className="mb-12">
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="mb-6 text-muted-foreground hover:text-primary text-lg"
+              className="mb-8 text-muted-foreground hover:text-primary text-lg"
             >
               <ArrowLeft className="mr-3 h-5 w-5" />
               Tillbaka till startsidan
             </Button>
             
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div>
-                <h1 className="font-crypto text-5xl md:text-7xl font-bold mb-4">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+              <div className="flex-1">
+                <h1 className="font-crypto text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
                   <span style={{ color: '#12E19F' }}>CRY</span>
                   <span className="text-white">PTO</span>
                   <span className="text-white"> </span>
@@ -265,11 +265,11 @@ const NewsPage = () => {
                   <span style={{ color: '#12E19F' }}>WORK</span>
                   <span className="text-white"> NYHETER</span>
                 </h1>
-                <p className="text-muted-foreground font-display text-xl md:text-2xl leading-relaxed">
+                <p className="text-muted-foreground font-display text-lg md:text-xl leading-relaxed max-w-3xl">
                   Sveriges mest omfattande och aktuella källa för krypto-nyheter, marknadsanalys och branschinsikter. 
                   Håll dig uppdaterad med realtidsrapportering från våra experter.
                 </p>
-                <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6 text-sm text-muted-foreground">
                   <div className="flex items-center">
                     <Activity className="h-4 w-4 mr-2 text-success" />
                     <span>Live uppdateringar varje minut</span>
@@ -281,17 +281,17 @@ const NewsPage = () => {
                 </div>
               </div>
               
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 lg:min-w-[400px]">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
                   <Input
                     placeholder="Sök nyheter, taggar eller författare..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 w-full sm:w-96 h-12 text-lg bg-secondary/50 border-border focus:border-primary"
+                    className="pl-12 w-full h-12 text-lg bg-secondary/50 border-border focus:border-primary"
                   />
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Button variant="outline" size="lg" className="text-base">
                     <Filter className="mr-2 h-5 w-5" />
                     Avancerat Filter
@@ -305,23 +305,22 @@ const NewsPage = () => {
             </div>
           </div>
 
-
-          {/* Enhanced Category Tabs */}
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full lg:w-auto bg-secondary/50 h-12">
+          {/* Enhanced Category Tabs - Fixed layout */}
+          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-10">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-6">
+              <TabsList className="grid grid-cols-3 lg:grid-cols-7 w-full lg:w-auto bg-secondary/50 h-12 p-1">
                 {categories.map((category) => (
                   <TabsTrigger
                     key={category}
                     value={category}
-                    className="font-display font-medium text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6"
+                    className="font-display font-medium text-sm lg:text-base data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 lg:px-6 py-2"
                   >
-                    {category === "all" ? "Alla Kategorier" : category}
+                    {category === "all" ? "Alla" : category}
                   </TabsTrigger>
                 ))}
               </TabsList>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
                 <span className="text-sm text-muted-foreground">Visning:</span>
                 <Button
                   variant={viewMode === "grid" ? "default" : "outline"}
@@ -343,76 +342,76 @@ const NewsPage = () => {
             </div>
           </Tabs>
 
-          {/* Enhanced News Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Enhanced News Grid - Fixed spacing and layout */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             {/* Main Content - Enhanced */}
-            <div className="lg:col-span-2 space-y-8">
+            <div className="xl:col-span-3 space-y-8">
               {/* Breaking News Alert */}
-              <Card className="p-6 bg-destructive/10 border-destructive/30">
+              <Card className="p-6 bg-destructive/10 border-destructive/30 shadow-lg">
                 <div className="flex items-start gap-4">
                   <AlertCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0" />
-                  <div>
-                    <h3 className="font-bold text-lg text-destructive mb-2">🚨 BREAKING NEWS</h3>
-                    <p className="text-base text-foreground">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-lg text-destructive mb-3">🚨 BREAKING NEWS</h3>
+                    <p className="text-base text-foreground leading-relaxed mb-4">
                       Bitcoin når nya all-time highs över $75,000 efter ETF-inflöden på rekordnivå. 
                       Institutionella investerare fortsätter att pumpa in kapital i krypto-marknaden.
                     </p>
-                    <Button variant="outline" size="sm" className="mt-3 border-destructive text-destructive hover:bg-destructive hover:text-white">
+                    <Button variant="outline" size="sm" className="border-destructive text-destructive hover:bg-destructive hover:text-white">
                       Läs mer →
                     </Button>
                   </div>
                 </div>
               </Card>
 
-              {/* Trending News - Enhanced */}
+              {/* Trending News - Enhanced layout */}
               <div>
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center">
                     <Flame className="h-7 w-7 text-destructive mr-3" />
-                    <h2 className="font-crypto text-2xl font-bold text-primary">TRENDING NYHETER</h2>
+                    <h2 className="font-crypto text-2xl md:text-3xl font-bold text-primary">TRENDING NYHETER</h2>
                   </div>
-                  <Badge variant="outline" className="text-lg px-4 py-2">
+                  <Badge variant="outline" className="text-base px-4 py-2 hidden md:flex">
                     {filteredNews.filter(article => article.trending).length} artiklar
                   </Badge>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {filteredNews
                     .filter(article => article.trending)
                     .slice(0, 3)
                     .map((article) => (
-                    <Card key={article.id} className="p-8 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-                      <div className="flex flex-col md:flex-row gap-6">
+                    <Card key={article.id} className="p-6 md:p-8 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm">
+                      <div className="flex flex-col lg:flex-row gap-6">
                         {article.imageUrl && (
-                          <div className="md:w-64 h-48 bg-secondary/50 rounded-xl flex-shrink-0 bg-gradient-to-br from-primary/20 to-accent/20"></div>
+                          <div className="lg:w-72 h-48 bg-secondary/50 rounded-xl flex-shrink-0 bg-gradient-to-br from-primary/20 to-accent/20"></div>
                         )}
                         
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between mb-6">
                             <div className="flex items-center gap-3 flex-wrap">
-                              <Badge className={`${getSentimentBadge(article.sentiment)} text-base px-3 py-1`}>
+                              <Badge className={`${getSentimentBadge(article.sentiment)} text-sm px-3 py-1`}>
                                 {article.sentiment === 'positive' ? '📈 Positiv' : 
                                  article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
                               </Badge>
-                              <Badge className={`${getImpactBadge(article.impact)} text-base px-3 py-1`}>
+                              <Badge className={`${getImpactBadge(article.impact)} text-sm px-3 py-1`}>
                                 {article.impact === 'high' ? '🔥 Hög Påverkan' : 
                                  article.impact === 'medium' ? '⚡ Medium Påverkan' : '💭 Låg Påverkan'}
                               </Badge>
-                              <Badge variant="outline" className="border-primary text-primary text-base px-3 py-1">
+                              <Badge variant="outline" className="border-primary text-primary text-sm px-3 py-1">
                                 {article.category}
                               </Badge>
                             </div>
                           </div>
                           
-                          <h3 className="font-display font-bold text-2xl mb-4 hover:text-primary cursor-pointer transition-colors leading-tight">
+                          <h3 className="font-display font-bold text-xl md:text-2xl mb-4 hover:text-primary cursor-pointer transition-colors leading-tight">
                             {article.title}
                           </h3>
                           
-                          <p className="text-muted-foreground mb-4 text-lg leading-relaxed">
+                          <p className="text-muted-foreground mb-6 text-base md:text-lg leading-relaxed">
                             {article.summary}
                           </p>
 
-                          <div className="flex flex-wrap gap-2 mb-4">
+                          <div className="flex flex-wrap gap-2 mb-6">
                             {article.tags.slice(0, 4).map((tag, index) => (
                               <Badge key={index} variant="secondary" className="text-sm">
                                 #{tag}

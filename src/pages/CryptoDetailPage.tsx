@@ -254,7 +254,7 @@ const CryptoDetailPage = () => {
       <Header />
       
       <div className="pt-20 pb-12">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 max-w-7xl">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
             <Button 
@@ -268,17 +268,17 @@ const CryptoDetailPage = () => {
             </Button>
           </div>
 
-          {/* Crypto Header */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+          {/* Crypto Header - Fixed responsive layout */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-10">
+            <div className="flex items-center gap-4 w-full lg:w-auto">
+              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                 <span className="font-crypto text-2xl font-bold text-primary">
                   {crypto.name.charAt(0)}
                 </span>
               </div>
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="font-crypto text-3xl font-bold">{crypto.name}</h1>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-3 mb-2 flex-wrap">
+                  <h1 className="font-crypto text-2xl md:text-3xl font-bold">{crypto.name}</h1>
                   <Badge variant="outline" className="font-crypto">
                     #{crypto.rank}
                   </Badge>
@@ -287,151 +287,151 @@ const CryptoDetailPage = () => {
               </div>
             </div>
             
-            <div className="text-right">
-              <div className="font-crypto text-4xl font-bold mb-2">
+            <div className="text-left lg:text-right w-full lg:w-auto">
+              <div className="font-crypto text-3xl md:text-4xl font-bold mb-3">
                 {formatPrice(crypto.price)}
               </div>
-              <div className="flex items-center gap-4">
-                {formatChange(crypto.change1h)}
-                {formatChange(crypto.change24h)}
-                {formatChange(crypto.change7d)}
+              <div className="flex flex-wrap items-center gap-4 justify-start lg:justify-end">
+                <div className="text-sm">{formatChange(crypto.change1h)}</div>
+                <div className="text-sm">{formatChange(crypto.change24h)}</div>
+                <div className="text-sm">{formatChange(crypto.change7d)}</div>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
-            <Card className="p-4 bg-card/80 backdrop-blur-sm">
+          {/* Stats Cards - Fixed responsive grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="h-4 w-4 text-primary" />
-                <span className="text-sm text-muted-foreground">Marknadskapital</span>
+                <DollarSign className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs md:text-sm text-muted-foreground">Marknadskapital</span>
               </div>
-              <div className="font-display font-bold">{crypto.marketCap} SEK</div>
+              <div className="font-display font-bold text-sm md:text-base">{crypto.marketCap} SEK</div>
             </Card>
             
-            <Card className="p-4 bg-card/80 backdrop-blur-sm">
+            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <BarChart3 className="h-4 w-4 text-primary" />
-                <span className="text-sm text-muted-foreground">Volym (24h)</span>
+                <BarChart3 className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs md:text-sm text-muted-foreground">Volym (24h)</span>
               </div>
-              <div className="font-display font-bold">{crypto.volume} SEK</div>
+              <div className="font-display font-bold text-sm md:text-base">{crypto.volume} SEK</div>
             </Card>
             
-            <Card className="p-4 bg-card/80 backdrop-blur-sm">
+            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Coins className="h-4 w-4 text-primary" />
-                <span className="text-sm text-muted-foreground">Cirkulerande</span>
+                <Coins className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs md:text-sm text-muted-foreground">Cirkulerande</span>
               </div>
-              <div className="font-display font-bold">{crypto.supply}</div>
+              <div className="font-display font-bold text-sm md:text-base">{crypto.supply}</div>
             </Card>
             
-            <Card className="p-4 bg-card/80 backdrop-blur-sm">
+            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Volume2 className="h-4 w-4 text-primary" />
-                <span className="text-sm text-muted-foreground">Max Utbud</span>
+                <Volume2 className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs md:text-sm text-muted-foreground">Max Utbud</span>
               </div>
-              <div className="font-display font-bold">{crypto.maxSupply}</div>
+              <div className="font-display font-bold text-sm md:text-base">{crypto.maxSupply}</div>
             </Card>
             
-            <Card className="p-4 bg-card/80 backdrop-blur-sm">
+            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-4 w-4 text-primary" />
-                <span className="text-sm text-muted-foreground">1h Förändring</span>
+                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs md:text-sm text-muted-foreground">1h Förändring</span>
               </div>
-              <div className="font-display font-bold">{formatChange(crypto.change1h)}</div>
+              <div className="font-display font-bold text-xs md:text-sm">{formatChange(crypto.change1h)}</div>
             </Card>
             
-            <Card className="p-4 bg-card/80 backdrop-blur-sm">
+            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-4 w-4 text-primary" />
-                <span className="text-sm text-muted-foreground">7d Förändring</span>
+                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-xs md:text-sm text-muted-foreground">7d Förändring</span>
               </div>
-              <div className="font-display font-bold">{formatChange(crypto.change7d)}</div>
+              <div className="font-display font-bold text-xs md:text-sm">{formatChange(crypto.change7d)}</div>
             </Card>
           </div>
 
-          {/* Chart */}
+          {/* Chart - Fixed layout and responsive */}
           <div className={`transition-all duration-300 ${
             isFullscreen ? 'fixed inset-0 z-50 bg-background p-4' : ''
           }`}>
-            <Card className={`p-6 mb-8 bg-card/80 backdrop-blur-sm h-full`}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-crypto text-2xl font-bold flex items-center gap-2">
-                <BarChart3 className="h-6 w-6 text-primary" />
-                {crypto.name} Kursutveckling
-              </h2>
-              <div className="flex items-center gap-2">
-                {/* Chart Provider Selector */}
-                <div className="flex bg-muted rounded-lg p-1">
+            <Card className={`p-4 md:p-6 mb-8 bg-card/80 backdrop-blur-sm h-full shadow-lg`}>
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
+                <h2 className="font-crypto text-xl md:text-2xl font-bold flex items-center gap-2">
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                  {crypto.name} Kursutveckling
+                </h2>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
+                  {/* Chart Provider Selector */}
+                  <div className="flex bg-muted rounded-lg p-1 w-full sm:w-auto">
+                    <Button
+                      variant={chartProvider === 'tradingview' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => switchChartProvider('tradingview')}
+                      disabled={!crypto.onTradingView}
+                      className="text-xs px-2 py-1 flex-1 sm:flex-none"
+                    >
+                      TradingView
+                    </Button>
+                    <Button
+                      variant={chartProvider === 'coingecko' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => switchChartProvider('coingecko')}
+                      className="text-xs px-2 py-1 flex-1 sm:flex-none"
+                    >
+                      CoinGecko
+                    </Button>
+                    <Button
+                      variant={chartProvider === 'dexscreener' ? 'default' : 'ghost'}
+                      size="sm"
+                      onClick={() => switchChartProvider('dexscreener')}
+                      className="text-xs px-2 py-1 flex-1 sm:flex-none"
+                    >
+                      DexScreener
+                    </Button>
+                  </div>
+                  
                   <Button
-                    variant={chartProvider === 'tradingview' ? 'default' : 'ghost'}
+                    variant="outline"
                     size="sm"
-                    onClick={() => switchChartProvider('tradingview')}
-                    disabled={!crypto.onTradingView}
-                    className="text-xs px-2 py-1"
+                    onClick={toggleFullscreen}
+                    className="flex items-center gap-2 w-full sm:w-auto"
                   >
-                    TradingView
-                  </Button>
-                  <Button
-                    variant={chartProvider === 'coingecko' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => switchChartProvider('coingecko')}
-                    className="text-xs px-2 py-1"
-                  >
-                    CoinGecko
-                  </Button>
-                  <Button
-                    variant={chartProvider === 'dexscreener' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => switchChartProvider('dexscreener')}
-                    className="text-xs px-2 py-1"
-                  >
-                    DexScreener
+                    {isFullscreen ? (
+                      <>
+                        <Minimize size={16} />
+                        Minimera
+                      </>
+                    ) : (
+                      <>
+                        <Maximize size={16} />
+                        Fullskärm
+                      </>
+                    )}
                   </Button>
                 </div>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={toggleFullscreen}
-                  className="flex items-center gap-2"
-                >
-                  {isFullscreen ? (
-                    <>
-                      <Minimize size={16} />
-                      Minimera
-                    </>
-                  ) : (
-                    <>
-                      <Maximize size={16} />
-                      Fullskärm
-                    </>
-                  )}
-                </Button>
               </div>
-            </div>
-            
-            {chartError && (
-              <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive">
-                <AlertCircle size={16} />
-                <span className="text-sm">Chart kunde inte laddas. Försök med en annan provider.</span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setChartError(false)}
-                  className="ml-auto"
-                >
-                  <RefreshCw size={14} />
-                </Button>
-              </div>
-            )}
-            
-            <div 
-              id="tradingview_chart" 
-              className={`w-full bg-background rounded-lg border border-border ${
-                isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[700px]'
-              }`}
-            ></div>
+              
+              {chartError && (
+                <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive">
+                  <AlertCircle size={16} />
+                  <span className="text-sm">Chart kunde inte laddas. Försök med en annan provider.</span>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setChartError(false)}
+                    className="ml-auto"
+                  >
+                    <RefreshCw size={14} />
+                  </Button>
+                </div>
+              )}
+              
+              <div 
+                id="tradingview_chart" 
+                className={`w-full bg-background rounded-lg border border-border ${
+                  isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[500px] md:h-[700px]'
+                }`}
+              ></div>
             </Card>
           </div>
 
