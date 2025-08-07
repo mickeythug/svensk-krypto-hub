@@ -47,6 +47,11 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
   // Convert symbol for Binance format (e.g., BTC -> BTCUSDT)
   const binanceSymbol = `${symbol.toUpperCase()}USDT`;
 
+  // Debug logging
+  useEffect(() => {
+    console.log('useBinanceOrderbook hook initialized for symbol:', binanceSymbol);
+  }, [binanceSymbol]);
+
   const processOrderBookData = useCallback((bids: [string, string][], asks: [string, string][]) => {
     let totalBids = 0;
     let totalAsks = 0;
@@ -80,14 +85,19 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
   }, [limit]);
 
   const fetchInitialSnapshot = useCallback(async () => {
+    console.log('Fetching initial orderbook snapshot for:', binanceSymbol);
+    
     try {
       const response = await fetch(`${BINANCE_API_URL}?symbol=${binanceSymbol}&limit=${limit * 2}`);
+      
+      console.log('Binance API response status:', response.status);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data: BinanceDepthResponse = await response.json();
+      console.log('Received orderbook data:', data);
       
       const { processedBids, processedAsks } = processOrderBookData(data.bids, data.asks);
       
@@ -100,6 +110,7 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
       
       lastUpdateIdRef.current = data.lastUpdateId;
       setError(null);
+      console.log('Orderbook initialized successfully');
       
     } catch (err) {
       console.error('Failed to fetch initial orderbook:', err);

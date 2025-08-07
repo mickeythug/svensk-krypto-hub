@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,6 +37,12 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   // Real Binance orderbook data
   const { orderBook, isConnected, error } = useBinanceOrderbook(symbol, 15);
 
+  // Debug logging
+  useEffect(() => {
+    console.log('DesktopTradingInterface loaded for symbol:', symbol);
+    console.log('OrderBook state:', { orderBook, isConnected, error });
+  }, [symbol, orderBook, isConnected, error]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 3,
@@ -60,7 +66,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
       {/* Main Chart Area */}
       <div className="flex-1 flex flex-col">
         {/* TradingView Chart Container */}
-        <div className="flex-1 m-2 relative">
+        <div className="flex-1 m-2 relative overflow-hidden">
           <TradingViewChart symbol={symbol} currentPrice={currentPrice} />
         </div>
 

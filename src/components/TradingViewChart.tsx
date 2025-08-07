@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, MoreHorizontal, Maximize2 } from "lucide-react";
+import { Settings, MoreHorizontal, Maximize2, BarChart3 } from "lucide-react";
 
 interface TradingViewChartProps {
   symbol: string;
@@ -22,76 +22,101 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
   const [timeframe, setTimeframe] = useState("1D");
 
   useEffect(() => {
+    console.log('TradingViewChart loading for symbol:', symbol);
+    
     // Load TradingView script
     if (!window.TradingView) {
+      console.log('Loading TradingView script...');
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/tv.js';
       script.async = true;
-      script.onload = () => initChart();
+      script.onload = () => {
+        console.log('TradingView script loaded successfully');
+        initChart();
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load TradingView script:', error);
+      };
       document.head.appendChild(script);
     } else {
+      console.log('TradingView already loaded, initializing chart...');
       initChart();
     }
 
     return () => {
       if (widgetRef.current) {
+        console.log('Cleaning up TradingView widget');
         widgetRef.current.remove();
       }
     };
   }, [symbol]);
 
   const initChart = () => {
-    if (!containerRef.current || !window.TradingView) return;
+    if (!containerRef.current || !window.TradingView) {
+      console.log('Container or TradingView not ready');
+      return;
+    }
+
+    console.log('Initializing TradingView chart...');
 
     // Clear previous widget
     if (widgetRef.current) {
+      console.log('Removing previous widget');
       widgetRef.current.remove();
     }
 
     const tradingPair = `BINANCE:${symbol}USDT`;
+    console.log('Creating TradingView widget for:', tradingPair);
 
-    widgetRef.current = new window.TradingView.widget({
-      autosize: true,
-      symbol: tradingPair,
-      interval: getInterval(timeframe),
-      container: containerRef.current,
-      theme: "dark",
-      style: "1",
-      locale: "en",
-      toolbar_bg: "rgba(0, 0, 0, 0)",
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      hide_legend: false,
-      save_image: false,
-      hide_volume: false,
-      studies: [
-        "Volume@tv-basicstudies"
-      ],
-      overrides: {
-        "paneProperties.background": "rgba(0, 0, 0, 0)",
-        "paneProperties.backgroundType": "solid",
-        "paneProperties.backgroundGradientStartColor": "rgba(0, 0, 0, 0.1)",
-        "paneProperties.backgroundGradientEndColor": "rgba(0, 0, 0, 0.1)",
-        "mainSeriesProperties.candleStyle.upColor": "hsl(var(--success))",
-        "mainSeriesProperties.candleStyle.downColor": "hsl(var(--destructive))",
-        "mainSeriesProperties.candleStyle.borderUpColor": "hsl(var(--success))",
-        "mainSeriesProperties.candleStyle.borderDownColor": "hsl(var(--destructive))",
-        "mainSeriesProperties.candleStyle.wickUpColor": "hsl(var(--success))",
-        "mainSeriesProperties.candleStyle.wickDownColor": "hsl(var(--destructive))",
-        "paneProperties.vertGridProperties.color": "rgba(255, 255, 255, 0.05)",
-        "paneProperties.horzGridProperties.color": "rgba(255, 255, 255, 0.05)",
-        "scalesProperties.textColor": "hsl(var(--muted-foreground))",
-        "scalesProperties.backgroundColor": "rgba(0, 0, 0, 0.1)"
-      },
-      disabled_features: [
-        "use_localstorage_for_settings",
-        "volume_force_overlay",
-        "create_volume_indicator_by_default_once"
-      ],
-      enabled_features: [
-        "study_templates"
-      ]
-    });
+    try {
+
+      widgetRef.current = new window.TradingView.widget({
+        autosize: true,
+        symbol: tradingPair,
+        interval: getInterval(timeframe),
+        container: containerRef.current,
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        toolbar_bg: "rgba(0, 0, 0, 0)",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: false,
+        hide_volume: false,
+        studies: [
+          "Volume@tv-basicstudies"
+        ],
+        overrides: {
+          "paneProperties.background": "rgba(0, 0, 0, 0)",
+          "paneProperties.backgroundType": "solid",
+          "paneProperties.backgroundGradientStartColor": "rgba(0, 0, 0, 0.1)",
+          "paneProperties.backgroundGradientEndColor": "rgba(0, 0, 0, 0.1)",
+          "mainSeriesProperties.candleStyle.upColor": "hsl(var(--success))",
+          "mainSeriesProperties.candleStyle.downColor": "hsl(var(--destructive))",
+          "mainSeriesProperties.candleStyle.borderUpColor": "hsl(var(--success))",
+          "mainSeriesProperties.candleStyle.borderDownColor": "hsl(var(--destructive))",
+          "mainSeriesProperties.candleStyle.wickUpColor": "hsl(var(--success))",
+          "mainSeriesProperties.candleStyle.wickDownColor": "hsl(var(--destructive))",
+          "paneProperties.vertGridProperties.color": "rgba(255, 255, 255, 0.05)",
+          "paneProperties.horzGridProperties.color": "rgba(255, 255, 255, 0.05)",
+          "scalesProperties.textColor": "hsl(var(--muted-foreground))",
+          "scalesProperties.backgroundColor": "rgba(0, 0, 0, 0.1)"
+        },
+        disabled_features: [
+          "use_localstorage_for_settings",
+          "volume_force_overlay",
+          "create_volume_indicator_by_default_once"
+        ],
+        enabled_features: [
+          "study_templates"
+        ]
+      });
+      
+      console.log('TradingView widget created successfully');
+    } catch (error) {
+      console.error('Error creating TradingView widget:', error);
+    }
   };
 
   const getInterval = (timeframe: string) => {
@@ -189,11 +214,20 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
       {/* Chart Container */}
       <div 
         ref={containerRef} 
-        className="w-full h-full min-h-[400px] bg-transparent"
+        className="w-full h-full min-h-[500px] bg-transparent"
         style={{ 
-          background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)'
+          background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
+          position: 'relative'
         }}
-      />
+      >
+        {/* Fallback content while chart loads */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
+            <p className="text-muted-foreground">Laddar TradingView chart...</p>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 };
