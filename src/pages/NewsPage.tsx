@@ -8,11 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { 
   TrendingUp, 
   TrendingDown, 
-  Clock, 
-  Eye, 
-  Heart, 
-  MessageCircle, 
-  Share, 
   Search,
   Filter,
   Calendar,
@@ -29,8 +24,7 @@ import {
   AlertCircle,
   ChevronUp,
   ChevronDown,
-  Activity,
-  TrendingDownIcon
+  Activity
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useNavigate } from "react-router-dom";
@@ -40,18 +34,13 @@ interface NewsArticle {
   title: string;
   summary: string;
   content: string;
-  author: string;
   publishedAt: string;
   category: string;
   sentiment: 'positive' | 'negative' | 'neutral';
-  views: number;
-  likes: number;
-  comments: number;
   imageUrl?: string;
   tags: string[];
   trending: boolean;
   impact: 'high' | 'medium' | 'low';
-  readTime: number;
   source: string;
 }
 
@@ -104,20 +93,15 @@ const NewsPage = () => {
       {
         id: "1",
         title: "Bitcoin når historiska höjder efter institutionella ETF-investeringar överstiger 50 miljarder dollar",
-        summary: "Bitcoin har nått nya rekordhöjder över $70,000 efter att institutionella investerare pumpat in över 50 miljarder dollar i Bitcoin ETF:er under den senaste månaden. Analster förutspår ytterligare tillväxt.",
+        summary: "Bitcoin har nått nya rekordhöjder över $70,000 efter att institutionella investerare pumpat in över 50 miljarder dollar i Bitcoin ETF:er under den senaste månaden. Analytiker förutspår ytterligare tillväxt.",
         content: "Detaljerad artikel om Bitcoin's exceptionella prisökning och institutionella adoption...",
-        author: "Erik Andersson, Senior Kryptoanalytiker",
         publishedAt: "2024-01-07T10:30:00Z",
         category: "Bitcoin",
         sentiment: "positive",
-        views: 45500,
-        likes: 1250,
-        comments: 189,
         imageUrl: "/crypto-charts.jpg",
         tags: ["Bitcoin", "ETF", "Institutionella", "Rekord", "Adoption"],
         trending: true,
         impact: "high",
-        readTime: 8,
         source: "CryptoNetwork Sverige"
       },
       {
@@ -125,35 +109,25 @@ const NewsPage = () => {
         title: "Ethereum 2.0 staking överstiger 32 miljoner ETH - Nätverkets säkerhet når nya nivåer",
         summary: "Ethereum-nätverket har nått en betydande milstolpe när över 32 miljoner ETH nu är stakade, vilket representerar mer än 25% av den totala ETH-tillgången. Detta stärker nätverkets säkerhet avsevärt.",
         content: "Fullständig analys av Ethereum stakingtrend och dess påverkan på nätverkssäkerhet...",
-        author: "Anna Björk, Blockchain-specialist",
         publishedAt: "2024-01-07T08:15:00Z",
         category: "Ethereum",
         sentiment: "positive",
-        views: 28900,
-        likes: 820,
-        comments: 167,
         tags: ["Ethereum", "Staking", "ETH2.0", "Säkerhet", "Milestone"],
         trending: true,
         impact: "high",
-        readTime: 6,
         source: "CryptoNetwork Sverige"
       },
       {
         id: "3",
-        title: "Meme Token-marknaden rasar 25% efter Elon Musks kritiska uttalanden om spekulation",
-        summary: "DOGE, SHIB och andra meme-tokens har tappat över 25% av sitt värde efter Elon Musks senaste tweets där han varnar för överdriven spekulation i meme-baserade kryptovalutor.",
-        content: "Djupgående analys av meme token volatilitet och social media påverkan...",
-        author: "Marcus Lind, Marknadsanalytiker",
+        title: "Meme Token-marknaden rasar 25% efter kritiska uttalanden om spekulation",
+        summary: "DOGE, SHIB och andra meme-tokens har tappat över 25% av sitt värde efter kritiska uttalanden där experter varnar för överdriven spekulation i meme-baserade kryptovalutor.",
+        content: "Djupgående analys av meme token volatilitet och marknadsrörelser...",
         publishedAt: "2024-01-07T07:45:00Z",
         category: "Meme Tokens",
         sentiment: "negative",
-        views: 67800,
-        likes: 534,
-        comments: 298,
-        tags: ["DOGE", "SHIB", "Meme", "Volatilitet", "Social Media"],
+        tags: ["DOGE", "SHIB", "Meme", "Volatilitet", "Marknad"],
         trending: true,
         impact: "medium",
-        readTime: 5,
         source: "CryptoNetwork Sverige"
       },
       {
@@ -161,17 +135,12 @@ const NewsPage = () => {
         title: "Sveriges CBDC-pilot med digital krona visar exceptionella resultat - Riksbanken planerar nationell utrullning",
         summary: "Riksbankens pilotprogram för digital krona har överträffat alla förväntningar med över 100,000 testanvändare. Planer för nationell utrullning diskuteras för 2025.",
         content: "Detaljerad rapport om Sveriges CBDC-utveckling och framtidsplaner...",
-        author: "Sophia Chen, FinTech-expert",
         publishedAt: "2024-01-07T06:20:00Z",
         category: "CBDC",
         sentiment: "positive",
-        views: 19400,
-        likes: 678,
-        comments: 89,
         tags: ["Sverige", "CBDC", "Riksbank", "Digital Krona", "Innovation"],
         trending: false,
         impact: "high",
-        readTime: 10,
         source: "CryptoNetwork Sverige"
       },
       {
@@ -179,17 +148,12 @@ const NewsPage = () => {
         title: "DeFi Total Value Locked (TVL) överstiger 100 miljarder dollar för första gången sedan 2022",
         summary: "Decentraliserad finans (DeFi) har nått en ny milstolpe med över 100 miljarder dollar i Total Value Locked, drivet av innovativa protokoll och ökad institutionell adoption.",
         content: "Omfattande analys av DeFi-marknadens återhämtning och framtidsutsikter...",
-        author: "David Kim, DeFi-specialist",
         publishedAt: "2024-01-07T05:30:00Z",
         category: "DeFi",
         sentiment: "positive",
-        views: 15600,
-        likes: 445,
-        comments: 67,
         tags: ["DeFi", "TVL", "Protokoll", "Innovation", "Growth"],
         trending: false,
         impact: "high",
-        readTime: 7,
         source: "CryptoNetwork Sverige"
       }
     ];
@@ -380,34 +344,32 @@ const NewsPage = () => {
                     .filter(article => article.trending)
                     .slice(0, 3)
                     .map((article) => (
-                    <Card key={article.id} className="p-6 md:p-8 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm">
+                    <Card key={article.id} className="p-6 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm">
                       <div className="flex flex-col lg:flex-row gap-6">
                         {article.imageUrl && (
                           <div className="lg:w-72 h-48 bg-secondary/50 rounded-xl flex-shrink-0 bg-gradient-to-br from-primary/20 to-accent/20"></div>
                         )}
                         
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between mb-6">
-                            <div className="flex items-center gap-3 flex-wrap">
-                              <Badge className={`${getSentimentBadge(article.sentiment)} text-sm px-3 py-1`}>
-                                {article.sentiment === 'positive' ? '📈 Positiv' : 
-                                 article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
-                              </Badge>
-                              <Badge className={`${getImpactBadge(article.impact)} text-sm px-3 py-1`}>
-                                {article.impact === 'high' ? '🔥 Hög Påverkan' : 
-                                 article.impact === 'medium' ? '⚡ Medium Påverkan' : '💭 Låg Påverkan'}
-                              </Badge>
-                              <Badge variant="outline" className="border-primary text-primary text-sm px-3 py-1">
-                                {article.category}
-                              </Badge>
-                            </div>
+                          <div className="flex items-center gap-3 flex-wrap mb-4">
+                            <Badge className={`${getSentimentBadge(article.sentiment)} text-sm px-3 py-1`}>
+                              {article.sentiment === 'positive' ? '📈 Positiv' : 
+                               article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
+                            </Badge>
+                            <Badge className={`${getImpactBadge(article.impact)} text-sm px-3 py-1`}>
+                              {article.impact === 'high' ? '🔥 Hög Påverkan' : 
+                               article.impact === 'medium' ? '⚡ Medium Påverkan' : '💭 Låg Påverkan'}
+                            </Badge>
+                            <Badge variant="outline" className="border-primary text-primary text-sm px-3 py-1">
+                              {article.category}
+                            </Badge>
                           </div>
                           
                           <h3 className="font-display font-bold text-xl md:text-2xl mb-4 hover:text-primary cursor-pointer transition-colors leading-tight">
                             {article.title}
                           </h3>
                           
-                          <p className="text-muted-foreground mb-6 text-base md:text-lg leading-relaxed">
+                          <p className="text-muted-foreground mb-6 text-base leading-relaxed">
                             {article.summary}
                           </p>
 
@@ -419,37 +381,11 @@ const NewsPage = () => {
                             ))}
                           </div>
                           
-                          <div className="flex items-center justify-between text-base">
-                            <div className="flex items-center gap-6 text-muted-foreground">
-                              <div className="flex items-center">
-                                <span className="font-semibold">{article.author}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <Clock className="h-4 w-4 mr-2" />
-                                {new Date(article.publishedAt).toLocaleDateString('sv-SE')}
-                              </div>
-                              <div className="flex items-center">
-                                <span className="text-primary">{article.readTime} min läsning</span>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-6 text-muted-foreground">
-                              <div className="flex items-center">
-                                <Eye className="h-5 w-5 mr-2" />
-                                <span className="font-semibold">{article.views.toLocaleString()}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <Heart className="h-5 w-5 mr-2 text-destructive" />
-                                <span className="font-semibold">{article.likes}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <MessageCircle className="h-5 w-5 mr-2 text-primary" />
-                                <span className="font-semibold">{article.comments}</span>
-                              </div>
-                              <Button variant="ghost" size="sm">
-                                <Share className="h-4 w-4" />
-                              </Button>
-                            </div>
+                          <div className="flex items-center text-sm text-muted-foreground mt-4">
+                            <Calendar className="h-4 w-4 mr-2" />
+                            <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
+                            <span className="mx-2">•</span>
+                            <span>{article.source}</span>
                           </div>
                         </div>
                       </div>
@@ -486,8 +422,6 @@ const NewsPage = () => {
                               {article.sentiment === 'positive' ? '📈' : 
                                article.sentiment === 'negative' ? '📉' : '➡️'}
                             </span>
-                            <span className="text-sm text-muted-foreground">{article.readTime} min</span>
-                            <span className="text-sm text-muted-foreground">•</span>
                             <span className="text-sm text-muted-foreground">{article.source}</span>
                           </div>
                           
@@ -499,26 +433,11 @@ const NewsPage = () => {
                             {article.summary}
                           </p>
                           
-                          <div className="flex items-center justify-between text-base text-muted-foreground">
-                            <div className="flex items-center gap-4">
-                              <span className="font-medium">{article.author}</span>
-                              <span>•</span>
-                              <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center">
-                                <Eye className="h-4 w-4 mr-2" />
-                                <span>{(article.views / 1000).toFixed(1)}k</span>
-                              </div>
-                              <div className="flex items-center">
-                                <Heart className="h-4 w-4 mr-2" />
-                                <span>{article.likes}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <MessageCircle className="h-4 w-4 mr-2" />
-                                <span>{article.comments}</span>
-                              </div>
-                            </div>
+                          <div className="flex items-center text-sm text-muted-foreground mt-3">
+                            <Calendar className="h-4 w-4 mr-2" />
+                            <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
+                            <span className="mx-2">•</span>
+                            <span>{article.source}</span>
                           </div>
                         </div>
                       </div>
