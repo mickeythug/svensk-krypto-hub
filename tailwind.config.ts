@@ -146,27 +146,35 @@ export default {
 				'glitch': {
 					'0%': { 
 						transform: 'translate(0)',
-						filter: 'hue-rotate(0deg)'
+						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
 					},
-					'20%': { 
-						transform: 'translate(-2px, 2px)',
-						filter: 'hue-rotate(90deg)'
+					'2%': { 
+						transform: 'translate(2px, 0)',
+						clipPath: 'polygon(0 78%, 100% 78%, 100% 100%, 0 100%)'
 					},
-					'40%': { 
-						transform: 'translate(-2px, -2px)',
-						filter: 'hue-rotate(180deg)'
+					'6%': { 
+						transform: 'translate(-2px, 0)',
+						clipPath: 'polygon(0 78%, 100% 78%, 100% 82%, 0 82%)'
 					},
-					'60%': { 
-						transform: 'translate(2px, 2px)',
-						filter: 'hue-rotate(270deg)'
+					'8%': { 
+						transform: 'translate(0)',
+						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
 					},
-					'80%': { 
-						transform: 'translate(2px, -2px)',
-						filter: 'hue-rotate(360deg)'
+					'9%': { 
+						transform: 'translate(3px, 0)',
+						clipPath: 'polygon(0 15%, 100% 15%, 100% 20%, 0 20%)'
+					},
+					'10%': { 
+						transform: 'translate(-1px, 0)',
+						clipPath: 'polygon(0 10%, 100% 10%, 100% 44%, 0 44%)'
+					},
+					'13%': { 
+						transform: 'translate(0)',
+						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
 					},
 					'100%': { 
 						transform: 'translate(0)',
-						filter: 'hue-rotate(0deg)'
+						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
 					}
 				}
 			},
@@ -179,7 +187,7 @@ export default {
 				'fade-in': 'fade-in 0.8s ease-out',
 				'ticker': 'ticker 30s linear infinite',
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'glitch': 'glitch 2s infinite'
+				'glitch': 'glitch 4s infinite'
 			}
 		}
 	},
