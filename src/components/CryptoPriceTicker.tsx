@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CryptoPrice {
   symbol: string;
@@ -10,6 +11,7 @@ interface CryptoPrice {
 
 const CryptoPriceTicker = () => {
   const [cryptoPrices, setCryptoPrices] = useState<CryptoPrice[]>([]);
+  const isMobile = useIsMobile();
 
   // Mock data - in real app, this would come from an API
   useEffect(() => {
@@ -41,21 +43,21 @@ const CryptoPriceTicker = () => {
   };
 
   return (
-    <section className="bg-background border-b border-border py-3 mt-16 relative z-40 w-full">
+    <section className={`bg-background border-b border-border ${isMobile ? 'py-2 mt-14' : 'py-3 mt-16'} relative z-40 w-full`}>
       
       <div className="relative overflow-hidden">
-        <div className="flex animate-ticker space-x-8 whitespace-nowrap">
+        <div className={`flex animate-ticker ${isMobile ? 'space-x-4' : 'space-x-8'} whitespace-nowrap`}>
           {/* Duplicate the array for seamless loop */}
           {[...cryptoPrices, ...cryptoPrices].map((crypto, index) => (
             <div
               key={`${crypto.symbol}-${index}`}
-              className="flex items-center space-x-3 bg-secondary/50 rounded-lg px-4 py-2 border border-border/50 flex-shrink-0"
+              className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-3'} bg-secondary/50 rounded-lg ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'} border border-border/50 flex-shrink-0`}
             >
-              <div className="flex items-center space-x-2">
-                <span className="font-crypto font-bold text-primary text-sm">
+              <div className={`flex items-center ${isMobile ? 'space-x-1' : 'space-x-2'}`}>
+                <span className={`font-crypto font-bold text-primary ${isMobile ? 'text-xs' : 'text-sm'}`}>
                   {crypto.symbol}
                 </span>
-                <span className="font-display text-foreground font-medium">
+                <span className={`font-display text-foreground font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
                   {formatPrice(crypto.price)}
                 </span>
               </div>
@@ -64,11 +66,11 @@ const CryptoPriceTicker = () => {
                 crypto.change24h >= 0 ? 'text-success' : 'text-destructive'
               }`}>
                 {crypto.change24h >= 0 ? (
-                  <TrendingUp size={14} />
+                  <TrendingUp size={isMobile ? 10 : 14} />
                 ) : (
-                  <TrendingDown size={14} />
+                  <TrendingDown size={isMobile ? 10 : 14} />
                 )}
-                <span className="font-display text-sm font-medium">
+                <span className={`font-display ${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>
                   {formatChange(crypto.change24h)}
                 </span>
               </div>

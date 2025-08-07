@@ -1,9 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Newspaper, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
 
 const NewsSection = () => {
+  const isMobile = useIsMobile();
   const cryptoNews = [
     {
       id: 1,
@@ -79,19 +81,19 @@ const NewsSection = () => {
   };
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-crypto text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             KRYPTO NYHETER
           </h2>
-          <p className="font-display text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Håll dig uppdaterad med de senaste nyheterna från kryptovärlden. 
             Vi kurerar och översätter de viktigaste händelserna för svenska läsare.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6' : 'lg:grid-cols-3 gap-8'}`}>
           {/* Featured News */}
           <div className="lg:col-span-2">
             <div className="grid gap-6">

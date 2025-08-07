@@ -1,9 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, DollarSign, BarChart3, PieChart, Activity } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import cryptoCharts from "@/assets/crypto-charts.jpg";
 
 const MarketOverview = () => {
+  const isMobile = useIsMobile();
   const marketStats = [
     {
       title: "Total Marknadskapital",
@@ -58,27 +60,27 @@ const MarketOverview = () => {
   };
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-crypto text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             MARKNADSÖVERSIKT
           </h2>
-          <p className="font-display text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Få en komplett bild av kryptomarknaden med realtidsdata, 
             analyser och insikter från de största digitala tillgångarna.
           </p>
         </div>
 
         {/* Market Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 mb-8' : 'md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12'}`}>
           {marketStats.map((stat) => {
             const IconComponent = stat.icon;
             
             return (
               <Card 
                 key={stat.title}
-                className="p-6 bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105"
+                className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <IconComponent className="h-6 w-6 text-primary" />
@@ -105,7 +107,7 @@ const MarketOverview = () => {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6' : 'lg:grid-cols-2 gap-8'}`}>
           {/* Top Cryptocurrencies */}
           <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
             <h3 className="font-crypto text-xl font-bold mb-6 text-primary">

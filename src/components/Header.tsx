@@ -71,20 +71,22 @@ const Header = () => {
             <img 
               src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
               alt="Crypto Network Sweden"
-              className={`${isMobile ? 'h-8' : 'h-10'} w-auto drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`}
+              className={`${isMobile ? 'h-10 w-10 object-contain' : 'h-12 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`}
             />
-            <div className={`${isMobile ? 'hidden' : 'hidden md:block'}`}>
-              <h1 className="font-crypto text-lg font-bold">
-                <span style={{ color: '#12E19F' }}>CRY</span>
-                <span className="text-white">PTO</span>
-                <span className="text-white"> </span>
-                <span className="text-white">NET</span>
-                <span style={{ color: '#12E19F' }}>WORK</span>
-              </h1>
-              <p className="font-crypto text-xs text-muted-foreground">
-                SWEDEN
-              </p>
-            </div>
+            {!isMobile && (
+              <div>
+                <h1 className="font-crypto text-lg font-bold">
+                  <span style={{ color: '#12E19F' }}>CRY</span>
+                  <span className="text-white">PTO</span>
+                  <span className="text-white"> </span>
+                  <span className="text-white">NET</span>
+                  <span style={{ color: '#12E19F' }}>WORK</span>
+                </h1>
+                <p className="font-crypto text-xs text-muted-foreground">
+                  SWEDEN
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Desktop Navigation */}

@@ -1,8 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { MessageCircle, Video, Twitter, Instagram, Youtube, Users } from "lucide-react";
 
 const SocialMediaSection = () => {
+  const isMobile = useIsMobile();
   const socialPlatforms = [
     {
       name: "Telegram",
@@ -61,26 +63,26 @@ const SocialMediaSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-secondary">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-crypto text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-gradient-secondary`}>
+      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             FÖLJ OSS ÖVERALLT
           </h2>
-          <p className="font-display text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Gå med i vårt växande community på alla sociala plattformar. 
-            Var än du befinner dig online, vi är där för att hjälpa dig på din krypto-resa.
+            Var än du befinner dig online, vi är där för att hjälpa dig på din krypto-reja.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 mb-8' : 'md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12'}`}>
           {socialPlatforms.map((platform) => {
             const IconComponent = platform.icon;
             
             return (
               <Card
                 key={platform.name}
-                className="group p-6 bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 hover:border-primary/50"
+                className={`group ${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 hover:border-primary/50`}
               >
                 <div className="text-center">
                   <div className={`inline-flex p-4 rounded-full ${platform.bgColor} mb-4 group-hover:scale-110 transition-transform duration-300`}>

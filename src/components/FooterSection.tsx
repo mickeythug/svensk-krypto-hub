@@ -1,9 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import { MessageCircle, Video, Twitter, Instagram, Youtube, Users, Mail, MapPin, Phone } from "lucide-react";
 
 const FooterSection = () => {
+  const isMobile = useIsMobile();
   const socialLinks = [
     { icon: MessageCircle, name: "Telegram", link: "#", color: "text-blue-400" },
     { icon: Video, name: "TikTok", link: "#", color: "text-pink-400" },
@@ -33,15 +35,15 @@ const FooterSection = () => {
 
   return (
     <footer className="bg-gradient-secondary border-t border-border">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+      <div className={`container mx-auto ${isMobile ? 'px-6 py-12' : 'px-4 py-16'}`}>
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6 mb-8' : 'lg:grid-cols-4 gap-8 mb-12'}`}>
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="mb-6">
               <img 
                 src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
                 alt="Crypto Network Sweden"
-                className="h-[400px] w-auto mb-4 drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
+                className={`${isMobile ? 'h-24 w-24' : 'h-[200px] w-auto'} mb-4 object-contain drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`}
               />
               <h3 className="font-crypto text-xl font-bold mb-2">
                 <span style={{ color: '#12E19F' }}>CRY</span>

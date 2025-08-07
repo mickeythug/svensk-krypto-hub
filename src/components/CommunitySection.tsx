@@ -1,9 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Users, MessageCircle, BookOpen, Trophy, Star, Calendar, MapPin, Heart } from "lucide-react";
 
 const CommunitySection = () => {
+  const isMobile = useIsMobile();
   const communityFeatures = [
     {
       icon: MessageCircle,
@@ -80,27 +82,27 @@ const CommunitySection = () => {
   ];
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-crypto text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             VÅR COMMUNITY
           </h2>
-          <p className="font-display text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Gå med i Sveriges mest välkomnande och utbildande krypto-community. 
             Tillsammans bygger vi kunskap, delar erfarenheter och navigerar kryptovärlden.
           </p>
         </div>
 
         {/* Community Features */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 mb-8' : 'md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16'}`}>
           {communityFeatures.map((feature) => {
             const IconComponent = feature.icon;
             
             return (
               <Card 
                 key={feature.title}
-                className="p-6 text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 group"
+                className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 group`}
               >
                 <div className="inline-flex p-4 rounded-full bg-primary/10 mb-4 group-hover:bg-primary/20 transition-colors">
                   <IconComponent className="h-8 w-8 text-primary" />
@@ -119,7 +121,7 @@ const CommunitySection = () => {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6 mb-8' : 'lg:grid-cols-2 gap-8 mb-16'}`}>
           {/* Upcoming Events */}
           <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
             <div className="flex items-center space-x-2 mb-6">

@@ -1,10 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { TrendingUp, TrendingDown, Flame, Star, Zap } from "lucide-react";
 import memeTokens from "@/assets/meme-tokens.jpg";
 
 const MemeTokenSection = () => {
+  const isMobile = useIsMobile();
   const memeCoins = [
     {
       symbol: "DOGE",
@@ -92,19 +94,19 @@ const MemeTokenSection = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-secondary">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="font-crypto text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-gradient-secondary`}>
+      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             MEME TOKEN ZON
           </h2>
-          <p className="font-display text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Håll koll på de roligaste och mest volatila meme-tokens på marknaden. 
             Från klassiska som DOGE till nya sensationer som PEPE!
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6 mb-8' : 'lg:grid-cols-3 gap-8 mb-12'}`}>
           {/* Meme Token Image */}
           <div className="lg:col-span-1">
             <Card className="overflow-hidden border-border bg-card/80 backdrop-blur-sm">
@@ -123,7 +125,7 @@ const MemeTokenSection = () => {
                 </div>
               </div>
               
-              <div className="p-6">
+              <div className={`${isMobile ? 'p-4' : 'p-6'}`}>
                 <p className="text-muted-foreground text-sm mb-4">
                   Meme-tokens har blivit en betydande del av kryptomarknaden. 
                   Följ de senaste trenderna och upptäck nästa stora meme-coin!
@@ -138,7 +140,7 @@ const MemeTokenSection = () => {
 
           {/* Meme Token List */}
           <div className="lg:col-span-2">
-            <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
+            <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-crypto text-xl font-bold text-primary">
                   TRENDANDE MEME TOKENS
@@ -148,11 +150,11 @@ const MemeTokenSection = () => {
                 </Badge>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-2 gap-4'}`}>
                 {memeCoins.map((coin) => (
                   <div 
                     key={coin.symbol}
-                    className={`p-4 rounded-lg border transition-all duration-300 hover:scale-105 ${getTrendColor(coin.trend)}`}
+                    className={`${isMobile ? 'p-3' : 'p-4'} rounded-lg border transition-all duration-300 hover:scale-105 ${getTrendColor(coin.trend)}`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-2">
@@ -214,20 +216,20 @@ const MemeTokenSection = () => {
         </div>
 
         {/* Fun Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="p-6 text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300">
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'md:grid-cols-3 gap-6'}`}>
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">🚀</div>
             <h4 className="font-crypto text-lg font-bold text-primary mb-1">500+</h4>
             <p className="text-muted-foreground text-sm">Aktiva Meme Tokens</p>
           </Card>
           
-          <Card className="p-6 text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300">
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">💎</div>
             <h4 className="font-crypto text-lg font-bold text-primary mb-1">50B+</h4>
             <p className="text-muted-foreground text-sm">Total Marknadskapital</p>
           </Card>
           
-          <Card className="p-6 text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300">
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">🎯</div>
             <h4 className="font-crypto text-lg font-bold text-primary mb-1">1000%+</h4>
             <p className="text-muted-foreground text-sm">Genomsnittlig Volatilitet</p>
