@@ -27,7 +27,7 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { name: "Marknadsöversikt", href: "#market", icon: TrendingUp, route: false },
+    { name: "Marknadsöversikt", href: "/marknad", icon: TrendingUp, route: true },
     { name: "Community", href: "#community", icon: Users, route: false },
     { name: "Utbildning", href: "#education", icon: BookOpen, route: false },
     { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true },
