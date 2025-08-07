@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import SocialMediaSection from "@/components/SocialMediaSection";
@@ -10,13 +11,20 @@ import FooterSection from "@/components/FooterSection";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <HeroSection />
       <CryptoPriceTicker />
       <SocialMediaSection />
-      <MarketOverview />
+      <div id="market">
+        <MarketOverview />
+      </div>
       <MemeTokenSection />
-      <NewsSection />
-      <CommunitySection />
+      <div id="news">
+        <NewsSection />
+      </div>
+      <div id="community">
+        <CommunitySection />
+      </div>
       <FooterSection />
     </div>
   );
