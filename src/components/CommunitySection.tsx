@@ -121,89 +121,61 @@ const CommunitySection = () => {
           })}
         </div>
 
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6 mb-8' : 'lg:grid-cols-2 gap-8 mb-16'}`}>
-          {/* Upcoming Events */}
-          <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
-            <div className="flex items-center space-x-2 mb-6">
-              <Calendar className="h-6 w-6 text-primary" />
-              <h3 className="font-crypto text-xl font-bold text-primary">
-                COMMUNITY AKTIVITETER
-              </h3>
-            </div>
-            
-            <div className="space-y-4">
-              {upcomingEvents.map((event, index) => (
-                <div 
-                  key={index}
-                  className="flex items-center justify-between p-4 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors group cursor-pointer"
-                >
-                  <div className="flex-1">
-                    <h4 className="font-display font-semibold mb-1 group-hover:text-primary transition-colors">
-                      {event.title}
-                    </h4>
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <div className="flex items-center space-x-1">
-                        <Calendar size={12} />
-                        <span>{event.date} kl {event.time}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin size={12} />
-                        <span>{event.type}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Users size={12} />
-                        <span>{event.attendees}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button size="sm" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                    Gå med
-                  </Button>
-                </div>
-              ))}
-            </div>
-            
-            <div className="mt-6 text-center">
-              <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                Gå med i Telegram
-              </Button>
-            </div>
-          </Card>
-
-          {/* Community Stats */}
-          <Card className="p-6 bg-gradient-primary text-primary-foreground">
-            <h3 className="font-crypto text-xl font-bold mb-6">
-              COMMUNITY STATISTIK
-            </h3>
-            
-            <div className="grid grid-cols-2 gap-6">
-              <div className="text-center">
-                <div className="font-crypto text-3xl font-bold mb-1">5,247</div>
-                <div className="text-sm opacity-90">Aktiva Medlemmar</div>
-              </div>
-              <div className="text-center">
-                <div className="font-crypto text-3xl font-bold mb-1">892</div>
-                <div className="text-sm opacity-90">Dagliga Meddelanden</div>
-              </div>
-              <div className="text-center">
-                <div className="font-crypto text-3xl font-bold mb-1">156</div>
-                <div className="text-sm opacity-90">Genomsnittlig Support</div>
-              </div>
-              <div className="text-center">
-                <div className="font-crypto text-3xl font-bold mb-1">24/7</div>
-                <div className="text-sm opacity-90">Community Support</div>
-              </div>
-            </div>
-            
-            <div className="mt-6 pt-6 border-t border-primary-foreground/20">
-              <div className="text-center">
-                <Badge className="bg-primary-foreground text-primary mb-2">
-                  🏆 Top Rated Community
-                </Badge>
-                <p className="text-sm opacity-90">
-                  4.9/5 rating från över 1,000 medlemsrecensioner
+        {/* Telegram Community Card */}
+        <div className={`${isMobile ? 'mb-8' : 'mb-16'}`}>
+          <Card className="p-8 bg-gradient-primary text-primary-foreground text-center border-border">
+            <div className="max-w-2xl mx-auto">
+              <div className="mb-6">
+                <img 
+                  src="/lovable-uploads/9749ce60-cc5c-4316-bb4e-d89a819b14cd.png" 
+                  alt="Telegram" 
+                  className="h-20 w-20 mx-auto mb-4"
+                />
+                <h3 className="font-crypto text-3xl font-bold mb-4">
+                  GÅ MED I VÅR TELEGRAM COMMUNITY
+                </h3>
+                <p className="font-display text-lg opacity-90 mb-6">
+                  Anslut till Sveriges största krypto-community! Ställ frågor, lär dig, tradea tillsammans i voice chat, 
+                  scanna meme tokens och träffa nya vänner. Helt gratis och öppet för alla!
                 </p>
+              </div>
+              
+              <a 
+                href="https://t.me/cryptonetworksweden" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-block"
+              >
+                <Button 
+                  size="lg" 
+                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 text-xl px-12 py-6 h-auto font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                >
+                  <img 
+                    src="/lovable-uploads/9749ce60-cc5c-4316-bb4e-d89a819b14cd.png" 
+                    alt="Telegram" 
+                    className="h-6 w-6 mr-3"
+                  />
+                  Gå med nu - Gratis!
+                </Button>
+              </a>
+              
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm opacity-90">
+                <div>
+                  <div className="font-bold">Voice Chat</div>
+                  <div>Dagligen 20:00</div>
+                </div>
+                <div>
+                  <div className="font-bold">Meme Scanning</div>
+                  <div>24/7 Support</div>
+                </div>
+                <div>
+                  <div className="font-bold">Frågor & Svar</div>
+                  <div>Alltid öppet</div>
+                </div>
+                <div>
+                  <div className="font-bold">Nya Vänner</div>
+                  <div>Välkommen in!</div>
+                </div>
               </div>
             </div>
           </Card>
