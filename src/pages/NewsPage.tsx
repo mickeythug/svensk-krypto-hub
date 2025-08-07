@@ -193,7 +193,7 @@ const NewsPage = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const categories = ["all", "Bitcoin", "Ethereum", "Meme Tokens", "CBDC", "DeFi", "NFT"];
+  const categories = ["all", "Bitcoin", "Ethereum", "Meme Tokens", "DeFi", "NFT"];
 
   const topMovers = [
     { name: "SHIB", symbol: "SHIB", change: "+23.45%", price: "0.000025 SEK", volume: "2.1B SEK" },
@@ -244,28 +244,6 @@ const NewsPage = () => {
                     <Star className="h-4 w-4 mr-2 text-warning" />
                     <span>Expertanalys från branschledare</span>
                   </div>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-4 lg:min-w-[400px]">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input
-                    placeholder="Sök nyheter, taggar eller författare..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 w-full h-12 text-lg bg-secondary/50 border-border focus:border-primary"
-                  />
-                </div>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button variant="outline" size="lg" className="text-base">
-                    <Filter className="mr-2 h-5 w-5" />
-                    Avancerat Filter
-                  </Button>
-                  <Button variant="outline" size="lg" className="text-base">
-                    <Bookmark className="mr-2 h-5 w-5" />
-                    Sparade Artiklar
-                  </Button>
                 </div>
               </div>
             </div>

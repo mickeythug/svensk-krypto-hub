@@ -81,10 +81,10 @@ const TokenItem = memo<TokenItemProps>(({ crypto, isMobile, onTokenClick }) => {
   return (
     <div 
       onClick={handleClick}
-      className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-3'} bg-secondary/50 rounded-lg ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'} border border-border/50 flex-shrink-0 group hover:bg-secondary/70 transition-colors cursor-pointer ${tokenColor}`}
+      className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-3'} bg-secondary/50 rounded-lg ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'} border border-border/50 flex-shrink-0 group hover:bg-secondary/70 transition-colors cursor-pointer`}
     >
       <div className={`flex items-center ${isMobile ? 'space-x-1' : 'space-x-2'}`}>
-        <span className={`symbol-text font-crypto font-bold text-primary ${isMobile ? 'text-xs' : 'text-sm'} transition-colors`}>
+        <span className={`symbol-text font-crypto font-bold text-primary group-hover:text-destructive ${isMobile ? 'text-xs' : 'text-sm'} transition-colors`}>
           {crypto.symbol}
         </span>
         <span className={`font-display text-foreground font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
