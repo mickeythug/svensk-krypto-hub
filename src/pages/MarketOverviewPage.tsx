@@ -635,6 +635,97 @@ const MarketOverviewPage = () => {
         <Header />
         
         <div className="pt-16 bg-background">
+          
+          {/* Mobile Header */}
+          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 border-b border-border/20">
+            <h1 className="font-crypto text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              MARKNAD
+            </h1>
+            <p className="text-muted-foreground">Live crypto data</p>
+          </div>
+
+          {/* Mobile Sentiment Dashboard */}
+          <div className="p-4 bg-secondary/5 border-b border-border/20">
+            <div className="space-y-4">
+              
+              {/* Market Cap & Volume Row */}
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="p-4 bg-gradient-to-br from-primary/10 to-accent/10 border-border/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <DollarSign className="h-4 w-4 text-primary" />
+                    <span className="text-xs text-muted-foreground font-medium">Market Cap</span>
+                  </div>
+                  <div className="text-lg font-bold text-primary mb-1">
+                    ${marketData.totalMarketCap}
+                  </div>
+                  <div className="text-xs text-success font-medium">+2.4%</div>
+                </Card>
+
+                <Card className="p-4 bg-gradient-to-br from-secondary/10 to-accent/10 border-border/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <BarChart3 className="h-4 w-4 text-secondary" />
+                    <span className="text-xs text-muted-foreground font-medium">24h Volume</span>
+                  </div>
+                  <div className="text-lg font-bold text-secondary mb-1">
+                    ${marketData.totalVolume}
+                  </div>
+                  <div className="text-xs text-destructive font-medium">-1.2%</div>
+                </Card>
+              </div>
+
+              {/* Fear & Greed Index */}
+              <Card className="p-4 bg-gradient-to-br from-success/10 to-warning/10 border-border/30">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-success" />
+                    <span className="text-xs text-muted-foreground font-medium">Fear & Greed Index</span>
+                  </div>
+                  <div className="text-lg font-bold text-success">{marketSentiment.fearGreedIndex}</div>
+                </div>
+                <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
+                  <div 
+                    className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${marketSentiment.fearGreedIndex}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-success font-medium">Greed</div>
+              </Card>
+
+              {/* Alt Season & BTC Dominance Row */}
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="p-4 bg-gradient-to-br from-accent/10 to-secondary/10 border-border/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Coins className="h-4 w-4 text-accent" />
+                    <span className="text-xs text-muted-foreground font-medium">Alt Season</span>
+                  </div>
+                  <div className="text-lg font-bold text-accent mb-1">65</div>
+                  <div className="w-full bg-secondary/30 rounded-full h-1.5 mb-1">
+                    <div 
+                      className="bg-gradient-to-r from-primary to-accent h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: '65%' }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-accent font-medium">Alt Season</div>
+                </Card>
+
+                <Card className="p-4 bg-gradient-to-br from-warning/10 to-destructive/10 border-border/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Bitcoin className="h-4 w-4 text-warning" />
+                    <span className="text-xs text-muted-foreground font-medium">BTC Dom</span>
+                  </div>
+                  <div className="text-lg font-bold text-warning mb-1">{marketData.btcDominance}%</div>
+                  <div className="w-full bg-secondary/30 rounded-full h-1.5 mb-1">
+                    <div 
+                      className="bg-gradient-to-r from-warning to-destructive h-1.5 rounded-full transition-all duration-500"
+                      style={{ width: `${marketData.btcDominance}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-warning font-medium">BTC Season</div>
+                </Card>
+              </div>
+            </div>
+          </div>
+
           {/* Mobile Search and Tabs */}
           <div className="sticky top-16 z-20 bg-background border-b border-border/30">
             <div className="p-3">
