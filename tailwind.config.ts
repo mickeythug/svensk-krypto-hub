@@ -141,52 +141,6 @@ export default {
 						boxShadow: '0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.6)',
 						transform: 'scale(1.05)'
 					}
-				},
-				'matrix-glitch': {
-					'0%, 100%': { 
-						transform: 'translate(0)',
-						filter: 'none'
-					},
-					'10%': { 
-						transform: 'translate(-2px, 1px)',
-						filter: 'blur(0.5px)'
-					},
-					'20%': { 
-						transform: 'translate(1px, -1px)',
-						filter: 'none'
-					},
-					'30%': { 
-						transform: 'translate(-1px, 2px)',
-						filter: 'blur(0.3px)'
-					},
-					'40%': { 
-						transform: 'translate(2px, -2px)',
-						filter: 'none'
-					},
-					'50%': { 
-						transform: 'translate(-2px, 1px)',
-						filter: 'blur(0.8px)'
-					},
-					'60%': { 
-						transform: 'translate(1px, 1px)',
-						filter: 'none'
-					},
-					'70%': { 
-						transform: 'translate(-1px, -1px)',
-						filter: 'blur(0.4px)'
-					},
-					'80%': { 
-						transform: 'translate(2px, 1px)',
-						filter: 'none'
-					},
-					'90%': { 
-						transform: 'translate(-2px, -2px)',
-						filter: 'blur(0.6px)'
-					}
-				},
-				'scan-lines': {
-					'0%': { transform: 'translateY(-100%)' },
-					'100%': { transform: 'translateY(100vh)' }
 				}
 			},
 			animation: {
@@ -197,9 +151,7 @@ export default {
 				'slide-up': 'slide-up 0.6s ease-out',
 				'fade-in': 'fade-in 0.8s ease-out',
 				'ticker': 'ticker 30s linear infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'matrix-glitch': 'matrix-glitch 0.6s ease-in-out infinite',
-				'scan-lines': 'scan-lines 3s linear infinite'
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
 			}
 		}
 	},
