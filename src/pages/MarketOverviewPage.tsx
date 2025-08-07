@@ -297,33 +297,67 @@ const MarketOverviewPage = () => {
             </div>
           </div>
 
-          {/* Market Stats - Modern Grid */}
+          {/* Modern Sentiment Dashboard */}
           <div className="bg-secondary/5 border-b border-border/20">
             <div className="max-w-7xl mx-auto px-6 py-6">
-              <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-                <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover:border-border/50 transition-all">
-                  <div className="text-2xl font-bold text-success">${marketData.totalMarketCap}</div>
-                  <div className="text-sm text-muted-foreground">Market Cap</div>
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                
+                {/* Total Market Cap Card */}
+                <div className="bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-primary/30 transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-muted-foreground">Total Market Cap</h3>
+                    <DollarSign className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="text-3xl font-bold text-primary mb-2">${marketData.totalMarketCap}</div>
+                  <div className="text-sm text-success font-medium">+2.4% (24h)</div>
                 </div>
-                <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover:border-border/50 transition-all">
-                  <div className="text-2xl font-bold text-primary">${marketData.totalVolume}</div>
-                  <div className="text-sm text-muted-foreground">24h Volym</div>
+
+                {/* Fear & Greed Index */}
+                <div className="bg-gradient-to-br from-success/10 to-warning/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-success/30 transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-muted-foreground">Fear & Greed Index</h3>
+                    <Activity className="h-5 w-5 text-success" />
+                  </div>
+                  <div className="text-3xl font-bold text-success mb-2">{marketSentiment.fearGreedIndex}</div>
+                  <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
+                    <div 
+                      className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${marketSentiment.fearGreedIndex}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-sm text-success font-medium">Greed</div>
                 </div>
-                <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover:border-border/50 transition-all">
-                  <div className="text-2xl font-bold text-warning">{marketData.btcDominance}%</div>
-                  <div className="text-sm text-muted-foreground">BTC Dominans</div>
+
+                {/* Alt Season Index */}
+                <div className="bg-gradient-to-br from-accent/10 to-secondary/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-accent/30 transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-muted-foreground">Alt Season Index</h3>
+                    <BarChart3 className="h-5 w-5 text-accent" />
+                  </div>
+                  <div className="text-3xl font-bold text-accent mb-2">65</div>
+                  <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
+                    <div 
+                      className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
+                      style={{ width: '65%' }}
+                    ></div>
+                  </div>
+                  <div className="text-sm text-accent font-medium">Alt Season</div>
                 </div>
-                <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover:border-border/50 transition-all">
-                  <div className="text-2xl font-bold text-accent">{marketData.ethDominance}%</div>
-                  <div className="text-sm text-muted-foreground">ETH Dominans</div>
-                </div>
-                <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover:border-border/50 transition-all">
-                  <div className="text-2xl font-bold text-primary">{marketData.activeAddresses}</div>
-                  <div className="text-sm text-muted-foreground">Aktiva Adresser</div>
-                </div>
-                <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 border border-border/30 hover:border-border/50 transition-all">
-                  <div className="text-2xl font-bold text-success">${marketData.defiTvl}</div>
-                  <div className="text-sm text-muted-foreground">DeFi TVL</div>
+
+                {/* BTC Dominance */}
+                <div className="bg-gradient-to-br from-warning/10 to-destructive/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-warning/30 transition-all">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-muted-foreground">BTC Dominance</h3>
+                    <Bitcoin className="h-5 w-5 text-warning" />
+                  </div>
+                  <div className="text-3xl font-bold text-warning mb-2">{marketData.btcDominance}%</div>
+                  <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
+                    <div 
+                      className="bg-gradient-to-r from-warning to-destructive h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${marketData.btcDominance}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-sm text-warning font-medium">BTC Season</div>
                 </div>
               </div>
             </div>
