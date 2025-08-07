@@ -43,7 +43,7 @@ const SocialMediaSection = () => {
             FÖLJ OSS ÖVERALLT
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-6'}`}>
-            Vi tänker bli den största krypto-communityn i Sverige! Gå med i våra sociala kanaler där vi hjälps åt att hitta möjligheter tillsammans. 
+            Vi tänker bli den största krypto-communityn i Sverige! Gå med i våra sociala kanaler där vi hjälps åt att hitta möjligheter tillsammans.
             En gemenskap med ett och samma mål - att växa och lära inom krypto.
           </p>
           <p className={`font-display ${isMobile ? 'text-sm' : 'text-base'} text-muted-foreground/80 max-w-2xl mx-auto`}>

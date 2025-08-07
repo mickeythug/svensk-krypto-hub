@@ -135,7 +135,7 @@ const CommunitySection = () => {
                   GÅ MED I VÅR TELEGRAM COMMUNITY
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
-                  Anslut till Sveriges största krypto-community! Ställ frågor, lär dig, tradea tillsammans i voice chat, 
+                  Anslut till vår växande krypto-community - vårt mål är att bli Sveriges största! Ställ frågor, lär dig, tradea tillsammans i voice chat, 
                   scanna meme tokens och träffa nya vänner. Helt gratis och öppet för alla!
                 </p>
               </div>
