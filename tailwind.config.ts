@@ -150,7 +150,7 @@ export default {
 				'glow': 'glow 2s ease-in-out infinite',
 				'slide-up': 'slide-up 0.6s ease-out',
 				'fade-in': 'fade-in 0.8s ease-out',
-				'ticker': 'ticker 60s linear infinite',
+				'ticker': 'ticker 30s linear infinite',
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
 			}
 		}

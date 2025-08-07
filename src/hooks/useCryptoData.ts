@@ -374,8 +374,8 @@ class CryptoAPIClient {
     try {
       await apiRateLimiter.acquire();
 
-      // Use Supabase edge function instead of direct CoinGecko call
-      const url = 'https://kcmgdvomqsgzuhjhxwkf.supabase.co/functions/v1/crypto-prices';
+      // Use direct CoinGecko API since it's working
+      const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h';
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
@@ -396,14 +396,10 @@ class CryptoAPIClient {
 
       const result = await response.json();
       
-      if (!result.success) {
-        throw new Error(`API error: ${result.error}`);
-      }
-      
       // Reset circuit breaker on success
       this.failureCount = 0;
       
-      return this.transformSupabaseResponse(result.data);
+      return this.transformCoinGeckoResponse(result);
       
     } catch (error) {
       this.recordFailure();
@@ -414,17 +410,17 @@ class CryptoAPIClient {
     }
   }
 
-  private transformSupabaseResponse(data: any[]): CryptoPrice[] {
-    return data.map((coin, index) => ({
-      symbol: coin.symbol,
+  private transformCoinGeckoResponse(data: any[]): CryptoPrice[] {
+    return data.slice(0, 15).map((coin, index) => ({
+      symbol: coin.symbol.toUpperCase(),
       name: coin.name,
-      price: coin.price,
-      change24h: coin.change24h,
-      marketCap: formatters.marketCap(coin.price * 21000000), // Rough estimate
-      volume: formatters.volume(coin.price * 1000000), // Rough estimate
-      rank: index + 1,
-      lastUpdated: coin.lastUpdated || new Date().toISOString(),
-      image: `https://assets.coingecko.com/coins/images/1/thumb/${coin.symbol.toLowerCase()}.png`
+      price: coin.current_price,
+      change24h: coin.price_change_percentage_24h || 0,
+      marketCap: formatters.marketCap(coin.market_cap || 0),
+      volume: formatters.volume(coin.total_volume || 0),
+      rank: coin.market_cap_rank || index + 1,
+      lastUpdated: coin.last_updated || new Date().toISOString(),
+      image: coin.image
     }));
   }
 
