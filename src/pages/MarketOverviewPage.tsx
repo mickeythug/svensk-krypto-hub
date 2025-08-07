@@ -233,7 +233,7 @@ const MarketOverviewPage = () => {
           .sort((a, b) => a.change24h - b.change24h)
           .slice(0, 50);
       case "all":
-        return formattedCrypto; // Visa alla 100
+        return formattedCrypto.sort((a, b) => a.rank - b.rank); // Sortera efter market cap rank
       default:
         // Top 10 sorterat efter market cap rank
         return formattedCrypto
