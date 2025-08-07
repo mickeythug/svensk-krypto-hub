@@ -74,6 +74,7 @@ const MarketOverviewPage = () => {
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const itemsPerPage = 10;
   const navigate = useNavigate();
+  const { cryptoPrices, isLoading, error } = useCryptoData();
 
   // Logo mapping for different cryptocurrencies
   const getCryptoLogo = (symbol: string) => {
@@ -160,67 +161,43 @@ const MarketOverviewPage = () => {
     }
   ];
 
-  const allCryptos = [
-    { rank: 1, name: "Bitcoin", symbol: "BTC", slug: "bitcoin", price: 645000, change1h: 0.5, change24h: 2.34, change7d: 5.12, marketCap: "12.5T", volume: "28.5B", supply: "19.5M BTC" },
-    { rank: 2, name: "Ethereum", symbol: "ETH", slug: "ethereum", price: 35000, change1h: -0.2, change24h: -1.45, change7d: 3.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M ETH" },
-    { rank: 3, name: "Binance Coin", symbol: "BNB", slug: "binance-coin", price: 3200, change1h: 0.8, change24h: 0.87, change7d: -2.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" },
-    { rank: 4, name: "XRP", symbol: "XRP", slug: "xrp", price: 8.5, change1h: 1.2, change24h: 5.23, change7d: 12.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" },
-    { rank: 5, name: "Cardano", symbol: "ADA", slug: "cardano", price: 4.2, change1h: -0.5, change24h: 3.21, change7d: 8.9, marketCap: "147B", volume: "1.8B", supply: "35.0B ADA" },
-    { rank: 6, name: "Solana", symbol: "SOL", slug: "solana", price: 1100, change1h: 2.1, change24h: 5.67, change7d: 15.2, marketCap: "523B", volume: "4.1B", supply: "475.2M SOL" },
-    { rank: 7, name: "Polkadot", symbol: "DOT", slug: "polkadot", price: 85, change1h: -1.2, change24h: -2.11, change7d: -5.4, marketCap: "98B", volume: "892M", supply: "1.15B DOT" },
-    { rank: 8, name: "Avalanche", symbol: "AVAX", slug: "avalanche", price: 450, change1h: 0.9, change24h: 1.99, change7d: 7.3, marketCap: "178B", volume: "1.2B", supply: "395.8M AVAX" },
-    { rank: 9, name: "Chainlink", symbol: "LINK", slug: "chainlink", price: 180, change1h: 0.3, change24h: 4.5, change7d: 9.8, marketCap: "89B", volume: "654M", supply: "494.0M LINK" },
-    { rank: 10, name: "Polygon", symbol: "MATIC", slug: "polygon", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B MATIC" },
-    { rank: 11, name: "Uniswap", symbol: "UNI", slug: "uniswap", price: 78, change1h: 1.5, change24h: 3.2, change7d: 8.1, marketCap: "47B", volume: "321M", supply: "601M UNI" },
-    { rank: 12, name: "Litecoin", symbol: "LTC", slug: "litecoin", price: 890, change1h: -0.3, change24h: 1.8, change7d: 4.5, marketCap: "66B", volume: "567M", supply: "74M LTC" },
-    { rank: 13, name: "Internet Computer", symbol: "ICP", slug: "internet-computer", price: 125, change1h: 2.1, change24h: 6.7, change7d: 12.3, marketCap: "58B", volume: "289M", supply: "464M ICP" },
-    { rank: 14, name: "Cosmos", symbol: "ATOM", slug: "cosmos", price: 98, change1h: -1.1, change24h: -2.3, change7d: -4.8, marketCap: "38B", volume: "198M", supply: "388M ATOM" },
-    { rank: 15, name: "Near Protocol", symbol: "NEAR", slug: "near", price: 67, change1h: 3.2, change24h: 7.8, change7d: 18.9, marketCap: "71B", volume: "445M", supply: "1.06B NEAR" },
-    { rank: 16, name: "Algorand", symbol: "ALGO", slug: "algorand", price: 2.1, change1h: 0.8, change24h: 4.2, change7d: 9.6, marketCap: "16B", volume: "89M", supply: "7.6B ALGO" },
-    { rank: 17, name: "VeChain", symbol: "VET", slug: "vechain", price: 0.456, change1h: -0.6, change24h: 2.9, change7d: 6.1, marketCap: "33B", volume: "134M", supply: "72.7B VET" },
-    { rank: 18, name: "Fantom", symbol: "FTM", slug: "fantom", price: 3.4, change1h: 4.5, change24h: 12.1, change7d: 28.7, marketCap: "9.5B", volume: "167M", supply: "2.8B FTM" },
-    { rank: 19, name: "The Graph", symbol: "GRT", slug: "the-graph", price: 1.89, change1h: 1.2, change24h: 5.4, change7d: 14.2, marketCap: "18B", volume: "78M", supply: "9.5B GRT" },
-    { rank: 20, name: "Hedera", symbol: "HBAR", slug: "hedera", price: 0.34, change1h: -0.9, change24h: 1.7, change7d: 3.9, marketCap: "17B", volume: "56M", supply: "50B HBAR" }
-  ];
-
-  const trendingCryptos = [
-    { rank: 1, name: "Pepe", symbol: "PEPE", slug: "pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T PEPE" },
-    { rank: 2, name: "Bonk", symbol: "BONK", slug: "bonk", price: 0.000018, change1h: 8.9, change24h: 32.1, change7d: 89.3, marketCap: "1.2B", volume: "456M", supply: "65.5T BONK" },
-    { rank: 3, name: "Floki", symbol: "FLOKI", slug: "floki", price: 0.00032, change1h: 12.5, change24h: 28.7, change7d: 67.8, marketCap: "3.1B", volume: "298M", supply: "9.7T FLOKI" }
-  ];
-
-  const memeCryptos = [
-    { rank: 1, name: "Dogecoin", symbol: "DOGE", slug: "dogecoin", price: 1.2, change1h: 2.1, change24h: 8.5, change7d: 23.4, marketCap: "172B", volume: "1.8B", supply: "143.2B DOGE" },
-    { rank: 2, name: "Shiba Inu", symbol: "SHIB", slug: "shiba-inu", price: 0.000034, change1h: 1.8, change24h: 12.3, change7d: 34.2, marketCap: "20.1B", volume: "892M", supply: "589.7T SHIB" },
-    { rank: 3, name: "Pepe", symbol: "PEPE", slug: "pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T PEPE" }
-  ];
-
-  const topGainers = [
-    { rank: 1, name: "Solana", symbol: "SOL", slug: "solana", price: 1100, change1h: 2.1, change24h: 15.67, change7d: 45.2, marketCap: "523B", volume: "4.1B", supply: "475.2M SOL" },
-    { rank: 2, name: "Pepe", symbol: "PEPE", slug: "pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T PEPE" },
-    { rank: 3, name: "XRP", symbol: "XRP", slug: "xrp", price: 8.5, change1h: 1.2, change24h: 15.23, change7d: 32.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" }
-  ];
-
-  const topLosers = [
-    { rank: 1, name: "Polkadot", symbol: "DOT", slug: "polkadot", price: 85, change1h: -1.2, change24h: -8.11, change7d: -15.4, marketCap: "98B", volume: "892M", supply: "1.15B DOT" },
-    { rank: 2, name: "Ethereum", symbol: "ETH", slug: "ethereum", price: 35000, change1h: -0.2, change24h: -5.45, change7d: -8.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M ETH" },
-    { rank: 3, name: "Binance Coin", symbol: "BNB", slug: "binance-coin", price: 3200, change1h: -0.8, change24h: -3.87, change7d: -12.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" }
-  ];
-
   const getCurrentData = () => {
+    // Använd riktig data från CoinGecko API via hooken
+    if (!cryptoPrices || cryptoPrices.length === 0) return [];
+    
+    // Konvertera riktig data till rätt format för tabellen
+    const formattedCrypto = cryptoPrices.map(crypto => ({
+      rank: crypto.rank || 1,
+      name: crypto.name,
+      symbol: crypto.symbol,
+      slug: crypto.symbol.toLowerCase(),
+      price: crypto.price,
+      change1h: 0, // CoinGecko API ger inte 1h data i vår hook
+      change24h: crypto.change24h,
+      change7d: 0, // CoinGecko API ger inte 7d data i vår hook  
+      marketCap: crypto.marketCap || "0",
+      volume: crypto.volume || "0",
+      supply: `${crypto.supply || "0"} ${crypto.symbol}`
+    }));
+
     switch (activeTab) {
       case "trending":
-        return trendingCryptos;
+        // Sortera efter högst positiv 24h förändring
+        return formattedCrypto.sort((a, b) => b.change24h - a.change24h).slice(0, 10);
       case "meme":
-        return memeCryptos;
+        // Visa bara meme tokens (DOGE, SHIB)
+        return formattedCrypto.filter(crypto => ['DOGE', 'SHIB'].includes(crypto.symbol));
       case "gainers":
-        return topGainers;
+        // Sortera efter högst positiv förändring
+        return formattedCrypto.filter(crypto => crypto.change24h > 0).sort((a, b) => b.change24h - a.change24h);
       case "losers":
-        return topLosers;
+        // Sortera efter lägst negativ förändring
+        return formattedCrypto.filter(crypto => crypto.change24h < 0).sort((a, b) => a.change24h - b.change24h);
       case "all":
-        return allCryptos;
+        return formattedCrypto;
       default:
-        return allCryptos.slice(0, 10); // Top 10 by default
+        // Top 10 sorterat efter rank
+        return formattedCrypto.sort((a, b) => a.rank - b.rank).slice(0, 10);
     }
   };
 
@@ -252,11 +229,11 @@ const MarketOverviewPage = () => {
 
   const formatPrice = (price: number) => {
     if (price >= 1000) {
-      return `${(price / 1000).toFixed(1)}k SEK`;
+      return `$${(price / 1000).toFixed(1)}k`;
     } else if (price < 0.001) {
-      return `${price.toFixed(8)} SEK`;
+      return `$${price.toFixed(8)}`;
     }
-    return `${price.toFixed(2)} SEK`;
+    return `$${price.toFixed(2)}`;
   };
 
   // Mini sparkline component
