@@ -469,11 +469,16 @@ const CryptoDetailPage = () => {
     
     const loadChart = () => {
       const chartContainer = chartRef.current;
-      if (!chartContainer) return;
+      if (!chartContainer || !document.contains(chartContainer)) return;
 
-      // Instant clear och reload
-      chartContainer.innerHTML = '';
-      loadTradingViewChart(chartContainer, crypto.symbol);
+      // Safe clear and reload with existence check
+      try {
+        chartContainer.innerHTML = '';
+        loadTradingViewChart(chartContainer, crypto.symbol);
+      } catch (error) {
+        console.error('Error clearing chart container:', error);
+        setChartError(true);
+      }
     };
 
     // Instant loading - ingen delay
@@ -489,9 +494,23 @@ const CryptoDetailPage = () => {
 
     return () => {
       chartInitialized.current = false;
-      if (tradingViewScriptRef.current) {
-        tradingViewScriptRef.current.remove();
+      // Safe cleanup of TradingView script
+      if (tradingViewScriptRef.current && document.contains(tradingViewScriptRef.current)) {
+        try {
+          tradingViewScriptRef.current.remove();
+        } catch (e) {
+          // Ignore cleanup errors
+        }
         tradingViewScriptRef.current = null;
+      }
+      
+      // Safe cleanup of chart container
+      if (chartRef.current && document.contains(chartRef.current)) {
+        try {
+          chartRef.current.innerHTML = '';
+        } catch (e) {
+          // Ignore cleanup errors
+        }
       }
     };
   }, [crypto, loadTradingViewChart, preloadChart]);

@@ -44,66 +44,71 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
   const widgetRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Initialize Li.Fi Widget
+  // Initialize Li.Fi Widget with proper cleanup
   useEffect(() => {
+    const controller = new AbortController();
+    let mounted = true;
+    
     const initializeLiFiWidget = async () => {
-      if (!widgetRef.current || !window.LiFi) return;
+      if (!widgetRef.current || !mounted) return;
 
       try {
-        // Clear previous widget
-        widgetRef.current.innerHTML = '';
+        // Clear previous widget safely
+        if (widgetRef.current.children.length > 0) {
+          widgetRef.current.innerHTML = '';
+        }
 
-        // Create Li.Fi widget with custom config
-        await window.LiFi.Widget.createWidget({
-          container: widgetRef.current,
-          integrator: 'cryptonetwork-sweden',
-          config: {
-            fromChain: 1, // Ethereum
-            toChain: 1, // Same chain by default
-            fromToken: fromToken === 'USDT' ? '0xdAC17F958D2ee523a2206206994597C13D831ec7' : '',
-            toToken: toToken === symbol ? '' : '',
-            slippage: parseFloat(slippage) / 100,
-            theme: 'dark',
-            appearance: 'dark',
-            variant: 'default',
-            hideAppearance: true,
-            hiddenUI: ['fromAmount', 'toAmount'], // We'll handle amounts in our UI
-            walletManagement: {
-              connect: true,
-              disconnect: true,
-              signer: undefined
-            },
-            sdkConfig: {
-              routeOptions: {
-                maxPriceImpact: 0.4,
-                slippage: parseFloat(slippage) / 100,
-                allowSwitchChain: true
-              }
-            }
-          }
-        });
+        // Simple fallback UI instead of external widget for now
+        const fallbackHTML = `
+          <div class="p-6 text-center space-y-4">
+            <div class="text-lg font-semibold">DEX Trading kommer snart</div>
+            <p class="text-sm text-muted-foreground">
+              Vi integrerar Li.Fi för säker cross-chain trading
+            </p>
+            <div class="grid grid-cols-2 gap-2 mt-4">
+              <div class="p-3 bg-secondary/20 rounded-lg">
+                <div class="text-sm font-medium">Best Price</div>
+                <div class="text-xs text-muted-foreground">Cross-chain routing</div>
+              </div>
+              <div class="p-3 bg-secondary/20 rounded-lg">
+                <div class="text-sm font-medium">Low Fees</div>
+                <div class="text-xs text-muted-foreground">Optimized costs</div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        if (mounted && widgetRef.current) {
+          widgetRef.current.innerHTML = fallbackHTML;
+        }
       } catch (error) {
-        console.error('Error initializing Li.Fi widget:', error);
-        toast({
-          title: "Widget Error",
-          description: "Kunde inte ladda trading widget. Försök igen senare.",
-          variant: "destructive"
-        });
+        if (mounted) {
+          console.error('Error initializing trading widget:', error);
+          toast({
+            title: "Widget Error",
+            description: "Kunde inte ladda trading widget. Försök igen senare.",
+            variant: "destructive"
+          });
+        }
       }
     };
 
-    // Load Li.Fi script if not already loaded
-    if (!window.LiFi) {
-      const script = document.createElement('script');
-      script.src = 'https://unpkg.com/@lifi/widget@latest/dist/widget.umd.js';
-      script.async = true;
-      script.onload = () => {
-        setTimeout(initializeLiFiWidget, 100);
-      };
-      document.head.appendChild(script);
-    } else {
-      initializeLiFiWidget();
-    }
+    // Initialize after a short delay to ensure DOM is ready
+    const timer = setTimeout(initializeLiFiWidget, 100);
+    
+    return () => {
+      mounted = false;
+      controller.abort();
+      clearTimeout(timer);
+      // Safe cleanup - only clear if element still exists and is mounted
+      if (widgetRef.current && document.contains(widgetRef.current)) {
+        try {
+          widgetRef.current.innerHTML = '';
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      }
+    };
   }, [symbol, fromToken, toToken, slippage, toast]);
 
   const handleQuickBuy = (amount: string) => {
