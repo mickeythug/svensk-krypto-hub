@@ -215,7 +215,9 @@ const NewsPage = () => {
                            article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
                            article.author.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory === "all" || article.category === selectedCategory;
+      const matchesCategory = selectedCategory === "all" || 
+        article.category === selectedCategory || 
+        (selectedCategory === "trending" && article.trending);
       return matchesSearch && matchesCategory;
     });
 
@@ -262,14 +264,61 @@ const NewsPage = () => {
     }
   };
 
-  const categories = ["all", "Bitcoin", "Ethereum", "Meme Tokens", "DeFi", "NFT", "Solana"];
+  const categories = [
+    { id: "all", label: "ALLA" },
+    { id: "Bitcoin", label: "BTC" },
+    { id: "Ethereum", label: "ETH" },
+    { id: "Meme Tokens", label: "Memes" },
+    { id: "Politik", label: "Politik" },
+    { id: "trending", label: "Trending" }
+  ];
 
   const topMovers = [
-    { name: "SHIB", symbol: "SHIB", change: "+23.45%", price: "0.000025 SEK", volume: "2.1B SEK" },
-    { name: "Dogecoin", symbol: "DOGE", change: "+18.92%", price: "0.95 SEK", volume: "1.8B SEK" },
-    { name: "Pepe", symbol: "PEPE", change: "+15.67%", price: "0.000012 SEK", volume: "890M SEK" },
-    { name: "Chainlink", symbol: "LINK", change: "-8.23%", price: "180.45 SEK", volume: "1.2B SEK" },
-    { name: "Cardano", symbol: "ADA", change: "-5.67%", price: "4.23 SEK", volume: "967M SEK" }
+    { 
+      name: "SHIB", 
+      symbol: "SHIB", 
+      change: "+23.45%", 
+      price: "0.000025 SEK", 
+      volume: "2.1B SEK",
+      logo: "/src/assets/crypto-logos/shib.png",
+      isPositive: true
+    },
+    { 
+      name: "Dogecoin", 
+      symbol: "DOGE", 
+      change: "+18.92%", 
+      price: "0.95 SEK", 
+      volume: "1.8B SEK",
+      logo: "/src/assets/crypto-logos/doge.png",
+      isPositive: true
+    },
+    { 
+      name: "Pepe", 
+      symbol: "PEPE", 
+      change: "+15.67%", 
+      price: "0.000012 SEK", 
+      volume: "890M SEK",
+      logo: "/src/assets/crypto-logos/eth.png", // Using ETH as placeholder for PEPE
+      isPositive: true
+    },
+    { 
+      name: "Chainlink", 
+      symbol: "LINK", 
+      change: "-8.23%", 
+      price: "180.45 SEK", 
+      volume: "1.2B SEK",
+      logo: "/src/assets/crypto-logos/link.png",
+      isPositive: false
+    },
+    { 
+      name: "Cardano", 
+      symbol: "ADA", 
+      change: "-5.67%", 
+      price: "4.23 SEK", 
+      volume: "967M SEK",
+      logo: "/src/assets/crypto-logos/ada.png",
+      isPositive: false
+    }
   ];
 
   const formatTimeAgo = (dateString: string) => {
@@ -375,14 +424,14 @@ const NewsPage = () => {
 
           {/* Category Tabs */}
           <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-10">
-            <TabsList className="grid grid-cols-3 lg:grid-cols-7 w-full bg-secondary/50 h-12 p-1">
+            <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full bg-secondary/50 h-12 p-1">
               {categories.map((category) => (
                 <TabsTrigger
-                  key={category}
-                  value={category}
+                  key={category.id}
+                  value={category.id}
                   className="font-display font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2 transition-all duration-300"
                 >
-                  {category === "all" ? "Alla" : category}
+                  {category.label}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -605,7 +654,7 @@ const NewsPage = () => {
             <div className="space-y-6">
               {/* Market Sentiment */}
               <Card className="p-6">
-                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">MARKNADSSENTIMENT</h3>
+                <h3 className="font-crypto text-lg font-bold mb-6 text-primary">MARKNADS-<br />SENTIMENT</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Fear & Greed Index</span>
@@ -644,20 +693,28 @@ const NewsPage = () => {
                 <h3 className="font-crypto text-xl font-bold mb-6 text-primary">TOP MOVERS</h3>
                 <div className="space-y-4">
                   {topMovers.map((token, index) => (
-                    <div key={token.symbol} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer">
+                    <div key={token.symbol} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer group">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold">
-                          {index + 1}
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-secondary flex items-center justify-center">
+                          <img 
+                            src={token.logo} 
+                            alt={token.symbol}
+                            className="w-6 h-6 object-contain"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = `data:image/svg+xml;base64,${btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#12E19F"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="8" font-weight="bold">${token.symbol.charAt(0)}</text></svg>`)}`;
+                            }}
+                          />
                         </div>
                         <div>
-                          <div className="font-semibold text-sm">{token.symbol}</div>
+                          <div className="font-semibold text-sm group-hover:text-primary transition-colors">{token.symbol}</div>
                           <div className="text-xs text-muted-foreground">{token.name}</div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`font-bold text-sm ${
-                          token.change.startsWith('+') ? 'text-success' : 'text-destructive'
+                        <div className={`font-bold text-sm flex items-center gap-1 ${
+                          token.isPositive ? 'text-success' : 'text-destructive'
                         }`}>
+                          {token.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                           {token.change}
                         </div>
                         <div className="text-xs text-muted-foreground">{token.price}</div>
