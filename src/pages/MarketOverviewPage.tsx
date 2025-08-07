@@ -325,126 +325,162 @@ const MarketOverviewPage = () => {
             })}
           </div>
 
-          {/* Search and Tabs */}
-          <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-              <div className="relative w-full lg:w-96">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Sök kryptovaluta..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-background/50"
-                />
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  <Star className="h-4 w-4 mr-2" />
-                  Favoriter
-                </Button>
+          {/* Cryptocurrency Table */}
+          <Card className="p-0 bg-card/95 backdrop-blur-sm border-border overflow-hidden">
+            {/* Table Header with Search */}
+            <div className="p-6 bg-gradient-to-r from-card/80 to-secondary/20 border-b border-border">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div>
+                  <h2 className="font-crypto text-2xl font-bold text-primary mb-2">
+                    KRYPTOVALUTOR
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Upptäck och spåra över {allCryptos.length}+ kryptovalutor
+                  </p>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <Input
+                      placeholder="Sök kryptovaluta..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 bg-background/50 w-full sm:w-80"
+                    />
+                  </div>
+                  
+                  <Button variant="outline" size="default" className="shrink-0">
+                    <Star className="h-4 w-4 mr-2" />
+                    Favoriter
+                  </Button>
+                </div>
               </div>
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 mb-6">
-                <TabsTrigger value="top10" className="flex items-center space-x-2">
-                  <Trophy className="h-4 w-4" />
-                  <span className="hidden sm:inline">TOP 10</span>
-                </TabsTrigger>
-                <TabsTrigger value="trending" className="flex items-center space-x-2">
-                  <Flame className="h-4 w-4" />
-                  <span className="hidden sm:inline">Trending</span>
-                </TabsTrigger>
-                <TabsTrigger value="meme" className="flex items-center space-x-2">
-                  <Target className="h-4 w-4" />
-                  <span className="hidden sm:inline">Meme</span>
-                </TabsTrigger>
-                <TabsTrigger value="gainers" className="flex items-center space-x-2">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="hidden sm:inline">Gainers</span>
-                </TabsTrigger>
-                <TabsTrigger value="losers" className="flex items-center space-x-2">
-                  <TrendingDown className="h-4 w-4" />
-                  <span className="hidden sm:inline">Losers</span>
-                </TabsTrigger>
-                <TabsTrigger value="all" className="flex items-center space-x-2">
-                  <BarChart3 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Alla</span>
-                </TabsTrigger>
-              </TabsList>
+            {/* Category Tabs */}
+            <div className="px-6 py-4 bg-background/30 border-b border-border">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto p-1 bg-background/50">
+                  <TabsTrigger 
+                    value="top10" 
+                    className="flex items-center justify-center space-x-2 py-3 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    <Trophy className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium">TOP 10</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="trending" 
+                    className="flex items-center justify-center space-x-2 py-3 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    <Flame className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium">Trending</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="meme" 
+                    className="flex items-center justify-center space-x-2 py-3 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    <Target className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium">Meme</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="gainers" 
+                    className="flex items-center justify-center space-x-2 py-3 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    <TrendingUp className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium">Gainers</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="losers" 
+                    className="flex items-center justify-center space-x-2 py-3 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    <TrendingDown className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium">Losers</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="all" 
+                    className="flex items-center justify-center space-x-2 py-3 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                    <span className="text-xs sm:text-sm font-medium">Alla</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
 
-              <TabsContent value={activeTab} className="w-full">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-16">#</TableHead>
-                        <TableHead className="min-w-[200px]">Namn</TableHead>
-                        <TableHead className="text-right">Pris</TableHead>
-                        <TableHead className="text-right">1h %</TableHead>
-                        <TableHead className="text-right">24h %</TableHead>
-                        <TableHead className="text-right">7d %</TableHead>
-                        <TableHead className="text-right">Marknadskapital</TableHead>
-                        <TableHead className="text-right">Volym (24h)</TableHead>
-                        <TableHead className="text-right min-w-[150px]">Cirkulerande Utbud</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredData.map((crypto) => (
-                        <TableRow 
-                          key={crypto.symbol} 
-                          className="hover:bg-muted/50 transition-colors cursor-pointer"
-                          onClick={() => navigate(`/crypto/${crypto.slug}`)}
-                        >
-                          <TableCell className="font-medium">
-                            <Badge variant="outline" className="font-crypto text-xs">
-                              {crypto.rank}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                                <span className="font-crypto text-xs font-bold text-primary">
-                                  {crypto.name.charAt(0)}
-                                </span>
-                              </div>
-                              <div>
-                                <div className="font-display font-semibold">{crypto.name}</div>
-                                <div className="text-sm text-muted-foreground font-crypto">
-                                  {crypto.symbol}
-                                </div>
-                              </div>
+            {/* Table Content */}
+            <div className="bg-background/40">
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent border-border bg-secondary/20">
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-left">#</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-left">Namn</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-right">Pris</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-right hidden sm:table-cell">1h %</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-right">24h %</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-right hidden md:table-cell">7d %</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-right hidden lg:table-cell">Market Cap</TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-4 px-6 text-right hidden xl:table-cell">Volym (24h)</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredData.map((crypto, index) => (
+                    <TableRow 
+                      key={crypto.symbol}
+                      className="hover:bg-secondary/40 cursor-pointer transition-all duration-200 border-border group"
+                      onClick={() => navigate(`/crypto/${crypto.slug}`)}
+                    >
+                      <TableCell className="font-medium text-muted-foreground py-4 px-6">
+                        <Badge variant="outline" className="text-xs">
+                          #{crypto.rank}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-4 px-6">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-primary via-accent to-secondary rounded-full flex items-center justify-center shadow-md">
+                            <span className="text-sm font-bold text-primary-foreground">
+                              {crypto.symbol.charAt(0)}
+                            </span>
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                              {crypto.name}
                             </div>
-                          </TableCell>
-                          <TableCell className="text-right font-display font-semibold">
-                            {formatPrice(crypto.price)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatChange(crypto.change1h)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatChange(crypto.change24h)}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {formatChange(crypto.change7d)}
-                          </TableCell>
-                          <TableCell className="text-right font-display">
-                            {crypto.marketCap} SEK
-                          </TableCell>
-                          <TableCell className="text-right font-display">
-                            {crypto.volume} SEK
-                          </TableCell>
-                          <TableCell className="text-right font-crypto text-sm">
-                            {crypto.supply}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-            </Tabs>
+                            <div className="text-sm text-muted-foreground font-mono">
+                              {crypto.symbol}
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono font-semibold py-4 px-6 text-right">
+                        <div className="text-foreground">
+                          {formatPrice(crypto.price)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-right hidden sm:table-cell">
+                        {formatChange(crypto.change1h)}
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-right">
+                        {formatChange(crypto.change24h)}
+                      </TableCell>
+                      <TableCell className="py-4 px-6 text-right hidden md:table-cell">
+                        {formatChange(crypto.change7d)}
+                      </TableCell>
+                      <TableCell className="font-mono text-muted-foreground py-4 px-6 text-right hidden lg:table-cell">
+                        <div className="text-sm">
+                          {crypto.marketCap} SEK
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono text-muted-foreground py-4 px-6 text-right hidden xl:table-cell">
+                        <div className="text-sm">
+                          {crypto.volume} SEK
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </Card>
         </div>
       </div>
