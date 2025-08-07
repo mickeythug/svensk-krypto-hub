@@ -42,11 +42,6 @@ const CryptoPriceTicker = () => {
 
   return (
     <section className="bg-background border-b border-border py-3 mt-16 relative z-40 w-full">
-      <div className="container mx-auto px-4 mb-2">
-        <h3 className="font-display font-semibold text-sm text-muted-foreground text-center">
-          LIVE KRYPTO PRISER
-        </h3>
-      </div>
       
       <div className="relative overflow-hidden">
         <div className="flex animate-ticker space-x-8 whitespace-nowrap">
