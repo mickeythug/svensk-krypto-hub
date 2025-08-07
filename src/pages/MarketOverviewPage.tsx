@@ -76,15 +76,113 @@ const MarketOverviewPage = () => {
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
 
-  // Använd riktiga logo bilder från CoinGecko API
+  // TrustWallet GitHub logo mappning för riktiga token loggor
   const getCryptoLogo = (crypto: any) => {
-    // Använd riktig bild från API om tillgänglig, annars fallback till lokal bild
-    if (crypto.image) {
-      return crypto.image;
-    }
+    const baseUrl = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains';
     
-    // Fallback till lokala bilder för vanliga tokens
-    const logoMap: { [key: string]: string } = {
+    // Mapping för tokens med blockchain och adresser
+    const tokenMapping: { [key: string]: string } = {
+      // Native blockchain tokens
+      'BTC': `${baseUrl}/bitcoin/info/logo.png`,
+      'ETH': `${baseUrl}/ethereum/info/logo.png`,
+      'BNB': `${baseUrl}/binance/assets/BNB/logo.png`,
+      'SOL': `${baseUrl}/solana/info/logo.png`,
+      'ADA': `${baseUrl}/cardano/info/logo.png`,
+      'DOT': `${baseUrl}/polkadot/info/logo.png`,
+      'AVAX': `${baseUrl}/avalanchec/info/logo.png`,
+      'MATIC': `${baseUrl}/polygon/info/logo.png`,
+      'LTC': `${baseUrl}/litecoin/info/logo.png`,
+      'TRX': `${baseUrl}/tron/info/logo.png`,
+      
+      // Ethereum ERC-20 tokens
+      'USDT': `${baseUrl}/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png`,
+      'USDC': `${baseUrl}/ethereum/assets/0xA0b86a33E6441986C3b94C2e3e583d6cED813331/logo.png`,
+      'UNI': `${baseUrl}/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png`,
+      'LINK': `${baseUrl}/ethereum/assets/0x514910771AF9Ca656af840dff83E8264EcF986CA/logo.png`,
+      'PEPE': `${baseUrl}/ethereum/assets/0x6982508145454Ce325dDbE47a25d4ec3d2311933/logo.png`,
+      'SHIB': `${baseUrl}/ethereum/assets/0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE/logo.png`,
+      'XRP': `${baseUrl}/ethereum/assets/0x1D2F0da169ceB9fC7B3144628dB156f3F6c60dBE/logo.png`,
+      
+      // Andra populära tokens
+      'AAVE': `${baseUrl}/ethereum/assets/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/logo.png`,
+      'MKR': `${baseUrl}/ethereum/assets/0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2/logo.png`,
+      'COMP': `${baseUrl}/ethereum/assets/0xc00e94Cb662C3520282E6f5717214004A7f26888/logo.png`,
+      'YFI': `${baseUrl}/ethereum/assets/0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e/logo.png`,
+      'SUSHI': `${baseUrl}/ethereum/assets/0x6B3595068778DD592e39A122f4f5a5cF09C90fE2/logo.png`,
+      'CRV': `${baseUrl}/ethereum/assets/0xD533a949740bb3306d119CC777fa900bA034cd52/logo.png`,
+      'SNX': `${baseUrl}/ethereum/assets/0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F/logo.png`,
+      'BAL': `${baseUrl}/ethereum/assets/0xba100000625a3754423978a60c9317c58a424e3D/logo.png`,
+      'RUNE': `${baseUrl}/ethereum/assets/0x3155BA85D5F96b2d030a4966AF206230e46849cb/logo.png`,
+      'THETA': `${baseUrl}/ethereum/assets/0x3883f5e181fccaF8410FA61e12b59BAd963fb645/logo.png`,
+      'VET': `${baseUrl}/ethereum/assets/0xD850942eF8811f2A866692A623011bDE52a462C1/logo.png`,
+      'FTM': `${baseUrl}/ethereum/assets/0x4E15361FD6b4BB609Fa63C81A2be19d873717870/logo.png`,
+      'ALGO': `${baseUrl}/algorand/info/logo.png`,
+      'XTZ': `${baseUrl}/tezos/info/logo.png`,
+      'ATOM': `${baseUrl}/cosmos/info/logo.png`,
+      'NEO': `${baseUrl}/neo/info/logo.png`,
+      'IOTA': `${baseUrl}/ethereum/assets/0xcc8a3F9c0fC81F0b85C142c0a2e84aa3C26BC7FC/logo.png`,
+      'EOS': `${baseUrl}/ethereum/assets/0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0/logo.png`,
+      'XLM': `${baseUrl}/ethereum/assets/0x0F5D2fB29fb7d3CFeE444a200298f468908cC942/logo.png`,
+      'XMR': `${baseUrl}/ethereum/assets/0xfa05A73FfE78ef8f1a739473e462c54bae6567D9/logo.png`,
+      'ZEC': `${baseUrl}/ethereum/assets/0xEcF0bDa2cABA4A6a102a15DD1c1D8CFFCE8BBAA3/logo.png`,
+      'DASH': `${baseUrl}/ethereum/assets/0x7C5A0CE9267ED19B22F8cae653F198e3E8daf098/logo.png`,
+      'BCH': `${baseUrl}/bitcoincash/info/logo.png`,
+      'BSV': `${baseUrl}/ethereum/assets/0x6a2f4dc63c08c3b7a71B8B4A0e2D78aE3F6A5EDD/logo.png`,
+      'ETC': `${baseUrl}/ethereumclassic/info/logo.png`,
+      'FIL': `${baseUrl}/ethereum/assets/0x6e1A19F235bE7ED8E3369eF73b196C07257494DE/logo.png`,
+      'HBAR': `${baseUrl}/ethereum/assets/0x88ACDd2a6425c3FAAe4bC9650Fd7E27e0Bebb7aB/logo.png`,
+      'ICP': `${baseUrl}/ethereum/assets/0xfaAe27E626460EF0B8C3BE9C1c7AD0d0DF5b2B79/logo.png`,
+      'NEAR': `${baseUrl}/ethereum/assets/0x85F17Cf997934a597031b2E18a9aB6ebD4B9f6a4/logo.png`,
+      'FLOW': `${baseUrl}/ethereum/assets/0x5f64b5c3eBc7dd64cC1b2E5F9C8c7A46616C5770/logo.png`,
+      'MANA': `${baseUrl}/ethereum/assets/0x0F5D2fB29fb7d3CFeE444a200298f468908cC942/logo.png`,
+      'SAND': `${baseUrl}/ethereum/assets/0x3845badAde8e6dFF049820680d1F14bD3903a5d0/logo.png`,
+      'AXS': `${baseUrl}/ethereum/assets/0xBB0E17EF65F82Ab018d8EDd776e8DD940327B28b/logo.png`,
+      'CHZ': `${baseUrl}/ethereum/assets/0x3506424F91fD33084466F402d5D97f05F8e3b4AF/logo.png`,
+      'ENJ': `${baseUrl}/ethereum/assets/0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c/logo.png`,
+      'BAT': `${baseUrl}/ethereum/assets/0x0D8775F648430679A709E98d2b0Cb6250d2887EF/logo.png`,
+      'ZRX': `${baseUrl}/ethereum/assets/0xE41d2489571d322189246DaFA5ebDe1F4699F498/logo.png`,
+      'REP': `${baseUrl}/ethereum/assets/0x221657776846890989a759BA2973e427DfF5C9bB/logo.png`,
+      'KNC': `${baseUrl}/ethereum/assets/0xdd974D5C2e2928deA5F71b9825b8b646686BD200/logo.png`,
+      'LRC': `${baseUrl}/ethereum/assets/0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD/logo.png`,
+      'BNT': `${baseUrl}/ethereum/assets/0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C/logo.png`,
+      'GNT': `${baseUrl}/ethereum/assets/0xa74476443119A942dE498590Fe1f2454d7D4aC0d/logo.png`,
+      'OMG': `${baseUrl}/ethereum/assets/0xd26114cd6EE289AccF82350c8d8487fedB8A0C07/logo.png`,
+      'ZIL': `${baseUrl}/ethereum/assets/0x05f4a42e251f2d52b8ed15E9FEdAacFcEF1FAD27/logo.png`,
+      'QTUM': `${baseUrl}/ethereum/assets/0x9a642d6b3368ddc662CA244bAdf32cDA716005BC/logo.png`,
+      'ICX': `${baseUrl}/ethereum/assets/0xb5A5F22694352C15B00323844aD545ABb2B11028/logo.png`,
+      'ONT': `${baseUrl}/ethereum/assets/0xd26114cd6EE289AccF82350c8d8487fedB8A0C07/logo.png`,
+      'DGB': `${baseUrl}/digibyte/info/logo.png`,
+      'RVN': `${baseUrl}/ravencoin/info/logo.png`,
+      'SC': `${baseUrl}/ethereum/assets/0xd13c7342e1ef687C5ad21b27c2b65D772cAb5C8c/logo.png`,
+      'DCR': `${baseUrl}/ethereum/assets/0x42dBBd5AE373FEA2FC320F5d9b9d510a45013f39/logo.png`,
+      'NANO': `${baseUrl}/ethereum/assets/0x0Ced95cd3F0E8A6a138c0e25E51F2c1bCcF506Be/logo.png`,
+      'BEA': `${baseUrl}/ethereum/assets/0x774BBC5D1D54aF3a1eD4cB0c7c0fA5e0bC3E1c2D/logo.png`,
+      'STORJ': `${baseUrl}/ethereum/assets/0xB64ef51C888972c908CFacf59B47C1AfBC0Ab8aC/logo.png`,
+      'GNO': `${baseUrl}/ethereum/assets/0x6810e776880C02933D47DB1b9fc05908e5386b96/logo.png`,
+      'POWR': `${baseUrl}/ethereum/assets/0x595832F8FC6BF59c85C527fEC3740A1b7a361269/logo.png`,
+      'REQ': `${baseUrl}/ethereum/assets/0x8f8221aFbB33998d8584A2B05749bA73c37a938a/logo.png`,
+      'ARDR': `${baseUrl}/ethereum/assets/0xcdcFc0f66c522Fd086A1b725ea3c0Eeb9F9e8814/logo.png`,
+      'ARK': `${baseUrl}/ethereum/assets/0x6Aeb95F06CDA84cA345c2dE0F3B7f96923a44f4c/logo.png`,
+      'KMD': `${baseUrl}/ethereum/assets/0x5DBcF33d8c2E976c6b560249878e6F1491Bca25c/logo.png`,
+      'LSK': `${baseUrl}/ethereum/assets/0x6881cb12AeDBfb7Cb4c8C122D270Aa3E35355c8c/logo.png`,
+      'STRAT': `${baseUrl}/ethereum/assets/0x5c872500c00565505F3624AB435c222E558E9ff8/logo.png`,
+      'WAVES': `${baseUrl}/waves/info/logo.png`,
+      'NXT': `${baseUrl}/ethereum/assets/0xA15C7Ebe1f07CaF6bFF097D8a589fb8AC49Ae5B3/logo.png`,
+      'BTS': `${baseUrl}/ethereum/assets/0x08389495D7456E1951ddF7c3a8B275A6646d22bE/logo.png`,
+      'STEEM': `${baseUrl}/ethereum/assets/0xD7525E80229ac4F0928DaA7B85dBDe1e3f8163b8/logo.png`,
+      'XEM': `${baseUrl}/ethereum/assets/0x84a401be2e7d1B1D4EaA2b82F71C20De2C1dA806/logo.png`,
+      'DOGE': `${baseUrl}/dogecoin/info/logo.png`,
+      'BONK': `${baseUrl}/solana/assets/DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263/logo.png`,
+      'FLOKI': `${baseUrl}/ethereum/assets/0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E/logo.png`
+    };
+
+    // Kontrollera om vi har en direkt mapping
+    if (tokenMapping[crypto.symbol]) {
+      return tokenMapping[crypto.symbol];
+    }
+
+    // Fallback till lokala bilder om TrustWallet inte har token
+    const localFallback: { [key: string]: string } = {
       'BTC': btcLogo,
       'ETH': ethLogo,
       'BNB': bnbLogo,
@@ -99,7 +197,8 @@ const MarketOverviewPage = () => {
       'SHIB': shibLogo,
       'LTC': ltcLogo
     };
-    return logoMap[crypto.symbol] || btcLogo;
+    
+    return localFallback[crypto.symbol] || btcLogo;
   };
 
   const marketSentiment = {
