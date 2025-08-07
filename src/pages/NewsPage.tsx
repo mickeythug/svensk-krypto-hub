@@ -445,11 +445,12 @@ const NewsPage = () => {
                   {viewMode === "grid" && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
                       {filteredNews.map((article, index) => (
-                        <Card 
-                          key={article.id} 
-                          className="p-5 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer hover-scale"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
+                         <Card 
+                           key={article.id} 
+                           className="p-5 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer hover-scale"
+                           style={{ animationDelay: `${index * 100}ms` }}
+                           onClick={() => navigate(`/artikel/${article.id}`)}
+                         >
                           <div className="space-y-4">
                             <div className="flex items-center gap-2 flex-wrap">
                               <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
@@ -509,11 +510,12 @@ const NewsPage = () => {
                   {viewMode === "list" && (
                     <div className="space-y-4 animate-fade-in">
                       {filteredNews.map((article, index) => (
-                        <Card 
-                          key={article.id} 
-                          className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
-                          style={{ animationDelay: `${index * 50}ms` }}
-                        >
+                         <Card 
+                           key={article.id} 
+                           className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
+                           style={{ animationDelay: `${index * 50}ms` }}
+                           onClick={() => navigate(`/artikel/${article.id}`)}
+                         >
                           <div className="flex gap-4">
                             <div className="flex-1 space-y-3">
                               <div className="flex items-center gap-2 flex-wrap">

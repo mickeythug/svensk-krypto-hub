@@ -10,6 +10,7 @@ import { Suspense, lazy, memo } from "react";
 // Lazy load pages för optimal bundling
 const Index = lazy(() => import("./pages/Index"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
+const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const MarketOverviewPage = lazy(() => import("./pages/MarketOverviewPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
@@ -57,6 +58,7 @@ const App = memo(() => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/nyheter" element={<NewsPage />} />
+                <Route path="/artikel/:id" element={<ArticleDetailPage />} />
                 <Route path="/marknad" element={<MarketOverviewPage />} />
                 <Route path="/verktyg" element={<ToolsPage />} />
                 <Route path="/portfolio" element={<Index />} />
