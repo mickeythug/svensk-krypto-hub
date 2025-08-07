@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface CryptoPrice {
   symbol: string;
@@ -14,167 +15,405 @@ interface CryptoPrice {
   lastUpdated?: string;
 }
 
-// Centraliserad hook för alla krypto-data
-export const useCryptoData = () => {
-  const [cryptoPrices, setCryptoPrices] = useState<CryptoPrice[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastFetch, setLastFetch] = useState<number>(0);
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+  expiresAt: number;
+}
 
-  // Cache och rate limiting - hämta bara var 3:e minut
-  const CACHE_DURATION = 3 * 60 * 1000; // 3 minuter
-  const API_DELAY = 1000; // 1 sekund mellan requests
+// Avancerad memory cache med TTL och LRU
+class MemoryCache {
+  private cache = new Map<string, CacheEntry<any>>();
+  private accessOrder = new Map<string, number>();
+  private maxSize = 100;
+  private accessCounter = 0;
 
-  // CoinGecko coin IDs och info
-  const coinData = {
-    'bitcoin': { name: 'Bitcoin', symbol: 'BTC', rank: 1 },
-    'ethereum': { name: 'Ethereum', symbol: 'ETH', rank: 2 },
-    'binancecoin': { name: 'Binance Coin', symbol: 'BNB', rank: 3 },
-    'ripple': { name: 'XRP', symbol: 'XRP', rank: 4 },
-    'cardano': { name: 'Cardano', symbol: 'ADA', rank: 5 },
-    'solana': { name: 'Solana', symbol: 'SOL', rank: 6 },
-    'polkadot': { name: 'Polkadot', symbol: 'DOT', rank: 7 },
-    'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', rank: 8 },
-    'chainlink': { name: 'Chainlink', symbol: 'LINK', rank: 9 },
-    'matic-network': { name: 'Polygon', symbol: 'MATIC', rank: 10 },
-    'uniswap': { name: 'Uniswap', symbol: 'UNI', rank: 11 },
-    'litecoin': { name: 'Litecoin', symbol: 'LTC', rank: 12 },
-    'dogecoin': { name: 'Dogecoin', symbol: 'DOGE', rank: 13 },
-    'shiba-inu': { name: 'Shiba Inu', symbol: 'SHIB', rank: 14 }
-  };
-
-  const formatMarketCap = (marketCap: number) => {
-    if (marketCap >= 1e12) {
-      return `${(marketCap / 1e12).toFixed(1)}T`;
-    } else if (marketCap >= 1e9) {
-      return `${(marketCap / 1e9).toFixed(1)}B`;
-    } else if (marketCap >= 1e6) {
-      return `${(marketCap / 1e6).toFixed(1)}M`;
-    }
-    return marketCap.toString();
-  };
-
-  const formatVolume = (volume: number) => {
-    if (volume >= 1e9) {
-      return `${(volume / 1e9).toFixed(1)}B`;
-    } else if (volume >= 1e6) {
-      return `${(volume / 1e6).toFixed(1)}M`;
-    }
-    return volume.toString();
-  };
-
-  const fetchCryptoPrices = useCallback(async () => {
+  set<T>(key: string, data: T, ttlMs: number): void {
     const now = Date.now();
+    const entry: CacheEntry<T> = {
+      data,
+      timestamp: now,
+      expiresAt: now + ttlMs
+    };
+
+    // LRU eviction om cache är full
+    if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
+      const oldestKey = this.getOldestKey();
+      if (oldestKey) {
+        this.cache.delete(oldestKey);
+        this.accessOrder.delete(oldestKey);
+      }
+    }
+
+    this.cache.set(key, entry);
+    this.accessOrder.set(key, ++this.accessCounter);
+  }
+
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    const now = Date.now();
+    if (now > entry.expiresAt) {
+      this.cache.delete(key);
+      this.accessOrder.delete(key);
+      return null;
+    }
+
+    // Uppdatera access order för LRU
+    this.accessOrder.set(key, ++this.accessCounter);
+    return entry.data;
+  }
+
+  private getOldestKey(): string | null {
+    let oldestKey: string | null = null;
+    let oldestAccess = Infinity;
+
+    for (const [key, access] of this.accessOrder) {
+      if (access < oldestAccess) {
+        oldestAccess = access;
+        oldestKey = key;
+      }
+    }
+
+    return oldestKey;
+  }
+
+  clear(): void {
+    this.cache.clear();
+    this.accessOrder.clear();
+  }
+
+  size(): number {
+    return this.cache.size;
+  }
+}
+
+// Global cache instance
+const globalCache = new MemoryCache();
+
+// Background refresh med exponential backoff
+class BackgroundRefresher {
+  private intervals = new Map<string, NodeJS.Timeout>();
+  private retryAttempts = new Map<string, number>();
+  private maxRetries = 3;
+
+  start(key: string, fetchFn: () => Promise<void>, intervalMs: number): void {
+    this.stop(key);
     
-    // Kontrollera cache
-    if (now - lastFetch < CACHE_DURATION && cryptoPrices.length > 0) {
-      console.log('Använder cachad crypto data, nästa uppdatering om:', Math.round((CACHE_DURATION - (now - lastFetch)) / 1000), 'sekunder');
+    const refresh = async () => {
+      try {
+        await fetchFn();
+        this.retryAttempts.set(key, 0); // Reset på success
+      } catch (error) {
+        const attempts = (this.retryAttempts.get(key) || 0) + 1;
+        this.retryAttempts.set(key, attempts);
+        
+        if (attempts < this.maxRetries) {
+          // Exponential backoff
+          const delay = Math.min(1000 * Math.pow(2, attempts), 30000);
+          setTimeout(refresh, delay);
+        }
+      }
+    };
+
+    const interval = setInterval(refresh, intervalMs);
+    this.intervals.set(key, interval);
+  }
+
+  stop(key: string): void {
+    const interval = this.intervals.get(key);
+    if (interval) {
+      clearInterval(interval);
+      this.intervals.delete(key);
+    }
+  }
+
+  stopAll(): void {
+    for (const interval of this.intervals.values()) {
+      clearInterval(interval);
+    }
+    this.intervals.clear();
+    this.retryAttempts.clear();
+  }
+}
+
+const backgroundRefresher = new BackgroundRefresher();
+
+// Rate limiter med token bucket
+class RateLimiter {
+  private tokens: number;
+  private lastRefill: number;
+  private readonly capacity: number;
+  private readonly refillRate: number; // tokens per second
+
+  constructor(capacity: number, refillRate: number) {
+    this.capacity = capacity;
+    this.refillRate = refillRate;
+    this.tokens = capacity;
+    this.lastRefill = Date.now();
+  }
+
+  async acquire(): Promise<void> {
+    this.refill();
+    
+    if (this.tokens > 0) {
+      this.tokens--;
       return;
     }
 
-    try {
-      setError(null);
-      
-      const coinIds = Object.keys(coinData);
-      
-      // Rate limiting
-      await new Promise(resolve => setTimeout(resolve, API_DELAY));
+    // Vänta tills nästa token finns tillgänglig
+    const waitTime = (1 / this.refillRate) * 1000;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+    return this.acquire();
+  }
 
-      // Hämta från CoinGecko API
-      const coinsParam = coinIds.join(',');
-      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinsParam}&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true&include_market_cap=true&include_24hr_vol=true`;
+  private refill(): void {
+    const now = Date.now();
+    const elapsed = (now - this.lastRefill) / 1000;
+    const tokensToAdd = elapsed * this.refillRate;
+    
+    this.tokens = Math.min(this.capacity, this.tokens + tokensToAdd);
+    this.lastRefill = now;
+  }
+}
+
+// API rate limiter - 10 requests per second
+const apiRateLimiter = new RateLimiter(10, 2);
+
+// CoinGecko coin data med optimerad struktur
+const COIN_DATA = Object.freeze({
+  'bitcoin': { name: 'Bitcoin', symbol: 'BTC', rank: 1 },
+  'ethereum': { name: 'Ethereum', symbol: 'ETH', rank: 2 },
+  'binancecoin': { name: 'Binance Coin', symbol: 'BNB', rank: 3 },
+  'ripple': { name: 'XRP', symbol: 'XRP', rank: 4 },
+  'cardano': { name: 'Cardano', symbol: 'ADA', rank: 5 },
+  'solana': { name: 'Solana', symbol: 'SOL', rank: 6 },
+  'polkadot': { name: 'Polkadot', symbol: 'DOT', rank: 7 },
+  'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', rank: 8 },
+  'chainlink': { name: 'Chainlink', symbol: 'LINK', rank: 9 },
+  'matic-network': { name: 'Polygon', symbol: 'MATIC', rank: 10 },
+  'uniswap': { name: 'Uniswap', symbol: 'UNI', rank: 11 },
+  'litecoin': { name: 'Litecoin', symbol: 'LTC', rank: 12 },
+  'dogecoin': { name: 'Dogecoin', symbol: 'DOGE', rank: 13 },
+  'shiba-inu': { name: 'Shiba Inu', symbol: 'SHIB', rank: 14 }
+} as const);
+
+// Cache keys
+const CACHE_KEYS = Object.freeze({
+  CRYPTO_PRICES: 'crypto-prices',
+  CRYPTO_METADATA: 'crypto-metadata'
+} as const);
+
+// Cache durations
+const CACHE_DURATIONS = Object.freeze({
+  CRYPTO_PRICES: 60000, // 1 minut för priser
+  CRYPTO_METADATA: 3600000, // 1 timme för metadata
+  BACKGROUND_REFRESH: 30000, // 30s background refresh
+  STALE_WHILE_REVALIDATE: 180000 // 3 minuter stale
+} as const);
+
+// Optimized formatter functions med memoization
+const formatters = {
+  marketCap: (() => {
+    const cache = new Map<number, string>();
+    return (marketCap: number): string => {
+      if (cache.has(marketCap)) return cache.get(marketCap)!;
       
+      let result: string;
+      if (marketCap >= 1e12) {
+        result = `${(marketCap / 1e12).toFixed(1)}T`;
+      } else if (marketCap >= 1e9) {
+        result = `${(marketCap / 1e9).toFixed(1)}B`;
+      } else if (marketCap >= 1e6) {
+        result = `${(marketCap / 1e6).toFixed(1)}M`;
+      } else {
+        result = marketCap.toString();
+      }
+      
+      cache.set(marketCap, result);
+      return result;
+    };
+  })(),
+
+  volume: (() => {
+    const cache = new Map<number, string>();
+    return (volume: number): string => {
+      if (cache.has(volume)) return cache.get(volume)!;
+      
+      let result: string;
+      if (volume >= 1e9) {
+        result = `${(volume / 1e9).toFixed(1)}B`;
+      } else if (volume >= 1e6) {
+        result = `${(volume / 1e6).toFixed(1)}M`;
+      } else {
+        result = volume.toString();
+      }
+      
+      cache.set(volume, result);
+      return result;
+    };
+  })()
+};
+
+// Optimerad API fetching med retry och circuit breaker
+class CryptoAPIClient {
+  private failureCount = 0;
+  private lastFailureTime = 0;
+  private readonly circuitBreakerThreshold = 3;
+  private readonly circuitBreakerTimeout = 30000; // 30s
+
+  async fetchCryptoPrices(): Promise<CryptoPrice[]> {
+    // Circuit breaker check
+    if (this.isCircuitOpen()) {
+      throw new Error('Circuit breaker is open - too many recent failures');
+    }
+
+    try {
+      await apiRateLimiter.acquire();
+
+      const coinIds = Object.keys(COIN_DATA);
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds.join(',')}&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true&include_market_cap=true&include_24hr_vol=true`;
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
       const response = await fetch(url, {
         headers: {
           'Accept': 'application/json',
-        }
+          'Cache-Control': 'no-cache'
+        },
+        signal: controller.signal
       });
-      
+
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error(`CoinGecko API error: ${response.status}`);
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
       
-      // Formatera data
-      const formattedPrices: CryptoPrice[] = coinIds.map(coinId => {
-        const coinPrice = data[coinId];
-        if (!coinPrice) return null;
-
-        const info = coinData[coinId as keyof typeof coinData];
-        return {
-          symbol: info.symbol,
-          name: info.name,
-          price: coinPrice.usd,
-          change24h: coinPrice.usd_24h_change || 0,
-          marketCap: formatMarketCap(coinPrice.usd_market_cap || 0),
-          volume: formatVolume(coinPrice.usd_24h_vol || 0),
-          rank: info.rank,
-          lastUpdated: new Date(coinPrice.last_updated_at * 1000).toISOString()
-        };
-      }).filter(Boolean) as CryptoPrice[];
-
-      setCryptoPrices(formattedPrices);
-      setLastFetch(now);
-      console.log('Crypto data uppdaterad från CoinGecko, nästa uppdatering om 3 minuter');
+      // Reset circuit breaker på success
+      this.failureCount = 0;
       
-    } catch (err) {
-      console.error('Error fetching crypto prices:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      return this.transformAPIResponse(data);
       
-      // Fallback till mock data vid fel
-      if (cryptoPrices.length === 0) {
-        const mockPrices: CryptoPrice[] = [
-          { symbol: "BTC", name: "Bitcoin", price: 98500, change24h: 2.34, rank: 1, marketCap: "1.9T", volume: "28.5B" },
-          { symbol: "ETH", name: "Ethereum", price: 3420, change24h: -1.45, rank: 2, marketCap: "411B", volume: "15.2B" },
-          { symbol: "BNB", name: "Binance Coin", price: 695, change24h: 0.87, rank: 3, marketCap: "101B", volume: "1.8B" },
-          { symbol: "XRP", name: "XRP", price: 2.15, change24h: 3.21, rank: 4, marketCap: "123B", volume: "4.2B" },
-          { symbol: "ADA", name: "Cardano", price: 1.08, change24h: 3.21, rank: 5, marketCap: "38B", volume: "1.1B" },
-          { symbol: "SOL", name: "Solana", price: 245, change24h: 5.67, rank: 6, marketCap: "115B", volume: "3.2B" },
-          { symbol: "DOT", name: "Polkadot", price: 12.5, change24h: -2.11, rank: 7, marketCap: "15B", volume: "892M" },
-          { symbol: "AVAX", name: "Avalanche", price: 52.3, change24h: 1.99, rank: 8, marketCap: "22B", volume: "1.2B" },
-          { symbol: "LINK", name: "Chainlink", price: 28.4, change24h: 4.33, rank: 9, marketCap: "17B", volume: "654M" },
-          { symbol: "MATIC", name: "Polygon", price: 0.89, change24h: 2.77, rank: 10, marketCap: "8.9B", volume: "423M" },
-          { symbol: "UNI", name: "Uniswap", price: 14.2, change24h: -0.88, rank: 11, marketCap: "10.8B", volume: "321M" },
-          { symbol: "LTC", name: "Litecoin", price: 102.5, change24h: 1.45, rank: 12, marketCap: "7.6B", volume: "567M" },
-          { symbol: "DOGE", name: "Dogecoin", price: 0.385, change24h: 2.77, rank: 13, marketCap: "56B", volume: "1.8B" },
-          { symbol: "SHIB", name: "Shiba Inu", price: 0.000025, change24h: 4.12, rank: 14, marketCap: "14.8B", volume: "892M" }
-        ];
-        setCryptoPrices(mockPrices);
-      }
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      this.recordFailure();
+      throw error;
     }
-  }, [lastFetch, cryptoPrices.length, CACHE_DURATION]);
+  }
 
-  useEffect(() => {
-    // Hämta prisdata initialt
-    fetchCryptoPrices();
+  private transformAPIResponse(data: any): CryptoPrice[] {
+    const coinIds = Object.keys(COIN_DATA);
     
-    // Uppdatera prisdata var 3:e minut
-    const interval = setInterval(fetchCryptoPrices, CACHE_DURATION);
+    return coinIds.map(coinId => {
+      const coinPrice = data[coinId];
+      if (!coinPrice) return null;
+
+      const info = COIN_DATA[coinId as keyof typeof COIN_DATA];
+      return {
+        symbol: info.symbol,
+        name: info.name,
+        price: coinPrice.usd,
+        change24h: coinPrice.usd_24h_change || 0,
+        marketCap: formatters.marketCap(coinPrice.usd_market_cap || 0),
+        volume: formatters.volume(coinPrice.usd_24h_vol || 0),
+        rank: info.rank,
+        lastUpdated: new Date(coinPrice.last_updated_at * 1000).toISOString()
+      };
+    }).filter(Boolean) as CryptoPrice[];
+  }
+
+  private recordFailure(): void {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+  }
+
+  private isCircuitOpen(): boolean {
+    if (this.failureCount < this.circuitBreakerThreshold) return false;
     
-    return () => clearInterval(interval);
-  }, [fetchCryptoPrices, CACHE_DURATION]);
+    const timeSinceLastFailure = Date.now() - this.lastFailureTime;
+    return timeSinceLastFailure < this.circuitBreakerTimeout;
+  }
+}
 
-  // Hjälpfunktioner för att hitta specifik crypto
-  const getCryptoBySymbol = (symbol: string) => {
-    return cryptoPrices.find(crypto => crypto.symbol.toLowerCase() === symbol.toLowerCase());
-  };
+const apiClient = new CryptoAPIClient();
 
-  const getCryptoByName = (name: string) => {
-    return cryptoPrices.find(crypto => crypto.name.toLowerCase() === name.toLowerCase());
-  };
+// High-performance crypto data hook
+export const useCryptoData = () => {
+  const queryClient = useQueryClient();
+  const refreshTimer = useRef<NodeJS.Timeout>();
 
-  return {
-    cryptoPrices,
+  // React Query för avancerad caching och background updates
+  const {
+    data: cryptoPrices = [] as CryptoPrice[],
     isLoading,
     error,
-    lastFetch,
+    isStale
+  } = useQuery<CryptoPrice[], Error>({
+    queryKey: [CACHE_KEYS.CRYPTO_PRICES],
+    queryFn: apiClient.fetchCryptoPrices.bind(apiClient),
+    staleTime: CACHE_DURATIONS.CRYPTO_PRICES,
+    gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
+    refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
+    refetchIntervalInBackground: true,
+    retry: (failureCount, error) => {
+      // Intelligent retry logik
+      if (failureCount >= 3) return false;
+      if (error?.message?.includes('Circuit breaker')) return false;
+      return true;
+    },
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+  });
+
+  // Memoized helper functions för optimal prestanda
+  const getCryptoBySymbol = useCallback((symbol: string) => {
+    return cryptoPrices.find(crypto => crypto.symbol.toLowerCase() === symbol.toLowerCase());
+  }, [cryptoPrices]);
+
+  const getCryptoByName = useCallback((name: string) => {
+    return cryptoPrices.find(crypto => crypto.name.toLowerCase() === name.toLowerCase());
+  }, [cryptoPrices]);
+
+  const refreshData = useCallback(async () => {
+    try {
+      await queryClient.invalidateQueries({ queryKey: [CACHE_KEYS.CRYPTO_PRICES] });
+      await queryClient.refetchQueries({ queryKey: [CACHE_KEYS.CRYPTO_PRICES] });
+    } catch (error) {
+      console.error('Force refresh failed:', error);
+    }
+  }, [queryClient]);
+
+  // Preload critical data och cleanup
+  useEffect(() => {
+    // Preload data if not already cached
+    if (!cryptoPrices.length && !isLoading) {
+      queryClient.prefetchQuery({
+        queryKey: [CACHE_KEYS.CRYPTO_PRICES],
+        queryFn: apiClient.fetchCryptoPrices.bind(apiClient),
+        staleTime: CACHE_DURATIONS.CRYPTO_PRICES
+      });
+    }
+
+    return () => {
+      if (refreshTimer.current) {
+        clearTimeout(refreshTimer.current);
+      }
+    };
+  }, [queryClient, cryptoPrices.length, isLoading]);
+
+  // Optimized return object
+  return useMemo(() => ({
+    cryptoPrices,
+    isLoading,
+    error: error?.message || null,
+    isStale,
     getCryptoBySymbol,
     getCryptoByName,
-    refreshData: fetchCryptoPrices
-  };
+    refreshData
+  }), [cryptoPrices, isLoading, error, isStale, getCryptoBySymbol, getCryptoByName, refreshData]);
 };
 
 export default useCryptoData;
