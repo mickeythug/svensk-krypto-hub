@@ -154,22 +154,21 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <span className="text-right font-semibold">Total</span>
               </div>
               
-              {/* Asks (Sell orders) - Red */}
-              <div className="space-y-0.5 p-2 max-h-40 overflow-y-auto">
-                {orderBook?.asks?.length ? orderBook.asks.map((ask, i) => (
+              {/* Asks (Sell orders) - Red - No scrollbar */}
+              <div className="space-y-0.5 p-2 h-44">
+                {orderBook?.asks?.slice(0, 12).map((ask, i) => (
                   <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-1 px-2 rounded cursor-pointer transition-colors">
                     <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
                     <span className="text-right font-mono">{formatSize(ask.size)}</span>
                     <span className="text-right font-mono text-muted-foreground">{formatSize(ask.total)}</span>
                   </div>
-                )) : (
-                  <div className="text-center text-muted-foreground text-xs py-4 animate-pulse">
-                    <div className="flex items-center justify-center gap-2">
-                      {isConnected ? <Wifi className="h-3 w-3 text-success" /> : <WifiOff className="h-3 w-3 text-destructive" />}
-                      {isConnected ? 'Laddar asks...' : 'Ansluter till Binance...'}
-                    </div>
+                )) || Array.from({length: 12}).map((_, i) => (
+                  <div key={`ask-skeleton-${i}`} className="grid grid-cols-3 text-xs py-1 px-2">
+                    <div className="h-3 bg-destructive/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
                   </div>
-                )}
+                ))}
               </div>
               
               {/* Current Price - Highlighted */}
@@ -185,22 +184,21 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 </div>
               </div>
               
-              {/* Bids (Buy orders) - Green */}
-              <div className="space-y-0.5 p-2 max-h-40 overflow-y-auto">
-                {orderBook?.bids?.length ? orderBook.bids.map((bid, i) => (
+              {/* Bids (Buy orders) - Green - No scrollbar */}
+              <div className="space-y-0.5 p-2 h-44">
+                {orderBook?.bids?.slice(0, 12).map((bid, i) => (
                   <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-1 px-2 rounded cursor-pointer transition-colors">
                     <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
                     <span className="text-right font-mono">{formatSize(bid.size)}</span>
                     <span className="text-right font-mono text-muted-foreground">{formatSize(bid.total)}</span>
                   </div>
-                )) : (
-                  <div className="text-center text-muted-foreground text-xs py-4 animate-pulse">
-                    <div className="flex items-center justify-center gap-2">
-                      {isConnected ? <Wifi className="h-3 w-3 text-success" /> : <WifiOff className="h-3 w-3 text-destructive" />}
-                      {isConnected ? 'Laddar bids...' : 'Ansluter till Binance...'}
-                    </div>
+                )) || Array.from({length: 12}).map((_, i) => (
+                  <div key={`bid-skeleton-${i}`} className="grid grid-cols-3 text-xs py-1 px-2">
+                    <div className="h-3 bg-success/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
                   </div>
-                )}
+                ))}
               </div>
             </div>
           </Card>
@@ -251,48 +249,31 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 </Button>
               </div>
 
-              {/* Leverage */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-2 block font-semibold">Leverage</label>
-                <div className="flex gap-1">
-                  {["1", "2", "5", "10", "20"].map((lev) => (
-                    <Button
-                      key={lev}
-                      variant={leverage === lev ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setLeverage(lev)}
-                      className="flex-1 h-8 text-xs"
-                    >
-                      {lev}x
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Price Input */}
+              {/* Price Input for Limit Orders */}
               {orderType === "limit" && (
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1 block">Price (USDC)</label>
+                  <label className="text-xs text-muted-foreground mb-2 block font-semibold">Price (USDT)</label>
                   <Input
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="h-8 text-sm font-mono"
-                    step="0.001"
+                    className="h-10 text-sm font-mono"
+                    step="0.01"
+                    placeholder="Enter limit price"
                   />
                 </div>
               )}
 
-              {/* Size Input */}
+              {/* Amount Input */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Size ({symbol})</label>
+                <label className="text-xs text-muted-foreground mb-2 block font-semibold">Amount ({symbol})</label>
                 <Input
                   type="number"
                   value={size}
                   onChange={(e) => setSize(e.target.value)}
-                  placeholder="0.0000"
-                  className="h-8 text-sm font-mono"
-                  step="0.0001"
+                  placeholder="0.00000000"
+                  className="h-10 text-sm font-mono"
+                  step="0.00000001"
                 />
               </div>
 

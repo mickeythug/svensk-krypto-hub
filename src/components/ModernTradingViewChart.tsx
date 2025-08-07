@@ -167,12 +167,12 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
         </div>
       </div>
 
-      {/* Price Display - Fixed in top left corner below controls */}
-      <div className="absolute top-16 left-4 z-20 bg-background/95 backdrop-blur-sm rounded-lg p-3 border border-border/20 shadow-lg">
-        <div className="text-lg font-bold font-mono text-foreground">
+      {/* Price Display - Moved to right side to avoid overlap */}
+      <div className="absolute top-16 right-4 z-20 bg-background/95 backdrop-blur-sm rounded-lg p-3 border border-border/20 shadow-lg">
+        <div className="text-lg font-bold font-mono text-foreground text-right">
           ${currentPrice.toLocaleString()}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted-foreground text-right">
           {symbol}/USDT • BINANCE
         </div>
       </div>

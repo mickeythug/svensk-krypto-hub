@@ -50,6 +50,7 @@ import {
   List
 } from "lucide-react";
 import Header from "@/components/Header";
+import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useCryptoData } from "@/hooks/useCryptoData";
 
 // Import crypto logos
@@ -270,9 +271,10 @@ const MarketOverviewPage = () => {
       {/* Desktop Version - Modern CoinMarketCap Style */}
       <div className="hidden md:block min-h-screen bg-background">
         <Header />
+        <CryptoPriceTicker />
         
         {/* Main Container */}
-        <div className="pt-16 bg-background">
+        <div className="pt-4 bg-background">
           
           {/* Header Section */}
           <div className="bg-gradient-to-r from-background via-background to-secondary/5 border-b border-border/30">
@@ -719,8 +721,9 @@ const MarketOverviewPage = () => {
       {/* Mobile Version - Exact Reference Match */}
       <div className="block md:hidden min-h-screen bg-background">
         <Header />
+        <CryptoPriceTicker />
         
-        <div className="pt-16 bg-background">
+        <div className="pt-4 bg-background">
           
           {/* Mobile Header */}
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 border-b border-border/20">

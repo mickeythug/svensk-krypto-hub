@@ -24,6 +24,7 @@ import {
   Play
 } from "lucide-react";
 import Header from "@/components/Header";
+import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const ToolsPage = () => {

@@ -27,6 +27,7 @@ import DesktopTradingInterface from "@/components/DesktopTradingInterface";
 import MobileTradingPanel from "@/components/MobileTradingPanel";
 import MobileChart from "@/components/MobileChart";
 import Header from "@/components/Header";
+import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useCryptoData } from "@/hooks/useCryptoData";
 
 const CryptoDetailPage = () => {
@@ -388,6 +389,9 @@ const CryptoDetailPage = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background">
+        {/* Global Crypto Price Ticker - Always at the top */}
+        <CryptoPriceTicker />
+        
         {/* Mobile Header */}
         <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
           <div className="flex items-center justify-between p-4">
@@ -521,6 +525,9 @@ const CryptoDetailPage = () => {
   // Desktop Layout - Fullscreen Trading Interface
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Global Crypto Price Ticker - Always at the top */}
+      <CryptoPriceTicker />
+      
       {/* Top Header Bar - Similar to Hyperliquid */}
       <div className="h-14 bg-card/40 border-b border-border/20 flex items-center justify-between px-4">
         <div className="flex items-center gap-6">
