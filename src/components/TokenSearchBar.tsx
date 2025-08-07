@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { Search, TrendingUp, TrendingDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCryptoData } from "@/hooks/useCryptoData";
@@ -18,10 +19,23 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const { cryptoPrices } = useCryptoData();
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Calculate dropdown position
+  const updateDropdownPosition = () => {
+    if (searchRef.current) {
+      const rect = searchRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
 
   // Filter tokens based on search query
   const filteredTokens = useMemo(() => {
@@ -46,9 +60,22 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
       }
     };
 
+    const handleScroll = () => {
+      if (isOpen) {
+        updateDropdownPosition();
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('resize', handleScroll);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll, true);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [isOpen]);
 
   const handleTokenSelect = (symbol: string) => {
     navigate(`/crypto/${symbol.toLowerCase()}`);
@@ -60,7 +87,19 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    setIsOpen(value.length > 0);
+    if (value.length > 0) {
+      updateDropdownPosition();
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
+  const handleInputFocus = () => {
+    if (query.length > 0) {
+      updateDropdownPosition();
+      setIsOpen(true);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -82,8 +121,72 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
     }
   };
 
+  // Portal dropdown component
+  const DropdownPortal = () => {
+    if (!isOpen || filteredTokens.length === 0) return null;
+
+    return createPortal(
+      <div 
+        className="fixed bg-background border border-border rounded-lg shadow-2xl max-h-80 overflow-y-auto"
+        style={{ 
+          top: dropdownPosition.top,
+          left: dropdownPosition.left,
+          width: dropdownPosition.width,
+          zIndex: 999999
+        }}
+      >
+        {filteredTokens.map((token) => {
+          const isPositive = token.change24h >= 0;
+          return (
+            <div
+              key={token.symbol}
+              onClick={() => handleTokenSelect(token.symbol)}
+              className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background"
+            >
+              <div className="flex items-center space-x-3">
+                {token.image && (
+                  <img 
+                    src={token.image} 
+                    alt={token.name}
+                    className="w-6 h-6 rounded-full"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                )}
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-semibold text-sm">{token.symbol.toUpperCase()}</span>
+                    <span className="text-xs text-muted-foreground">/USDT</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{token.name}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <span className="font-medium text-sm">{formatPrice(token.price)}</span>
+                <div className={cn(
+                  "flex items-center space-x-1 text-xs",
+                  isPositive ? "text-success" : "text-destructive"
+                )}>
+                  {isPositive ? (
+                    <TrendingUp className="h-3 w-3" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3" />
+                  )}
+                  <span>{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>,
+      document.body
+    );
+  };
+
   return (
-    <div ref={searchRef} className={cn("relative", className)} style={{ zIndex: 99999 }}>
+    <div ref={searchRef} className={cn("relative", className)}>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
         <Input
@@ -93,63 +196,11 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           value={query}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => query.length > 0 && setIsOpen(true)}
+          onFocus={handleInputFocus}
           className="pl-10 bg-background/95 backdrop-blur-sm border-border/50 hover:bg-background/100 focus:bg-background transition-colors relative z-10"
         />
       </div>
-
-      {isOpen && filteredTokens.length > 0 && (
-        <div 
-          className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-2xl max-h-80 overflow-y-auto"
-          style={{ zIndex: 99999 }}
-        >
-          {filteredTokens.map((token) => {
-            const isPositive = token.change24h >= 0;
-            return (
-              <div
-                key={token.symbol}
-                onClick={() => handleTokenSelect(token.symbol)}
-                className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background"
-              >
-                <div className="flex items-center space-x-3">
-                  {token.image && (
-                    <img 
-                      src={token.image} 
-                      alt={token.name}
-                      className="w-6 h-6 rounded-full"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                  )}
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-semibold text-sm">{token.symbol.toUpperCase()}</span>
-                      <span className="text-xs text-muted-foreground">/USDT</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">{token.name}</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <span className="font-medium text-sm">{formatPrice(token.price)}</span>
-                  <div className={cn(
-                    "flex items-center space-x-1 text-xs",
-                    isPositive ? "text-success" : "text-destructive"
-                  )}>
-                    {isPositive ? (
-                      <TrendingUp className="h-3 w-3" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3" />
-                    )}
-                    <span>{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      <DropdownPortal />
     </div>
   );
 };
