@@ -35,7 +35,7 @@ const HeroSection = () => {
             <div className="flex items-center justify-center mb-6">
               <div className="relative">
                 <img 
-                  src="/lovable-uploads/3e6ed0e2-f9f8-4aa6-94e8-62aa1bdc11ce.png" 
+                  src="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png" 
                   alt="Crypto Network Sweden"
                   className="h-32 w-auto filter drop-shadow-lg animate-pulse-glow"
                 />

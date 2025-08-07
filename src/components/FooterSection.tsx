@@ -38,7 +38,7 @@ const FooterSection = () => {
           <div className="lg:col-span-1">
             <div className="mb-6">
               <img 
-                src="/lovable-uploads/3e6ed0e2-f9f8-4aa6-94e8-62aa1bdc11ce.png" 
+                src="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png" 
                 alt="Crypto Network Sweden"
                 className="h-16 w-auto mb-4"
               />
