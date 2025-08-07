@@ -17,6 +17,7 @@ import {
   RefreshCw,
   AlertCircle
 } from "lucide-react";
+import TradingPanel from "@/components/TradingPanel";
 import Header from "@/components/Header";
 import { useCryptoData } from "@/hooks/useCryptoData";
 
@@ -667,57 +668,72 @@ const CryptoDetailPage = () => {
             </Card>
           </div>
 
-          {/* TradingView Chart - Optimerad för prestanda */}
-          <Card className="p-6 bg-card/80 backdrop-blur-sm shadow-lg">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="font-crypto text-xl font-bold">Live Chart</h2>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={reloadChart}
-                  className="flex items-center gap-2"
-                  disabled={isLoading}
-                >
-                  <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
-                  {isLoading ? "Laddar..." : "Uppdatera"}
-                </Button>
-              </div>
-            </div>
-            
-            {chartError ? (
-              <div className="text-center py-12">
-                <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="text-lg font-semibold mb-2">Chart kunde inte laddas</h3>
-                <p className="text-muted-foreground mb-4">
-                  Det gick inte att ladda chart för {crypto.symbol}. Prova att uppdatera.
-                </p>
-                <Button onClick={reloadChart} variant="outline">
-                  <RefreshCw size={16} className="mr-2" />
-                  Försök igen
-                </Button>
-              </div>
-            ) : (
-              <div 
-                ref={chartRef}
-                id="tradingview_chart" 
-                className="w-full rounded-lg overflow-hidden relative"
-                style={{ 
-                  height: '700px',
-                  minHeight: '700px'
-                }}
-              >
-                {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-                    <div className="flex items-center space-x-2">
-                      <RefreshCw className="animate-spin h-6 w-6 text-primary" />
-                      <span className="font-crypto">Laddar chart...</span>
-                    </div>
+          {/* Main Content Grid - Chart and Trading Panel */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
+            {/* TradingView Chart - Optimerad för prestanda */}
+            <div className="xl:col-span-2">
+              <Card className="p-6 bg-card/80 backdrop-blur-sm shadow-lg">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="font-crypto text-xl font-bold">Live Chart</h2>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={reloadChart}
+                      className="flex items-center gap-2"
+                      disabled={isLoading}
+                    >
+                      <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+                      {isLoading ? "Laddar..." : "Uppdatera"}
+                    </Button>
+                  </div>
+                </div>
+                
+                {chartError ? (
+                  <div className="text-center py-12">
+                    <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                    <h3 className="text-lg font-semibold mb-2">Chart kunde inte laddas</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Det gick inte att ladda chart för {crypto.symbol}. Prova att uppdatera.
+                    </p>
+                    <Button onClick={reloadChart} variant="outline">
+                      <RefreshCw size={16} className="mr-2" />
+                      Försök igen
+                    </Button>
+                  </div>
+                ) : (
+                  <div 
+                    ref={chartRef}
+                    id="tradingview_chart" 
+                    className="w-full rounded-lg overflow-hidden relative"
+                    style={{ 
+                      height: '700px',
+                      minHeight: '700px'
+                    }}
+                  >
+                    {isLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                        <div className="flex items-center space-x-2">
+                          <RefreshCw className="animate-spin h-6 w-6 text-primary" />
+                          <span className="font-crypto">Laddar chart...</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-            )}
-          </Card>
+              </Card>
+            </div>
+
+            {/* Trading Panel */}
+            <div className="xl:col-span-1">
+              <TradingPanel
+                symbol={crypto.symbol}
+                currentPrice={crypto.price}
+                priceChange24h={crypto.change24h}
+                tokenName={crypto.name}
+              />
+            </div>
+          </div>
 
           {/* Description and Links */}
           <div className="mt-8">
