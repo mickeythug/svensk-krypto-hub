@@ -1,0 +1,218 @@
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
+
+interface MobileTradingPanelProps {
+  symbol: string;
+  currentPrice: number;
+  tokenName: string;
+}
+
+const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPanelProps) => {
+  const [orderType, setOrderType] = useState("market");
+  const [side, setSide] = useState("buy");
+  const [price, setPrice] = useState(currentPrice.toString());
+  const [amount, setAmount] = useState("");
+
+  return (
+    <div className="space-y-4">
+      {/* Trading Tabs */}
+      <Tabs value={side} onValueChange={setSide}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger 
+            value="buy" 
+            className="data-[state=active]:bg-success data-[state=active]:text-white"
+          >
+            <TrendingUp className="h-4 w-4 mr-1" />
+            Köp
+          </TabsTrigger>
+          <TabsTrigger 
+            value="sell"
+            className="data-[state=active]:bg-destructive data-[state=active]:text-white"
+          >
+            <TrendingDown className="h-4 w-4 mr-1" />
+            Sälj
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="buy" className="mt-4">
+          <TradingForm
+            side="buy"
+            symbol={symbol}
+            currentPrice={currentPrice}
+            orderType={orderType}
+            setOrderType={setOrderType}
+            price={price}
+            setPrice={setPrice}
+            amount={amount}
+            setAmount={setAmount}
+          />
+        </TabsContent>
+
+        <TabsContent value="sell" className="mt-4">
+          <TradingForm
+            side="sell"
+            symbol={symbol}
+            currentPrice={currentPrice}
+            orderType={orderType}
+            setOrderType={setOrderType}
+            price={price}
+            setPrice={setPrice}
+            amount={amount}
+            setAmount={setAmount}
+          />
+        </TabsContent>
+      </Tabs>
+
+      {/* Account Balance */}
+      <Card className="p-4">
+        <h3 className="font-semibold text-sm mb-3">Saldo</h3>
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">USDT</span>
+            <span className="font-mono">2,450.00</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">{symbol}</span>
+            <span className="font-mono">0.000000</span>
+          </div>
+        </div>
+      </Card>
+
+      {/* Open Orders */}
+      <Card className="p-4">
+        <h3 className="font-semibold text-sm mb-3">Öppna ordrar</h3>
+        <div className="text-center text-muted-foreground text-sm py-4">
+          Inga öppna ordrar
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+interface TradingFormProps {
+  side: "buy" | "sell";
+  symbol: string;
+  currentPrice: number;
+  orderType: string;
+  setOrderType: (type: string) => void;
+  price: string;
+  setPrice: (price: string) => void;
+  amount: string;
+  setAmount: (amount: string) => void;
+}
+
+const TradingForm = ({
+  side,
+  symbol,
+  currentPrice,
+  orderType,
+  setOrderType,
+  price,
+  setPrice,
+  amount,
+  setAmount
+}: TradingFormProps) => {
+  const isBuy = side === "buy";
+
+  return (
+    <Card className="p-4 space-y-4">
+      {/* Order Type */}
+      <div className="flex gap-2">
+        <Button
+          variant={orderType === "market" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setOrderType("market")}
+          className="flex-1"
+        >
+          Marknad
+        </Button>
+        <Button
+          variant={orderType === "limit" ? "default" : "outline"}
+          size="sm"
+          onClick={() => setOrderType("limit")}
+          className="flex-1"
+        >
+          Limit
+        </Button>
+      </div>
+
+      {/* Price Input (for limit orders) */}
+      {orderType === "limit" && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-muted-foreground">
+            Pris (USDT)
+          </label>
+          <Input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="0.00"
+            className="font-mono"
+          />
+        </div>
+      )}
+
+      {/* Amount Input */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-muted-foreground">
+          Belopp ({symbol})
+        </label>
+        <Input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="0.00000000"
+          className="font-mono"
+        />
+      </div>
+
+      {/* Percentage Buttons */}
+      <div className="grid grid-cols-4 gap-2">
+        {["25%", "50%", "75%", "100%"].map((percent) => (
+          <Button
+            key={percent}
+            variant="outline"
+            size="sm"
+            className="text-xs"
+          >
+            {percent}
+          </Button>
+        ))}
+      </div>
+
+      {/* Order Summary */}
+      <div className="space-y-2 text-sm">
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Ordervärde:</span>
+          <span className="font-mono">
+            {amount && price ? `$${(parseFloat(amount) * parseFloat(price)).toFixed(2)}` : '$0.00'}
+          </span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-muted-foreground">Avgift:</span>
+          <span className="font-mono">~$0.05</span>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <Button
+        className={`w-full font-semibold ${
+          isBuy
+            ? "bg-success hover:bg-success/90 text-white"
+            : "bg-destructive hover:bg-destructive/90 text-white"
+        }`}
+        disabled={!amount}
+      >
+        <Wallet className="h-4 w-4 mr-2" />
+        {isBuy ? "Köp" : "Sälj"} {symbol}
+      </Button>
+    </Card>
+  );
+};
+
+export default MobileTradingPanel;

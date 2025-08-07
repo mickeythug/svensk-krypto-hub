@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { Suspense, lazy, memo } from "react";
 
 // Lazy load pages för optimal bundling
@@ -41,26 +43,33 @@ const LoadingFallback = memo(() => (
 
 LoadingFallback.displayName = 'LoadingFallback';
 
-const App = memo(() => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/nyheter" element={<NewsPage />} />
-            <Route path="/marknad" element={<MarketOverviewPage />} />
-            <Route path="/verktyg" element={<ToolsPage />} />
-            <Route path="/crypto/:slug" element={<CryptoDetailPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-));
+const App = memo(() => {
+  const isMobile = useIsMobile();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className={`min-h-screen bg-background ${isMobile ? 'pb-16' : ''}`}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/nyheter" element={<NewsPage />} />
+                <Route path="/marknad" element={<MarketOverviewPage />} />
+                <Route path="/verktyg" element={<ToolsPage />} />
+                <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+            {isMobile && <MobileBottomNavigation />}
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+});
 
 App.displayName = 'App';
 
