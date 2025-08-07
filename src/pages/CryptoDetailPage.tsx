@@ -20,287 +20,153 @@ import {
   AlertCircle
 } from "lucide-react";
 import Header from "@/components/Header";
+import { useCryptoData } from "@/hooks/useCryptoData";
 
 const CryptoDetailPage = () => {
-  console.log("CryptoDetailPage component loading");
   const { slug } = useParams();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chartError, setChartError] = useState(false);
+  const { getCryptoBySymbol } = useCryptoData();
   
-  console.log("State initialized, slug:", slug);
+  // Mappa slug till symbol för att hitta korrekt crypto
+  const slugToSymbol = {
+    'bitcoin': 'BTC',
+    'ethereum': 'ETH', 
+    'bnb': 'BNB',
+    'xrp': 'XRP',
+    'ada': 'ADA',
+    'sol': 'SOL',
+    'dot': 'DOT',
+    'avax': 'AVAX',
+    'link': 'LINK',
+    'matic': 'MATIC',
+    'uni': 'UNI',
+    'ltc': 'LTC',
+    'doge': 'DOGE',
+    'shib': 'SHIB'
+  };
 
-  // Mock data with additional chart info - in real app this would come from API
-  const cryptoData = {
-    bitcoin: {
+  const symbol = slugToSymbol[slug as keyof typeof slugToSymbol];
+  const crypto = symbol ? getCryptoBySymbol(symbol) : null;
+
+  // Statisk info för varje crypto (info som inte ändras ofta)
+  const cryptoInfo = {
+    'BTC': {
       name: "Bitcoin",
-      symbol: "BTC",
-      coingeckoId: "bitcoin",
-      dexscreenerId: "bitcoin",
-      price: 116414,
-      change1h: 0.5,
-      change24h: 2.19,
-      change7d: 5.12,
-      marketCap: "2.3T",
-      volume: "28.5B",
-      supply: "19.8M",
-      maxSupply: "21M",
-      rank: 1,
       description: "Bitcoin är den första och mest kända kryptovalutan, skapad av den pseudonyma Satoshi Nakamoto 2009. Den fungerar som ett decentraliserat digitalt betalningssystem utan behov av mellanhand som banker.",
       website: "https://bitcoin.org",
       whitepaper: "https://bitcoin.org/bitcoin.pdf",
-      onTradingView: true
+      supply: "19.8M",
+      maxSupply: "21M"
     },
-    ethereum: {
+    'ETH': {
       name: "Ethereum",
-      symbol: "ETH",
-      coingeckoId: "ethereum", 
-      dexscreenerId: "ethereum",
-      price: 3834.48,
-      change1h: -0.2,
-      change24h: 6.76,
-      change7d: 3.21,
-      marketCap: "460B",
-      volume: "15.2B", 
-      supply: "120.3M",
-      maxSupply: "∞",
-      rank: 2,
       description: "Ethereum är en decentraliserad plattform som möjliggör smarta kontrakt och decentraliserade applikationer (DApps). Den introducerade konceptet med programmerbara blockkedjor.",
       website: "https://ethereum.org",
       whitepaper: "https://ethereum.org/en/whitepaper/",
-      onTradingView: true
+      supply: "120.3M",
+      maxSupply: "∞"
     },
-    bnb: {
+    'BNB': {
       name: "Binance Coin",
-      symbol: "BNB",
-      coingeckoId: "binancecoin",
-      dexscreenerId: "bsc/bnb",
-      price: 775.94,
-      change1h: 0.8,
-      change24h: 2.07,
-      change7d: 4.2,
-      marketCap: "110B",
-      volume: "1.8B",
-      supply: "153M",
-      maxSupply: "200M",
-      rank: 3,
       description: "Binance Coin (BNB) är den ursprungliga kryptovalutan för Binance Smart Chain och används för att betala avgifter på Binance-börsens plattform.",
       website: "https://www.binance.com",
       whitepaper: "",
-      onTradingView: true
+      supply: "153M",
+      maxSupply: "200M"
     },
-    ada: {
-      name: "Cardano",
-      symbol: "ADA",
-      coingeckoId: "cardano",
-      dexscreenerId: "cardano/ada",
-      price: 0.767208,
-      change1h: 1.2,
-      change24h: 5.59,
-      change7d: 8.4,
-      marketCap: "27B",
-      volume: "1.1B",
-      supply: "35.1B",
-      maxSupply: "45B",
-      rank: 4,
-      description: "Cardano är en blockchain-plattform för changemakers, innovatörer och visionärer, med verktyg och teknologier som krävs för att skapa möjligheter för många såväl som för några få.",
-      website: "https://cardano.org",
-      whitepaper: "https://www.cardano.org/en/academic-papers/",
-      onTradingView: true
-    },
-    sol: {
-      name: "Solana",
-      symbol: "SOL",
-      coingeckoId: "solana",
-      dexscreenerId: "solana/sol",
-      price: 172.05,
-      change1h: 0.6,
-      change24h: 4.78,
-      change7d: 12.3,
-      marketCap: "82B",
-      volume: "3.2B",
-      supply: "477M",
-      maxSupply: "∞",
-      rank: 5,
-      description: "Solana är en högpresterande blockchain som stöder utvecklare över hela världen att skapa krypto-appar som skalas idag.",
-      website: "https://solana.com",
-      whitepaper: "https://solana.com/solana-whitepaper.pdf",
-      onTradingView: true
-    },
-    dot: {
-      name: "Polkadot",
-      symbol: "DOT",
-      coingeckoId: "polkadot",
-      dexscreenerId: "polkadot/dot",
-      price: 3.79,
-      change1h: -0.3,
-      change24h: 5.52,
-      change7d: 2.1,
-      marketCap: "6.2B",
-      volume: "180M",
-      supply: "1.5B",
-      maxSupply: "∞",
-      rank: 15,
-      description: "Polkadot är en blockchain-protokoll som möjliggör interoperabilitet mellan olika blockkedjor.",
-      website: "https://polkadot.network",
-      whitepaper: "https://polkadot.network/PolkaDotPaper.pdf",
-      onTradingView: true
-    },
-    avax: {
-      name: "Avalanche", 
-      symbol: "AVAX",
-      coingeckoId: "avalanche-2",
-      dexscreenerId: "avalanche/avax",
-      price: 22.73,
-      change1h: 0.4,
-      change24h: 3.88,
-      change7d: 6.7,
-      marketCap: "9.8B",
-      volume: "420M",
-      supply: "431M",
-      maxSupply: "720M",
-      rank: 12,
-      description: "Avalanche är en snabb, låg kostnad och miljövänlig blockchain-plattform.",
-      website: "https://www.avax.network",
-      whitepaper: "https://assets.website-files.com/5d80307810123f5ffbb34d6e/6008d7bbf8b10d1eb01e7e16_Avalanche%20Platform%20Whitepaper.pdf",
-      onTradingView: true
-    },
-    link: {
-      name: "Chainlink",
-      symbol: "LINK", 
-      coingeckoId: "chainlink",
-      dexscreenerId: "ethereum/0x514910771af9ca656af840dff83e8264ecf986ca",
-      price: 17.86,
-      change1h: 0.7,
-      change24h: 9.20,
-      change7d: 15.4,
-      marketCap: "11.2B",
-      volume: "680M",
-      supply: "626M",
-      maxSupply: "1B",
-      rank: 13,
-      description: "Chainlink är ett decentraliserat oracle-nätverk som möjliggör för smarta kontrakt att säkert komma åt off-chain dataflöden.",
-      website: "https://chain.link",
-      whitepaper: "https://link.smartcontract.com/whitepaper",
-      onTradingView: true
-    },
-    uni: {
-      name: "Uniswap",
-      symbol: "UNI",
-      coingeckoId: "uniswap",
-      dexscreenerId: "ethereum/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
-      price: 10.11,
-      change1h: 0.2,
-      change24h: 6.87,
-      change7d: 8.9,
-      marketCap: "7.6B",
-      volume: "420M",
-      supply: "753M",
-      maxSupply: "1B",
-      rank: 16,
-      description: "Uniswap är ett decentraliserat handelsprotokoll som är känt för sin roll i att underlätta automatiserad handel av decentraliserade finanstoken (DeFi).",
-      website: "https://uniswap.org",
-      whitepaper: "https://uniswap.org/whitepaper.pdf",
-      onTradingView: true
-    },
-    doge: {
-      name: "Dogecoin",
-      symbol: "DOGE",
-      coingeckoId: "dogecoin",
-      dexscreenerId: "dogecoin/doge",
-      price: 0.214554,
-      change1h: 1.1,
-      change24h: 7.07,
-      change7d: 12.5,
-      marketCap: "31B",
-      volume: "1.8B",
-      supply: "147B",
-      maxSupply: "∞",
-      rank: 8,
-      description: "Dogecoin är en kryptovaluta som skapades som ett skämt baserat på det populära 'Doge' meme som visar en Shiba Inu hund.",
-      website: "https://dogecoin.com",
-      whitepaper: "",
-      onTradingView: true
-    },
-    shib: {
-      name: "Shiba Inu",
-      symbol: "SHIB",
-      coingeckoId: "shiba-inu",
-      dexscreenerId: "ethereum/0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
-      price: 0.00001268,
-      change1h: 0.8,
-      change24h: 4.49,
-      change7d: 9.2,
-      marketCap: "7.5B",
-      volume: "420M",
-      supply: "589T",
-      maxSupply: "1000T",
-      rank: 17,
-      description: "Shiba Inu är en decentraliserad spontan community building experiment. SHIB-token är vår första token och tillåter användare att hålla miljarder eller till och med biljoner av dem.",
-      website: "https://shibatoken.com",
-      whitepaper: "",
-      onTradingView: true
-    },
-    matic: {
-      name: "Polygon",
-      symbol: "MATIC",
-      coingeckoId: "matic-network",
-      dexscreenerId: "ethereum/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",
-      price: 0.237972,
-      change1h: 0.4,
-      change24h: 7.80,
-      change7d: 11.2,
-      marketCap: "2.4B",
-      volume: "190M",
-      supply: "10B",
-      maxSupply: "10B",
-      rank: 18,
-      description: "Polygon är en decentraliserad Ethereum scaling platform som möjliggör för utvecklare att bygga skalbara användar-vänliga dApps med låga transaktionsavgifter.",
-      website: "https://polygon.technology",
-      whitepaper: "https://polygon.technology/papers/pol-whitepaper",
-      onTradingView: true
-    },
-    ltc: {
-      name: "Litecoin",
-      symbol: "LTC",
-      coingeckoId: "litecoin",
-      dexscreenerId: "litecoin/ltc",
-      price: 120.06,
-      change1h: 0.3,
-      change24h: 3.86,
-      change7d: 5.4,
-      marketCap: "9.1B",
-      volume: "580M",
-      supply: "75.8M",
-      maxSupply: "84M",
-      rank: 14,
-      description: "Litecoin är en peer-to-peer internetvaluta som möjliggör omedelbara betalningar med nära noll kostnader till vem som helst i världen.",
-      website: "https://litecoin.org",
-      whitepaper: "",
-      onTradingView: true
-    },
-    xrp: {
+    'XRP': {
       name: "XRP",
-      symbol: "XRP",
-      coingeckoId: "ripple",
-      dexscreenerId: "xrp/xrp",
-      price: 3.07,
-      change1h: 0.6,
-      change24h: 4.19,
-      change7d: 7.8,
-      marketCap: "176B",
-      volume: "2.1B",
-      supply: "57.2B",
-      maxSupply: "100B",
-      rank: 3,
       description: "XRP är en digital tillgång byggd för betalningar. Det är den ursprungliga digitala tillgången på XRP Ledger—en öppen källkod, tillståndslös och decentraliserad blockchain-teknik.",
       website: "https://xrpl.org",
       whitepaper: "https://xrpl.org/known-amendments.html",
-      onTradingView: true
+      supply: "57.2B",
+      maxSupply: "100B"
+    },
+    'ADA': {
+      name: "Cardano",
+      description: "Cardano är en blockchain-plattform för changemakers, innovatörer och visionärer, med verktyg och teknologier som krävs för att skapa möjligheter för många såväl som för några få.",
+      website: "https://cardano.org", 
+      whitepaper: "https://www.cardano.org/en/academic-papers/",
+      supply: "35.1B",
+      maxSupply: "45B"
+    },
+    'SOL': {
+      name: "Solana",
+      description: "Solana är en högpresterande blockchain som stöder utvecklare över hela världen att skapa krypto-appar som skalas idag.",
+      website: "https://solana.com",
+      whitepaper: "https://solana.com/solana-whitepaper.pdf",
+      supply: "477M",
+      maxSupply: "∞"
+    },
+    'DOT': {
+      name: "Polkadot",
+      description: "Polkadot är en blockchain-protokoll som möjliggör interoperabilitet mellan olika blockkedjor.",
+      website: "https://polkadot.network",
+      whitepaper: "https://polkadot.network/PolkaDotPaper.pdf",
+      supply: "1.5B",
+      maxSupply: "∞"
+    },
+    'AVAX': {
+      name: "Avalanche",
+      description: "Avalanche är en snabb, låg kostnad och miljövänlig blockchain-plattform.",
+      website: "https://www.avax.network",
+      whitepaper: "https://assets.website-files.com/5d80307810123f5ffbb34d6e/6008d7bbf8b10d1eb01e7e16_Avalanche%20Platform%20Whitepaper.pdf",
+      supply: "431M",
+      maxSupply: "720M"
+    },
+    'LINK': {
+      name: "Chainlink",
+      description: "Chainlink är ett decentraliserat oracle-nätverk som möjliggör för smarta kontrakt att säkert komma åt off-chain dataflöden.",
+      website: "https://chain.link",
+      whitepaper: "https://link.smartcontract.com/whitepaper",
+      supply: "626M",
+      maxSupply: "1B"
+    },
+    'MATIC': {
+      name: "Polygon",
+      description: "Polygon är en decentraliserad Ethereum scaling platform som möjliggör för utvecklare att bygga skalbara användar-vänliga dApps med låga transaktionsavgifter.",
+      website: "https://polygon.technology",
+      whitepaper: "https://polygon.technology/papers/pol-whitepaper",
+      supply: "10B",
+      maxSupply: "10B"
+    },
+    'UNI': {
+      name: "Uniswap",
+      description: "Uniswap är ett decentraliserat handelsprotokoll som är känt för sin roll i att underlätta automatiserad handel av decentraliserade finanstoken (DeFi).",
+      website: "https://uniswap.org",
+      whitepaper: "https://uniswap.org/whitepaper.pdf",
+      supply: "753M",
+      maxSupply: "1B"
+    },
+    'LTC': {
+      name: "Litecoin",
+      description: "Litecoin är en peer-to-peer internetvaluta som möjliggör omedelbara betalningar med nära noll kostnader till vem som helst i världen.",
+      website: "https://litecoin.org",
+      whitepaper: "",
+      supply: "75.8M", 
+      maxSupply: "84M"
+    },
+    'DOGE': {
+      name: "Dogecoin",
+      description: "Dogecoin är en kryptovaluta som skapades som ett skämt baserat på det populära 'Doge' meme som visar en Shiba Inu hund.",
+      website: "https://dogecoin.com",
+      whitepaper: "",
+      supply: "147B",
+      maxSupply: "∞"
+    },
+    'SHIB': {
+      name: "Shiba Inu", 
+      description: "Shiba Inu är en decentraliserad spontan community building experiment. SHIB-token är vår första token och tillåter användare att hålla miljarder eller till och med biljoner av dem.",
+      website: "https://shibatoken.com",
+      whitepaper: "",
+      supply: "589T",
+      maxSupply: "1000T"
     }
   };
 
-  const crypto = cryptoData[slug as keyof typeof cryptoData];
+  const info = symbol ? cryptoInfo[symbol as keyof typeof cryptoInfo] : null;
 
   useEffect(() => {
     if (!crypto) {
@@ -366,7 +232,7 @@ const CryptoDetailPage = () => {
   };
 
 
-  if (!crypto) {
+  if (!crypto || !info) {
     return null;
   }
 
@@ -438,9 +304,7 @@ const CryptoDetailPage = () => {
                 {formatPrice(crypto.price)}
               </div>
               <div className="flex flex-wrap items-center gap-4 justify-start lg:justify-end">
-                <div className="text-sm">{formatChange(crypto.change1h)}</div>
                 <div className="text-sm">{formatChange(crypto.change24h)}</div>
-                <div className="text-sm">{formatChange(crypto.change7d)}</div>
               </div>
             </div>
           </div>
@@ -468,7 +332,7 @@ const CryptoDetailPage = () => {
                 <Coins className="h-4 w-4 text-primary flex-shrink-0" />
                 <span className="text-xs md:text-sm text-muted-foreground">Cirkulerande</span>
               </div>
-              <div className="font-display font-bold text-sm md:text-base">{crypto.supply}</div>
+              <div className="font-display font-bold text-sm md:text-base">{info.supply}</div>
             </Card>
             
             <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
@@ -476,23 +340,23 @@ const CryptoDetailPage = () => {
                 <Volume2 className="h-4 w-4 text-primary flex-shrink-0" />
                 <span className="text-xs md:text-sm text-muted-foreground">Max Utbud</span>
               </div>
-              <div className="font-display font-bold text-sm md:text-base">{crypto.maxSupply}</div>
+              <div className="font-display font-bold text-sm md:text-base">{info.maxSupply}</div>
             </Card>
             
             <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">1h Förändring</span>
+                <span className="text-xs md:text-sm text-muted-foreground">24h Förändring</span>
               </div>
-              <div className="font-display font-bold text-xs md:text-sm">{formatChange(crypto.change1h)}</div>
+              <div className="font-display font-bold text-xs md:text-sm">{formatChange(crypto.change24h)}</div>
             </Card>
             
             <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">7d Förändring</span>
+                <span className="text-xs md:text-sm text-muted-foreground">Rank</span>
               </div>
-              <div className="font-display font-bold text-xs md:text-sm">{formatChange(crypto.change7d)}</div>
+              <div className="font-display font-bold text-xs md:text-sm">#{crypto.rank}</div>
             </Card>
           </div>
 
@@ -557,25 +421,27 @@ const CryptoDetailPage = () => {
             <Card className="p-6 bg-card/80 backdrop-blur-sm">
               <h3 className="font-crypto text-xl font-bold mb-4">Om {crypto.name}</h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                {crypto.description}
+                {info.description}
               </p>
               
               <div className="flex flex-wrap gap-4">
                 <Button variant="outline" size="sm" asChild>
-                  <a href={crypto.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                  <a href={info.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                     <Globe size={16} />
                     Officiell Webbplats
                     <ExternalLink size={14} />
                   </a>
                 </Button>
                 
-                <Button variant="outline" size="sm" asChild>
-                  <a href={crypto.whitepaper} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                    <DollarSign size={16} />
-                    Whitepaper
-                    <ExternalLink size={14} />
-                  </a>
-                </Button>
+                {info.whitepaper && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={info.whitepaper} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                      <DollarSign size={16} />
+                      Whitepaper
+                      <ExternalLink size={14} />
+                    </a>
+                  </Button>
+                )}
               </div>
             </Card>
 
@@ -598,14 +464,9 @@ const CryptoDetailPage = () => {
                   {formatChange(crypto.change24h)}
                 </div>
                 
-                <div className="flex justify-between items-center py-2 border-b border-border/50">
-                  <span className="text-muted-foreground">7d Förändring</span>
-                  {formatChange(crypto.change7d)}
-                </div>
-                
                 <div className="flex justify-between items-center py-2">
                   <span className="text-muted-foreground">Marknadskapital</span>
-                  <span className="font-display font-semibold">{crypto.marketCap} SEK</span>
+                  <span className="font-display font-semibold">${crypto.marketCap}</span>
                 </div>
               </div>
             </Card>

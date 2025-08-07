@@ -50,6 +50,7 @@ import {
   List
 } from "lucide-react";
 import Header from "@/components/Header";
+import { useCryptoData } from "@/hooks/useCryptoData";
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
