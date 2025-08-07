@@ -33,11 +33,11 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto">
           {/* Logo and Title */}
           <div className="mb-8 animate-fade-in">
-            <div className="flex items-center justify-center mb-6">
+            <div className="mb-6">
               <img 
                 src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
                 alt="Crypto Network Sweden"
-                className="h-[600px] w-auto animate-pulse-glow drop-shadow-[0_0_30px_rgba(0,255,204,0.5)]"
+                className="h-[600px] w-auto mx-auto animate-pulse-glow drop-shadow-[0_0_30px_rgba(0,255,204,0.5)]"
               />
             </div>
             
