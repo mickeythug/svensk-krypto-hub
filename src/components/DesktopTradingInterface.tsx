@@ -17,6 +17,7 @@ import {
   WifiOff
 } from "lucide-react";
 import ModernTradingViewChart from "./ModernTradingViewChart";
+import OrderBook from "./OrderBook";
 import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
 
 interface DesktopTradingInterfaceProps {
@@ -146,87 +147,14 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
       {/* Right Sidebar - Perfect spacing and alignment */}
       <div className="w-80 flex flex-col bg-card/20 border-l border-border/30">
-        {/* Orderbook - Top section with increased height and proper spacing */}
-        <div className="flex-1 m-3 mb-2 max-h-[800px]">
-          <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg flex flex-col">
-            <div className="p-3 border-b border-border/30 bg-background/40 flex-shrink-0">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-sm">Order Book</h3>
-                  {isConnected ? (
-                    <Wifi className="h-3 w-3 text-success" />
-                  ) : (
-                    <WifiOff className="h-3 w-3 text-destructive" />
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground font-mono">
-                  Spread: {calculateSpread()}%
-                </div>
-              </div>
-              {error && (
-                <div className="text-xs text-destructive mt-1">{error}</div>
-              )}
-            </div>
-            
-            <div className="flex-1 flex flex-col min-h-0">
-              {/* Header */}
-              <div className="grid grid-cols-3 text-xs text-muted-foreground p-2 border-b border-border/20 bg-background/20 flex-shrink-0">
-                <span className="font-semibold">Price (USDT)</span>
-                <span className="text-right font-semibold">Size ({symbol})</span>
-                <span className="text-right font-semibold">Total</span>
-              </div>
-              
-              {/* Asks (Sell orders) - Red - Sorted highest to lowest */}
-              <div className="flex-shrink-0 p-2" style={{height: '240px'}}>
-                <div className="space-y-0.5">
-                  {orderBook?.asks?.sort((a, b) => b.price - a.price)
-                    .slice(0, 15)
-                    .map((ask, i) => (
-                    <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
-                      <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
-                      <span className="text-right font-mono text-xs">{formatSize(ask.size)}</span>
-                      <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(ask.total)}</span>
-                    </div>
-                  )) || Array.from({length: 15}).map((_, i) => (
-                    <div key={`ask-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
-                      <div className="h-3 bg-destructive/20 rounded animate-pulse"></div>
-                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Current Price - SOLID Separator - More prominent */}
-              <div className="border-y-2 border-primary/60 p-4 bg-gradient-to-r from-primary/10 to-primary/5 flex-shrink-0">
-                <div className="text-center">
-                  <div className="text-xl font-bold font-mono tracking-tight text-primary">{formatPrice(currentPrice)}</div>
-                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">LAST PRICE</div>
-                </div>
-              </div>
-              
-              {/* Bids (Buy orders) - Green - Sorted highest to lowest */}
-              <div className="flex-shrink-0 p-2" style={{height: '240px'}}>
-                <div className="space-y-0.5">
-                  {orderBook?.bids?.sort((a, b) => b.price - a.price)
-                    .slice(0, 15)
-                    .map((bid, i) => (
-                    <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
-                      <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
-                      <span className="text-right font-mono text-xs">{formatSize(bid.size)}</span>
-                      <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(bid.total)}</span>
-                    </div>
-                  )) || Array.from({length: 15}).map((_, i) => (
-                    <div key={`bid-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
-                      <div className="h-3 bg-success/20 rounded animate-pulse"></div>
-                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </Card>
+        {/* Orderbook - New Bybit-style component */}
+        <div className="flex-1 m-3 mb-2">
+          <OrderBook 
+            orderBook={orderBook}
+            currentPrice={currentPrice}
+            symbol={symbol}
+            isConnected={isConnected}
+          />
         </div>
 
         {/* Trading Panel - Bottom section with reduced height */}
