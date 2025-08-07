@@ -10,7 +10,6 @@ const SocialMediaSection = () => {
       name: "Telegram",
       icon: MessageCircle,
       description: "Ställ frågor, lär dig, få gratis krypto-information och hjälp. Vi hjälps åt att hitta möjligheter tillsammans!",
-      members: "3.2k",
       link: "https://t.me/cryptonetworksweden",
       color: "text-blue-400",
       bgColor: "bg-blue-400/10"
@@ -19,7 +18,6 @@ const SocialMediaSection = () => {
       name: "TikTok",
       icon: Video,
       description: "Följ våra senaste krypto-tips, analyser och utbildningsinnehåll",
-      members: "15k",
       link: "#",
       color: "text-pink-400",
       bgColor: "bg-pink-400/10"
@@ -28,7 +26,6 @@ const SocialMediaSection = () => {
       name: "Twitter/X",
       icon: Twitter,
       description: "Håll dig uppdaterad med senaste nyheterna och marknadsanalyser",
-      members: "8.5k",
       link: "#",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
@@ -70,10 +67,6 @@ const SocialMediaSection = () => {
                     {platform.description}
                   </p>
                   
-                  <div className="flex items-center justify-center space-x-2 mb-4">
-                    <span className="font-crypto text-primary font-bold">{platform.members}</span>
-                    <span className="text-muted-foreground text-sm">följare</span>
-                  </div>
                   
                   <Button 
                     variant="outline" 
@@ -88,19 +81,6 @@ const SocialMediaSection = () => {
           })}
         </div>
 
-        <div className="text-center">
-          <Card className="inline-block p-6 bg-gradient-primary">
-            <div className="flex items-center space-x-4">
-              <div className="text-primary-foreground">
-                <Users className="h-8 w-8" />
-              </div>
-              <div className="text-left text-primary-foreground">
-                <p className="font-crypto font-bold text-2xl">26,700+</p>
-                <p className="font-display text-sm opacity-90">Totala följare över alla plattformar</p>
-              </div>
-            </div>
-          </Card>
-        </div>
       </div>
     </section>
   );
