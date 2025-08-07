@@ -55,8 +55,15 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+      const target = event.target as Element;
+      
+      // Check if the click is inside the search ref or any dropdown item
+      if (searchRef.current && !searchRef.current.contains(target)) {
+        // Also check if clicking on a dropdown item (which is rendered in portal)
+        const isDropdownClick = target.closest('[data-dropdown-item]');
+        if (!isDropdownClick) {
+          setIsOpen(false);
+        }
       }
     };
 
@@ -78,6 +85,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
   }, [isOpen]);
 
   const handleTokenSelect = (symbol: string) => {
+    console.log('Token selected:', symbol); // Debug log
     navigate(`/crypto/${symbol.toLowerCase()}`);
     setQuery("");
     setIsOpen(false);
@@ -140,8 +148,13 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           return (
             <div
               key={token.symbol}
-              onClick={() => handleTokenSelect(token.symbol)}
-              className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background"
+              data-dropdown-item
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleTokenSelect(token.symbol);
+              }}
+              className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background transition-colors"
             >
               <div className="flex items-center space-x-3">
                 {token.image && (
