@@ -43,8 +43,18 @@ const FooterSection = () => {
                 alt="Crypto Network Sweden"
                 className="h-[400px] w-auto mb-4 drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
               />
-              <h3 className="font-crypto text-xl font-bold text-primary mb-2">
-                CRYPTO NETWORK SWEDEN
+              <h3 className="font-crypto text-xl font-bold mb-2">
+                <span className="text-primary">CR</span>
+                <span className="text-white">Y</span>
+                <span className="text-primary">P</span>
+                <span className="text-white">TO</span>
+                <span className="text-white"> </span>
+                <span className="text-white">NET</span>
+                <span className="text-primary">W</span>
+                <span className="text-white">OR</span>
+                <span className="text-primary">K</span>
+                <span className="text-white"> </span>
+                <span className="text-muted-foreground">SWEDEN</span>
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Sveriges ledande krypto-community som hjälper dig navigera Web3-världen 

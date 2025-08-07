@@ -57,8 +57,16 @@ const Header = () => {
               className="h-10 w-auto drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
             />
             <div className="hidden md:block">
-              <h1 className="font-crypto text-lg font-bold text-primary">
-                CRYPTO NETWORK
+              <h1 className="font-crypto text-lg font-bold">
+                <span className="text-primary">CR</span>
+                <span className="text-white">Y</span>
+                <span className="text-primary">P</span>
+                <span className="text-white">TO</span>
+                <span className="text-white"> </span>
+                <span className="text-white">NET</span>
+                <span className="text-primary">W</span>
+                <span className="text-white">OR</span>
+                <span className="text-primary">K</span>
               </h1>
               <p className="font-crypto text-xs text-muted-foreground">
                 SWEDEN
@@ -116,8 +124,16 @@ const Header = () => {
                     className="h-8 w-auto"
                   />
                   <div>
-                    <h1 className="font-crypto text-sm font-bold text-primary">
-                      CRYPTO NETWORK
+                    <h1 className="font-crypto text-sm font-bold">
+                      <span className="text-primary">CR</span>
+                      <span className="text-white">Y</span>
+                      <span className="text-primary">P</span>
+                      <span className="text-white">TO</span>
+                      <span className="text-white"> </span>
+                      <span className="text-white">NET</span>
+                      <span className="text-primary">W</span>
+                      <span className="text-white">OR</span>
+                      <span className="text-primary">K</span>
                     </h1>
                     <p className="font-crypto text-xs text-muted-foreground">
                       SWEDEN

@@ -41,10 +41,18 @@ const HeroSection = () => {
               />
             </div>
             
-            <h1 className="font-crypto text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              CRYPTO NETWORK
+            <h1 className="font-crypto text-5xl md:text-7xl font-bold mb-4">
+              <span className="text-primary">CR</span>
+              <span className="text-white">Y</span>
+              <span className="text-primary">P</span>
+              <span className="text-white">TO</span>
+              <span className="text-white"> </span>
+              <span className="text-white">NET</span>
+              <span className="text-primary">W</span>
+              <span className="text-white">OR</span>
+              <span className="text-primary">K</span>
             </h1>
-            <h2 className="font-crypto text-2xl md:text-4xl text-foreground mb-6">
+            <h2 className="font-crypto text-2xl md:text-4xl text-muted-foreground mb-6">
               SWEDEN
             </h2>
           </div>
