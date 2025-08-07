@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NewsPage from "./pages/NewsPage";
 import MarketOverviewPage from "./pages/MarketOverviewPage";
+import CryptoDetailPage from "./pages/CryptoDetailPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/nyheter" element={<NewsPage />} />
             <Route path="/marknad" element={<MarketOverviewPage />} />
+            <Route path="/crypto/:slug" element={<CryptoDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
       </BrowserRouter>

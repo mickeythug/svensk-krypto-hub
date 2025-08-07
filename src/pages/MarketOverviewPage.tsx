@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ import Header from "@/components/Header";
 const MarketOverviewPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("top10");
+  const navigate = useNavigate();
 
   const marketSentiment = {
     overall: 68,
@@ -92,40 +94,40 @@ const MarketOverviewPage = () => {
   ];
 
   const allCryptos = [
-    { rank: 1, name: "Bitcoin", symbol: "Bitcoin", price: 645000, change1h: 0.5, change24h: 2.34, change7d: 5.12, marketCap: "12.5T", volume: "28.5B", supply: "19.5M Bitcoin" },
-    { rank: 2, name: "Ethereum", symbol: "Ethereum", price: 35000, change1h: -0.2, change24h: -1.45, change7d: 3.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M Ethereum" },
-    { rank: 3, name: "Binance Coin", symbol: "Binance Coin", price: 3200, change1h: 0.8, change24h: 0.87, change7d: -2.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" },
-    { rank: 4, name: "XRP", symbol: "XRP", price: 8.5, change1h: 1.2, change24h: 5.23, change7d: 12.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" },
-    { rank: 5, name: "Cardano", symbol: "Cardano", price: 4.2, change1h: -0.5, change24h: 3.21, change7d: 8.9, marketCap: "147B", volume: "1.8B", supply: "35.0B Cardano" },
-    { rank: 6, name: "Solana", symbol: "Solana", price: 1100, change1h: 2.1, change24h: 5.67, change7d: 15.2, marketCap: "523B", volume: "4.1B", supply: "475.2M Solana" },
-    { rank: 7, name: "Polkadot", symbol: "Polkadot", price: 85, change1h: -1.2, change24h: -2.11, change7d: -5.4, marketCap: "98B", volume: "892M", supply: "1.15B Polkadot" },
-    { rank: 8, name: "Avalanche", symbol: "Avalanche", price: 450, change1h: 0.9, change24h: 1.99, change7d: 7.3, marketCap: "178B", volume: "1.2B", supply: "395.8M Avalanche" },
-    { rank: 9, name: "Chainlink", symbol: "Chainlink", price: 180, change1h: 0.3, change24h: 4.5, change7d: 9.8, marketCap: "89B", volume: "654M", supply: "494.0M Chainlink" },
-    { rank: 10, name: "Polygon", symbol: "Polygon", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B Polygon" }
+    { rank: 1, name: "Bitcoin", symbol: "Bitcoin", slug: "bitcoin", price: 645000, change1h: 0.5, change24h: 2.34, change7d: 5.12, marketCap: "12.5T", volume: "28.5B", supply: "19.5M Bitcoin" },
+    { rank: 2, name: "Ethereum", symbol: "Ethereum", slug: "ethereum", price: 35000, change1h: -0.2, change24h: -1.45, change7d: 3.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M Ethereum" },
+    { rank: 3, name: "Binance Coin", symbol: "Binance Coin", slug: "binance-coin", price: 3200, change1h: 0.8, change24h: 0.87, change7d: -2.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" },
+    { rank: 4, name: "XRP", symbol: "XRP", slug: "xrp", price: 8.5, change1h: 1.2, change24h: 5.23, change7d: 12.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" },
+    { rank: 5, name: "Cardano", symbol: "Cardano", slug: "cardano", price: 4.2, change1h: -0.5, change24h: 3.21, change7d: 8.9, marketCap: "147B", volume: "1.8B", supply: "35.0B Cardano" },
+    { rank: 6, name: "Solana", symbol: "Solana", slug: "solana", price: 1100, change1h: 2.1, change24h: 5.67, change7d: 15.2, marketCap: "523B", volume: "4.1B", supply: "475.2M Solana" },
+    { rank: 7, name: "Polkadot", symbol: "Polkadot", slug: "polkadot", price: 85, change1h: -1.2, change24h: -2.11, change7d: -5.4, marketCap: "98B", volume: "892M", supply: "1.15B Polkadot" },
+    { rank: 8, name: "Avalanche", symbol: "Avalanche", slug: "avalanche", price: 450, change1h: 0.9, change24h: 1.99, change7d: 7.3, marketCap: "178B", volume: "1.2B", supply: "395.8M Avalanche" },
+    { rank: 9, name: "Chainlink", symbol: "Chainlink", slug: "chainlink", price: 180, change1h: 0.3, change24h: 4.5, change7d: 9.8, marketCap: "89B", volume: "654M", supply: "494.0M Chainlink" },
+    { rank: 10, name: "Polygon", symbol: "Polygon", slug: "polygon", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B Polygon" }
   ];
 
   const trendingCryptos = [
-    { rank: 1, name: "Pepe", symbol: "Pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" },
-    { rank: 2, name: "Bonk", symbol: "Bonk", price: 0.000018, change1h: 8.9, change24h: 32.1, change7d: 89.3, marketCap: "1.2B", volume: "456M", supply: "65.5T Bonk" },
-    { rank: 3, name: "Floki", symbol: "Floki", price: 0.00032, change1h: 12.5, change24h: 28.7, change7d: 67.8, marketCap: "3.1B", volume: "298M", supply: "9.7T Floki" }
+    { rank: 1, name: "Pepe", symbol: "Pepe", slug: "pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" },
+    { rank: 2, name: "Bonk", symbol: "Bonk", slug: "bonk", price: 0.000018, change1h: 8.9, change24h: 32.1, change7d: 89.3, marketCap: "1.2B", volume: "456M", supply: "65.5T Bonk" },
+    { rank: 3, name: "Floki", symbol: "Floki", slug: "floki", price: 0.00032, change1h: 12.5, change24h: 28.7, change7d: 67.8, marketCap: "3.1B", volume: "298M", supply: "9.7T Floki" }
   ];
 
   const memeCryptos = [
-    { rank: 1, name: "Dogecoin", symbol: "Dogecoin", price: 1.2, change1h: 2.1, change24h: 8.5, change7d: 23.4, marketCap: "172B", volume: "1.8B", supply: "143.2B Dogecoin" },
-    { rank: 2, name: "Shiba Inu", symbol: "Shiba Inu", price: 0.000034, change1h: 1.8, change24h: 12.3, change7d: 34.2, marketCap: "20.1B", volume: "892M", supply: "589.7T Shiba Inu" },
-    { rank: 3, name: "Pepe", symbol: "Pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" }
+    { rank: 1, name: "Dogecoin", symbol: "Dogecoin", slug: "dogecoin", price: 1.2, change1h: 2.1, change24h: 8.5, change7d: 23.4, marketCap: "172B", volume: "1.8B", supply: "143.2B Dogecoin" },
+    { rank: 2, name: "Shiba Inu", symbol: "Shiba Inu", slug: "shiba-inu", price: 0.000034, change1h: 1.8, change24h: 12.3, change7d: 34.2, marketCap: "20.1B", volume: "892M", supply: "589.7T Shiba Inu" },
+    { rank: 3, name: "Pepe", symbol: "Pepe", slug: "pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" }
   ];
 
   const topGainers = [
-    { rank: 1, name: "Solana", symbol: "Solana", price: 1100, change1h: 2.1, change24h: 15.67, change7d: 45.2, marketCap: "523B", volume: "4.1B", supply: "475.2M Solana" },
-    { rank: 2, name: "Pepe", symbol: "Pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" },
-    { rank: 3, name: "XRP", symbol: "XRP", price: 8.5, change1h: 1.2, change24h: 15.23, change7d: 32.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" }
+    { rank: 1, name: "Solana", symbol: "Solana", slug: "solana", price: 1100, change1h: 2.1, change24h: 15.67, change7d: 45.2, marketCap: "523B", volume: "4.1B", supply: "475.2M Solana" },
+    { rank: 2, name: "Pepe", symbol: "Pepe", slug: "pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" },
+    { rank: 3, name: "XRP", symbol: "XRP", slug: "xrp", price: 8.5, change1h: 1.2, change24h: 15.23, change7d: 32.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" }
   ];
 
   const topLosers = [
-    { rank: 1, name: "Polkadot", symbol: "Polkadot", price: 85, change1h: -1.2, change24h: -8.11, change7d: -15.4, marketCap: "98B", volume: "892M", supply: "1.15B Polkadot" },
-    { rank: 2, name: "Ethereum", symbol: "Ethereum", price: 35000, change1h: -0.2, change24h: -5.45, change7d: -8.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M Ethereum" },
-    { rank: 3, name: "Binance Coin", symbol: "Binance Coin", price: 3200, change1h: -0.8, change24h: -3.87, change7d: -12.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" }
+    { rank: 1, name: "Polkadot", symbol: "Polkadot", slug: "polkadot", price: 85, change1h: -1.2, change24h: -8.11, change7d: -15.4, marketCap: "98B", volume: "892M", supply: "1.15B Polkadot" },
+    { rank: 2, name: "Ethereum", symbol: "Ethereum", slug: "ethereum", price: 35000, change1h: -0.2, change24h: -5.45, change7d: -8.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M Ethereum" },
+    { rank: 3, name: "Binance Coin", symbol: "Binance Coin", slug: "binance-coin", price: 3200, change1h: -0.8, change24h: -3.87, change7d: -12.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" }
   ];
 
   const getCurrentData = () => {
@@ -390,7 +392,11 @@ const MarketOverviewPage = () => {
                     </TableHeader>
                     <TableBody>
                       {filteredData.map((crypto) => (
-                        <TableRow key={crypto.symbol} className="hover:bg-muted/50 transition-colors">
+                        <TableRow 
+                          key={crypto.symbol} 
+                          className="hover:bg-muted/50 transition-colors cursor-pointer"
+                          onClick={() => navigate(`/crypto/${crypto.slug}`)}
+                        >
                           <TableCell className="font-medium">
                             <Badge variant="outline" className="font-crypto text-xs">
                               {crypto.rank}
