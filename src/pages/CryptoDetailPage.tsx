@@ -32,19 +32,33 @@ const CryptoDetailPage = () => {
   // Mappa slug till symbol för att hitta korrekt crypto
   const slugToSymbol = {
     'bitcoin': 'BTC',
-    'ethereum': 'ETH', 
+    'btc': 'BTC',
+    'ethereum': 'ETH',
+    'eth': 'ETH', 
     'bnb': 'BNB',
+    'binance-coin': 'BNB',
     'xrp': 'XRP',
+    'ripple': 'XRP',
     'ada': 'ADA',
+    'cardano': 'ADA',
     'sol': 'SOL',
+    'solana': 'SOL',
     'dot': 'DOT',
+    'polkadot': 'DOT',
     'avax': 'AVAX',
+    'avalanche': 'AVAX',
     'link': 'LINK',
+    'chainlink': 'LINK',
     'matic': 'MATIC',
+    'polygon': 'MATIC',
     'uni': 'UNI',
+    'uniswap': 'UNI',
     'ltc': 'LTC',
+    'litecoin': 'LTC',
     'doge': 'DOGE',
-    'shib': 'SHIB'
+    'dogecoin': 'DOGE',
+    'shib': 'SHIB',
+    'shiba-inu': 'SHIB'
   };
 
   const symbol = slugToSymbol[slug as keyof typeof slugToSymbol];
