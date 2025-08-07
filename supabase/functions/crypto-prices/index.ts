@@ -39,9 +39,8 @@ serve(async (req) => {
       const ticker = allTickers.find(t => t.symbol === symbol);
       if (!ticker) return null;
 
-      // Konvertera till SEK (ungefärlig kurs: 1 USD = 10.5 SEK)
+      // Använd USD pris direkt
       const usdPrice = parseFloat(ticker.price);
-      const sekPrice = usdPrice * 10.5;
       
       // Mappa till vårt format
       const cryptoNames: { [key: string]: string } = {
@@ -65,7 +64,7 @@ serve(async (req) => {
       return {
         symbol: symbol.replace('USDT', ''),
         name: cryptoNames[symbol] || symbol.replace('USDT', ''),
-        price: sekPrice,
+        price: usdPrice,
         change24h: parseFloat(ticker.priceChangePercent),
         lastUpdated: new Date().toISOString()
       };

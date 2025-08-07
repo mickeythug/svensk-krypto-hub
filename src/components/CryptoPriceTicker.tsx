@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CryptoPrice {
   symbol: string;
@@ -34,18 +34,18 @@ const CryptoPriceTicker = () => {
       console.error('Error fetching crypto prices:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
       
-      // Fallback till mock data vid fel
+      // Fallback till mock data vid fel (USD priser)
       const mockPrices: CryptoPrice[] = [
-        { symbol: "BTC", name: "Bitcoin", price: 645000, change24h: 2.34 },
-        { symbol: "ETH", name: "Ethereum", price: 35000, change24h: -1.45 },
-        { symbol: "BNB", name: "Binance Coin", price: 3200, change24h: 0.87 },
-        { symbol: "ADA", name: "Cardano", price: 4.2, change24h: 3.21 },
-        { symbol: "SOL", name: "Solana", price: 1100, change24h: 5.67 },
-        { symbol: "DOT", name: "Polkadot", price: 85, change24h: -2.11 },
-        { symbol: "AVAX", name: "Avalanche", price: 450, change24h: 1.99 },
-        { symbol: "LINK", name: "Chainlink", price: 180, change24h: 4.33 },
-        { symbol: "UNI", name: "Uniswap", price: 95, change24h: -0.88 },
-        { symbol: "ATOM", name: "Cosmos", price: 120, change24h: 2.77 }
+        { symbol: "BTC", name: "Bitcoin", price: 98500, change24h: 2.34 },
+        { symbol: "ETH", name: "Ethereum", price: 3420, change24h: -1.45 },
+        { symbol: "BNB", name: "Binance Coin", price: 695, change24h: 0.87 },
+        { symbol: "ADA", name: "Cardano", price: 1.08, change24h: 3.21 },
+        { symbol: "SOL", name: "Solana", price: 245, change24h: 5.67 },
+        { symbol: "DOT", name: "Polkadot", price: 12.5, change24h: -2.11 },
+        { symbol: "AVAX", name: "Avalanche", price: 52.3, change24h: 1.99 },
+        { symbol: "LINK", name: "Chainlink", price: 28.4, change24h: 4.33 },
+        { symbol: "UNI", name: "Uniswap", price: 14.2, change24h: -0.88 },
+        { symbol: "DOGE", name: "Dogecoin", price: 0.385, change24h: 2.77 }
       ];
       setCryptoPrices(mockPrices);
     } finally {
@@ -65,9 +65,12 @@ const CryptoPriceTicker = () => {
 
   const formatPrice = (price: number) => {
     if (price >= 1000) {
-      return `${(price / 1000).toFixed(1)}k SEK`;
+      return `$${(price / 1000).toFixed(1)}k`;
     }
-    return `${price.toFixed(2)} SEK`;
+    if (price < 1) {
+      return `$${price.toFixed(4)}`;
+    }
+    return `$${price.toFixed(2)}`;
   };
 
   const formatChange = (change: number) => {
