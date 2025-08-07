@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -15,9 +16,14 @@ import {
   Globe,
   ExternalLink,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Menu,
+  Search,
+  Bell
 } from "lucide-react";
 import TradingPanel from "@/components/TradingPanel";
+import MobileTradingPanel from "@/components/MobileTradingPanel";
+import MobileChart from "@/components/MobileChart";
 import Header from "@/components/Header";
 import { useCryptoData } from "@/hooks/useCryptoData";
 
@@ -26,6 +32,7 @@ const CryptoDetailPage = () => {
   const navigate = useNavigate();
   const [chartError, setChartError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("overview");
   const { getCryptoBySymbol } = useCryptoData();
   const chartInitialized = useRef(false);
   
@@ -265,6 +272,9 @@ const CryptoDetailPage = () => {
 
   const info = symbol ? getTokenInfo(symbol) : null;
 
+  // Check if mobile
+  const isMobile = window.innerWidth < 768;
+
   // Förenklad chart loading utan DOM-manipulation
   const loadTradingViewChart = useCallback((symbol: string) => {
     if (chartInitialized.current) return;
@@ -312,8 +322,8 @@ const CryptoDetailPage = () => {
   if (!symbol || !info) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <div className="pt-20 pb-12">
+        {!isMobile && <Header />}
+        <div className={`${!isMobile ? 'pt-20' : 'pt-4'} pb-12`}>
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h1 className="font-crypto text-2xl font-bold mb-4">Token ej hittad</h1>
@@ -334,8 +344,8 @@ const CryptoDetailPage = () => {
   if (!crypto) {
     return (
       <div className="min-h-screen bg-background">
-        <Header />
-        <div className="pt-20 pb-12">
+        {!isMobile && <Header />}
+        <div className={`${!isMobile ? 'pt-20' : 'pt-4'} pb-12`}>
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h1 className="font-crypto text-2xl font-bold mb-4">Laddar {info.name}...</h1>
@@ -372,13 +382,148 @@ const CryptoDetailPage = () => {
     );
   };
 
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Mobile Header */}
+        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
+          <div className="flex items-center justify-between p-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/marknad')}
+              className="h-10 w-10 p-0"
+            >
+              <ArrowLeft size={20} />
+            </Button>
+            
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
+                <Search size={20} />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
+                <Bell size={20} />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-10 w-10 p-0">
+                <Menu size={20} />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="sticky top-[73px] z-40 bg-background/95 backdrop-blur-md border-b border-border/50">
+            <TabsList className="w-full h-12 grid grid-cols-3 rounded-none bg-transparent">
+              <TabsTrigger value="overview" className="text-sm">Översikt</TabsTrigger>
+              <TabsTrigger value="chart" className="text-sm">Chart</TabsTrigger>
+              <TabsTrigger value="trade" className="text-sm">Handel</TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="overview" className="mt-0">
+            {/* Mobile Price Header */}
+            <div className="p-4 bg-gradient-to-b from-primary/5 to-transparent">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <span className="text-lg font-bold text-primary">{crypto.name.charAt(0)}</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold">{crypto.name}</h1>
+                  <div className="flex items-center gap-2">
+                    <span className="text-muted-foreground">{crypto.symbol}</span>
+                    <Badge variant="outline" className="text-xs">#{crypto.rank}</Badge>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center mb-4">
+                <div className="text-3xl font-bold mb-2">{formatPrice(crypto.price)}</div>
+                <div className="flex items-center justify-center gap-2">
+                  {formatChange(crypto.change24h)}
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Stats Grid */}
+            <div className="px-4 pb-4">
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <Card className="p-4">
+                  <div className="text-xs text-muted-foreground mb-1">Marknadskapital</div>
+                  <div className="font-bold">${crypto.marketCap}</div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-xs text-muted-foreground mb-1">Volym (24h)</div>
+                  <div className="font-bold">${crypto.volume}</div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-xs text-muted-foreground mb-1">Cirkulerande</div>
+                  <div className="font-bold">{info.supply}</div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-xs text-muted-foreground mb-1">Max Utbud</div>
+                  <div className="font-bold">{info.maxSupply}</div>
+                </Card>
+              </div>
+
+              {/* About Section */}
+              <Card className="p-4 mb-4">
+                <h3 className="font-bold mb-3">Om {crypto.name}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  {info.description}
+                </p>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" asChild className="flex-1">
+                    <a href={info.website} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                      <Globe size={14} />
+                      Webbplats
+                    </a>
+                  </Button>
+                  {info.whitepaper && (
+                    <Button variant="outline" size="sm" asChild className="flex-1">
+                      <a href={info.whitepaper} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
+                        <ExternalLink size={14} />
+                        Whitepaper
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="chart" className="mt-0">
+            <MobileChart
+              symbol={crypto.symbol}
+              currentPrice={crypto.price}
+              priceChange24h={crypto.change24h}
+              tokenName={crypto.name}
+              crypto={crypto}
+            />
+          </TabsContent>
+
+          <TabsContent value="trade" className="mt-0">
+            <MobileTradingPanel
+              symbol={crypto.symbol}
+              currentPrice={crypto.price}
+              priceChange24h={crypto.change24h}
+              tokenName={crypto.name}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
       <div className="pt-20 pb-12">
         <div className="container mx-auto px-4 max-w-7xl">
-          {/* Header */}
+          {/* Desktop content remains the same */}
           <div className="flex items-center gap-4 mb-8">
             <Button 
               variant="outline" 
