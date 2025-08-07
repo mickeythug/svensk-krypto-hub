@@ -129,8 +129,8 @@ export default {
 					'100%': { opacity: '1', transform: 'translateY(0)' }
 				},
 				'ticker': {
-					'0%': { transform: 'translateX(100%)' },
-					'100%': { transform: 'translateX(-100%)' }
+					'0%': { transform: 'translateX(0%)' },
+					'100%': { transform: 'translateX(-50%)' }
 				},
 				'pulse-glow': {
 					'0%, 100%': { 
@@ -150,7 +150,7 @@ export default {
 				'glow': 'glow 2s ease-in-out infinite',
 				'slide-up': 'slide-up 0.6s ease-out',
 				'fade-in': 'fade-in 0.8s ease-out',
-				'ticker': 'ticker 30s linear infinite',
+				'ticker': 'ticker 60s linear infinite',
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
 			}
 		}
