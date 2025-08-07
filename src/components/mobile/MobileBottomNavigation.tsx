@@ -2,9 +2,9 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   Home, 
   TrendingUp, 
-  Search, 
+  Newspaper, 
   Wallet, 
-  User 
+  Settings 
 } from "lucide-react";
 
 const MobileBottomNavigation = () => {
@@ -13,9 +13,9 @@ const MobileBottomNavigation = () => {
   const navItems = [
     { path: "/", icon: Home, label: "Hem" },
     { path: "/marknad", icon: TrendingUp, label: "Marknad" },
-    { path: "/search", icon: Search, label: "Sök" },
+    { path: "/news", icon: Newspaper, label: "Nyheter" },
     { path: "/portfolio", icon: Wallet, label: "Portfölj" },
-    { path: "/profil", icon: User, label: "Profil" }
+    { path: "/tools", icon: Settings, label: "Verktyg" }
   ];
 
   return (
