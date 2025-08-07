@@ -66,12 +66,28 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className={`flex flex-col ${isMobile ? 'gap-3' : 'sm:flex-row gap-4'} justify-center ${isMobile ? 'mb-8 px-4' : 'mb-12'} animate-fade-in`} style={{ animationDelay: '0.6s' }}>
-            <Button size={isMobile ? "default" : "lg"} className={`font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 transform hover:scale-105`}>
-              Gå med i Communityn
-            </Button>
-            <Button variant="outline" size={isMobile ? "default" : "lg"} className={`font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300`}>
-              Lär dig mer
-            </Button>
+            <a 
+              href="https://t.me/cryptonetworksweden" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 transform hover:scale-105`}>
+                Gå med i Communityn
+              </Button>
+            </a>
+            <button
+              onClick={() => {
+                const element = document.querySelector('#market');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }}
+            >
+              <Button variant="outline" size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300`}>
+                Lär dig mer
+              </Button>
+            </button>
           </div>
 
           {/* Stats Cards */}

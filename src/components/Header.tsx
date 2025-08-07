@@ -120,15 +120,22 @@ const Header = () => {
                 variant="outline" 
                 size="sm"
                 className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={() => window.open('https://t.me/cryptonetworksweden', '_blank')}
               >
                 Logga in
               </Button>
-              <Button 
-                size="sm"
-                className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+              <a 
+                href="https://t.me/cryptonetworksweden" 
+                target="_blank" 
+                rel="noopener noreferrer"
               >
-                Gå med
-              </Button>
+                <Button 
+                  size="sm"
+                  className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+                >
+                  Gå med
+                </Button>
+              </a>
             </div>
           )}
 
@@ -195,14 +202,22 @@ const Header = () => {
                 <Button 
                   variant="outline" 
                   className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  onClick={() => window.open('https://t.me/cryptonetworksweden', '_blank')}
                 >
                   Logga in
                 </Button>
-                <Button 
-                  className="w-full bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+                <a 
+                  href="https://t.me/cryptonetworksweden" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block"
                 >
-                  Gå med i Communityn
-                </Button>
+                  <Button 
+                    className="w-full bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+                  >
+                    Gå med i Communityn
+                  </Button>
+                </a>
               </div>
             </SheetContent>
           </Sheet>
