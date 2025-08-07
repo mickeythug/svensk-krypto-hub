@@ -12,6 +12,7 @@ const Index = lazy(() => import("./pages/Index"));
 const NewsPage = lazy(() => import("./pages/NewsPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const MarketOverviewPage = lazy(() => import("./pages/MarketOverviewPage"));
+const PortfolioPage = lazy(() => import("./pages/PortfolioPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -61,7 +62,7 @@ const App = memo(() => {
                 <Route path="/artikel/:id" element={<ArticleDetailPage />} />
                 <Route path="/marknad" element={<MarketOverviewPage />} />
                 <Route path="/verktyg" element={<ToolsPage />} />
-                <Route path="/portfolio" element={<Index />} />
+                <Route path="/portfolio" element={<PortfolioPage />} />
                 <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
