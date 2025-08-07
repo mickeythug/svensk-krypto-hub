@@ -70,7 +70,7 @@ import ltcLogo from "@/assets/crypto-logos/ltc.png";
 
 const MarketOverviewPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("top10");
+  const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const itemsPerPage = 15; // 15 tokens per sida som begärt
@@ -160,8 +160,40 @@ const MarketOverviewPage = () => {
     // Använd riktig top 100 data från CoinGecko API
     if (!cryptoPrices || cryptoPrices.length === 0) return [];
     
+    // Filtrera bort wrapped tokens och staked tokens
+    const filteredCryptoPrices = cryptoPrices.filter(crypto => {
+      const nameToCheck = crypto.name.toLowerCase();
+      const symbolToCheck = crypto.symbol.toLowerCase();
+      
+      // Lista över tokens att filtrera bort
+      const excludedKeywords = [
+        'wrapped',
+        'staked',
+        'lido',
+        'wsteth',
+        'steth',
+        'weth',
+        'wbtc',
+        'wbnb',
+        'wmatic',
+        'wsol',
+        'wdoge',
+        'wada',
+        'wavax',
+        'wdot',
+        'wlink',
+        'wuni',
+        'wltc',
+        'wxrp'
+      ];
+      
+      return !excludedKeywords.some(keyword => 
+        nameToCheck.includes(keyword) || symbolToCheck.includes(keyword)
+      );
+    });
+    
     // Konvertera riktig data till rätt format för tabellen
-    const formattedCrypto = cryptoPrices.map(crypto => ({
+    const formattedCrypto = filteredCryptoPrices.map(crypto => ({
       rank: crypto.rank || 1,
       name: crypto.name,
       symbol: crypto.symbol,
