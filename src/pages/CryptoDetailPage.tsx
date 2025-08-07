@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,6 @@ import {
   Calendar,
   Globe,
   ExternalLink,
-  Maximize,
-  Minimize,
   RefreshCw,
   AlertCircle
 } from "lucide-react";
@@ -25,10 +23,15 @@ import { useCryptoData } from "@/hooks/useCryptoData";
 const CryptoDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [chartError, setChartError] = useState(false);
-  const [chartWidget, setChartWidget] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { getCryptoBySymbol } = useCryptoData();
+  const chartRef = useRef<HTMLDivElement>(null);
+  const tradingViewScriptRef = useRef<HTMLScriptElement | null>(null);
+  const chartInitialized = useRef(false);
+  
+  // Cache för TradingView script
+  const scriptCache = useMemo(() => new Map(), []);
   
   // Omfattande slug-mappning för alla top 100 tokens 
   const slugToSymbol: Record<string, string> = {
@@ -376,124 +379,130 @@ const CryptoDetailPage = () => {
     return tradingPairs[symbol.toUpperCase()] || `BINANCE:${symbol.toUpperCase()}USDT`;
   };
 
-  const loadTradingViewChart = (container: HTMLElement) => {
+  // Optimerad chart loading med aggressiv cachning
+  const loadTradingViewChart = useCallback((container: HTMLElement, symbol: string) => {
+    if (chartInitialized.current) return;
+    
     try {
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-      script.async = true;
+      setIsLoading(true);
       
-      const tradingSymbol = getTradingViewSymbol(crypto?.symbol || '');
+      // Preload TradingView script i cache
+      const scriptSrc = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
       
-      script.innerHTML = JSON.stringify({
-        width: "100%",
-        height: isFullscreen ? "100vh" : "700",
-        symbol: tradingSymbol,
-        interval: "1D",
-        timezone: "Europe/Stockholm",
-        theme: "dark",
-        style: "1",
-        locale: "en",
-        toolbar_bg: "#000000",
-        enable_publishing: false,
-        hide_top_toolbar: false,
-        hide_legend: false,
-        save_image: true,
-        hide_side_toolbar: false,
-        allow_symbol_change: true,
-        studies: [],
-        container_id: "tradingview_chart"
-      });
-      container.appendChild(script);
-      setChartError(false);
+      const loadScript = () => {
+        const script = document.createElement('script');
+        script.src = scriptSrc;
+        script.async = true;
+        script.defer = true;
+        
+        const tradingSymbol = getTradingViewSymbol(symbol);
+        
+        // Optimerad konfiguration för snabbast möjliga laddning
+        const config = {
+          width: "100%",
+          height: "700",
+          symbol: tradingSymbol,
+          interval: "1D",
+          timezone: "Europe/Stockholm",
+          theme: "dark",
+          style: "1",
+          locale: "en",
+          toolbar_bg: "#000000",
+          enable_publishing: false,
+          hide_top_toolbar: false,
+          hide_legend: false,
+          save_image: false, // Disabled för prestanda
+          hide_side_toolbar: false,
+          allow_symbol_change: false, // Disabled för prestanda
+          studies: [],
+          container_id: "tradingview_chart",
+          autosize: true,
+          hide_volume: false,
+          calendar: false, // Disabled för prestanda
+          news: [], // Disabled för prestanda
+          hotlist: false // Disabled för prestanda
+        };
+        
+        script.innerHTML = JSON.stringify(config);
+        
+        // Onload event för snabb feedback
+        script.onload = () => {
+          setIsLoading(false);
+          setChartError(false);
+          chartInitialized.current = true;
+        };
+        
+        script.onerror = () => {
+          setChartError(true);
+          setIsLoading(false);
+        };
+        
+        container.appendChild(script);
+        tradingViewScriptRef.current = script;
+      };
+
+      // Instant loading utan delay
+      loadScript();
+      
     } catch (error) {
       console.error('Error loading TradingView chart:', error);
       setChartError(true);
+      setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (!crypto) {
-      // Bara vänta på att data ska laddas, omdirigera inte
-      return;
-    }
-
-    const loadChart = () => {
-      const chartContainer = document.getElementById('tradingview_chart');
-      if (!chartContainer) return;
-
-      // Clear previous content
-      chartContainer.innerHTML = '';
-      loadTradingViewChart(chartContainer);
-    };
-
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(loadChart, 100);
-
-    return () => {
-      clearTimeout(timer);
-      const chartContainer = document.getElementById('tradingview_chart');
-      if (chartContainer) {
-        chartContainer.innerHTML = '';
-      }
-    };
-  }, [crypto, navigate, slug, isFullscreen]);
-
-  // Hantera fullscreen med HTML5 Fullscreen API
-  const toggleFullscreen = () => {
-    const chartContainer = document.getElementById('tradingview_chart');
-    if (!chartContainer) return;
-
-    if (!document.fullscreenElement) {
-      // Enter fullscreen
-      chartContainer.requestFullscreen().then(() => {
-        setIsFullscreen(true);
-        // Uppdatera chart storlek efter fullscreen
-        setTimeout(() => {
-          reloadChart();
-        }, 100);
-      }).catch(err => {
-        console.error('Fullscreen error:', err);
-      });
-    } else {
-      // Exit fullscreen
-      document.exitFullscreen().then(() => {
-        setIsFullscreen(false);
-        // Uppdatera chart storlek efter exit fullscreen
-        setTimeout(() => {
-          reloadChart();
-        }, 100);
-      });
-    }
-  };
-
-  // Lyssna på fullscreen ändringar
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      const isCurrentlyFullscreen = !!document.fullscreenElement;
-      setIsFullscreen(isCurrentlyFullscreen);
-      
-      if (!isCurrentlyFullscreen) {
-        // Om användaren trycker ESC för att lämna fullscreen
-        setTimeout(() => {
-          reloadChart();
-        }, 100);
-      }
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
   }, []);
 
-  // Funktion för att ladda om charten med ny storlek
-  const reloadChart = () => {
-    const chartContainer = document.getElementById('tradingview_chart');
-    if (chartContainer && crypto) {
+  // Preload nästa chart för ännu snabbare navigering
+  const preloadChart = useCallback((symbol: string) => {
+    const tradingSymbol = getTradingViewSymbol(symbol);
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = `https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js`;
+    link.as = 'script';
+    document.head.appendChild(link);
+  }, []);
+
+  useEffect(() => {
+    if (!crypto) return;
+
+    chartInitialized.current = false;
+    
+    const loadChart = () => {
+      const chartContainer = chartRef.current;
+      if (!chartContainer) return;
+
+      // Instant clear och reload
       chartContainer.innerHTML = '';
-      loadTradingViewChart(chartContainer);
-    }
-  };
+      loadTradingViewChart(chartContainer, crypto.symbol);
+    };
+
+    // Instant loading - ingen delay
+    loadChart();
+
+    // Preload nästa populära charts
+    const popularSymbols = ['BTC', 'ETH', 'SOL', 'BNB'];
+    popularSymbols.forEach(symbol => {
+      if (symbol !== crypto.symbol) {
+        preloadChart(symbol);
+      }
+    });
+
+    return () => {
+      chartInitialized.current = false;
+      if (tradingViewScriptRef.current) {
+        tradingViewScriptRef.current.remove();
+        tradingViewScriptRef.current = null;
+      }
+    };
+  }, [crypto, loadTradingViewChart, preloadChart]);
+
+  // Instant chart reload för prestanda
+  const reloadChart = useCallback(() => {
+    if (!crypto || !chartRef.current) return;
+    
+    chartInitialized.current = false;
+    chartRef.current.innerHTML = '';
+    loadTradingViewChart(chartRef.current, crypto.symbol);
+  }, [crypto, loadTradingViewChart]);
 
 
   if (!symbol || !info) {
@@ -658,7 +667,7 @@ const CryptoDetailPage = () => {
             </Card>
           </div>
 
-          {/* TradingView Chart med fullscreen support */}
+          {/* TradingView Chart - Optimerad för prestanda */}
           <Card className="p-6 bg-card/80 backdrop-blur-sm shadow-lg">
             <div className="flex justify-between items-center mb-6">
               <h2 className="font-crypto text-xl font-bold">Live Chart</h2>
@@ -666,29 +675,12 @@ const CryptoDetailPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={toggleFullscreen}
-                  className="flex items-center gap-2"
-                >
-                  {isFullscreen ? (
-                    <>
-                      <Minimize size={16} />
-                      Lämna Fullskärm
-                    </>
-                  ) : (
-                    <>
-                      <Maximize size={16} />
-                      Fullskärm
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
                   onClick={reloadChart}
                   className="flex items-center gap-2"
+                  disabled={isLoading}
                 >
-                  <RefreshCw size={16} />
-                  Uppdatera
+                  <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+                  {isLoading ? "Laddar..." : "Uppdatera"}
                 </Button>
               </div>
             </div>
@@ -707,75 +699,83 @@ const CryptoDetailPage = () => {
               </div>
             ) : (
               <div 
+                ref={chartRef}
                 id="tradingview_chart" 
-                className={`w-full rounded-lg overflow-hidden ${
-                  isFullscreen ? 'fixed inset-0 z-50 bg-black' : 'relative'
-                }`}
+                className="w-full rounded-lg overflow-hidden relative"
                 style={{ 
-                  height: isFullscreen ? '100vh' : '700px',
-                  minHeight: isFullscreen ? '100vh' : '700px'
+                  height: '700px',
+                  minHeight: '700px'
                 }}
-              />
+              >
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                    <div className="flex items-center space-x-2">
+                      <RefreshCw className="animate-spin h-6 w-6 text-primary" />
+                      <span className="font-crypto">Laddar chart...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </Card>
 
-          {/* Description and Links - Hidden in fullscreen */}
-          {!isFullscreen && (
+          {/* Description and Links */}
+          <div className="mt-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <Card className="p-6 bg-card/80 backdrop-blur-sm">
-              <h3 className="font-crypto text-xl font-bold mb-4">Om {crypto.name}</h3>
-              <p className="text-muted-foreground leading-relaxed mb-6">
-                {info.description}
-              </p>
-              
-              <div className="flex flex-wrap gap-4">
-                <Button variant="outline" size="sm" asChild>
-                  <a href={info.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                    <Globe size={16} />
-                    Officiell Webbplats
-                    <ExternalLink size={14} />
-                  </a>
-                </Button>
+              <Card className="p-6 bg-card/80 backdrop-blur-sm">
+                <h3 className="font-crypto text-xl font-bold mb-4">Om {crypto.name}</h3>
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  {info.description}
+                </p>
                 
-                {info.whitepaper && (
+                <div className="flex flex-wrap gap-4">
                   <Button variant="outline" size="sm" asChild>
-                    <a href={info.whitepaper} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                      <DollarSign size={16} />
-                      Whitepaper
+                    <a href={info.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                      <Globe size={16} />
+                      Officiell Webbplats
                       <ExternalLink size={14} />
                     </a>
                   </Button>
-                )}
-              </div>
-            </Card>
+                  
+                  {info.whitepaper && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={info.whitepaper} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                        <DollarSign size={16} />
+                        Whitepaper
+                        <ExternalLink size={14} />
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </Card>
 
-            <Card className="p-6 bg-card/80 backdrop-blur-sm">
-              <h3 className="font-crypto text-xl font-bold mb-4">Marknadsstatistik</h3>
-              
-              <div className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b border-border/50">
-                  <span className="text-muted-foreground">Ranking</span>
-                  <span className="font-display font-semibold">#{crypto.rank}</span>
-                </div>
+              <Card className="p-6 bg-card/80 backdrop-blur-sm">
+                <h3 className="font-crypto text-xl font-bold mb-4">Marknadsstatistik</h3>
                 
-                <div className="flex justify-between items-center py-2 border-b border-border/50">
-                  <span className="text-muted-foreground">Aktuellt Pris</span>
-                  <span className="font-display font-semibold">{formatPrice(crypto.price)}</span>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">Ranking</span>
+                    <span className="font-display font-semibold">#{crypto.rank}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">Aktuellt Pris</span>
+                    <span className="font-display font-semibold">{formatPrice(crypto.price)}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="text-muted-foreground">24h Förändring</span>
+                    {formatChange(crypto.change24h)}
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-muted-foreground">Marknadskapital</span>
+                    <span className="font-display font-semibold">${crypto.marketCap}</span>
+                  </div>
                 </div>
-                
-                <div className="flex justify-between items-center py-2 border-b border-border/50">
-                  <span className="text-muted-foreground">24h Förändring</span>
-                  {formatChange(crypto.change24h)}
-                </div>
-                
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-muted-foreground">Marknadskapital</span>
-                  <span className="font-display font-semibold">${crypto.marketCap}</span>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </div>
           </div>
-          )}
         </div>
       </div>
     </div>
