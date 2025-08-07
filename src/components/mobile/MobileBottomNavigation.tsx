@@ -13,9 +13,9 @@ const MobileBottomNavigation = () => {
   const navItems = [
     { path: "/", icon: Home, label: "Hem" },
     { path: "/marknad", icon: TrendingUp, label: "Marknad" },
-    { path: "/news", icon: Newspaper, label: "Nyheter" },
+    { path: "/nyheter", icon: Newspaper, label: "Nyheter" },
     { path: "/portfolio", icon: Wallet, label: "Portfölj" },
-    { path: "/tools", icon: Settings, label: "Verktyg" }
+    { path: "/verktyg", icon: Settings, label: "Verktyg" }
   ];
 
   return (

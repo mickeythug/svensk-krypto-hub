@@ -59,6 +59,7 @@ const App = memo(() => {
                 <Route path="/nyheter" element={<NewsPage />} />
                 <Route path="/marknad" element={<MarketOverviewPage />} />
                 <Route path="/verktyg" element={<ToolsPage />} />
+                <Route path="/portfolio" element={<Index />} />
                 <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
