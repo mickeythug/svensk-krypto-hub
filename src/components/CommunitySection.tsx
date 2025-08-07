@@ -217,28 +217,6 @@ const CommunitySection = () => {
           </div>
         </div>
 
-        {/* CTA Section */}
-        <Card className="p-8 text-center bg-gradient-secondary border-border">
-          <div className="max-w-2xl mx-auto">
-            <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h3 className="font-crypto text-2xl font-bold mb-4">
-              REDO ATT GÅ MED I OSS?
-            </h3>
-            <p className="font-display text-muted-foreground mb-6">
-              Börja din krypto-resa idag med Sveriges vänligaste och mest hjälpsamma community. 
-              Det är gratis att gå med och du får omedelbar tillgång till alla våra resurser.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-primary hover:shadow-glow-primary">
-                Gå med nu - Gratis!
-              </Button>
-              <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                Läs mer om medlemskap
-              </Button>
-            </div>
-          </div>
-        </Card>
       </div>
     </section>
   );
