@@ -89,7 +89,6 @@ export default {
 				'sans': ['Inter', 'sans-serif'],
 				'crypto': ['Orbitron', 'monospace'],
 				'display': ['Exo 2', 'sans-serif'],
-				'glitch': ['Black Ops One', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -142,52 +141,6 @@ export default {
 						boxShadow: '0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.6)',
 						transform: 'scale(1.05)'
 					}
-				},
-				'glitch': {
-					'0%': { 
-						transform: 'translate(0)',
-						textShadow: 'none'
-					},
-					'10%': { 
-						transform: 'translate(-1px, -1px)',
-						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
-					},
-					'20%': { 
-						transform: 'translate(1px, 1px)',
-						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
-					},
-					'30%': { 
-						transform: 'translate(-1px, 1px)',
-						textShadow: '2px 0 0 #12E19F, -2px 0 0 #12E19F'
-					},
-					'40%': { 
-						transform: 'translate(1px, -1px)',
-						textShadow: 'none'
-					},
-					'50%': { 
-						transform: 'translate(0)',
-						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
-					},
-					'60%': { 
-						transform: 'translate(-1px, 0)',
-						textShadow: 'none'
-					},
-					'70%': { 
-						transform: 'translate(1px, 0)',
-						textShadow: '2px 0 0 #12E19F, -2px 0 0 #12E19F'
-					},
-					'80%': { 
-						transform: 'translate(0)',
-						textShadow: 'none'
-					},
-					'90%': { 
-						transform: 'translate(-1px, 1px)',
-						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
-					},
-					'100%': { 
-						transform: 'translate(0)',
-						textShadow: 'none'
-					}
 				}
 			},
 			animation: {
@@ -198,8 +151,7 @@ export default {
 				'slide-up': 'slide-up 0.6s ease-out',
 				'fade-in': 'fade-in 0.8s ease-out',
 				'ticker': 'ticker 30s linear infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'glitch': 'glitch 3s infinite'
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
 			}
 		}
 	},
