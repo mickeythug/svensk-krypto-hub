@@ -13,6 +13,7 @@ interface CryptoPrice {
   supply?: string;
   rank?: number;
   lastUpdated?: string;
+  image?: string; // Riktig logo URL från CoinGecko
 }
 
 interface CacheEntry<T> {
@@ -407,18 +408,30 @@ class CryptoAPIClient {
   }
 
   private transformMarketAPIResponse(data: any[]): CryptoPrice[] {
-    return data.map((coin, index) => {
-      return {
-        symbol: coin.symbol.toUpperCase(),
-        name: coin.name,
-        price: coin.current_price,
-        change24h: coin.price_change_percentage_24h || 0,
-        marketCap: formatters.marketCap(coin.market_cap || 0),
-        volume: formatters.volume(coin.total_volume || 0),
-        rank: coin.market_cap_rank || (index + 1),
-        lastUpdated: new Date(coin.last_updated).toISOString()
-      };
-    }).filter(Boolean) as CryptoPrice[];
+    return data
+      .filter(coin => {
+        // Filtrera bort staked och wrapped tokens
+        const name = coin.name.toLowerCase();
+        const id = coin.id.toLowerCase();
+        return !name.includes('staked') && 
+               !name.includes('wrapped') && 
+               !id.includes('staked') && 
+               !id.includes('wrapped') &&
+               !name.includes('liquid staking');
+      })
+      .map((coin, index) => {
+        return {
+          symbol: coin.symbol.toUpperCase(),
+          name: coin.name,
+          price: coin.current_price,
+          change24h: coin.price_change_percentage_24h || 0,
+          marketCap: formatters.marketCap(coin.market_cap || 0),
+          volume: formatters.volume(coin.total_volume || 0),
+          rank: coin.market_cap_rank || (index + 1),
+          lastUpdated: new Date(coin.last_updated).toISOString(),
+          image: coin.image // Lägg till riktig bild URL från CoinGecko
+        };
+      }).filter(Boolean) as CryptoPrice[];
   }
 
   private recordFailure(): void {

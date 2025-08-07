@@ -76,8 +76,14 @@ const MarketOverviewPage = () => {
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
 
-  // Logo mapping for different cryptocurrencies
-  const getCryptoLogo = (symbol: string) => {
+  // Använd riktiga logo bilder från CoinGecko API
+  const getCryptoLogo = (crypto: any) => {
+    // Använd riktig bild från API om tillgänglig, annars fallback till lokal bild
+    if (crypto.image) {
+      return crypto.image;
+    }
+    
+    // Fallback till lokala bilder för vanliga tokens
     const logoMap: { [key: string]: string } = {
       'BTC': btcLogo,
       'ETH': ethLogo,
@@ -91,21 +97,9 @@ const MarketOverviewPage = () => {
       'MATIC': maticLogo,
       'DOGE': dogeLogo,
       'SHIB': shibLogo,
-      'LTC': ltcLogo,
-      'PEPE': btcLogo, // fallback
-      'BONK': ethLogo, // fallback
-      'FLOKI': bnbLogo, // fallback
-      'UNI': linkLogo, // fallback
-      'ICP': solLogo, // fallback
-      'ATOM': dotLogo, // fallback
-      'NEAR': avaxLogo, // fallback
-      'ALGO': maticLogo, // fallback
-      'VET': xrpLogo, // fallback
-      'FTM': adaLogo, // fallback
-      'GRT': linkLogo, // fallback
-      'HBAR': dogeLogo // fallback
+      'LTC': ltcLogo
     };
-    return logoMap[symbol] || btcLogo; // default fallback
+    return logoMap[crypto.symbol] || btcLogo;
   };
 
   const marketSentiment = {
@@ -177,7 +171,8 @@ const MarketOverviewPage = () => {
       change7d: 0, // CoinGecko markets API ger inte 7d data direkt
       marketCap: crypto.marketCap || "0",
       volume: crypto.volume || "0",
-      supply: `${crypto.supply || "0"} ${crypto.symbol}`
+      supply: `${crypto.supply || "0"} ${crypto.symbol}`,
+      image: crypto.image // Inkludera riktig bild URL
     }));
 
     switch (activeTab) {
@@ -499,7 +494,7 @@ const MarketOverviewPage = () => {
                             <div className="flex items-center space-x-4">
                               <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
                                 <img 
-                                  src={getCryptoLogo(crypto.symbol)} 
+                                  src={getCryptoLogo(crypto)} 
                                   alt={crypto.name}
                                   className="w-full h-full object-contain"
                                 />
@@ -601,7 +596,7 @@ const MarketOverviewPage = () => {
                         <div className="flex items-center space-x-3">
                           <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
                             <img 
-                              src={getCryptoLogo(crypto.symbol)} 
+                              src={getCryptoLogo(crypto)} 
                               alt={crypto.name}
                               className="w-full h-full object-contain"
                             />
@@ -874,7 +869,7 @@ const MarketOverviewPage = () => {
                 <div className="flex-1 flex items-center space-x-3">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-white">
                     <img 
-                      src={getCryptoLogo(crypto.symbol)} 
+                      src={getCryptoLogo(crypto)} 
                       alt={crypto.name}
                       className="w-full h-full object-contain"
                     />
