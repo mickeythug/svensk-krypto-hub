@@ -62,18 +62,18 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-background">
       {/* Main Chart Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Modern TradingView Chart Container */}
-        <div className="flex-1 m-2 relative overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Chart Container - Perfect spacing */}
+        <div className="flex-1 m-3 rounded-lg overflow-hidden shadow-lg">
           <ModernTradingViewChart symbol={symbol} currentPrice={currentPrice} />
         </div>
 
-        {/* Bottom Panels */}
-        <div className="h-48 m-2">
+        {/* Bottom Panels - Clean separation */}
+        <div className="h-48 mx-3 mb-3">
           <Tabs defaultValue="positions" className="h-full">
-            <TabsList className="mb-2">
+            <TabsList className="mb-2 bg-card/60">
               <TabsTrigger value="positions" className="text-xs">Positions</TabsTrigger>
               <TabsTrigger value="orders" className="text-xs">Open Orders</TabsTrigger>
               <TabsTrigger value="history" className="text-xs">Order History</TabsTrigger>
@@ -81,7 +81,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsList>
             
             <TabsContent value="positions" className="h-full">
-              <Card className="h-full p-4 bg-card/40">
+              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
                 <div className="text-center text-muted-foreground text-sm">
                   No open positions
                 </div>
@@ -89,7 +89,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsContent>
             
             <TabsContent value="orders" className="h-full">
-              <Card className="h-full p-4 bg-card/40">
+              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
                 <div className="text-center text-muted-foreground text-sm">
                   No open orders
                 </div>
@@ -97,7 +97,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsContent>
             
             <TabsContent value="history" className="h-full">
-              <Card className="h-full p-4 bg-card/40">
+              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
                 <div className="text-center text-muted-foreground text-sm">
                   No order history
                 </div>
@@ -105,7 +105,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsContent>
             
             <TabsContent value="balances" className="h-full">
-              <Card className="h-full p-4 bg-card/40">
+              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>USDC</span>
@@ -122,12 +122,12 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         </div>
       </div>
 
-      {/* Right Sidebar */}
-      <div className="w-80 flex flex-col">
-        {/* Orderbook */}
-        <div className="flex-1 m-2 mb-1">
-          <Card className="h-full bg-card/40">
-            <div className="p-3 border-b border-border/20">
+      {/* Right Sidebar - Perfect spacing and alignment */}
+      <div className="w-80 flex flex-col bg-card/20 border-l border-border/30">
+        {/* Orderbook - Top section */}
+        <div className="flex-1 m-3 mb-2">
+          <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
+            <div className="p-3 border-b border-border/30 bg-background/40">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-sm">Order Book</h3>
@@ -137,7 +137,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                     <WifiOff className="h-3 w-3 text-destructive" />
                   )}
                 </div>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-xs text-muted-foreground font-mono">
                   Spread: {calculateSpread()}%
                 </div>
               </div>
@@ -148,10 +148,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             
             <div className="h-full overflow-hidden">
               {/* Header */}
-              <div className="grid grid-cols-3 text-xs text-muted-foreground p-2 border-b border-border/10">
-                <span>Price (USDC)</span>
-                <span className="text-right">Size ({symbol})</span>
-                <span className="text-right">Total</span>
+              <div className="grid grid-cols-3 text-xs text-muted-foreground p-3 border-b border-border/20 bg-background/20">
+                <span className="font-semibold">Price (USDT)</span>
+                <span className="text-right font-semibold">Size ({symbol})</span>
+                <span className="text-right font-semibold">Total</span>
               </div>
               
               {/* Asks (Sell orders) - Red */}
@@ -206,16 +206,16 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           </Card>
         </div>
 
-        {/* Trading Panel */}
-        <div className="h-96 m-2 mt-1">
-          <Card className="h-full bg-card/40">
-            <div className="p-3 border-b border-border/20">
+        {/* Trading Panel - Bottom section with perfect spacing */}
+        <div className="h-96 m-3 mt-2">
+          <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
+            <div className="p-3 border-b border-border/30 bg-background/40">
               <div className="flex gap-1">
                 <Button
                   variant={side === "buy" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSide("buy")}
-                  className={`flex-1 ${side === "buy" ? "bg-success hover:bg-success/90 text-white" : ""}`}
+                  className={`flex-1 transition-all ${side === "buy" ? "bg-success hover:bg-success/90 text-white shadow-md" : "hover:bg-success/20"}`}
                 >
                   Buy
                 </Button>
@@ -223,21 +223,21 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                   variant={side === "sell" ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSide("sell")}
-                  className={`flex-1 ${side === "sell" ? "bg-destructive hover:bg-destructive/90 text-white" : ""}`}
+                  className={`flex-1 transition-all ${side === "sell" ? "bg-destructive hover:bg-destructive/90 text-white shadow-md" : "hover:bg-destructive/20"}`}
                 >
                   Sell
                 </Button>
               </div>
             </div>
             
-            <div className="p-3 space-y-3">
+            <div className="p-4 space-y-4 bg-background/20">
               {/* Order Type */}
               <div className="flex gap-1 text-xs">
                 <Button
                   variant={orderType === "market" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setOrderType("market")}
-                  className="flex-1 h-7"
+                  className="flex-1 h-8"
                 >
                   Market
                 </Button>
@@ -245,7 +245,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                   variant={orderType === "limit" ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setOrderType("limit")}
-                  className="flex-1 h-7"
+                  className="flex-1 h-8"
                 >
                   Limit
                 </Button>
@@ -253,7 +253,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
               {/* Leverage */}
               <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Leverage</label>
+                <label className="text-xs text-muted-foreground mb-2 block font-semibold">Leverage</label>
                 <div className="flex gap-1">
                   {["1", "2", "5", "10", "20"].map((lev) => (
                     <Button
@@ -261,7 +261,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                       variant={leverage === lev ? "default" : "outline"}
                       size="sm"
                       onClick={() => setLeverage(lev)}
-                      className="flex-1 h-7 text-xs"
+                      className="flex-1 h-8 text-xs"
                     >
                       {lev}x
                     </Button>

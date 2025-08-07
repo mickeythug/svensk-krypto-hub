@@ -114,57 +114,61 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
 
   return (
     <Card className="h-full bg-background/95 backdrop-blur-sm border-border/20 relative overflow-hidden">
-      {/* Chart Controls */}
-      <div className="absolute top-4 left-4 flex gap-2 z-20">
-        {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
-          <Badge
-            key={tf}
-            variant={timeframe === tf ? "default" : "outline"}
-            className={`cursor-pointer bg-background/90 backdrop-blur-sm transition-all hover:scale-105 ${
-              timeframe === tf ? "bg-primary text-primary-foreground" : "hover:bg-primary/20"
-            }`}
-            onClick={() => handleTimeframeChange(tf)}
+      {/* Top Controls Bar - Fixed above chart */}
+      <div className="absolute top-0 left-0 right-0 h-14 bg-background/90 backdrop-blur-md border-b border-border/20 flex items-center justify-between px-4 z-30">
+        {/* Left: Timeframe Controls */}
+        <div className="flex gap-1">
+          {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
+            <Badge
+              key={tf}
+              variant={timeframe === tf ? "default" : "outline"}
+              className={`cursor-pointer transition-all hover:scale-105 ${
+                timeframe === tf ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-primary/20"
+              }`}
+              onClick={() => handleTimeframeChange(tf)}
+            >
+              {tf}
+            </Badge>
+          ))}
+        </div>
+        
+        {/* Right: Action Controls */}
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 hover:bg-primary/20"
+            onClick={handleRetry}
           >
-            {tf}
-          </Badge>
-        ))}
-      </div>
-      
-      <div className="absolute top-4 right-4 flex gap-2 z-20">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm hover:bg-primary/20"
-          onClick={handleRetry}
-        >
-          <RefreshCw className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm hover:bg-primary/20"
-          onClick={toggleFullscreen}
-        >
-          <Maximize2 className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm hover:bg-primary/20"
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/90 backdrop-blur-sm hover:bg-primary/20"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 hover:bg-primary/20"
+            onClick={toggleFullscreen}
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 hover:bg-primary/20"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 hover:bg-primary/20"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Price Display */}
-      <div className="absolute top-16 left-4 z-20 bg-background/95 backdrop-blur-sm rounded-lg p-3 border border-border/20">
+      {/* Price Display - Fixed in top left corner below controls */}
+      <div className="absolute top-16 left-4 z-20 bg-background/95 backdrop-blur-sm rounded-lg p-3 border border-border/20 shadow-lg">
         <div className="text-lg font-bold font-mono text-foreground">
           ${currentPrice.toLocaleString()}
         </div>
@@ -173,13 +177,14 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
         </div>
       </div>
 
-      {/* Chart Container */}
+      {/* Chart Container - Properly spaced below controls */}
       <div 
         ref={containerRef} 
-        className="w-full h-full min-h-[500px] relative"
+        className="w-full h-full pt-14"
+        style={{ minHeight: 'calc(100% - 56px)' }}
       >
         {hasError ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/90">
+          <div className="flex items-center justify-center h-full bg-background/90">
             <div className="text-center">
               <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
               <h3 className="text-lg font-semibold mb-2">Kunde inte ladda chart</h3>
@@ -191,7 +196,7 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
             </div>
           </div>
         ) : !isLoaded ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/90">
+          <div className="flex items-center justify-center h-full bg-background/90">
             <div className="text-center">
               <div className="animate-spin mx-auto h-12 w-12 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
               <h3 className="text-lg font-semibold mb-2">Laddar TradingView Chart</h3>
