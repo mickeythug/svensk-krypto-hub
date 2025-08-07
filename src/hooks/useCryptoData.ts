@@ -510,5 +510,3 @@ export const useCryptoData = () => {
     refreshData
   }), [cryptoPrices, isLoading, error, isStale, getCryptoBySymbol, getCryptoByName, refreshData]);
 };
-
-export default useCryptoData;
