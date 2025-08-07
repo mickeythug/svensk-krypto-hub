@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import TransparentLogo from "@/components/TransparentLogo";
 import { MessageCircle, Video, Twitter, Instagram, Youtube, Users, Mail, MapPin, Phone } from "lucide-react";
 
 const FooterSection = () => {
@@ -37,8 +38,8 @@ const FooterSection = () => {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <img 
-                src="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png" 
+              <TransparentLogo
+                originalSrc="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png"
                 alt="Crypto Network Sweden"
                 className="h-16 w-auto mb-4"
               />

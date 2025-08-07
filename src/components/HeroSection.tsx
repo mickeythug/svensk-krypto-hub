@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Hexagon, Users, TrendingUp, BookOpen } from "lucide-react";
+import TransparentLogo from "@/components/TransparentLogo";
 import hexPattern from "@/assets/hex-pattern.jpg";
 
 const HeroSection = () => {
@@ -34,10 +35,10 @@ const HeroSection = () => {
           <div className="mb-8 animate-fade-in">
             <div className="flex items-center justify-center mb-6">
               <div className="relative">
-                <img 
-                  src="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png" 
+                <TransparentLogo
+                  originalSrc="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png"
                   alt="Crypto Network Sweden"
-                  className="h-32 w-auto filter drop-shadow-lg animate-pulse-glow"
+                  className="h-32 w-auto animate-pulse-glow"
                 />
               </div>
             </div>
