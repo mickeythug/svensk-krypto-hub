@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
@@ -14,6 +15,8 @@ import {
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,17 +27,31 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { name: "Marknadsöversikt", href: "#market", icon: TrendingUp },
-    { name: "Community", href: "#community", icon: Users },
-    { name: "Utbildning", href: "#education", icon: BookOpen },
-    { name: "Nyheter", href: "#news", icon: Newspaper },
-    { name: "Kontakt", href: "#contact", icon: MessageCircle },
+    { name: "Marknadsöversikt", href: "#market", icon: TrendingUp, route: false },
+    { name: "Community", href: "#community", icon: Users, route: false },
+    { name: "Utbildning", href: "#education", icon: BookOpen, route: false },
+    { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true },
+    { name: "Kontakt", href: "#contact", icon: MessageCircle, route: false },
   ];
 
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleNavigation = (item: typeof navItems[0]) => {
+    if (item.route) {
+      navigate(item.href);
+    } else {
+      if (location.pathname !== '/') {
+        navigate('/');
+        setTimeout(() => {
+          const element = document.querySelector(item.href);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 100);
+      } else {
+        const element = document.querySelector(item.href);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
     }
     setIsOpen(false);
   };
@@ -77,7 +94,7 @@ const Header = () => {
               return (
                 <button
                   key={item.name}
-                  onClick={() => scrollToSection(item.href)}
+                  onClick={() => handleNavigation(item)}
                   className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-display font-medium"
                 >
                   <IconComponent size={16} />
@@ -147,7 +164,7 @@ const Header = () => {
                   return (
                     <button
                       key={item.name}
-                      onClick={() => scrollToSection(item.href)}
+                      onClick={() => handleNavigation(item)}
                       className="flex items-center space-x-3 w-full p-3 rounded-lg hover:bg-muted transition-colors font-display"
                     >
                       <IconComponent size={20} className="text-primary" />
