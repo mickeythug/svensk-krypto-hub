@@ -20,6 +20,7 @@ All colors MUST be HSL.
 
     --primary: 180 100% 50%; /* Bright cyan like logo */
     --primary-foreground: 214 32% 8%;
+    --primary-glow: 180 80% 45%; /* Lighter version of primary */
 
     --secondary: 214 25% 18%; /* Muted navy */
     --secondary-foreground: 180 100% 85%;

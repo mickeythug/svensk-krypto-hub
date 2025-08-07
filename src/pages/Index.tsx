@@ -7,25 +7,62 @@ import MemeTokenSection from "@/components/MemeTokenSection";
 import NewsSection from "@/components/NewsSection";
 import CommunitySection from "@/components/CommunitySection";
 import FooterSection from "@/components/FooterSection";
+import LazySection from "@/components/LazySection";
+import { useEffect } from "react";
 
 const Index = () => {
+  // SEO optimization
+  useEffect(() => {
+    document.title = "Crypto Network Sweden - Din Krypto Community | Bitcoin, Ethereum & DeFi";
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 
+        'Sveriges ledande krypto community. Lär dig om kryptovalutor, följ marknaden i realtid och träff nya vänner med samma passion för Web3. Gå med idag!'
+      );
+    }
+
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', 'https://cryptonetworksweden.se/');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <CryptoPriceTicker />
       <HeroSection />
-      <SocialMediaSection />
+      
+      <LazySection>
+        <SocialMediaSection />
+      </LazySection>
+      
       <div id="market" className="scroll-mt-20">
-        <MarketOverview />
+        <LazySection>
+          <MarketOverview />
+        </LazySection>
       </div>
-      <MemeTokenSection />
+      
+      <LazySection>
+        <MemeTokenSection />
+      </LazySection>
+      
       <div id="news" className="scroll-mt-20">
-        <NewsSection />
+        <LazySection>
+          <NewsSection />
+        </LazySection>
       </div>
+      
       <div id="community" className="scroll-mt-20">
-        <CommunitySection />
+        <LazySection>
+          <CommunitySection />
+        </LazySection>
       </div>
-      <FooterSection />
+      
+      <LazySection>
+        <FooterSection />
+      </LazySection>
     </div>
   );
 };
