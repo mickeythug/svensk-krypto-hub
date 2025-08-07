@@ -1,7 +1,15 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, TrendingUp, Users, BookOpen, MessageCircle, Newspaper } from "lucide-react";
+import { 
+  Menu, 
+  X, 
+  TrendingUp, 
+  Users, 
+  BookOpen, 
+  MessageCircle, 
+  Newspaper 
+} from "lucide-react";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
