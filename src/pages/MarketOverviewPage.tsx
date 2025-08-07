@@ -591,7 +591,8 @@ const MarketOverviewPage = () => {
                   {currentData.map((crypto) => (
                     <Card 
                       key={crypto.symbol}
-                      className="p-6 hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 bg-background/50 backdrop-blur-sm"
+                      className="p-6 hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 backdrop-blur-sm"
+                      style={{ backgroundColor: 'hsl(var(--crypto-grid-background))' }}
                       onClick={() => navigate(`/crypto/${crypto.slug}`)}
                     >
                       <div className="flex items-center justify-between mb-4">
@@ -603,59 +604,59 @@ const MarketOverviewPage = () => {
                               className="w-full h-full object-contain"
                             />
                           </div>
-                          <div>
-                            <h3 className="font-semibold text-foreground text-lg">{crypto.name}</h3>
-                            <p className="text-muted-foreground font-mono">{crypto.symbol}</p>
-                          </div>
-                        </div>
-                        <Badge variant="secondary" className="text-xs px-2 py-1 bg-secondary/30">
-                          #{crypto.rank}
-                        </Badge>
-                      </div>
-                      
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">Pris</span>
-                          <span className="font-mono font-semibold text-lg">{formatPrice(crypto.price)}</span>
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-2">
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mb-1">1h</p>
-                            <div className={`text-sm font-medium ${
-                              crypto.change1h >= 0 ? 'text-success' : 'text-destructive'
-                            }`}>
-                              {crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mb-1">24h</p>
-                            <div className={`text-sm font-medium ${
-                              crypto.change24h >= 0 ? 'text-success' : 'text-destructive'
-                            }`}>
-                              {crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-xs text-muted-foreground mb-1">7d</p>
-                            <div className={`text-sm font-medium ${
-                              crypto.change7d >= 0 ? 'text-success' : 'text-destructive'
-                            }`}>
-                              {crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="pt-2 border-t border-border/20">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Market Cap</span>
-                            <span className="font-mono">${crypto.marketCap}</span>
-                          </div>
-                          <div className="flex justify-between text-sm mt-1">
-                            <span className="text-muted-foreground">Volume</span>
-                            <span className="font-mono">${crypto.volume}</span>
-                          </div>
-                        </div>
+                           <div>
+                             <h3 className="font-semibold text-white text-lg">{crypto.name}</h3>
+                             <p className="text-white/80 font-mono">{crypto.symbol}</p>
+                           </div>
+                         </div>
+                         <Badge variant="secondary" className="text-xs px-2 py-1 bg-white/20 text-white border-white/30">
+                           #{crypto.rank}
+                         </Badge>
+                       </div>
+                       
+                       <div className="space-y-3">
+                         <div className="flex justify-between items-center">
+                           <span className="text-white/80">Pris</span>
+                           <span className="font-mono font-semibold text-lg text-white">{formatPrice(crypto.price)}</span>
+                         </div>
+                         
+                         <div className="grid grid-cols-3 gap-2">
+                           <div className="text-center">
+                             <p className="text-xs text-white/70 mb-1">1h</p>
+                             <div className={`text-sm font-medium ${
+                               crypto.change1h >= 0 ? 'text-white' : 'text-red-300'
+                             }`}>
+                               {crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%
+                             </div>
+                           </div>
+                           <div className="text-center">
+                             <p className="text-xs text-white/70 mb-1">24h</p>
+                             <div className={`text-sm font-medium ${
+                               crypto.change24h >= 0 ? 'text-white' : 'text-red-300'
+                             }`}>
+                               {crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%
+                             </div>
+                           </div>
+                           <div className="text-center">
+                             <p className="text-xs text-white/70 mb-1">7d</p>
+                             <div className={`text-sm font-medium ${
+                               crypto.change7d >= 0 ? 'text-white' : 'text-red-300'
+                             }`}>
+                               {crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%
+                             </div>
+                           </div>
+                         </div>
+                         
+                         <div className="pt-2 border-t border-white/20">
+                           <div className="flex justify-between text-sm">
+                             <span className="text-white/70">Market Cap</span>
+                             <span className="font-mono text-white">${crypto.marketCap}</span>
+                           </div>
+                           <div className="flex justify-between text-sm mt-1">
+                             <span className="text-white/70">Volume</span>
+                             <span className="font-mono text-white">${crypto.volume}</span>
+                           </div>
+                         </div>
                       </div>
                     </Card>
                   ))}

@@ -59,6 +59,9 @@ All colors MUST be HSL.
     --glow-primary: 0 0 20px hsl(180 100% 50% / 0.5);
     --glow-secondary: 0 0 15px hsl(180 80% 45% / 0.3);
 
+    /* Custom grid background color for crypto tokens */
+    --crypto-grid-background: 174 100% 44%; /* HEX: #12E19F */
+
     --sidebar-background: 214 28% 10%;
     --sidebar-foreground: 180 100% 85%;
     --sidebar-primary: 180 100% 50%;
