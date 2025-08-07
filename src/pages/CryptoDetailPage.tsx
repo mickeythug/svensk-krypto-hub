@@ -27,6 +27,7 @@ const CryptoDetailPage = () => {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chartError, setChartError] = useState(false);
+  const [chartWidget, setChartWidget] = useState<any>(null);
   const { getCryptoBySymbol } = useCryptoData();
   
   // Omfattande slug-mappning för alla top 100 tokens 
@@ -265,21 +266,6 @@ const CryptoDetailPage = () => {
 
   const info = symbol ? getTokenInfo(symbol) : null;
 
-  useEffect(() => {
-    if (!crypto) {
-      // Bara vänta på att data ska laddas, omdirigera inte
-      return;
-    }
-
-    const loadChart = () => {
-      const chartContainer = document.getElementById('tradingview_chart');
-      if (!chartContainer) return;
-
-      // Clear previous content
-      chartContainer.innerHTML = '';
-      loadTradingViewChart(chartContainer);
-    };
-
   // Komplett TradingView symbol mappning för alla 100 tokens
   const getTradingViewSymbol = (symbol: string): string => {
     const tradingPairs: Record<string, string> = {
@@ -396,11 +382,11 @@ const CryptoDetailPage = () => {
       script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
       script.async = true;
       
-      const tradingSymbol = getTradingViewSymbol(crypto.symbol);
+      const tradingSymbol = getTradingViewSymbol(crypto?.symbol || '');
       
       script.innerHTML = JSON.stringify({
         width: "100%",
-        height: isFullscreen ? "90vh" : "700",
+        height: isFullscreen ? "100vh" : "700",
         symbol: tradingSymbol,
         interval: "1D",
         timezone: "Europe/Stockholm",
@@ -425,6 +411,21 @@ const CryptoDetailPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (!crypto) {
+      // Bara vänta på att data ska laddas, omdirigera inte
+      return;
+    }
+
+    const loadChart = () => {
+      const chartContainer = document.getElementById('tradingview_chart');
+      if (!chartContainer) return;
+
+      // Clear previous content
+      chartContainer.innerHTML = '';
+      loadTradingViewChart(chartContainer);
+    };
+
     // Small delay to ensure DOM is ready
     const timer = setTimeout(loadChart, 100);
 
@@ -437,8 +438,61 @@ const CryptoDetailPage = () => {
     };
   }, [crypto, navigate, slug, isFullscreen]);
 
+  // Hantera fullscreen med HTML5 Fullscreen API
   const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
+    const chartContainer = document.getElementById('tradingview_chart');
+    if (!chartContainer) return;
+
+    if (!document.fullscreenElement) {
+      // Enter fullscreen
+      chartContainer.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+        // Uppdatera chart storlek efter fullscreen
+        setTimeout(() => {
+          reloadChart();
+        }, 100);
+      }).catch(err => {
+        console.error('Fullscreen error:', err);
+      });
+    } else {
+      // Exit fullscreen
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+        // Uppdatera chart storlek efter exit fullscreen
+        setTimeout(() => {
+          reloadChart();
+        }, 100);
+      });
+    }
+  };
+
+  // Lyssna på fullscreen ändringar
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!document.fullscreenElement;
+      setIsFullscreen(isCurrentlyFullscreen);
+      
+      if (!isCurrentlyFullscreen) {
+        // Om användaren trycker ESC för att lämna fullscreen
+        setTimeout(() => {
+          reloadChart();
+        }, 100);
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  // Funktion för att ladda om charten med ny storlek
+  const reloadChart = () => {
+    const chartContainer = document.getElementById('tradingview_chart');
+    if (chartContainer && crypto) {
+      chartContainer.innerHTML = '';
+      loadTradingViewChart(chartContainer);
+    }
   };
 
 
@@ -604,27 +658,21 @@ const CryptoDetailPage = () => {
             </Card>
           </div>
 
-          {/* Chart - Fixed layout and responsive */}
-          <div className={`transition-all duration-300 ${
-            isFullscreen ? 'fixed inset-0 z-50 bg-background p-4' : ''
-          }`}>
-            <Card className={`p-4 md:p-6 mb-8 bg-card/80 backdrop-blur-sm h-full shadow-lg`}>
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
-                <h2 className="font-crypto text-xl md:text-2xl font-bold flex items-center gap-2">
-                  <BarChart3 className="h-6 w-6 text-primary" />
-                  {crypto.name} Kursutveckling
-                </h2>
-                
+          {/* TradingView Chart med fullscreen support */}
+          <Card className="p-6 bg-card/80 backdrop-blur-sm shadow-lg">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-crypto text-xl font-bold">Live Chart</h2>
+              <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={toggleFullscreen}
-                  className="flex items-center gap-2 w-full sm:w-auto"
+                  className="flex items-center gap-2"
                 >
                   {isFullscreen ? (
                     <>
                       <Minimize size={16} />
-                      Minimera
+                      Lämna Fullskärm
                     </>
                   ) : (
                     <>
@@ -633,31 +681,43 @@ const CryptoDetailPage = () => {
                     </>
                   )}
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={reloadChart}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw size={16} />
+                  Uppdatera
+                </Button>
               </div>
-              
-              {chartError && (
-                <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive">
-                  <AlertCircle size={16} />
-                  <span className="text-sm">Chart kunde inte laddas. Försök med en annan provider.</span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => setChartError(false)}
-                    className="ml-auto"
-                  >
-                    <RefreshCw size={14} />
-                  </Button>
-                </div>
-              )}
-              
+            </div>
+            
+            {chartError ? (
+              <div className="text-center py-12">
+                <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+                <h3 className="text-lg font-semibold mb-2">Chart kunde inte laddas</h3>
+                <p className="text-muted-foreground mb-4">
+                  Det gick inte att ladda chart för {crypto.symbol}. Prova att uppdatera.
+                </p>
+                <Button onClick={reloadChart} variant="outline">
+                  <RefreshCw size={16} className="mr-2" />
+                  Försök igen
+                </Button>
+              </div>
+            ) : (
               <div 
                 id="tradingview_chart" 
-                className={`w-full bg-background rounded-lg border border-border ${
-                  isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[500px] md:h-[700px]'
+                className={`w-full rounded-lg overflow-hidden ${
+                  isFullscreen ? 'fixed inset-0 z-50 bg-black' : 'relative'
                 }`}
-              ></div>
-            </Card>
-          </div>
+                style={{ 
+                  height: isFullscreen ? '100vh' : '700px',
+                  minHeight: isFullscreen ? '100vh' : '700px'
+                }}
+              />
+            )}
+          </Card>
 
           {/* Description and Links - Hidden in fullscreen */}
           {!isFullscreen && (
