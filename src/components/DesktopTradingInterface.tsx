@@ -176,11 +176,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <span className="text-right font-semibold">Total</span>
               </div>
               
-              {/* Asks (Sell orders) - Red - Only orders ABOVE current price */}
+              {/* Asks (Sell orders) - Red - Sorted highest to lowest */}
               <div className="flex-shrink-0 p-2" style={{height: '240px'}}>
                 <div className="space-y-0.5">
-                  {orderBook?.asks?.filter(ask => ask.price > currentPrice)
-                    .sort((a, b) => b.price - a.price)
+                  {orderBook?.asks?.sort((a, b) => b.price - a.price)
                     .slice(0, 15)
                     .map((ask, i) => (
                     <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
@@ -206,11 +205,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 </div>
               </div>
               
-              {/* Bids (Buy orders) - Green - Only orders BELOW current price */}
+              {/* Bids (Buy orders) - Green - Sorted highest to lowest */}
               <div className="flex-shrink-0 p-2" style={{height: '240px'}}>
                 <div className="space-y-0.5">
-                  {orderBook?.bids?.filter(bid => bid.price < currentPrice)
-                    .sort((a, b) => b.price - a.price)
+                  {orderBook?.bids?.sort((a, b) => b.price - a.price)
                     .slice(0, 15)
                     .map((bid, i) => (
                     <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
