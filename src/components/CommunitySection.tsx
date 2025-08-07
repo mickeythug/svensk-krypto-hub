@@ -9,73 +9,73 @@ const CommunitySection = () => {
   const communityFeatures = [
     {
       icon: MessageCircle,
-      title: "Dagliga Diskussioner",
-      description: "Delta i livliga diskussioner om marknadsrörelser, nya projekt och investeringsstrategier",
-      count: "200+"
+      title: "Telegram Community",
+      description: "Gå med i vår öppna Telegram-grupp där alla är välkomna att ställa frågor och lära sig tillsammans",
+      count: "Alltid"
     },
     {
-      icon: BookOpen, 
-      title: "Utbildningsresurser",
-      description: "Gratis guider, tutorials och kurser för alla nivåer - från nybörjare till avancerade traders",
-      count: "100+"
+      icon: Users, 
+      title: "Voice Chat Trading",
+      description: "Möjlighet att trade tillsammans i voice chat och dela insights i realtid med andra medlemmar",
+      count: "Dagligen"
     },
     {
       icon: Trophy,
-      title: "Trading Tävlingar", 
-      description: "Månadsvis trading-tävlingar med riktiga priser och erkännande för bästa performance",
-      count: "12/år"
+      title: "Meme Token Scanning", 
+      description: "Scanna och analysera nya meme tokens tillsammans - hitta nästa stora möjlighet som grupp",
+      count: "24/7"
     },
     {
-      icon: Users,
-      title: "Mentor Program",
-      description: "Erfarna traders hjälper nya medlemmar att navigera kryptovärlden säkert",
-      count: "50+"
+      icon: Heart,
+      title: "Nya Vänner",
+      description: "Träffa likasinnade personer och bygg vänskaper med andra som delar ditt intresse för krypto",
+      count: "Öppet"
     }
   ];
 
   const upcomingEvents = [
     {
-      title: "Bitcoin Halving Workshop",
-      date: "15 Mars",
-      time: "19:00",
-      type: "Online",
-      attendees: 245
+      title: "Voice Chat Trading Session",
+      date: "Varje dag",
+      time: "20:00",
+      type: "Telegram VC",
+      attendees: "Alla välkomna"
     },
     {
-      title: "DeFi Deep Dive",
-      date: "22 Mars", 
-      time: "18:30",
-      type: "Stockholm",
-      attendees: 89
+      title: "Meme Token Scanning", 
+      date: "Kontinuerligt",
+      time: "24/7",
+      type: "Telegram Chat",
+      attendees: "Community"
     },
     {
-      title: "Trading Psychology",
-      date: "29 Mars",
-      time: "20:00", 
-      type: "Online",
-      attendees: 167
+      title: "Frågor & Svar",
+      date: "Alltid öppet",
+      time: "Dygnet runt", 
+      type: "Telegram",
+      attendees: "Gratis hjälp"
     }
   ];
 
   const testimonials = [
     {
       name: "Anna L.",
-      role: "Nybörjare → Erfaren Trader",
-      content: "Crypto Network Sweden hjälpte mig gå från att inte veta något om krypto till att göra lönsamma trades. Communityn är otroligt välkomnande!",
+      role: "Community Medlem",
+      content: "Bästa Telegram-gruppen! Alla hjälper varandra, ställer frågor fritt och vi tradear tillsammans i voice chat. Känns som en stor familj!",
       rating: 5,
       timeInCommunity: "8 månader"
     },
     {
       name: "Erik M.", 
-      role: "DeFi Entusiast",
-      content: "Bästa svenska krypto-communityn! Lärde mig allt om DeFi och yield farming. Nu tjänar jag passiv inkomst på mina krypton.",
+      role: "Meme Token Hunter",
+      content: "Vi scannar meme tokens tillsammans varje dag! Gruppen har hjälpt mig hitta så många tidiga gems. Helt gratis och öppet för alla!",
       rating: 5,
       timeInCommunity: "1 år"
     },
     {
       name: "Maria S.",
-      role: "NFT Samlare",
-      content: "Tack vare CNS upptäckte jag NFT-världen tidigt. Gemenskapen delar fantastiska projekt innan de blir mainstream.",
+      role: "Voice Chat Regular",
+      content: "Voice chat sessionerna är fantastiska! Vi tradear live tillsammans och delar tips. Träffat så många nya vänner genom communityn.",
       rating: 5,
       timeInCommunity: "6 månader"
     }
@@ -89,8 +89,8 @@ const CommunitySection = () => {
             VÅR COMMUNITY
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Gå med i Sveriges mest välkomnande och utbildande krypto-community. 
-            Tillsammans bygger vi kunskap, delar erfarenheter och navigerar kryptovärlden.
+            Vår Telegram-community är öppen för alla! Ställ frågor, lär dig, trade tillsammans i voice chat och hitta möjligheter. 
+            Vi hjälps åt att scanna meme tokens och bygga vänskaper - allt helt gratis.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ const CommunitySection = () => {
                 </p>
                 
                 <Badge className="bg-primary text-primary-foreground">
-                  {feature.count} per månad
+                  {feature.count}
                 </Badge>
               </Card>
             );
@@ -127,7 +127,7 @@ const CommunitySection = () => {
             <div className="flex items-center space-x-2 mb-6">
               <Calendar className="h-6 w-6 text-primary" />
               <h3 className="font-crypto text-xl font-bold text-primary">
-                KOMMANDE EVENTS
+                COMMUNITY AKTIVITETER
               </h3>
             </div>
             
@@ -158,7 +158,7 @@ const CommunitySection = () => {
                   </div>
                   
                   <Button size="sm" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                    Anmäl
+                    Gå med
                   </Button>
                 </div>
               ))}
@@ -166,7 +166,7 @@ const CommunitySection = () => {
             
             <div className="mt-6 text-center">
               <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                Se alla events
+                Gå med i Telegram
               </Button>
             </div>
           </Card>
