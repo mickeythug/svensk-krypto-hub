@@ -37,7 +37,7 @@ const HeroSection = () => {
               <img 
                 src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
                 alt="Crypto Network Sweden"
-                className="h-[600px] w-auto mx-auto animate-pulse-glow drop-shadow-[0_0_30px_rgba(0,255,204,0.5)]"
+                className="h-[600px] w-auto mx-auto drop-shadow-[0_0_30px_rgba(18,225,159,0.5)]"
               />
             </div>
             
