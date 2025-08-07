@@ -170,7 +170,7 @@ const CryptoDetailPage = () => {
 
   useEffect(() => {
     if (!crypto) {
-      navigate('/marknad');
+      // Bara vänta på att data ska laddas, omdirigera inte
       return;
     }
 
@@ -232,8 +232,42 @@ const CryptoDetailPage = () => {
   };
 
 
-  if (!crypto || !info) {
-    return null;
+  if (!symbol || !info) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="pt-20 pb-12">
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="text-center">
+              <h1 className="font-crypto text-2xl font-bold mb-4">Token ej hittad</h1>
+              <p className="text-muted-foreground mb-4">
+                Denna kryptovaluta finns inte tillgänglig eller är inte stödd ännu.
+              </p>
+              <Button onClick={() => navigate('/marknad')}>
+                Tillbaka till Marknadsöversikt
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Om data håller på att laddas, visa loading
+  if (!crypto) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="pt-20 pb-12">
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="text-center">
+              <h1 className="font-crypto text-2xl font-bold mb-4">Laddar {info.name}...</h1>
+              <div className="animate-pulse">📡 Hämtar live prisdata...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const formatPrice = (price: number) => {
