@@ -16,7 +16,7 @@ import {
   Wifi,
   WifiOff
 } from "lucide-react";
-import TradingViewChart from "./TradingViewChart";
+import ModernTradingViewChart from "./ModernTradingViewChart";
 import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
 
 interface DesktopTradingInterfaceProps {
@@ -65,9 +65,9 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     <div className="flex h-full">
       {/* Main Chart Area */}
       <div className="flex-1 flex flex-col">
-        {/* TradingView Chart Container */}
+        {/* Modern TradingView Chart Container */}
         <div className="flex-1 m-2 relative overflow-hidden">
-          <TradingViewChart symbol={symbol} currentPrice={currentPrice} />
+          <ModernTradingViewChart symbol={symbol} currentPrice={currentPrice} />
         </div>
 
         {/* Bottom Panels */}
@@ -154,45 +154,51 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <span className="text-right">Total</span>
               </div>
               
-              {/* Asks (Sell orders) */}
-              <div className="space-y-0.5 p-2">
-                {orderBook?.asks?.map((ask, i) => (
-                  <div key={i} className="grid grid-cols-3 text-xs hover:bg-destructive/5 py-0.5 cursor-pointer">
-                    <span className="text-destructive font-mono">{formatPrice(ask.price)}</span>
+              {/* Asks (Sell orders) - Red */}
+              <div className="space-y-0.5 p-2 max-h-40 overflow-y-auto">
+                {orderBook?.asks?.length ? orderBook.asks.map((ask, i) => (
+                  <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-1 px-2 rounded cursor-pointer transition-colors">
+                    <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
                     <span className="text-right font-mono">{formatSize(ask.size)}</span>
                     <span className="text-right font-mono text-muted-foreground">{formatSize(ask.total)}</span>
                   </div>
-                )) || (
-                  <div className="text-center text-muted-foreground text-xs py-4">
-                    Loading orderbook...
+                )) : (
+                  <div className="text-center text-muted-foreground text-xs py-4 animate-pulse">
+                    <div className="flex items-center justify-center gap-2">
+                      {isConnected ? <Wifi className="h-3 w-3 text-success" /> : <WifiOff className="h-3 w-3 text-destructive" />}
+                      {isConnected ? 'Laddar asks...' : 'Ansluter till Binance...'}
+                    </div>
                   </div>
                 )}
               </div>
               
-              {/* Current Price */}
-              <div className="border-y border-border/20 p-2 bg-primary/5">
+              {/* Current Price - Highlighted */}
+              <div className="border-y border-border/40 p-3 bg-gradient-to-r from-primary/5 to-primary/10">
                 <div className="text-center">
-                  <div className="text-lg font-bold font-mono">{formatPrice(currentPrice)}</div>
-                  <div className={`text-xs flex items-center justify-center gap-1 ${
+                  <div className="text-xl font-bold font-mono tracking-tight">{formatPrice(currentPrice)}</div>
+                  <div className={`text-sm flex items-center justify-center gap-2 ${
                     priceChange24h >= 0 ? 'text-success' : 'text-destructive'
                   }`}>
-                    {priceChange24h >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                    {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
+                    {priceChange24h >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+                    <span className="font-semibold">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
                   </div>
                 </div>
               </div>
               
-              {/* Bids (Buy orders) */}
-              <div className="space-y-0.5 p-2">
-                {orderBook?.bids?.map((bid, i) => (
-                  <div key={i} className="grid grid-cols-3 text-xs hover:bg-success/5 py-0.5 cursor-pointer">
-                    <span className="text-success font-mono">{formatPrice(bid.price)}</span>
+              {/* Bids (Buy orders) - Green */}
+              <div className="space-y-0.5 p-2 max-h-40 overflow-y-auto">
+                {orderBook?.bids?.length ? orderBook.bids.map((bid, i) => (
+                  <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-1 px-2 rounded cursor-pointer transition-colors">
+                    <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
                     <span className="text-right font-mono">{formatSize(bid.size)}</span>
                     <span className="text-right font-mono text-muted-foreground">{formatSize(bid.total)}</span>
                   </div>
-                )) || (
-                  <div className="text-center text-muted-foreground text-xs py-4">
-                    Loading orderbook...
+                )) : (
+                  <div className="text-center text-muted-foreground text-xs py-4 animate-pulse">
+                    <div className="flex items-center justify-center gap-2">
+                      {isConnected ? <Wifi className="h-3 w-3 text-success" /> : <WifiOff className="h-3 w-3 text-destructive" />}
+                      {isConnected ? 'Laddar bids...' : 'Ansluter till Binance...'}
+                    </div>
                   </div>
                 )}
               </div>
