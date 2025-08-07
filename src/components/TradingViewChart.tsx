@@ -52,8 +52,13 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
   }, [symbol]);
 
   const initChart = () => {
-    if (!containerRef.current || !window.TradingView) {
-      console.log('Container or TradingView not ready');
+    if (!containerRef.current) {
+      console.log('Container not ready');
+      return;
+    }
+
+    if (!window.TradingView) {
+      console.log('TradingView not loaded yet');
       return;
     }
 
@@ -62,11 +67,21 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
     // Clear previous widget
     if (widgetRef.current) {
       console.log('Removing previous widget');
-      widgetRef.current.remove();
+      try {
+        widgetRef.current.remove();
+      } catch (e) {
+        console.log('Error removing widget:', e);
+      }
+      widgetRef.current = null;
     }
 
     const tradingPair = `BINANCE:${symbol}USDT`;
     console.log('Creating TradingView widget for:', tradingPair);
+
+    // Clear the container first
+    if (containerRef.current) {
+      containerRef.current.innerHTML = '';
+    }
 
     try {
 
@@ -114,6 +129,11 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
       });
       
       console.log('TradingView widget created successfully');
+      
+      // Remove fallback content after widget creation
+      const fallbackElements = containerRef.current?.querySelectorAll('.fallback-content');
+      fallbackElements?.forEach(el => el.remove());
+      
     } catch (error) {
       console.error('Error creating TradingView widget:', error);
     }
@@ -221,10 +241,13 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
         }}
       >
         {/* Fallback content while chart loads */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div className="fallback-content absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
             <p className="text-muted-foreground">Laddar TradingView chart...</p>
+            <div className="mt-2 text-xs text-muted-foreground">
+              {window.TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+            </div>
           </div>
         </div>
       </div>

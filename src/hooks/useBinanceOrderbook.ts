@@ -123,6 +123,7 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
       return;
     }
 
+    console.log('Connecting WebSocket for symbol:', binanceSymbol);
     const streamName = `${binanceSymbol.toLowerCase()}@depth`;
     const ws = new WebSocket(`${BINANCE_WS_URL}${streamName}`);
     
@@ -136,30 +137,16 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
     ws.onmessage = (event) => {
       try {
         const data: BinanceStreamData = JSON.parse(event.data);
+        console.log('WebSocket message received:', data.e, 'Updates:', data.b?.length + data.a?.length);
         
         if (data.e === 'depthUpdate') {
-          // Buffer updates until we have the initial snapshot
-          if (lastUpdateIdRef.current === 0) {
-            bufferRef.current.push(data);
-            return;
-          }
-
-          // Process buffered updates first
-          if (bufferRef.current.length > 0) {
-            const bufferedUpdates = bufferRef.current.filter(
-              update => update.U <= lastUpdateIdRef.current + 1 && update.u >= lastUpdateIdRef.current + 1
-            );
-            
-            bufferedUpdates.forEach(update => {
-              updateOrderBook(update);
-            });
-            
-            bufferRef.current = [];
-          }
-
-          // Process current update
-          if (data.U <= lastUpdateIdRef.current + 1 && data.u >= lastUpdateIdRef.current + 1) {
+          // Process immediately if we have initial snapshot
+          if (lastUpdateIdRef.current > 0) {
             updateOrderBook(data);
+          } else {
+            // Buffer updates until we have the initial snapshot
+            bufferRef.current.push(data);
+            console.log('Buffering update, waiting for initial snapshot');
           }
         }
       } catch (err) {
@@ -191,6 +178,8 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
   }, [binanceSymbol]);
 
   const updateOrderBook = useCallback((data: BinanceStreamData) => {
+    console.log('Updating orderbook with WebSocket data, updateId:', data.u);
+    
     setOrderBook(prev => {
       if (!prev) return null;
 
@@ -265,6 +254,7 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
     });
 
     lastUpdateIdRef.current = data.u;
+    console.log('Orderbook updated, new updateId:', data.u);
   }, [limit, binanceSymbol]);
 
   const disconnect = useCallback(() => {
@@ -283,12 +273,23 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
   }, []);
 
   useEffect(() => {
+    console.log('Starting orderbook for:', binanceSymbol);
     fetchInitialSnapshot().then(() => {
+      // Process any buffered updates after getting initial snapshot
+      if (bufferRef.current.length > 0) {
+        console.log('Processing', bufferRef.current.length, 'buffered updates');
+        bufferRef.current.forEach(update => {
+          if (update.U <= lastUpdateIdRef.current + 1 && update.u >= lastUpdateIdRef.current + 1) {
+            updateOrderBook(update);
+          }
+        });
+        bufferRef.current = [];
+      }
       connectWebSocket();
     });
 
     return disconnect;
-  }, [fetchInitialSnapshot, connectWebSocket, disconnect]);
+  }, [fetchInitialSnapshot, connectWebSocket, disconnect, updateOrderBook]);
 
   return {
     orderBook,
