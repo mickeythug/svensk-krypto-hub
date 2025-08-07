@@ -9,7 +9,8 @@ import {
   TrendingUp, 
   Users, 
   Newspaper,
-  Settings
+  Settings,
+  BarChart3
 } from "lucide-react";
 
 const Header = () => {
@@ -30,6 +31,7 @@ const Header = () => {
   const navItems = [
     { name: "Marknadsöversikt", href: "/marknad", icon: TrendingUp, route: true },
     { name: "Verktyg", href: "/verktyg", icon: Settings, route: true },
+    { name: "Trade", href: "/crypto/btc", icon: BarChart3, route: true },
     { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true },
     { name: "Community", href: "#community", icon: Users, route: false }
   ];
