@@ -89,6 +89,7 @@ export default {
 				'sans': ['Inter', 'sans-serif'],
 				'crypto': ['Orbitron', 'monospace'],
 				'display': ['Exo 2', 'sans-serif'],
+				'glitch': ['Black Ops One', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -141,6 +142,32 @@ export default {
 						boxShadow: '0 0 20px hsl(var(--primary) / 0.8), 0 0 30px hsl(var(--primary) / 0.6)',
 						transform: 'scale(1.05)'
 					}
+				},
+				'glitch': {
+					'0%': { 
+						transform: 'translate(0)',
+						filter: 'hue-rotate(0deg)'
+					},
+					'20%': { 
+						transform: 'translate(-2px, 2px)',
+						filter: 'hue-rotate(90deg)'
+					},
+					'40%': { 
+						transform: 'translate(-2px, -2px)',
+						filter: 'hue-rotate(180deg)'
+					},
+					'60%': { 
+						transform: 'translate(2px, 2px)',
+						filter: 'hue-rotate(270deg)'
+					},
+					'80%': { 
+						transform: 'translate(2px, -2px)',
+						filter: 'hue-rotate(360deg)'
+					},
+					'100%': { 
+						transform: 'translate(0)',
+						filter: 'hue-rotate(0deg)'
+					}
 				}
 			},
 			animation: {
@@ -151,7 +178,8 @@ export default {
 				'slide-up': 'slide-up 0.6s ease-out',
 				'fade-in': 'fade-in 0.8s ease-out',
 				'ticker': 'ticker 30s linear infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'glitch': 'glitch 2s infinite'
 			}
 		}
 	},
