@@ -56,7 +56,9 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
     let totalBids = 0;
     let totalAsks = 0;
 
+    // Process bids (highest price first)
     const processedBids = bids
+      .slice(0, limit)
       .map(([price, quantity]) => {
         const size = parseFloat(quantity);
         totalBids += size;
@@ -65,10 +67,11 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
           size,
           total: totalBids
         };
-      })
-      .slice(0, limit);
+      });
 
+    // Process asks (lowest price first) 
     const processedAsks = asks
+      .slice(0, limit)
       .map(([price, quantity]) => {
         const size = parseFloat(quantity);
         totalAsks += size;
@@ -77,9 +80,7 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
           size,
           total: totalAsks
         };
-      })
-      .slice(0, limit)
-      .reverse(); // Reverse asks to show highest price first
+      });
 
     return { processedBids, processedAsks };
   }, [limit]);
@@ -228,7 +229,7 @@ export const useBinanceOrderbook = (symbol: string, limit: number = 20) => {
         }
       });
 
-      // Sort and calculate totals
+      // Sort properly: bids high to low, asks low to high
       newBids.sort((a, b) => b.price - a.price);
       newAsks.sort((a, b) => a.price - b.price);
 
