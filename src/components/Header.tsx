@@ -58,15 +58,11 @@ const Header = () => {
             />
             <div className="hidden md:block">
               <h1 className="font-crypto text-lg font-bold">
-                <span style={{ color: '#12E19F' }}>CR</span>
-                <span className="text-white">Y</span>
-                <span style={{ color: '#12E19F' }}>P</span>
-                <span className="text-white">TO</span>
+                <span style={{ color: '#12E19F' }}>CRY</span>
+                <span className="text-white">PTO</span>
                 <span className="text-white"> </span>
                 <span className="text-white">NET</span>
-                <span style={{ color: '#12E19F' }}>W</span>
-                <span className="text-white">OR</span>
-                <span style={{ color: '#12E19F' }}>K</span>
+                <span style={{ color: '#12E19F' }}>WORK</span>
               </h1>
               <p className="font-crypto text-xs text-muted-foreground">
                 SWEDEN
@@ -125,15 +121,11 @@ const Header = () => {
                   />
                   <div>
                     <h1 className="font-crypto text-sm font-bold">
-                      <span style={{ color: '#12E19F' }}>CR</span>
-                      <span className="text-white">Y</span>
-                      <span style={{ color: '#12E19F' }}>P</span>
-                      <span className="text-white">TO</span>
+                      <span style={{ color: '#12E19F' }}>CRY</span>
+                      <span className="text-white">PTO</span>
                       <span className="text-white"> </span>
                       <span className="text-white">NET</span>
-                      <span style={{ color: '#12E19F' }}>W</span>
-                      <span className="text-white">OR</span>
-                      <span style={{ color: '#12E19F' }}>K</span>
+                      <span style={{ color: '#12E19F' }}>WORK</span>
                     </h1>
                     <p className="font-crypto text-xs text-muted-foreground">
                       SWEDEN

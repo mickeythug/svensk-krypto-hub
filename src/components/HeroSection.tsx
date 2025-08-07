@@ -42,15 +42,11 @@ const HeroSection = () => {
             </div>
             
             <h1 className="font-crypto text-5xl md:text-7xl font-bold mb-4">
-              <span style={{ color: '#12E19F' }}>CR</span>
-              <span className="text-white">Y</span>
-              <span style={{ color: '#12E19F' }}>P</span>
-              <span className="text-white">TO</span>
+              <span style={{ color: '#12E19F' }}>CRY</span>
+              <span className="text-white">PTO</span>
               <span className="text-white"> </span>
               <span className="text-white">NET</span>
-              <span style={{ color: '#12E19F' }}>W</span>
-              <span className="text-white">OR</span>
-              <span style={{ color: '#12E19F' }}>K</span>
+              <span style={{ color: '#12E19F' }}>WORK</span>
             </h1>
             <h2 className="font-crypto text-2xl md:text-4xl text-muted-foreground mb-6">
               SWEDEN
