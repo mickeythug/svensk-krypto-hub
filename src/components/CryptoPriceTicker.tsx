@@ -145,6 +145,26 @@ const CryptoPriceTicker = () => {
     return `${sign}${change.toFixed(2)}%`;
   };
 
+  const getTokenHoverColor = (symbol: string) => {
+    const colors: { [key: string]: string } = {
+      'BTC': 'hover:text-[#F7931A]', // Bitcoin Orange
+      'ETH': 'hover:text-[#627EEA]', // Ethereum Blue  
+      'BNB': 'hover:text-[#F3BA2F]', // Binance Yellow
+      'ADA': 'hover:text-[#0033AD]', // Cardano Blue
+      'SOL': 'hover:text-[#9945FF]', // Solana Purple
+      'DOT': 'hover:text-[#E6007A]', // Polkadot Pink
+      'AVAX': 'hover:text-[#E84142]', // Avalanche Red
+      'LINK': 'hover:text-[#375BD2]', // Chainlink Blue
+      'UNI': 'hover:text-[#FF007A]', // Uniswap Pink
+      'DOGE': 'hover:text-[#C2A633]', // Dogecoin Gold
+      'SHIB': 'hover:text-[#FFA409]', // Shiba Inu Orange
+      'MATIC': 'hover:text-[#8247E5]', // Polygon Purple
+      'LTC': 'hover:text-[#BFBBBB]', // Litecoin Silver
+      'XRP': 'hover:text-[#23292F]' // XRP Dark Blue
+    };
+    return colors[symbol] || 'hover:text-primary-foreground';
+  };
+
   return (
     <section className={`bg-background border-b border-border ${isMobile ? 'py-2 mt-14' : 'py-3 mt-16'} relative z-40 w-full`}>
       {/* Error indicator */}
@@ -178,7 +198,7 @@ const CryptoPriceTicker = () => {
               className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-3'} bg-secondary/50 rounded-lg ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'} border border-border/50 flex-shrink-0 group hover:bg-secondary/70 transition-colors`}
             >
               <div className={`flex items-center ${isMobile ? 'space-x-1' : 'space-x-2'}`}>
-                <span className={`font-crypto font-bold text-primary ${isMobile ? 'text-xs' : 'text-sm'} group-hover:text-primary-foreground transition-colors`}>
+                <span className={`font-crypto font-bold text-primary ${isMobile ? 'text-xs' : 'text-sm'} group-hover:transition-colors ${getTokenHoverColor(crypto.symbol)}`}>
                   {crypto.symbol}
                 </span>
                 <span className={`font-display text-foreground font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
