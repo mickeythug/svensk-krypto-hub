@@ -22,10 +22,13 @@ import {
 import Header from "@/components/Header";
 
 const CryptoDetailPage = () => {
+  console.log("CryptoDetailPage component loading");
   const { slug } = useParams();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [chartError, setChartError] = useState(false);
+  
+  console.log("State initialized, slug:", slug);
 
   // Mock data with additional chart info - in real app this would come from API
   const cryptoData = {
