@@ -83,7 +83,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
   };
 
   return (
-    <div ref={searchRef} className={cn("relative z-50", className)}>
+    <div ref={searchRef} className={cn("relative", className)} style={{ zIndex: 99999 }}>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
         <Input
@@ -94,19 +94,22 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() => query.length > 0 && setIsOpen(true)}
-          className="pl-10 bg-background/90 backdrop-blur-sm border-border/50 hover:bg-background/95 focus:bg-background transition-colors relative z-10"
+          className="pl-10 bg-background/95 backdrop-blur-sm border-border/50 hover:bg-background/100 focus:bg-background transition-colors relative z-10"
         />
       </div>
 
       {isOpen && filteredTokens.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-background/95 backdrop-blur-sm border border-border rounded-lg shadow-xl z-[9999] max-h-80 overflow-y-auto">
+        <div 
+          className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-2xl max-h-80 overflow-y-auto"
+          style={{ zIndex: 99999 }}
+        >
           {filteredTokens.map((token) => {
             const isPositive = token.change24h >= 0;
             return (
               <div
                 key={token.symbol}
                 onClick={() => handleTokenSelect(token.symbol)}
-                className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background/50"
+                className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background"
               >
                 <div className="flex items-center space-x-3">
                   {token.image && (
