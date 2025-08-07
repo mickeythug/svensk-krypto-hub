@@ -21,15 +21,56 @@ const CryptoPriceTicker = () => {
     try {
       setError(null);
       
-      const { data, error: functionError } = await supabase.functions.invoke('crypto-prices');
+      // Hämta direkt från Binance API för realtidsdata
+      const response = await fetch('https://api.binance.com/api/v3/ticker/24hr');
       
-      if (functionError) throw functionError;
-      
-      if (data?.success && data?.data) {
-        setCryptoPrices(data.data);
-      } else {
-        throw new Error(data?.error || 'Failed to fetch prices');
+      if (!response.ok) {
+        throw new Error(`Binance API error: ${response.status}`);
       }
+
+      const allTickers = await response.json();
+      
+      // Symboler vi vill visa
+      const symbols = [
+        'BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'ADAUSDT', 'SOLUSDT',
+        'DOTUSDT', 'AVAXUSDT', 'LINKUSDT', 'UNIUSDT', 'DOGEUSDT',
+        'SHIBUSDT', 'MATICUSDT', 'LTCUSDT', 'XRPUSDT'
+      ];
+
+      // Kryptovalutornas namn
+      const cryptoNames: { [key: string]: string } = {
+        'BTCUSDT': 'Bitcoin',
+        'ETHUSDT': 'Ethereum', 
+        'BNBUSDT': 'Binance Coin',
+        'ADAUSDT': 'Cardano',
+        'SOLUSDT': 'Solana',
+        'DOTUSDT': 'Polkadot',
+        'AVAXUSDT': 'Avalanche',
+        'LINKUSDT': 'Chainlink',
+        'UNIUSDT': 'Uniswap',
+        'DOGEUSDT': 'Dogecoin',
+        'SHIBUSDT': 'Shiba Inu',
+        'MATICUSDT': 'Polygon',
+        'LTCUSDT': 'Litecoin',
+        'XRPUSDT': 'XRP'
+      };
+
+      // Filtrera och formatera data
+      const filteredPrices = symbols.map(symbol => {
+        const ticker = allTickers.find((t: any) => t.symbol === symbol);
+        if (!ticker) return null;
+
+        return {
+          symbol: symbol.replace('USDT', ''),
+          name: cryptoNames[symbol] || symbol.replace('USDT', ''),
+          price: parseFloat(ticker.price),
+          change24h: parseFloat(ticker.priceChangePercent),
+          lastUpdated: new Date().toISOString()
+        };
+      }).filter(Boolean);
+
+      setCryptoPrices(filteredPrices);
+      
     } catch (err) {
       console.error('Error fetching crypto prices:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
