@@ -11,7 +11,7 @@ import {
   Share,
   BarChart3
 } from "lucide-react";
-import MobileChart from "./MobileChart";
+import SimpleMobileChart from "./SimpleMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
 import MobileTradingPanel from "./MobileTradingPanel";
 
@@ -91,7 +91,7 @@ const MobileTradingView = ({
         </TabsList>
 
         <TabsContent value="chart" className="flex-1 mt-0">
-          <MobileChart symbol={symbol} currentPrice={currentPrice} />
+          <SimpleMobileChart symbol={symbol} currentPrice={currentPrice} />
         </TabsContent>
 
         <TabsContent value="orderbook" className="flex-1 mt-0 px-4">
