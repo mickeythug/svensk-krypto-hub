@@ -280,37 +280,150 @@ const CryptoDetailPage = () => {
       loadTradingViewChart(chartContainer);
     };
 
-    const loadTradingViewChart = (container: HTMLElement) => {
-      try {
-        const script = document.createElement('script');
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-        script.async = true;
-        script.innerHTML = JSON.stringify({
-          width: "100%",
-          height: isFullscreen ? "90vh" : "700",
-          symbol: `COINBASE:${crypto.symbol}USD`,
-          interval: "1D",
-          timezone: "Europe/Stockholm",
-          theme: "dark",
-          style: "1",
-          locale: "en",
-          toolbar_bg: "#000000",
-          enable_publishing: false,
-          hide_top_toolbar: false,
-          hide_legend: false,
-          save_image: true,
-          hide_side_toolbar: false,
-          allow_symbol_change: true,
-          studies: [],
-          container_id: "tradingview_chart"
-        });
-        container.appendChild(script);
-        setChartError(false);
-      } catch (error) {
-        console.error('Error loading TradingView chart:', error);
-        setChartError(true);
-      }
+  // Komplett TradingView symbol mappning för alla 100 tokens
+  const getTradingViewSymbol = (symbol: string): string => {
+    const tradingPairs: Record<string, string> = {
+      // Top 10
+      'BTC': 'BINANCE:BTCUSDT',
+      'ETH': 'BINANCE:ETHUSDT', 
+      'USDT': 'BINANCE:USDCUSDT',
+      'BNB': 'BINANCE:BNBUSDT',
+      'SOL': 'BINANCE:SOLUSDT',
+      'USDC': 'BINANCE:USDCUSDT',
+      'XRP': 'BINANCE:XRPUSDT',
+      'STETH': 'BINANCE:ETHUSDT', // Fallback till ETH
+      'ADA': 'BINANCE:ADAUSDT',
+      'AVAX': 'BINANCE:AVAXUSDT',
+      
+      // Top 11-30
+      'DOGE': 'BINANCE:DOGEUSDT',
+      'LINK': 'BINANCE:LINKUSDT',
+      'TRX': 'BINANCE:TRXUSDT',
+      'MATIC': 'BINANCE:MATICUSDT',
+      'SHIB': 'BINANCE:SHIBUSDT',
+      'DOT': 'BINANCE:DOTUSDT',
+      'LTC': 'BINANCE:LTCUSDT',
+      'BCH': 'BINANCE:BCHUSDT',
+      'UNI': 'BINANCE:UNIUSDT',
+      'PEPE': 'BINANCE:PEPEUSDT',
+      'ICP': 'BINANCE:ICPUSDT',
+      'ETC': 'BINANCE:ETCUSDT',
+      'FET': 'BINANCE:FETUSDT',
+      'KAS': 'MEXC:KASUSDT',
+      'NEAR': 'BINANCE:NEARUSDT',
+      'DAI': 'BINANCE:DAIUSDT',
+      'APT': 'BINANCE:APTUSDT',
+      'XLM': 'BINANCE:XLMUSDT',
+      'CRO': 'BINANCE:CROUSDT',
+      'FIL': 'BINANCE:FILUSDT',
+      
+      // Top 31-60
+      'ATOM': 'BINANCE:ATOMUSDT',
+      'VET': 'BINANCE:VETUSDT',
+      'XMR': 'BINANCE:XMRUSDT',
+      'HBAR': 'BINANCE:HBARUSDT',
+      'ENS': 'BINANCE:ENSUSDT',
+      'ARB': 'BINANCE:ARBUSDT',
+      'OP': 'BINANCE:OPUSDT',
+      'IMX': 'BINANCE:IMXUSDT',
+      'MKR': 'BINANCE:MKRUSDT',
+      'FTM': 'BINANCE:FTMUSDT',
+      'RPL': 'BINANCE:RPLUSDT',
+      'GRT': 'BINANCE:GRTUSDT',
+      'TAO': 'MEXC:TAOUSDT',
+      'RNDR': 'BINANCE:RNDRUSDT',
+      'THETA': 'BINANCE:THETAUSDT',
+      'ALGO': 'BINANCE:ALGOUSDT',
+      'KCS': 'KUCOIN:KCSUSDT',
+      'LDO': 'BINANCE:LDOUSDT',
+      'FLOW': 'BINANCE:FLOWUSDT',
+      'AAVE': 'BINANCE:AAVEUSDT',
+      'MANA': 'BINANCE:MANAUSDT',
+      'INJ': 'BINANCE:INJUSDT',
+      'SEI': 'BINANCE:SEIUSDT',
+      'STX': 'BINANCE:STXUSDT',
+      'EGLD': 'BINANCE:EGLDUSDT',
+      'SAND': 'BINANCE:SANDUSDT',
+      'AXS': 'BINANCE:AXSUSDT',
+      'FLOKI': 'BINANCE:FLOKIUSDT',
+      'RUNE': 'BINANCE:RUNEUSDT',
+      'FTT': 'BINANCE:FTTUSDT',
+      
+      // Top 61-100
+      'HNT': 'BINANCE:HNTUSDT',
+      'GALA': 'BINANCE:GALAUSDT',
+      'XTZ': 'BINANCE:XTZUSDT',
+      'ZEC': 'BINANCE:ZECUSDT',
+      'CHZ': 'BINANCE:CHZUSDT',
+      'MINA': 'BINANCE:MINAUSDT',
+      'DYDX': 'BINANCE:DYDXUSDT',
+      'BONK': 'BINANCE:BONKUSDT',
+      'NEO': 'BINANCE:NEOUSDT',
+      'IOTA': 'BINANCE:IOTAUSDT',
+      'CEL': 'BINANCE:CELUSDT',
+      'EOS': 'BINANCE:EOSUSDT',
+      'TON': 'BYBIT:TONUSDT',
+      'QNT': 'BINANCE:QNTUSDT',
+      'KAVA': 'BINANCE:KAVAUSDT',
+      'CFX': 'BINANCE:CFXUSDT',
+      '1INCH': 'BINANCE:1INCHUSDT',
+      'COMP': 'BINANCE:COMPUSDT',
+      'AR': 'BINANCE:ARUSDT',
+      'XEC': 'BINANCE:XECUSDT',
+      'CRV': 'BINANCE:CRVUSDT',
+      'LUNA': 'BINANCE:LUNAUSDT',
+      'LOOKS': 'BINANCE:LOOKSUSDT',
+      'TWT': 'BINANCE:TWTUSDT',
+      'W': 'BINANCE:WUSDT',
+      'CAKE': 'BINANCE:CAKEUSDT',
+      'CVX': 'BINANCE:CVXUSDT',
+      'SNX': 'BINANCE:SNXUSDT',
+      'BSV': 'BINANCE:BSVUSDT',
+      'LPT': 'BINANCE:LPTUSDT',
+      'SUSHI': 'BINANCE:SUSHIUSDT',
+      'BLUR': 'BINANCE:BLURUSDT',
+      'MASK': 'BINANCE:MASKUSDT',
+      'OSMO': 'OSMOSIS:OSMOUSDT',
+      'GLM': 'BINANCE:GLMUSDT'
     };
+
+    return tradingPairs[symbol.toUpperCase()] || `BINANCE:${symbol.toUpperCase()}USDT`;
+  };
+
+  const loadTradingViewChart = (container: HTMLElement) => {
+    try {
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.async = true;
+      
+      const tradingSymbol = getTradingViewSymbol(crypto.symbol);
+      
+      script.innerHTML = JSON.stringify({
+        width: "100%",
+        height: isFullscreen ? "90vh" : "700",
+        symbol: tradingSymbol,
+        interval: "1D",
+        timezone: "Europe/Stockholm",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        toolbar_bg: "#000000",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: true,
+        hide_side_toolbar: false,
+        allow_symbol_change: true,
+        studies: [],
+        container_id: "tradingview_chart"
+      });
+      container.appendChild(script);
+      setChartError(false);
+    } catch (error) {
+      console.error('Error loading TradingView chart:', error);
+      setChartError(true);
+    }
+  };
 
     // Small delay to ensure DOM is ready
     const timer = setTimeout(loadChart, 100);
