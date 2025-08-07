@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -23,13 +24,37 @@ import {
   Activity,
   Flame,
   Trophy,
-  Target
+  Target,
+  Clock,
+  Globe,
+  MessageCircle,
+  Zap,
+  AlertCircle,
+  ChevronUp
 } from "lucide-react";
 import Header from "@/components/Header";
 
 const MarketOverviewPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("top10");
+
+  const marketSentiment = {
+    overall: 68,
+    fearGreedIndex: 72,
+    socialVolume: 85,
+    newsVolume: 76,
+    trend: 'bullish' as const,
+    change24h: 4.2
+  };
+  
+  const marketData = {
+    totalMarketCap: "2.1T",
+    totalVolume: "89.5B",
+    btcDominance: 52.3,
+    ethDominance: 17.8,
+    activeAddresses: "1.2M",
+    defiTvl: "45.2B"
+  };
 
   const marketStats = [
     {
@@ -67,40 +92,40 @@ const MarketOverviewPage = () => {
   ];
 
   const allCryptos = [
-    { rank: 1, name: "Bitcoin", symbol: "BTC", price: 645000, change1h: 0.5, change24h: 2.34, change7d: 5.12, marketCap: "12.5T", volume: "28.5B", supply: "19.5M BTC" },
-    { rank: 2, name: "Ethereum", symbol: "ETH", price: 35000, change1h: -0.2, change24h: -1.45, change7d: 3.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M ETH" },
-    { rank: 3, name: "Binance Coin", symbol: "BNB", price: 3200, change1h: 0.8, change24h: 0.87, change7d: -2.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" },
+    { rank: 1, name: "Bitcoin", symbol: "Bitcoin", price: 645000, change1h: 0.5, change24h: 2.34, change7d: 5.12, marketCap: "12.5T", volume: "28.5B", supply: "19.5M Bitcoin" },
+    { rank: 2, name: "Ethereum", symbol: "Ethereum", price: 35000, change1h: -0.2, change24h: -1.45, change7d: 3.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M Ethereum" },
+    { rank: 3, name: "Binance Coin", symbol: "Binance Coin", price: 3200, change1h: 0.8, change24h: 0.87, change7d: -2.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" },
     { rank: 4, name: "XRP", symbol: "XRP", price: 8.5, change1h: 1.2, change24h: 5.23, change7d: 12.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" },
-    { rank: 5, name: "Cardano", symbol: "ADA", price: 4.2, change1h: -0.5, change24h: 3.21, change7d: 8.9, marketCap: "147B", volume: "1.8B", supply: "35.0B ADA" },
-    { rank: 6, name: "Solana", symbol: "SOL", price: 1100, change1h: 2.1, change24h: 5.67, change7d: 15.2, marketCap: "523B", volume: "4.1B", supply: "475.2M SOL" },
-    { rank: 7, name: "Polkadot", symbol: "DOT", price: 85, change1h: -1.2, change24h: -2.11, change7d: -5.4, marketCap: "98B", volume: "892M", supply: "1.15B DOT" },
-    { rank: 8, name: "Avalanche", symbol: "AVAX", price: 450, change1h: 0.9, change24h: 1.99, change7d: 7.3, marketCap: "178B", volume: "1.2B", supply: "395.8M AVAX" },
-    { rank: 9, name: "Chainlink", symbol: "LINK", price: 180, change1h: 0.3, change24h: 4.5, change7d: 9.8, marketCap: "89B", volume: "654M", supply: "494.0M LINK" },
-    { rank: 10, name: "Polygon", symbol: "MATIC", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B MATIC" }
+    { rank: 5, name: "Cardano", symbol: "Cardano", price: 4.2, change1h: -0.5, change24h: 3.21, change7d: 8.9, marketCap: "147B", volume: "1.8B", supply: "35.0B Cardano" },
+    { rank: 6, name: "Solana", symbol: "Solana", price: 1100, change1h: 2.1, change24h: 5.67, change7d: 15.2, marketCap: "523B", volume: "4.1B", supply: "475.2M Solana" },
+    { rank: 7, name: "Polkadot", symbol: "Polkadot", price: 85, change1h: -1.2, change24h: -2.11, change7d: -5.4, marketCap: "98B", volume: "892M", supply: "1.15B Polkadot" },
+    { rank: 8, name: "Avalanche", symbol: "Avalanche", price: 450, change1h: 0.9, change24h: 1.99, change7d: 7.3, marketCap: "178B", volume: "1.2B", supply: "395.8M Avalanche" },
+    { rank: 9, name: "Chainlink", symbol: "Chainlink", price: 180, change1h: 0.3, change24h: 4.5, change7d: 9.8, marketCap: "89B", volume: "654M", supply: "494.0M Chainlink" },
+    { rank: 10, name: "Polygon", symbol: "Polygon", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B Polygon" }
   ];
 
   const trendingCryptos = [
-    { rank: 1, name: "Pepe", symbol: "PEPE", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T PEPE" },
-    { rank: 2, name: "Bonk", symbol: "BONK", price: 0.000018, change1h: 8.9, change24h: 32.1, change7d: 89.3, marketCap: "1.2B", volume: "456M", supply: "65.5T BONK" },
-    { rank: 3, name: "Floki", symbol: "FLOKI", price: 0.00032, change1h: 12.5, change24h: 28.7, change7d: 67.8, marketCap: "3.1B", volume: "298M", supply: "9.7T FLOKI" }
+    { rank: 1, name: "Pepe", symbol: "Pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" },
+    { rank: 2, name: "Bonk", symbol: "Bonk", price: 0.000018, change1h: 8.9, change24h: 32.1, change7d: 89.3, marketCap: "1.2B", volume: "456M", supply: "65.5T Bonk" },
+    { rank: 3, name: "Floki", symbol: "Floki", price: 0.00032, change1h: 12.5, change24h: 28.7, change7d: 67.8, marketCap: "3.1B", volume: "298M", supply: "9.7T Floki" }
   ];
 
   const memeCryptos = [
-    { rank: 1, name: "Dogecoin", symbol: "DOGE", price: 1.2, change1h: 2.1, change24h: 8.5, change7d: 23.4, marketCap: "172B", volume: "1.8B", supply: "143.2B DOGE" },
-    { rank: 2, name: "Shiba Inu", symbol: "SHIB", price: 0.000034, change1h: 1.8, change24h: 12.3, change7d: 34.2, marketCap: "20.1B", volume: "892M", supply: "589.7T SHIB" },
-    { rank: 3, name: "Pepe", symbol: "PEPE", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T PEPE" }
+    { rank: 1, name: "Dogecoin", symbol: "Dogecoin", price: 1.2, change1h: 2.1, change24h: 8.5, change7d: 23.4, marketCap: "172B", volume: "1.8B", supply: "143.2B Dogecoin" },
+    { rank: 2, name: "Shiba Inu", symbol: "Shiba Inu", price: 0.000034, change1h: 1.8, change24h: 12.3, change7d: 34.2, marketCap: "20.1B", volume: "892M", supply: "589.7T Shiba Inu" },
+    { rank: 3, name: "Pepe", symbol: "Pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" }
   ];
 
   const topGainers = [
-    { rank: 1, name: "Solana", symbol: "SOL", price: 1100, change1h: 2.1, change24h: 15.67, change7d: 45.2, marketCap: "523B", volume: "4.1B", supply: "475.2M SOL" },
-    { rank: 2, name: "Pepe", symbol: "PEPE", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T PEPE" },
+    { rank: 1, name: "Solana", symbol: "Solana", price: 1100, change1h: 2.1, change24h: 15.67, change7d: 45.2, marketCap: "523B", volume: "4.1B", supply: "475.2M Solana" },
+    { rank: 2, name: "Pepe", symbol: "Pepe", price: 0.000024, change1h: 15.2, change24h: 45.8, change7d: 123.4, marketCap: "9.8B", volume: "2.1B", supply: "420.7T Pepe" },
     { rank: 3, name: "XRP", symbol: "XRP", price: 8.5, change1h: 1.2, change24h: 15.23, change7d: 32.5, marketCap: "389B", volume: "3.2B", supply: "45.4B XRP" }
   ];
 
   const topLosers = [
-    { rank: 1, name: "Polkadot", symbol: "DOT", price: 85, change1h: -1.2, change24h: -8.11, change7d: -15.4, marketCap: "98B", volume: "892M", supply: "1.15B DOT" },
-    { rank: 2, name: "Ethereum", symbol: "ETH", price: 35000, change1h: -0.2, change24h: -5.45, change7d: -8.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M ETH" },
-    { rank: 3, name: "Binance Coin", symbol: "BNB", price: 3200, change1h: -0.8, change24h: -3.87, change7d: -12.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" }
+    { rank: 1, name: "Polkadot", symbol: "Polkadot", price: 85, change1h: -1.2, change24h: -8.11, change7d: -15.4, marketCap: "98B", volume: "892M", supply: "1.15B Polkadot" },
+    { rank: 2, name: "Ethereum", symbol: "Ethereum", price: 35000, change1h: -0.2, change24h: -5.45, change7d: -8.21, marketCap: "4.2T", volume: "15.2B", supply: "120.3M Ethereum" },
+    { rank: 3, name: "Binance Coin", symbol: "Binance Coin", price: 3200, change1h: -0.8, change24h: -3.87, change7d: -12.1, marketCap: "492B", volume: "8.9B", supply: "153.8M BNB" }
   ];
 
   const getCurrentData = () => {
@@ -163,6 +188,105 @@ const MarketOverviewPage = () => {
               Komplett översikt av kryptomarknaden med realtidsdata, analyser och detaljerad information om alla digitala tillgångar
             </p>
           </div>
+
+          {/* Market Sentiment Dashboard */}
+          <Card className="mb-12 p-8 bg-gradient-secondary border-border shadow-lg">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-crypto text-2xl font-bold text-primary flex items-center">
+                <BarChart3 className="mr-3 h-7 w-7" />
+                MARKNADS SENTIMENT & STATISTIK
+              </h2>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Clock className="mr-2 h-4 w-4" />
+                Uppdaterat för 2 minuter sedan
+              </div>
+            </div>
+            
+            {/* Main Sentiment Indicators */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card className="p-6 bg-background/50 border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <TrendingUp className="h-6 w-6 text-success mr-3" />
+                    <span className="font-display font-semibold text-lg">Overall Sentiment</span>
+                  </div>
+                  <Badge className="bg-success/20 text-success">
+                    +{marketSentiment.change24h}%
+                  </Badge>
+                </div>
+                <div className="text-4xl font-bold text-success mb-2">{marketSentiment.overall}%</div>
+                <Progress value={marketSentiment.overall} className="mb-2 h-3" />
+                <div className="text-base text-muted-foreground">Stark Bullish Trend</div>
+              </Card>
+              
+              <Card className="p-6 bg-background/50 border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <Globe className="h-6 w-6 text-warning mr-3" />
+                    <span className="font-display font-semibold text-lg">Fear & Greed Index</span>
+                  </div>
+                  <AlertCircle className="h-5 w-5 text-warning" />
+                </div>
+                <div className="text-4xl font-bold text-warning mb-2">{marketSentiment.fearGreedIndex}</div>
+                <Progress value={marketSentiment.fearGreedIndex} className="mb-2 h-3" />
+                <div className="text-base text-muted-foreground">Greed Territory</div>
+              </Card>
+              
+              <Card className="p-6 bg-background/50 border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <MessageCircle className="h-6 w-6 text-primary mr-3" />
+                    <span className="font-display font-semibold text-lg">Social Aktivitet</span>
+                  </div>
+                  <ChevronUp className="h-5 w-5 text-success" />
+                </div>
+                <div className="text-4xl font-bold text-primary mb-2">{marketSentiment.socialVolume}%</div>
+                <Progress value={marketSentiment.socialVolume} className="mb-2 h-3" />
+                <div className="text-base text-muted-foreground">Extremt Hög Aktivitet</div>
+              </Card>
+              
+              <Card className="p-6 bg-background/50 border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center">
+                    <Zap className="h-6 w-6 text-accent mr-3" />
+                    <span className="font-display font-semibold text-lg">Nyhets Volym</span>
+                  </div>
+                  <ChevronUp className="h-5 w-5 text-success" />
+                </div>
+                <div className="text-4xl font-bold text-accent mb-2">{marketSentiment.newsVolume}%</div>
+                <Progress value={marketSentiment.newsVolume} className="mb-2 h-3" />
+                <div className="text-base text-muted-foreground">Rekordhög Volym</div>
+              </Card>
+            </div>
+
+            {/* Market Data Section */}
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+              <div className="text-center p-4 bg-background/30 rounded-lg">
+                <div className="text-2xl font-bold text-success">${marketData.totalMarketCap}</div>
+                <div className="text-sm text-muted-foreground">Total Market Cap</div>
+              </div>
+              <div className="text-center p-4 bg-background/30 rounded-lg">
+                <div className="text-2xl font-bold text-primary">${marketData.totalVolume}</div>
+                <div className="text-sm text-muted-foreground">24h Volym</div>
+              </div>
+              <div className="text-center p-4 bg-background/30 rounded-lg">
+                <div className="text-2xl font-bold text-warning">{marketData.btcDominance}%</div>
+                <div className="text-sm text-muted-foreground">Bitcoin Dominans</div>
+              </div>
+              <div className="text-center p-4 bg-background/30 rounded-lg">
+                <div className="text-2xl font-bold text-accent">{marketData.ethDominance}%</div>
+                <div className="text-sm text-muted-foreground">Ethereum Dominans</div>
+              </div>
+              <div className="text-center p-4 bg-background/30 rounded-lg">
+                <div className="text-2xl font-bold text-primary">{marketData.activeAddresses}</div>
+                <div className="text-sm text-muted-foreground">Aktiva Adresser</div>
+              </div>
+              <div className="text-center p-4 bg-background/30 rounded-lg">
+                <div className="text-2xl font-bold text-success">${marketData.defiTvl}</div>
+                <div className="text-sm text-muted-foreground">DeFi TVL</div>
+              </div>
+            </div>
+          </Card>
 
           {/* Market Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -276,7 +400,7 @@ const MarketOverviewPage = () => {
                             <div className="flex items-center space-x-3">
                               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
                                 <span className="font-crypto text-xs font-bold text-primary">
-                                  {crypto.symbol.charAt(0)}
+                                  {crypto.name.charAt(0)}
                                 </span>
                               </div>
                               <div>
