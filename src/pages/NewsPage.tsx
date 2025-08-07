@@ -30,10 +30,15 @@ import {
   ChevronUp,
   ChevronDown,
   Activity,
-  TrendingDownIcon
+  TrendingDownIcon,
+  Play,
+  Volume2
 } from "lucide-react";
 import Header from "@/components/Header";
 import { useNavigate } from "react-router-dom";
+import cryptoCharts from "@/assets/crypto-charts.jpg";
+import hexPattern from "@/assets/hex-pattern.jpg";
+import memeTokens from "@/assets/meme-tokens.jpg";
 
 interface NewsArticle {
   id: string;
@@ -99,12 +104,12 @@ const NewsPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
-    // Mock expanded news data
+    // Mock expanded news data with real images
     const mockNews: NewsArticle[] = [
       {
         id: "1",
         title: "Bitcoin når historiska höjder efter institutionella ETF-investeringar överstiger 50 miljarder dollar",
-        summary: "Bitcoin har nått nya rekordhöjder över $70,000 efter att institutionella investerare pumpat in över 50 miljarder dollar i Bitcoin ETF:er under den senaste månaden. Analster förutspår ytterligare tillväxt.",
+        summary: "Bitcoin har nått nya rekordhöjder över $70,000 efter att institutionella investerare pumpat in över 50 miljarder dollar i Bitcoin ETF:er under den senaste månaden. Analster förutspår ytterligare tillväxt med möjlighet att nå $100,000 inom året.",
         content: "Detaljerad artikel om Bitcoin's exceptionella prisökning och institutionella adoption...",
         author: "Erik Andersson, Senior Kryptoanalytiker",
         publishedAt: "2024-01-07T10:30:00Z",
@@ -113,7 +118,7 @@ const NewsPage = () => {
         views: 45500,
         likes: 1250,
         comments: 189,
-        imageUrl: "/crypto-charts.jpg",
+        imageUrl: cryptoCharts,
         tags: ["Bitcoin", "ETF", "Institutionella", "Rekord", "Adoption"],
         trending: true,
         impact: "high",
@@ -123,7 +128,7 @@ const NewsPage = () => {
       {
         id: "2",
         title: "Ethereum 2.0 staking överstiger 32 miljoner ETH - Nätverkets säkerhet når nya nivåer",
-        summary: "Ethereum-nätverket har nått en betydande milstolpe när över 32 miljoner ETH nu är stakade, vilket representerar mer än 25% av den totala ETH-tillgången. Detta stärker nätverkets säkerhet avsevärt.",
+        summary: "Ethereum-nätverket har nått en betydande milstolpe när över 32 miljoner ETH nu är stakade, vilket representerar mer än 25% av den totala ETH-tillgången. Detta stärker nätverkets säkerhet avsevärt och visar på stark tilltro till plattformen.",
         content: "Fullständig analys av Ethereum stakingtrend och dess påverkan på nätverkssäkerhet...",
         author: "Anna Björk, Blockchain-specialist",
         publishedAt: "2024-01-07T08:15:00Z",
@@ -132,6 +137,7 @@ const NewsPage = () => {
         views: 28900,
         likes: 820,
         comments: 167,
+        imageUrl: hexPattern,
         tags: ["Ethereum", "Staking", "ETH2.0", "Säkerhet", "Milestone"],
         trending: true,
         impact: "high",
@@ -141,7 +147,7 @@ const NewsPage = () => {
       {
         id: "3",
         title: "Meme Token-marknaden rasar 25% efter Elon Musks kritiska uttalanden om spekulation",
-        summary: "DOGE, SHIB och andra meme-tokens har tappat över 25% av sitt värde efter Elon Musks senaste tweets där han varnar för överdriven spekulation i meme-baserade kryptovalutor.",
+        summary: "DOGE, SHIB och andra meme-tokens har tappat över 25% av sitt värde efter Elon Musks senaste tweets där han varnar för överdriven spekulation i meme-baserade kryptovalutor. Experter uppmanar till försiktighet men ser potentiell återhämtning.",
         content: "Djupgående analys av meme token volatilitet och social media påverkan...",
         author: "Marcus Lind, Marknadsanalytiker",
         publishedAt: "2024-01-07T07:45:00Z",
@@ -150,6 +156,7 @@ const NewsPage = () => {
         views: 67800,
         likes: 534,
         comments: 298,
+        imageUrl: memeTokens,
         tags: ["DOGE", "SHIB", "Meme", "Volatilitet", "Social Media"],
         trending: true,
         impact: "medium",
@@ -159,7 +166,7 @@ const NewsPage = () => {
       {
         id: "4",
         title: "Sveriges CBDC-pilot med digital krona visar exceptionella resultat - Riksbanken planerar nationell utrullning",
-        summary: "Riksbankens pilotprogram för digital krona har överträffat alla förväntningar med över 100,000 testanvändare. Planer för nationell utrullning diskuteras för 2025.",
+        summary: "Riksbankens pilotprogram för digital krona har överträffat alla förväntningar med över 100,000 testanvändare och 99.9% systemtillgänglighet. Planer för nationell utrullning diskuteras aktivt för 2025 med potential att revolutionera svenskt betalningssystem.",
         content: "Detaljerad rapport om Sveriges CBDC-utveckling och framtidsplaner...",
         author: "Sophia Chen, FinTech-expert",
         publishedAt: "2024-01-07T06:20:00Z",
@@ -168,6 +175,7 @@ const NewsPage = () => {
         views: 19400,
         likes: 678,
         comments: 89,
+        imageUrl: cryptoCharts,
         tags: ["Sverige", "CBDC", "Riksbank", "Digital Krona", "Innovation"],
         trending: false,
         impact: "high",
@@ -177,7 +185,7 @@ const NewsPage = () => {
       {
         id: "5",
         title: "DeFi Total Value Locked (TVL) överstiger 100 miljarder dollar för första gången sedan 2022",
-        summary: "Decentraliserad finans (DeFi) har nått en ny milstolpe med över 100 miljarder dollar i Total Value Locked, drivet av innovativa protokoll och ökad institutionell adoption.",
+        summary: "Decentraliserad finans (DeFi) har nått en ny milstolpe med över 100 miljarder dollar i Total Value Locked, drivet av innovativa protokoll, förbättrad säkerhet och ökad institutionell adoption. Uniswap och Aave leder utvecklingen.",
         content: "Omfattande analys av DeFi-marknadens återhämtning och framtidsutsikter...",
         author: "David Kim, DeFi-specialist",
         publishedAt: "2024-01-07T05:30:00Z",
@@ -186,6 +194,7 @@ const NewsPage = () => {
         views: 15600,
         likes: 445,
         comments: 67,
+        imageUrl: hexPattern,
         tags: ["DeFi", "TVL", "Protokoll", "Innovation", "Growth"],
         trending: false,
         impact: "high",
@@ -245,19 +254,19 @@ const NewsPage = () => {
       <main className="pt-20 pb-16">
         <div className="container mx-auto px-4">
           {/* Enhanced Header Section */}
-          <div className="mb-10">
+          <div className="mb-12">
             <Button 
               variant="ghost" 
               onClick={() => navigate('/')}
-              className="mb-6 text-muted-foreground hover:text-primary text-lg"
+              className="mb-8 text-muted-foreground hover:text-primary text-xl p-4 h-auto"
             >
-              <ArrowLeft className="mr-3 h-5 w-5" />
-              Tillbaka till startsidan
+              <ArrowLeft className="mr-4 h-6 w-6" />
+              <span className="text-lg">Tillbaka till startsidan</span>
             </Button>
             
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-              <div>
-                <h1 className="font-crypto text-5xl md:text-7xl font-bold mb-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+              <div className="max-w-4xl">
+                <h1 className="font-crypto text-6xl md:text-8xl font-bold mb-6 leading-tight">
                   <span style={{ color: '#12E19F' }}>CRY</span>
                   <span className="text-white">PTO</span>
                   <span className="text-white"> </span>
@@ -265,40 +274,49 @@ const NewsPage = () => {
                   <span style={{ color: '#12E19F' }}>WORK</span>
                   <span className="text-white"> NYHETER</span>
                 </h1>
-                <p className="text-muted-foreground font-display text-xl md:text-2xl leading-relaxed">
+                <p className="text-muted-foreground font-display text-2xl md:text-3xl leading-relaxed mb-6">
                   Sveriges mest omfattande och aktuella källa för krypto-nyheter, marknadsanalys och branschinsikter. 
-                  Håll dig uppdaterad med realtidsrapportering från våra experter.
+                  <br className="hidden md:block" />
+                  <span className="text-primary font-semibold">Håll dig uppdaterad med realtidsrapportering från våra experter.</span>
                 </p>
-                <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
-                  <div className="flex items-center">
-                    <Activity className="h-4 w-4 mr-2 text-success" />
-                    <span>Live uppdateringar varje minut</span>
+                <div className="flex flex-wrap items-center gap-6 text-lg text-muted-foreground">
+                  <div className="flex items-center bg-success/10 px-4 py-2 rounded-full">
+                    <Activity className="h-5 w-5 mr-3 text-success" />
+                    <span className="font-medium">Live uppdateringar varje minut</span>
                   </div>
-                  <div className="flex items-center">
-                    <Star className="h-4 w-4 mr-2 text-warning" />
-                    <span>Expertanalys från branschledare</span>
+                  <div className="flex items-center bg-warning/10 px-4 py-2 rounded-full">
+                    <Star className="h-5 w-5 mr-3 text-warning" />
+                    <span className="font-medium">Expertanalys från branschledare</span>
+                  </div>
+                  <div className="flex items-center bg-primary/10 px-4 py-2 rounded-full">
+                    <Eye className="h-5 w-5 mr-3 text-primary" />
+                    <span className="font-medium">Lätt att läsa för alla åldrar</span>
                   </div>
                 </div>
               </div>
               
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-6">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-muted-foreground h-6 w-6" />
                   <Input
-                    placeholder="Sök nyheter, taggar eller författare..."
+                    placeholder="🔍 Sök nyheter, taggar eller författare..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 w-full sm:w-96 h-12 text-lg bg-secondary/50 border-border focus:border-primary"
+                    className="pl-16 w-full sm:w-[500px] h-16 text-xl bg-secondary/50 border-2 border-border focus:border-primary rounded-2xl"
                   />
                 </div>
-                <div className="flex gap-3">
-                  <Button variant="outline" size="lg" className="text-base">
-                    <Filter className="mr-2 h-5 w-5" />
+                <div className="flex flex-wrap gap-4">
+                  <Button variant="outline" size="lg" className="text-lg px-6 py-3 h-auto rounded-xl border-2">
+                    <Filter className="mr-3 h-6 w-6" />
                     Avancerat Filter
                   </Button>
-                  <Button variant="outline" size="lg" className="text-base">
-                    <Bookmark className="mr-2 h-5 w-5" />
+                  <Button variant="outline" size="lg" className="text-lg px-6 py-3 h-auto rounded-xl border-2">
+                    <Bookmark className="mr-3 h-6 w-6" />
                     Sparade Artiklar
+                  </Button>
+                  <Button variant="outline" size="lg" className="text-lg px-6 py-3 h-auto rounded-xl border-2">
+                    <Volume2 className="mr-3 h-6 w-6" />
+                    Lyssna på nyheter
                   </Button>
                 </div>
               </div>
@@ -474,79 +492,96 @@ const NewsPage = () => {
                   </Badge>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {filteredNews
                     .filter(article => article.trending)
                     .slice(0, 3)
                     .map((article) => (
-                    <Card key={article.id} className="p-8 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-                      <div className="flex flex-col md:flex-row gap-6">
+                    <Card key={article.id} className="overflow-hidden border-2 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 rounded-3xl">
+                      <div className="flex flex-col lg:flex-row">
                         {article.imageUrl && (
-                          <div className="md:w-64 h-48 bg-secondary/50 rounded-xl flex-shrink-0 bg-gradient-to-br from-primary/20 to-accent/20"></div>
+                          <div className="lg:w-80 h-64 lg:h-80 relative overflow-hidden">
+                            <img 
+                              src={article.imageUrl} 
+                              alt={article.title}
+                              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                            />
+                            <div className="absolute top-4 left-4">
+                              <Badge className="bg-destructive/90 text-white text-lg px-4 py-2 font-bold">
+                                🔥 TRENDING
+                              </Badge>
+                            </div>
+                            <div className="absolute bottom-4 right-4">
+                              <Button size="sm" variant="secondary" className="bg-black/70 text-white hover:bg-black/90">
+                                <Play className="h-4 w-4 mr-2" />
+                                Spela upp
+                              </Button>
+                            </div>
+                          </div>
                         )}
                         
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3 flex-wrap">
-                              <Badge className={`${getSentimentBadge(article.sentiment)} text-base px-3 py-1`}>
-                                {article.sentiment === 'positive' ? '📈 Positiv' : 
-                                 article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
+                        <div className="flex-1 p-8">
+                          <div className="flex items-start justify-between mb-6">
+                            <div className="flex items-center gap-4 flex-wrap">
+                              <Badge className={`${getSentimentBadge(article.sentiment)} text-lg px-4 py-2 font-semibold`}>
+                                {article.sentiment === 'positive' ? '📈 POSITIV NYHET' : 
+                                 article.sentiment === 'negative' ? '📉 VIKTIG VARNING' : '➡️ NEUTRAL INFO'}
                               </Badge>
-                              <Badge className={`${getImpactBadge(article.impact)} text-base px-3 py-1`}>
-                                {article.impact === 'high' ? '🔥 Hög Påverkan' : 
-                                 article.impact === 'medium' ? '⚡ Medium Påverkan' : '💭 Låg Påverkan'}
+                              <Badge className={`${getImpactBadge(article.impact)} text-lg px-4 py-2 font-semibold`}>
+                                {article.impact === 'high' ? '🔥 HÖG PÅVERKAN' : 
+                                 article.impact === 'medium' ? '⚡ MEDIUM PÅVERKAN' : '💭 LÅG PÅVERKAN'}
                               </Badge>
-                              <Badge variant="outline" className="border-primary text-primary text-base px-3 py-1">
-                                {article.category}
+                              <Badge variant="outline" className="border-2 border-primary text-primary text-lg px-4 py-2 font-bold">
+                                📂 {article.category}
                               </Badge>
                             </div>
                           </div>
                           
-                          <h3 className="font-display font-bold text-2xl mb-4 hover:text-primary cursor-pointer transition-colors leading-tight">
+                          <h3 className="font-display font-bold text-3xl mb-6 hover:text-primary cursor-pointer transition-colors leading-tight">
                             {article.title}
                           </h3>
                           
-                          <p className="text-muted-foreground mb-4 text-lg leading-relaxed">
+                          <p className="text-muted-foreground mb-6 text-xl leading-relaxed font-medium">
                             {article.summary}
                           </p>
 
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {article.tags.slice(0, 4).map((tag, index) => (
-                              <Badge key={index} variant="secondary" className="text-sm">
+                          <div className="flex flex-wrap gap-3 mb-6">
+                            {article.tags.slice(0, 5).map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-base px-3 py-1 bg-secondary/70">
                                 #{tag}
                               </Badge>
                             ))}
                           </div>
                           
-                          <div className="flex items-center justify-between text-base">
-                            <div className="flex items-center gap-6 text-muted-foreground">
-                              <div className="flex items-center">
-                                <span className="font-semibold">{article.author}</span>
+                          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-lg">
+                            <div className="flex flex-wrap items-center gap-6 text-muted-foreground">
+                              <div className="flex items-center font-medium">
+                                👤 <span className="ml-2 font-bold text-primary">{article.author}</span>
                               </div>
                               <div className="flex items-center">
-                                <Clock className="h-4 w-4 mr-2" />
-                                {new Date(article.publishedAt).toLocaleDateString('sv-SE')}
+                                <Clock className="h-5 w-5 mr-2" />
+                                <span className="font-medium">{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
                               </div>
-                              <div className="flex items-center">
-                                <span className="text-primary">{article.readTime} min läsning</span>
+                              <div className="flex items-center text-primary font-bold">
+                                ⏱️ <span className="ml-2">{article.readTime} min läsning</span>
                               </div>
                             </div>
                             
                             <div className="flex items-center gap-6 text-muted-foreground">
-                              <div className="flex items-center">
-                                <Eye className="h-5 w-5 mr-2" />
-                                <span className="font-semibold">{article.views.toLocaleString()}</span>
+                              <div className="flex items-center font-bold">
+                                <Eye className="h-6 w-6 mr-2 text-primary" />
+                                <span className="text-xl">{article.views.toLocaleString()}</span>
                               </div>
-                              <div className="flex items-center">
-                                <Heart className="h-5 w-5 mr-2 text-destructive" />
-                                <span className="font-semibold">{article.likes}</span>
+                              <div className="flex items-center font-bold">
+                                <Heart className="h-6 w-6 mr-2 text-destructive" />
+                                <span className="text-xl">{article.likes}</span>
                               </div>
-                              <div className="flex items-center">
-                                <MessageCircle className="h-5 w-5 mr-2 text-primary" />
-                                <span className="font-semibold">{article.comments}</span>
+                              <div className="flex items-center font-bold">
+                                <MessageCircle className="h-6 w-6 mr-2 text-primary" />
+                                <span className="text-xl">{article.comments}</span>
                               </div>
-                              <Button variant="ghost" size="sm">
-                                <Share className="h-4 w-4" />
+                              <Button variant="ghost" size="lg" className="h-auto">
+                                <Share className="h-6 w-6" />
                               </Button>
                             </div>
                           </div>
@@ -557,64 +592,82 @@ const NewsPage = () => {
                 </div>
               </div>
 
-              {/* All News - Enhanced */}
               <div>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-crypto text-2xl font-bold text-primary">ALLA NYHETER</h2>
-                  <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="text-base">
-                      <Calendar className="mr-2 h-5 w-5" />
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="font-crypto text-3xl font-bold text-primary">📰 ALLA NYHETER</h2>
+                  <div className="flex items-center gap-4">
+                    <Button variant="outline" size="lg" className="text-lg px-6 py-3 h-auto rounded-xl border-2">
+                      <Calendar className="mr-3 h-6 w-6" />
                       Sortera efter datum
                     </Button>
-                    <span className="text-muted-foreground text-base">
-                      {filteredNews.length} artiklar
+                    <span className="text-muted-foreground text-xl font-medium bg-secondary/50 px-4 py-2 rounded-full">
+                      📊 {filteredNews.length} artiklar
                     </span>
                   </div>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {filteredNews.map((article) => (
-                    <Card key={article.id} className="p-6 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
-                      <div className="flex items-start gap-6">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <Badge variant="outline" className="border-primary text-primary text-sm px-2 py-1">
-                              {article.category}
+                    <Card key={article.id} className="overflow-hidden border-2 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg rounded-2xl">
+                      <div className="flex flex-col lg:flex-row">
+                        {article.imageUrl && (
+                          <div className="lg:w-72 h-48 lg:h-64 relative overflow-hidden">
+                            <img 
+                              src={article.imageUrl} 
+                              alt={article.title}
+                              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 p-6">
+                          <div className="flex items-center gap-4 mb-4">
+                            <Badge variant="outline" className="border-2 border-primary text-primary text-base px-3 py-2 font-bold">
+                              📂 {article.category}
                             </Badge>
-                            <span className={`text-lg ${getSentimentColor(article.sentiment)}`}>
+                            <span className={`text-2xl ${getSentimentColor(article.sentiment)}`}>
                               {article.sentiment === 'positive' ? '📈' : 
                                article.sentiment === 'negative' ? '📉' : '➡️'}
                             </span>
-                            <span className="text-sm text-muted-foreground">{article.readTime} min</span>
-                            <span className="text-sm text-muted-foreground">•</span>
-                            <span className="text-sm text-muted-foreground">{article.source}</span>
+                            <span className="text-base text-primary font-bold bg-primary/10 px-3 py-1 rounded-full">
+                              ⏱️ {article.readTime} min
+                            </span>
+                            <span className="text-base text-muted-foreground">•</span>
+                            <span className="text-base text-muted-foreground font-medium">{article.source}</span>
                           </div>
                           
-                          <h3 className="font-display font-semibold text-xl mb-3 hover:text-primary cursor-pointer transition-colors leading-tight">
+                          <h3 className="font-display font-bold text-2xl mb-4 hover:text-primary cursor-pointer transition-colors leading-tight">
                             {article.title}
                           </h3>
                           
-                          <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
+                          <p className="text-xl text-muted-foreground mb-6 leading-relaxed font-medium">
                             {article.summary}
                           </p>
                           
-                          <div className="flex items-center justify-between text-base text-muted-foreground">
-                            <div className="flex items-center gap-4">
-                              <span className="font-medium">{article.author}</span>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {article.tags.slice(0, 4).map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-sm bg-secondary/70">
+                                #{tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          
+                          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-lg text-muted-foreground">
+                            <div className="flex items-center gap-6">
+                              <span className="font-bold text-primary">👤 {article.author}</span>
                               <span>•</span>
-                              <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
+                              <span className="font-medium">{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
                             </div>
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center">
-                                <Eye className="h-4 w-4 mr-2" />
+                            <div className="flex items-center gap-6">
+                              <div className="flex items-center font-bold">
+                                <Eye className="h-5 w-5 mr-2 text-primary" />
                                 <span>{(article.views / 1000).toFixed(1)}k</span>
                               </div>
-                              <div className="flex items-center">
-                                <Heart className="h-4 w-4 mr-2" />
+                              <div className="flex items-center font-bold">
+                                <Heart className="h-5 w-5 mr-2 text-destructive" />
                                 <span>{article.likes}</span>
                               </div>
-                              <div className="flex items-center">
-                                <MessageCircle className="h-4 w-4 mr-2" />
+                              <div className="flex items-center font-bold">
+                                <MessageCircle className="h-5 w-5 mr-2 text-primary" />
                                 <span>{article.comments}</span>
                               </div>
                             </div>
