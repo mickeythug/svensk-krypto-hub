@@ -14,6 +14,7 @@ import {
 import SimpleMobileChart from "./SimpleMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
 import MobileTradingPanel from "./MobileTradingPanel";
+import TokenSearchBar from "../TokenSearchBar";
 
 interface MobileTradingViewProps {
   symbol: string;
@@ -56,6 +57,15 @@ const MobileTradingView = ({
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
+        </div>
+        
+        {/* Mobile Search Bar */}
+        <div className="mb-3">
+          <TokenSearchBar 
+            currentSymbol={symbol}
+            placeholder="Sök token (t.ex. SOLUSDT)"
+            className="w-full"
+          />
         </div>
         
         <div className="flex items-end gap-3">

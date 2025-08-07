@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import ModernTradingViewChart from "./ModernTradingViewChart";
 import OrderBook from "./OrderBook";
+import TokenSearchBar from "./TokenSearchBar";
 import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
 
 interface DesktopTradingInterfaceProps {
@@ -70,12 +71,20 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         <div className="mx-3 mt-3 mb-2">
           <Card className="bg-background/95 backdrop-blur-sm border-border/20 p-3">
             <div className="flex items-center justify-between">
-              <div>
-                <div className="text-2xl font-bold font-mono text-foreground">
-                  ${currentPrice.toLocaleString()}
+              <div className="flex items-center gap-4">
+                <div>
+                  <div className="text-2xl font-bold font-mono text-foreground">
+                    ${currentPrice.toLocaleString()}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {symbol}/USDT • BINANCE
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {symbol}/USDT • BINANCE
+                <div className="w-64">
+                  <TokenSearchBar 
+                    currentSymbol={symbol}
+                    placeholder="Sök token (t.ex. SOLUSDT)"
+                  />
                 </div>
               </div>
               <div className={`flex items-center gap-2 ${
