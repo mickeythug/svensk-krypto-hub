@@ -425,24 +425,43 @@ class CryptoAPIClient {
   }
 
   private getFallbackData(): CryptoPrice[] {
-    // Fallback data with realistic crypto prices
+    // Fallback data with realistic crypto prices and correct logo mappings
     const fallbackData = [
-      { symbol: 'BTC', name: 'Bitcoin', price: 66234.50, change24h: 2.45 },
-      { symbol: 'ETH', name: 'Ethereum', price: 3521.30, change24h: 1.87 },
-      { symbol: 'BNB', name: 'Binance Coin', price: 623.45, change24h: -0.65 },
-      { symbol: 'ADA', name: 'Cardano', price: 0.4521, change24h: 3.21 },
-      { symbol: 'SOL', name: 'Solana', price: 185.34, change24h: 4.12 },
-      { symbol: 'DOT', name: 'Polkadot', price: 7.23, change24h: -1.23 },
-      { symbol: 'AVAX', name: 'Avalanche', price: 34.56, change24h: 2.87 },
-      { symbol: 'LINK', name: 'Chainlink', price: 14.78, change24h: 1.45 },
-      { symbol: 'UNI', name: 'Uniswap', price: 9.87, change24h: -0.87 },
-      { symbol: 'ATOM', name: 'Cosmos', price: 8.45, change24h: 2.13 },
-      { symbol: 'DOGE', name: 'Dogecoin', price: 0.1234, change24h: 5.67 },
-      { symbol: 'SHIB', name: 'Shiba Inu', price: 0.000024, change24h: -2.34 },
-      { symbol: 'MATIC', name: 'Polygon', price: 0.87, change24h: 1.98 },
-      { symbol: 'LTC', name: 'Litecoin', price: 87.65, change24h: 0.76 },
-      { symbol: 'XRP', name: 'XRP', price: 0.6234, change24h: -1.45 }
+      { symbol: 'BTC', name: 'Bitcoin', price: 66234.50, change24h: 2.45, coinGeckoId: 'bitcoin' },
+      { symbol: 'ETH', name: 'Ethereum', price: 3521.30, change24h: 1.87, coinGeckoId: 'ethereum' },
+      { symbol: 'BNB', name: 'Binance Coin', price: 623.45, change24h: -0.65, coinGeckoId: 'binancecoin' },
+      { symbol: 'ADA', name: 'Cardano', price: 0.4521, change24h: 3.21, coinGeckoId: 'cardano' },
+      { symbol: 'SOL', name: 'Solana', price: 185.34, change24h: 4.12, coinGeckoId: 'solana' },
+      { symbol: 'DOT', name: 'Polkadot', price: 7.23, change24h: -1.23, coinGeckoId: 'polkadot' },
+      { symbol: 'AVAX', name: 'Avalanche', price: 34.56, change24h: 2.87, coinGeckoId: 'avalanche-2' },
+      { symbol: 'LINK', name: 'Chainlink', price: 14.78, change24h: 1.45, coinGeckoId: 'chainlink' },
+      { symbol: 'UNI', name: 'Uniswap', price: 9.87, change24h: -0.87, coinGeckoId: 'uniswap' },
+      { symbol: 'ATOM', name: 'Cosmos', price: 8.45, change24h: 2.13, coinGeckoId: 'cosmos' },
+      { symbol: 'DOGE', name: 'Dogecoin', price: 0.1234, change24h: 5.67, coinGeckoId: 'dogecoin' },
+      { symbol: 'SHIB', name: 'Shiba Inu', price: 0.000024, change24h: -2.34, coinGeckoId: 'shiba-inu' },
+      { symbol: 'MATIC', name: 'Polygon', price: 0.87, change24h: 1.98, coinGeckoId: 'matic-network' },
+      { symbol: 'LTC', name: 'Litecoin', price: 87.65, change24h: 0.76, coinGeckoId: 'litecoin' },
+      { symbol: 'XRP', name: 'XRP', price: 0.6234, change24h: -1.45, coinGeckoId: 'ripple' }
     ];
+
+    // CoinGecko logo mapping för korrekt image ID
+    const logoMapping: { [key: string]: number } = {
+      'bitcoin': 1,
+      'ethereum': 279,
+      'binancecoin': 825,
+      'cardano': 975,
+      'solana': 4128,
+      'polkadot': 12171,
+      'avalanche-2': 12559,
+      'chainlink': 1027,
+      'uniswap': 7083,
+      'cosmos': 3794,
+      'dogecoin': 5,
+      'shiba-inu': 11939,
+      'matic-network': 4713,
+      'litecoin': 2,
+      'ripple': 52
+    };
 
     return fallbackData.map((coin, index) => ({
       ...coin,
@@ -450,7 +469,7 @@ class CryptoAPIClient {
       volume: formatters.volume(coin.price * 1000000),
       rank: index + 1,
       lastUpdated: new Date().toISOString(),
-      image: `https://assets.coingecko.com/coins/images/1/thumb/${coin.symbol.toLowerCase()}.png`
+      image: `https://assets.coingecko.com/coins/images/${logoMapping[coin.coinGeckoId]}/thumb/${coin.coinGeckoId}.png`
     }));
   }
 
