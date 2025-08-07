@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,16 @@ import {
   Coins,
   Calendar,
   Globe,
-  ExternalLink
+  ExternalLink,
+  Maximize,
+  Minimize
 } from "lucide-react";
 import Header from "@/components/Header";
 
 const CryptoDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Mock data - in real app this would come from API
   const cryptoData = {
@@ -65,39 +68,56 @@ const CryptoDetailPage = () => {
       return;
     }
 
-    // Load TradingView widget
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      width: "100%",
-      height: "500",
-      symbol: `COINBASE:${crypto.symbol}USD`,
-      interval: "D",
-      timezone: "Europe/Stockholm",
-      theme: "dark",
-      style: "1",
-      locale: "sv",
-      toolbar_bg: "#f1f3f6",
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      hide_legend: false,
-      save_image: false,
-      container_id: "tradingview_chart"
-    });
+    const loadChart = () => {
+      // Load TradingView widget
+      const script = document.createElement('script');
+      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        width: "100%",
+        height: isFullscreen ? "90vh" : "700",
+        symbol: `COINBASE:${crypto.symbol}USD`,
+        interval: "D",
+        timezone: "Europe/Stockholm",
+        theme: "dark",
+        style: "1",
+        locale: "sv",
+        toolbar_bg: "#0a0a0a",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        save_image: true,
+        hide_side_toolbar: false,
+        allow_symbol_change: false,
+        studies: ["BB@tv-basicstudies", "RSI@tv-basicstudies", "MACD@tv-basicstudies"],
+        container_id: "tradingview_chart",
+        backgroundColor: "#0a0a0a",
+        gridColor: "#1a1a1a",
+        color: "#ffffff"
+      });
 
-    const chartContainer = document.getElementById('tradingview_chart');
-    if (chartContainer) {
-      chartContainer.innerHTML = '';
-      chartContainer.appendChild(script);
-    }
+      const chartContainer = document.getElementById('tradingview_chart');
+      if (chartContainer) {
+        chartContainer.innerHTML = '';
+        chartContainer.appendChild(script);
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(loadChart, 100);
 
     return () => {
+      clearTimeout(timer);
+      const chartContainer = document.getElementById('tradingview_chart');
       if (chartContainer) {
         chartContainer.innerHTML = '';
       }
     };
-  }, [crypto, navigate, slug]);
+  }, [crypto, navigate, slug, isFullscreen]);
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
 
   if (!crypto) {
     return null;
@@ -230,16 +250,44 @@ const CryptoDetailPage = () => {
           </div>
 
           {/* Chart */}
-          <Card className="p-6 mb-8 bg-card/80 backdrop-blur-sm">
-            <h2 className="font-crypto text-2xl font-bold mb-4 flex items-center gap-2">
-              <BarChart3 className="h-6 w-6 text-primary" />
-              {crypto.name} Kursutveckling
-            </h2>
-            <div id="tradingview_chart" className="w-full h-[500px] bg-background rounded-lg"></div>
+          <Card className={`p-6 mb-8 bg-card/80 backdrop-blur-sm transition-all duration-300 ${
+            isFullscreen ? 'fixed inset-4 z-50 overflow-auto' : ''
+          }`}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-crypto text-2xl font-bold flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-primary" />
+                {crypto.name} Kursutveckling
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleFullscreen}
+                className="flex items-center gap-2"
+              >
+                {isFullscreen ? (
+                  <>
+                    <Minimize size={16} />
+                    Minimera
+                  </>
+                ) : (
+                  <>
+                    <Maximize size={16} />
+                    Fullskärm
+                  </>
+                )}
+              </Button>
+            </div>
+            <div 
+              id="tradingview_chart" 
+              className={`w-full bg-background rounded-lg border border-border ${
+                isFullscreen ? 'h-[85vh]' : 'h-[700px]'
+              }`}
+            ></div>
           </Card>
 
-          {/* Description and Links */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Description and Links - Hidden in fullscreen */}
+          {!isFullscreen && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <Card className="p-6 bg-card/80 backdrop-blur-sm">
               <h3 className="font-crypto text-xl font-bold mb-4">Om {crypto.name}</h3>
               <p className="text-muted-foreground leading-relaxed mb-6">
@@ -296,6 +344,7 @@ const CryptoDetailPage = () => {
               </div>
             </Card>
           </div>
+          )}
         </div>
       </div>
     </div>
