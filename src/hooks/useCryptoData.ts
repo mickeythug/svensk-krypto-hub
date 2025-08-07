@@ -181,23 +181,124 @@ class RateLimiter {
 // API rate limiter - 10 requests per second
 const apiRateLimiter = new RateLimiter(10, 2);
 
-// CoinGecko coin data med optimerad struktur
-const COIN_DATA = Object.freeze({
-  'bitcoin': { name: 'Bitcoin', symbol: 'BTC', rank: 1 },
-  'ethereum': { name: 'Ethereum', symbol: 'ETH', rank: 2 },
-  'binancecoin': { name: 'Binance Coin', symbol: 'BNB', rank: 3 },
-  'ripple': { name: 'XRP', symbol: 'XRP', rank: 4 },
-  'cardano': { name: 'Cardano', symbol: 'ADA', rank: 5 },
-  'solana': { name: 'Solana', symbol: 'SOL', rank: 6 },
-  'polkadot': { name: 'Polkadot', symbol: 'DOT', rank: 7 },
-  'avalanche-2': { name: 'Avalanche', symbol: 'AVAX', rank: 8 },
-  'chainlink': { name: 'Chainlink', symbol: 'LINK', rank: 9 },
-  'matic-network': { name: 'Polygon', symbol: 'MATIC', rank: 10 },
-  'uniswap': { name: 'Uniswap', symbol: 'UNI', rank: 11 },
-  'litecoin': { name: 'Litecoin', symbol: 'LTC', rank: 12 },
-  'dogecoin': { name: 'Dogecoin', symbol: 'DOGE', rank: 13 },
-  'shiba-inu': { name: 'Shiba Inu', symbol: 'SHIB', rank: 14 }
-} as const);
+// CoinGecko top 100 coins - riktig ranking
+const TOP_100_COINS = Object.freeze([
+  'bitcoin', 'ethereum', 'tether', 'binancecoin', 'solana', 'usd-coin', 'xrp', 'staked-ether', 'cardano', 'avalanche-2',
+  'dogecoin', 'chainlink', 'tron', 'polygon', 'shiba-inu', 'polkadot', 'litecoin', 'bitcoin-cash', 'uniswap', 'pepe',
+  'internet-computer', 'ethereum-classic', 'artificial-superintelligence-alliance', 'kaspa', 'near', 'dai', 'aptos',
+  'stellar', 'cronos', 'filecoin', 'cosmos', 'vechain', 'monero', 'hedera', 'ethereum-name-service', 'arbitrum',
+  'optimism', 'immutable-x', 'maker', 'fantom', 'rocket-pool', 'the-graph', 'bittensor', 'render-token', 'theta-network',
+  'algorand', 'kucoin-shares', 'lido-dao', 'flow', 'aave', 'decentraland', 'injective-protocol', 'sei-network',
+  'blockstack', 'elrond-erd-2', 'sandbox', 'axie-infinity', 'floki', 'thorchain', 'ftx-token', 'helium', 'gala',
+  'tezos', 'zcash', 'chiliz', 'mina-protocol', 'dydx', 'bonk', 'neo', 'iota', 'celsius-degree-token', 'eos',
+  'the-open-network', 'quant-network', 'kava', 'conflux-token', '1inch', 'compound', 'arweave', 'ecash', 'curve-dao-token',
+  'terra-luna-2', 'looksrare', 'trust-wallet-token', 'wormhole', 'pancakeswap-token', 'convex-finance', 'havven',
+  'bitcoin-sv', 'livepeer', 'sushiswap', 'blur', 'mask-network', 'osmosis', 'celsius-degree-token', 'golem'
+] as const);
+
+// Utökad coin data mapping för top 100
+const getCoinInfo = (coinId: string, rank: number) => {
+  const coinMap: Record<string, { name: string; symbol: string }> = {
+    'bitcoin': { name: 'Bitcoin', symbol: 'BTC' },
+    'ethereum': { name: 'Ethereum', symbol: 'ETH' },
+    'tether': { name: 'Tether', symbol: 'USDT' },
+    'binancecoin': { name: 'Binance Coin', symbol: 'BNB' },
+    'solana': { name: 'Solana', symbol: 'SOL' },
+    'usd-coin': { name: 'USD Coin', symbol: 'USDC' },
+    'xrp': { name: 'XRP', symbol: 'XRP' },
+    'staked-ether': { name: 'Lido Staked Ether', symbol: 'STETH' },
+    'cardano': { name: 'Cardano', symbol: 'ADA' },
+    'avalanche-2': { name: 'Avalanche', symbol: 'AVAX' },
+    'dogecoin': { name: 'Dogecoin', symbol: 'DOGE' },
+    'chainlink': { name: 'Chainlink', symbol: 'LINK' },
+    'tron': { name: 'TRON', symbol: 'TRX' },
+    'polygon': { name: 'Polygon', symbol: 'MATIC' },
+    'shiba-inu': { name: 'Shiba Inu', symbol: 'SHIB' },
+    'polkadot': { name: 'Polkadot', symbol: 'DOT' },
+    'litecoin': { name: 'Litecoin', symbol: 'LTC' },
+    'bitcoin-cash': { name: 'Bitcoin Cash', symbol: 'BCH' },
+    'uniswap': { name: 'Uniswap', symbol: 'UNI' },
+    'pepe': { name: 'Pepe', symbol: 'PEPE' },
+    'internet-computer': { name: 'Internet Computer', symbol: 'ICP' },
+    'ethereum-classic': { name: 'Ethereum Classic', symbol: 'ETC' },
+    'artificial-superintelligence-alliance': { name: 'Artificial Superintelligence Alliance', symbol: 'FET' },
+    'kaspa': { name: 'Kaspa', symbol: 'KAS' },
+    'near': { name: 'NEAR Protocol', symbol: 'NEAR' },
+    'dai': { name: 'Dai', symbol: 'DAI' },
+    'aptos': { name: 'Aptos', symbol: 'APT' },
+    'stellar': { name: 'Stellar', symbol: 'XLM' },
+    'cronos': { name: 'Cronos', symbol: 'CRO' },
+    'filecoin': { name: 'Filecoin', symbol: 'FIL' },
+    'cosmos': { name: 'Cosmos', symbol: 'ATOM' },
+    'vechain': { name: 'VeChain', symbol: 'VET' },
+    'monero': { name: 'Monero', symbol: 'XMR' },
+    'hedera': { name: 'Hedera', symbol: 'HBAR' },
+    'ethereum-name-service': { name: 'Ethereum Name Service', symbol: 'ENS' },
+    'arbitrum': { name: 'Arbitrum', symbol: 'ARB' },
+    'optimism': { name: 'Optimism', symbol: 'OP' },
+    'immutable-x': { name: 'Immutable', symbol: 'IMX' },
+    'maker': { name: 'Maker', symbol: 'MKR' },
+    'fantom': { name: 'Fantom', symbol: 'FTM' },
+    'rocket-pool': { name: 'Rocket Pool', symbol: 'RPL' },
+    'the-graph': { name: 'The Graph', symbol: 'GRT' },
+    'bittensor': { name: 'Bittensor', symbol: 'TAO' },
+    'render-token': { name: 'Render', symbol: 'RNDR' },
+    'theta-network': { name: 'Theta Network', symbol: 'THETA' },
+    'algorand': { name: 'Algorand', symbol: 'ALGO' },
+    'kucoin-shares': { name: 'KuCoin Token', symbol: 'KCS' },
+    'lido-dao': { name: 'Lido DAO', symbol: 'LDO' },
+    'flow': { name: 'Flow', symbol: 'FLOW' },
+    'aave': { name: 'Aave', symbol: 'AAVE' },
+    'decentraland': { name: 'Decentraland', symbol: 'MANA' },
+    'injective-protocol': { name: 'Injective', symbol: 'INJ' },
+    'sei-network': { name: 'Sei', symbol: 'SEI' },
+    'blockstack': { name: 'Stacks', symbol: 'STX' },
+    'elrond-erd-2': { name: 'MultiversX', symbol: 'EGLD' },
+    'sandbox': { name: 'The Sandbox', symbol: 'SAND' },
+    'axie-infinity': { name: 'Axie Infinity', symbol: 'AXS' },
+    'floki': { name: 'FLOKI', symbol: 'FLOKI' },
+    'thorchain': { name: 'THORChain', symbol: 'RUNE' },
+    'ftx-token': { name: 'FTX Token', symbol: 'FTT' },
+    'helium': { name: 'Helium', symbol: 'HNT' },
+    'gala': { name: 'Gala', symbol: 'GALA' },
+    'tezos': { name: 'Tezos', symbol: 'XTZ' },
+    'zcash': { name: 'Zcash', symbol: 'ZEC' },
+    'chiliz': { name: 'Chiliz', symbol: 'CHZ' },
+    'mina-protocol': { name: 'Mina', symbol: 'MINA' },
+    'dydx': { name: 'dYdX', symbol: 'DYDX' },
+    'bonk': { name: 'Bonk', symbol: 'BONK' },
+    'neo': { name: 'Neo', symbol: 'NEO' },
+    'iota': { name: 'IOTA', symbol: 'IOTA' },
+    'celsius-degree-token': { name: 'Celsius', symbol: 'CEL' },
+    'eos': { name: 'EOS', symbol: 'EOS' },
+    'the-open-network': { name: 'Toncoin', symbol: 'TON' },
+    'quant-network': { name: 'Quant', symbol: 'QNT' },
+    'kava': { name: 'Kava', symbol: 'KAVA' },
+    'conflux-token': { name: 'Conflux', symbol: 'CFX' },
+    '1inch': { name: '1inch Network', symbol: '1INCH' },
+    'compound': { name: 'Compound', symbol: 'COMP' },
+    'arweave': { name: 'Arweave', symbol: 'AR' },
+    'ecash': { name: 'eCash', symbol: 'XEC' },
+    'curve-dao-token': { name: 'Curve DAO Token', symbol: 'CRV' },
+    'terra-luna-2': { name: 'Terra', symbol: 'LUNA' },
+    'looksrare': { name: 'LooksRare', symbol: 'LOOKS' },
+    'trust-wallet-token': { name: 'Trust Wallet Token', symbol: 'TWT' },
+    'wormhole': { name: 'Wormhole', symbol: 'W' },
+    'pancakeswap-token': { name: 'PancakeSwap', symbol: 'CAKE' },
+    'convex-finance': { name: 'Convex Finance', symbol: 'CVX' },
+    'havven': { name: 'Synthetix', symbol: 'SNX' },
+    'bitcoin-sv': { name: 'Bitcoin SV', symbol: 'BSV' },
+    'livepeer': { name: 'Livepeer', symbol: 'LPT' },
+    'sushiswap': { name: 'SushiSwap', symbol: 'SUSHI' },
+    'blur': { name: 'Blur', symbol: 'BLUR' },
+    'mask-network': { name: 'Mask Network', symbol: 'MASK' },
+    'osmosis': { name: 'Osmosis', symbol: 'OSMO' },
+    'golem': { name: 'Golem', symbol: 'GLM' }
+  };
+
+  const info = coinMap[coinId] || { name: coinId.charAt(0).toUpperCase() + coinId.slice(1), symbol: coinId.toUpperCase() };
+  return { ...info, rank };
+};
 
 // Cache keys
 const CACHE_KEYS = Object.freeze({
@@ -272,11 +373,11 @@ class CryptoAPIClient {
     try {
       await apiRateLimiter.acquire();
 
-      const coinIds = Object.keys(COIN_DATA);
-      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds.join(',')}&vs_currencies=usd&include_24hr_change=true&include_last_updated_at=true&include_market_cap=true&include_24hr_vol=true`;
+      // Använd CoinGecko markets endpoint för top 100 med korrekt ranking
+      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h`;
       
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout för större dataset
 
       const response = await fetch(url, {
         headers: {
@@ -297,7 +398,7 @@ class CryptoAPIClient {
       // Reset circuit breaker på success
       this.failureCount = 0;
       
-      return this.transformAPIResponse(data);
+      return this.transformMarketAPIResponse(data);
       
     } catch (error) {
       this.recordFailure();
@@ -305,23 +406,17 @@ class CryptoAPIClient {
     }
   }
 
-  private transformAPIResponse(data: any): CryptoPrice[] {
-    const coinIds = Object.keys(COIN_DATA);
-    
-    return coinIds.map(coinId => {
-      const coinPrice = data[coinId];
-      if (!coinPrice) return null;
-
-      const info = COIN_DATA[coinId as keyof typeof COIN_DATA];
+  private transformMarketAPIResponse(data: any[]): CryptoPrice[] {
+    return data.map((coin, index) => {
       return {
-        symbol: info.symbol,
-        name: info.name,
-        price: coinPrice.usd,
-        change24h: coinPrice.usd_24h_change || 0,
-        marketCap: formatters.marketCap(coinPrice.usd_market_cap || 0),
-        volume: formatters.volume(coinPrice.usd_24h_vol || 0),
-        rank: info.rank,
-        lastUpdated: new Date(coinPrice.last_updated_at * 1000).toISOString()
+        symbol: coin.symbol.toUpperCase(),
+        name: coin.name,
+        price: coin.current_price,
+        change24h: coin.price_change_percentage_24h || 0,
+        marketCap: formatters.marketCap(coin.market_cap || 0),
+        volume: formatters.volume(coin.total_volume || 0),
+        rank: coin.market_cap_rank || (index + 1),
+        lastUpdated: new Date(coin.last_updated).toISOString()
       };
     }).filter(Boolean) as CryptoPrice[];
   }

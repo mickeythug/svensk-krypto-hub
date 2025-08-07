@@ -29,39 +29,106 @@ const CryptoDetailPage = () => {
   const [chartError, setChartError] = useState(false);
   const { getCryptoBySymbol } = useCryptoData();
   
-  // Mappa slug till symbol för att hitta korrekt crypto
-  const slugToSymbol = {
-    'bitcoin': 'BTC',
-    'btc': 'BTC',
-    'ethereum': 'ETH',
-    'eth': 'ETH', 
-    'bnb': 'BNB',
-    'binance-coin': 'BNB',
-    'xrp': 'XRP',
-    'ripple': 'XRP',
-    'ada': 'ADA',
-    'cardano': 'ADA',
-    'sol': 'SOL',
-    'solana': 'SOL',
-    'dot': 'DOT',
-    'polkadot': 'DOT',
-    'avax': 'AVAX',
-    'avalanche': 'AVAX',
-    'link': 'LINK',
-    'chainlink': 'LINK',
-    'matic': 'MATIC',
-    'polygon': 'MATIC',
-    'uni': 'UNI',
-    'uniswap': 'UNI',
-    'ltc': 'LTC',
-    'litecoin': 'LTC',
-    'doge': 'DOGE',
-    'dogecoin': 'DOGE',
-    'shib': 'SHIB',
-    'shiba-inu': 'SHIB'
+  // Omfattande slug-mappning för alla top 100 tokens 
+  const slugToSymbol: Record<string, string> = {
+    'bitcoin': 'BTC', 'btc': 'BTC',
+    'ethereum': 'ETH', 'eth': 'ETH',
+    'tether': 'USDT', 'usdt': 'USDT',
+    'binancecoin': 'BNB', 'bnb': 'BNB', 'binance-coin': 'BNB',
+    'solana': 'SOL', 'sol': 'SOL',
+    'usd-coin': 'USDC', 'usdc': 'USDC',
+    'xrp': 'XRP', 'ripple': 'XRP',
+    'staked-ether': 'STETH', 'steth': 'STETH',
+    'cardano': 'ADA', 'ada': 'ADA',
+    'avalanche-2': 'AVAX', 'avax': 'AVAX', 'avalanche': 'AVAX',
+    'dogecoin': 'DOGE', 'doge': 'DOGE',
+    'chainlink': 'LINK', 'link': 'LINK',
+    'tron': 'TRX', 'trx': 'TRX',
+    'polygon': 'MATIC', 'matic': 'MATIC',
+    'shiba-inu': 'SHIB', 'shib': 'SHIB',
+    'polkadot': 'DOT', 'dot': 'DOT',
+    'litecoin': 'LTC', 'ltc': 'LTC',
+    'bitcoin-cash': 'BCH', 'bch': 'BCH',
+    'uniswap': 'UNI', 'uni': 'UNI',
+    'pepe': 'PEPE',
+    'internet-computer': 'ICP', 'icp': 'ICP',
+    'ethereum-classic': 'ETC', 'etc': 'ETC',
+    'artificial-superintelligence-alliance': 'FET', 'fet': 'FET',
+    'kaspa': 'KAS', 'kas': 'KAS',
+    'near': 'NEAR', 'near-protocol': 'NEAR',
+    'dai': 'DAI',
+    'aptos': 'APT', 'apt': 'APT',
+    'stellar': 'XLM', 'xlm': 'XLM',
+    'cronos': 'CRO', 'cro': 'CRO',
+    'filecoin': 'FIL', 'fil': 'FIL',
+    'cosmos': 'ATOM', 'atom': 'ATOM',
+    'vechain': 'VET', 'vet': 'VET',
+    'monero': 'XMR', 'xmr': 'XMR',
+    'hedera': 'HBAR', 'hbar': 'HBAR',
+    'ethereum-name-service': 'ENS', 'ens': 'ENS',
+    'arbitrum': 'ARB', 'arb': 'ARB',
+    'optimism': 'OP', 'op': 'OP',
+    'immutable-x': 'IMX', 'imx': 'IMX',
+    'maker': 'MKR', 'mkr': 'MKR',
+    'fantom': 'FTM', 'ftm': 'FTM',
+    'rocket-pool': 'RPL', 'rpl': 'RPL',
+    'the-graph': 'GRT', 'grt': 'GRT',
+    'bittensor': 'TAO', 'tao': 'TAO',
+    'render-token': 'RNDR', 'rndr': 'RNDR',
+    'theta-network': 'THETA', 'theta': 'THETA',
+    'algorand': 'ALGO', 'algo': 'ALGO',
+    'kucoin-shares': 'KCS', 'kcs': 'KCS',
+    'lido-dao': 'LDO', 'ldo': 'LDO',
+    'flow': 'FLOW',
+    'aave': 'AAVE',
+    'decentraland': 'MANA', 'mana': 'MANA',
+    'injective-protocol': 'INJ', 'inj': 'INJ',
+    'sei-network': 'SEI', 'sei': 'SEI',
+    'blockstack': 'STX', 'stx': 'STX',
+    'elrond-erd-2': 'EGLD', 'egld': 'EGLD',
+    'sandbox': 'SAND', 'sand': 'SAND',
+    'axie-infinity': 'AXS', 'axs': 'AXS',
+    'floki': 'FLOKI',
+    'thorchain': 'RUNE', 'rune': 'RUNE',
+    'ftx-token': 'FTT', 'ftt': 'FTT',
+    'helium': 'HNT', 'hnt': 'HNT',
+    'gala': 'GALA',
+    'tezos': 'XTZ', 'xtz': 'XTZ',
+    'zcash': 'ZEC', 'zec': 'ZEC',
+    'chiliz': 'CHZ', 'chz': 'CHZ',
+    'mina-protocol': 'MINA', 'mina': 'MINA',
+    'dydx': 'DYDX',
+    'bonk': 'BONK',
+    'neo': 'NEO',
+    'iota': 'IOTA',
+    'celsius-degree-token': 'CEL', 'cel': 'CEL',
+    'eos': 'EOS',
+    'the-open-network': 'TON', 'ton': 'TON',
+    'quant-network': 'QNT', 'qnt': 'QNT',
+    'kava': 'KAVA',
+    'conflux-token': 'CFX', 'cfx': 'CFX',
+    '1inch': '1INCH',
+    'compound': 'COMP', 'comp': 'COMP',
+    'arweave': 'AR', 'ar': 'AR',
+    'ecash': 'XEC', 'xec': 'XEC',
+    'curve-dao-token': 'CRV', 'crv': 'CRV',
+    'terra-luna-2': 'LUNA', 'luna': 'LUNA',
+    'looksrare': 'LOOKS', 'looks': 'LOOKS',
+    'trust-wallet-token': 'TWT', 'twt': 'TWT',
+    'wormhole': 'W', 'w': 'W',
+    'pancakeswap-token': 'CAKE', 'cake': 'CAKE',
+    'convex-finance': 'CVX', 'cvx': 'CVX',
+    'havven': 'SNX', 'snx': 'SNX',
+    'bitcoin-sv': 'BSV', 'bsv': 'BSV',
+    'livepeer': 'LPT', 'lpt': 'LPT',
+    'sushiswap': 'SUSHI', 'sushi': 'SUSHI',
+    'blur': 'BLUR',
+    'mask-network': 'MASK', 'mask': 'MASK',
+    'osmosis': 'OSMO', 'osmo': 'OSMO',
+    'golem': 'GLM', 'glm': 'GLM'
   };
 
-  const symbol = slugToSymbol[slug as keyof typeof slugToSymbol];
+  const symbol = slugToSymbol[slug?.toLowerCase() || ''];
   const crypto = symbol ? getCryptoBySymbol(symbol) : null;
 
   // Statisk info för varje crypto (info som inte ändras ofta)
@@ -180,7 +247,23 @@ const CryptoDetailPage = () => {
     }
   };
 
-  const info = symbol ? cryptoInfo[symbol as keyof typeof cryptoInfo] : null;
+  // Fallback info för tokens som inte har detaljerad info än
+  const getTokenInfo = (symbol: string) => {
+    const staticInfo = cryptoInfo[symbol as keyof typeof cryptoInfo];
+    if (staticInfo) return staticInfo;
+    
+    // Fallback för alla andra tokens
+    return {
+      name: crypto?.name || symbol,
+      description: `${crypto?.name || symbol} är en kryptovaluta som handlas på världens största kryptobörser. Se live prisdata och chart ovan.`,
+      website: "#",
+      whitepaper: "",
+      supply: "N/A",
+      maxSupply: "N/A"
+    };
+  };
+
+  const info = symbol ? getTokenInfo(symbol) : null;
 
   useEffect(() => {
     if (!crypto) {

@@ -72,7 +72,7 @@ const MarketOverviewPage = () => {
   const [activeTab, setActiveTab] = useState("top10");
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
-  const itemsPerPage = 10;
+  const itemsPerPage = 15; // 15 tokens per sida som begärt
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
 
@@ -162,7 +162,7 @@ const MarketOverviewPage = () => {
   ];
 
   const getCurrentData = () => {
-    // Använd riktig data från CoinGecko API via hooken
+    // Använd riktig top 100 data från CoinGecko API
     if (!cryptoPrices || cryptoPrices.length === 0) return [];
     
     // Konvertera riktig data till rätt format för tabellen
@@ -172,9 +172,9 @@ const MarketOverviewPage = () => {
       symbol: crypto.symbol,
       slug: crypto.symbol.toLowerCase(),
       price: crypto.price,
-      change1h: 0, // CoinGecko API ger inte 1h data i vår hook
+      change1h: 0, // CoinGecko markets API ger inte 1h data direkt
       change24h: crypto.change24h,
-      change7d: 0, // CoinGecko API ger inte 7d data i vår hook  
+      change7d: 0, // CoinGecko markets API ger inte 7d data direkt
       marketCap: crypto.marketCap || "0",
       volume: crypto.volume || "0",
       supply: `${crypto.supply || "0"} ${crypto.symbol}`
@@ -182,22 +182,35 @@ const MarketOverviewPage = () => {
 
     switch (activeTab) {
       case "trending":
-        // Sortera efter högst positiv 24h förändring
-        return formattedCrypto.sort((a, b) => b.change24h - a.change24h).slice(0, 10);
+        // Sortera efter högst positiv 24h förändring (trending up)
+        return formattedCrypto
+          .filter(crypto => crypto.change24h > 5) // Bara tokens med >5% ökning
+          .sort((a, b) => b.change24h - a.change24h)
+          .slice(0, 50);
       case "meme":
-        // Visa bara meme tokens (DOGE, SHIB)
-        return formattedCrypto.filter(crypto => ['DOGE', 'SHIB'].includes(crypto.symbol));
+        // Visa populära meme tokens
+        return formattedCrypto.filter(crypto => 
+          ['DOGE', 'SHIB', 'PEPE', 'BONK', 'FLOKI'].includes(crypto.symbol)
+        );
       case "gainers":
         // Sortera efter högst positiv förändring
-        return formattedCrypto.filter(crypto => crypto.change24h > 0).sort((a, b) => b.change24h - a.change24h);
+        return formattedCrypto
+          .filter(crypto => crypto.change24h > 0)
+          .sort((a, b) => b.change24h - a.change24h)
+          .slice(0, 50);
       case "losers":
         // Sortera efter lägst negativ förändring
-        return formattedCrypto.filter(crypto => crypto.change24h < 0).sort((a, b) => a.change24h - b.change24h);
+        return formattedCrypto
+          .filter(crypto => crypto.change24h < 0)
+          .sort((a, b) => a.change24h - b.change24h)
+          .slice(0, 50);
       case "all":
-        return formattedCrypto;
+        return formattedCrypto; // Visa alla 100
       default:
-        // Top 10 sorterat efter rank
-        return formattedCrypto.sort((a, b) => a.rank - b.rank).slice(0, 10);
+        // Top 10 sorterat efter market cap rank
+        return formattedCrypto
+          .sort((a, b) => a.rank - b.rank)
+          .slice(0, 10);
     }
   };
 
