@@ -60,7 +60,7 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className={`font-display ${isMobile ? 'text-base px-2' : 'text-xl md:text-2xl'} text-muted-foreground ${isMobile ? 'mb-6' : 'mb-8'} leading-relaxed animate-fade-in`} style={{ animationDelay: '0.3s' }}>
-            Sveriges ledande krypto community där du lär dig om kryptovalutor, 
+            Vårt mål är att bli Sveriges ledande krypto community där du lär dig om kryptovalutor, 
             följer marknaden i realtid och träffar nya vänner med samma passion för Web3
           </p>
 
