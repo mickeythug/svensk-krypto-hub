@@ -49,6 +49,21 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 
+// Import crypto logos
+import btcLogo from "@/assets/crypto-logos/btc.png";
+import ethLogo from "@/assets/crypto-logos/eth.png";
+import bnbLogo from "@/assets/crypto-logos/bnb.png";
+import xrpLogo from "@/assets/crypto-logos/xrp.png";
+import adaLogo from "@/assets/crypto-logos/ada.png";
+import solLogo from "@/assets/crypto-logos/sol.png";
+import dotLogo from "@/assets/crypto-logos/dot.png";
+import avaxLogo from "@/assets/crypto-logos/avax.png";
+import linkLogo from "@/assets/crypto-logos/link.png";
+import maticLogo from "@/assets/crypto-logos/matic.png";
+import dogeLogo from "@/assets/crypto-logos/doge.png";
+import shibLogo from "@/assets/crypto-logos/shib.png";
+import ltcLogo from "@/assets/crypto-logos/ltc.png";
+
 const MarketOverviewPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("top10");
@@ -56,26 +71,36 @@ const MarketOverviewPage = () => {
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
-  // Icon mapping for different cryptocurrencies
-  const getCryptoIcon = (symbol: string) => {
-    const iconMap: { [key: string]: any } = {
-      'BTC': Bitcoin,
-      'ETH': CircleDollarSign,
-      'BNB': Coins,
-      'XRP': Zap,
-      'ADA': Target,
-      'SOL': Flame,
-      'DOT': Globe,
-      'AVAX': Activity,
-      'LINK': MessageCircle,
-      'MATIC': BarChart3,
-      'PEPE': Target,
-      'BONK': Flame,
-      'FLOKI': Zap,
-      'DOGE': Target,
-      'SHIB': Flame
+  // Logo mapping for different cryptocurrencies
+  const getCryptoLogo = (symbol: string) => {
+    const logoMap: { [key: string]: string } = {
+      'BTC': btcLogo,
+      'ETH': ethLogo,
+      'BNB': bnbLogo,
+      'XRP': xrpLogo,
+      'ADA': adaLogo,
+      'SOL': solLogo,
+      'DOT': dotLogo,
+      'AVAX': avaxLogo,
+      'LINK': linkLogo,
+      'MATIC': maticLogo,
+      'DOGE': dogeLogo,
+      'SHIB': shibLogo,
+      'LTC': ltcLogo,
+      'PEPE': btcLogo, // fallback
+      'BONK': ethLogo, // fallback
+      'FLOKI': bnbLogo, // fallback
+      'UNI': linkLogo, // fallback
+      'ICP': solLogo, // fallback
+      'ATOM': dotLogo, // fallback
+      'NEAR': avaxLogo, // fallback
+      'ALGO': maticLogo, // fallback
+      'VET': xrpLogo, // fallback
+      'FTM': adaLogo, // fallback
+      'GRT': linkLogo, // fallback
+      'HBAR': dogeLogo // fallback
     };
-    return iconMap[symbol] || CircleDollarSign;
+    return logoMap[symbol] || btcLogo; // default fallback
   };
 
   const marketSentiment = {
@@ -430,11 +455,12 @@ const MarketOverviewPage = () => {
                         </TableCell>
                         <TableCell className="py-2 px-2 md:px-4">
                           <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 md:w-8 md:h-8 bg-gradient-to-br from-primary/80 via-accent/80 to-secondary/80 rounded-full flex items-center justify-center shadow-sm">
-                              {(() => {
-                                const IconComponent = getCryptoIcon(crypto.symbol);
-                                return <IconComponent className="h-2 w-2 md:h-4 md:w-4 text-primary-foreground" />;
-                              })()}
+                            <div className="w-4 h-4 md:w-8 md:h-8 rounded-full flex items-center justify-center shadow-sm overflow-hidden bg-white">
+                              <img 
+                                src={getCryptoLogo(crypto.symbol)} 
+                                alt={crypto.name}
+                                className="w-full h-full object-contain"
+                              />
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors text-[9px] md:text-sm">
@@ -596,11 +622,12 @@ const MarketOverviewPage = () => {
 
                 {/* Coin Info */}
                 <div className="flex-1 flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-primary/80 via-accent/80 to-secondary/80 rounded-full flex items-center justify-center">
-                    {(() => {
-                      const IconComponent = getCryptoIcon(crypto.symbol);
-                      return <IconComponent className="h-4 w-4 text-primary-foreground" />;
-                    })()}
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-white">
+                    <img 
+                      src={getCryptoLogo(crypto.symbol)} 
+                      alt={crypto.name}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-foreground text-sm">
