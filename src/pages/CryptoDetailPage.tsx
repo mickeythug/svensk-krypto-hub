@@ -77,23 +77,20 @@ const CryptoDetailPage = () => {
         width: "100%",
         height: isFullscreen ? "90vh" : "700",
         symbol: `COINBASE:${crypto.symbol}USD`,
-        interval: "D",
+        interval: "1D",
         timezone: "Europe/Stockholm",
         theme: "dark",
         style: "1",
-        locale: "sv",
-        toolbar_bg: "#0a0a0a",
+        locale: "en",
+        toolbar_bg: "#000000",
         enable_publishing: false,
         hide_top_toolbar: false,
         hide_legend: false,
         save_image: true,
         hide_side_toolbar: false,
-        allow_symbol_change: false,
-        studies: ["BB@tv-basicstudies", "RSI@tv-basicstudies", "MACD@tv-basicstudies"],
-        container_id: "tradingview_chart",
-        backgroundColor: "#0a0a0a",
-        gridColor: "#1a1a1a",
-        color: "#ffffff"
+        allow_symbol_change: true,
+        studies: ["RSI@tv-basicstudies"],
+        container_id: "tradingview_chart"
       });
 
       const chartContainer = document.getElementById('tradingview_chart');
@@ -250,40 +247,42 @@ const CryptoDetailPage = () => {
           </div>
 
           {/* Chart */}
-          <Card className={`p-6 mb-8 bg-card/80 backdrop-blur-sm transition-all duration-300 ${
-            isFullscreen ? 'fixed inset-4 z-50 overflow-auto' : ''
+          <div className={`transition-all duration-300 ${
+            isFullscreen ? 'fixed inset-0 z-50 bg-background p-4' : ''
           }`}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-crypto text-2xl font-bold flex items-center gap-2">
-                <BarChart3 className="h-6 w-6 text-primary" />
-                {crypto.name} Kursutveckling
-              </h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={toggleFullscreen}
-                className="flex items-center gap-2"
-              >
-                {isFullscreen ? (
-                  <>
-                    <Minimize size={16} />
-                    Minimera
-                  </>
-                ) : (
-                  <>
-                    <Maximize size={16} />
-                    Fullskärm
-                  </>
-                )}
-              </Button>
-            </div>
-            <div 
-              id="tradingview_chart" 
-              className={`w-full bg-background rounded-lg border border-border ${
-                isFullscreen ? 'h-[85vh]' : 'h-[700px]'
-              }`}
-            ></div>
-          </Card>
+            <Card className={`p-6 mb-8 bg-card/80 backdrop-blur-sm h-full`}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-crypto text-2xl font-bold flex items-center gap-2">
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                  {crypto.name} Kursutveckling
+                </h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleFullscreen}
+                  className="flex items-center gap-2"
+                >
+                  {isFullscreen ? (
+                    <>
+                      <Minimize size={16} />
+                      Minimera
+                    </>
+                  ) : (
+                    <>
+                      <Maximize size={16} />
+                      Fullskärm
+                    </>
+                  )}
+                </Button>
+              </div>
+              <div 
+                id="tradingview_chart" 
+                className={`w-full bg-background rounded-lg border border-border ${
+                  isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[700px]'
+                }`}
+              ></div>
+            </Card>
+          </div>
 
           {/* Description and Links - Hidden in fullscreen */}
           {!isFullscreen && (
