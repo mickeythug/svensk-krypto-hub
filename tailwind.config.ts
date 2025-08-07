@@ -146,35 +146,47 @@ export default {
 				'glitch': {
 					'0%': { 
 						transform: 'translate(0)',
-						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
-					},
-					'2%': { 
-						transform: 'translate(2px, 0)',
-						clipPath: 'polygon(0 78%, 100% 78%, 100% 100%, 0 100%)'
-					},
-					'6%': { 
-						transform: 'translate(-2px, 0)',
-						clipPath: 'polygon(0 78%, 100% 78%, 100% 82%, 0 82%)'
-					},
-					'8%': { 
-						transform: 'translate(0)',
-						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
-					},
-					'9%': { 
-						transform: 'translate(3px, 0)',
-						clipPath: 'polygon(0 15%, 100% 15%, 100% 20%, 0 20%)'
+						textShadow: 'none'
 					},
 					'10%': { 
-						transform: 'translate(-1px, 0)',
-						clipPath: 'polygon(0 10%, 100% 10%, 100% 44%, 0 44%)'
+						transform: 'translate(-1px, -1px)',
+						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
 					},
-					'13%': { 
+					'20%': { 
+						transform: 'translate(1px, 1px)',
+						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
+					},
+					'30%': { 
+						transform: 'translate(-1px, 1px)',
+						textShadow: '2px 0 0 #12E19F, -2px 0 0 #12E19F'
+					},
+					'40%': { 
+						transform: 'translate(1px, -1px)',
+						textShadow: 'none'
+					},
+					'50%': { 
 						transform: 'translate(0)',
-						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
+						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
+					},
+					'60%': { 
+						transform: 'translate(-1px, 0)',
+						textShadow: 'none'
+					},
+					'70%': { 
+						transform: 'translate(1px, 0)',
+						textShadow: '2px 0 0 #12E19F, -2px 0 0 #12E19F'
+					},
+					'80%': { 
+						transform: 'translate(0)',
+						textShadow: 'none'
+					},
+					'90%': { 
+						transform: 'translate(-1px, 1px)',
+						textShadow: '1px 0 0 #12E19F, -1px 0 0 #12E19F'
 					},
 					'100%': { 
 						transform: 'translate(0)',
-						clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)'
+						textShadow: 'none'
 					}
 				}
 			},
@@ -187,7 +199,7 @@ export default {
 				'fade-in': 'fade-in 0.8s ease-out',
 				'ticker': 'ticker 30s linear infinite',
 				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'glitch': 'glitch 4s infinite'
+				'glitch': 'glitch 3s infinite'
 			}
 		}
 	},
