@@ -15,7 +15,9 @@ import {
   Globe,
   ExternalLink,
   Maximize,
-  Minimize
+  Minimize,
+  RefreshCw,
+  AlertCircle
 } from "lucide-react";
 import Header from "@/components/Header";
 
@@ -23,12 +25,16 @@ const CryptoDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [chartProvider, setChartProvider] = useState<'tradingview' | 'coingecko' | 'dexscreener'>('tradingview');
+  const [chartError, setChartError] = useState(false);
 
-  // Mock data - in real app this would come from API
+  // Mock data with additional chart info - in real app this would come from API
   const cryptoData = {
     bitcoin: {
       name: "Bitcoin",
       symbol: "BTC",
+      coingeckoId: "bitcoin",
+      dexscreenerId: "bitcoin",
       price: 645000,
       change1h: 0.5,
       change24h: 2.34,
@@ -40,11 +46,14 @@ const CryptoDetailPage = () => {
       rank: 1,
       description: "Bitcoin är den första och mest kända kryptovalutan, skapad av den pseudonyma Satoshi Nakamoto 2009. Den fungerar som ett decentraliserat digitalt betalningssystem utan behov av mellanhand som banker.",
       website: "https://bitcoin.org",
-      whitepaper: "https://bitcoin.org/bitcoin.pdf"
+      whitepaper: "https://bitcoin.org/bitcoin.pdf",
+      onTradingView: true
     },
     ethereum: {
       name: "Ethereum",
-      symbol: "ETH", 
+      symbol: "ETH",
+      coingeckoId: "ethereum", 
+      dexscreenerId: "ethereum",
       price: 35000,
       change1h: -0.2,
       change24h: -1.45,
@@ -56,7 +65,27 @@ const CryptoDetailPage = () => {
       rank: 2,
       description: "Ethereum är en decentraliserad plattform som möjliggör smarta kontrakt och decentraliserade applikationer (DApps). Den introducerade konceptet med programmerbara blockkedjor.",
       website: "https://ethereum.org",
-      whitepaper: "https://ethereum.org/en/whitepaper/"
+      whitepaper: "https://ethereum.org/en/whitepaper/",
+      onTradingView: true
+    },
+    pepe: {
+      name: "Pepe",
+      symbol: "PEPE",
+      coingeckoId: "pepe",
+      dexscreenerId: "ethereum/0x6982508145454ce325ddbe47a25d4ec3d2311933",
+      price: 0.000024,
+      change1h: 15.2,
+      change24h: 45.8,
+      change7d: 123.4,
+      marketCap: "9.8B",
+      volume: "2.1B",
+      supply: "420.7T",
+      maxSupply: "420.7T",
+      rank: 25,
+      description: "PEPE är en memecoin baserad på den populära Pepe the Frog memen. Den lanserades på Ethereum-nätverket och har blivit en av de mest populära memecoins.",
+      website: "https://www.pepe.vip/",
+      whitepaper: "",
+      onTradingView: false
     }
   };
 
@@ -69,35 +98,105 @@ const CryptoDetailPage = () => {
     }
 
     const loadChart = () => {
-      // Load TradingView widget
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-      script.async = true;
-      script.innerHTML = JSON.stringify({
-        width: "100%",
-        height: isFullscreen ? "90vh" : "700",
-        symbol: `COINBASE:${crypto.symbol}USD`,
-        interval: "1D",
-        timezone: "Europe/Stockholm",
-        theme: "dark",
-        style: "1",
-        locale: "en",
-        toolbar_bg: "#000000",
-        enable_publishing: false,
-        hide_top_toolbar: false,
-        hide_legend: false,
-        save_image: true,
-        hide_side_toolbar: false,
-        allow_symbol_change: true,
-        studies: ["RSI@tv-basicstudies"],
-        container_id: "tradingview_chart"
-      });
-
       const chartContainer = document.getElementById('tradingview_chart');
-      if (chartContainer) {
-        chartContainer.innerHTML = '';
-        chartContainer.appendChild(script);
+      if (!chartContainer) return;
+
+      // Clear previous content
+      chartContainer.innerHTML = '';
+
+      if (chartProvider === 'tradingview' && crypto.onTradingView) {
+        loadTradingViewChart(chartContainer);
+      } else if (chartProvider === 'coingecko') {
+        loadCoinGeckoChart(chartContainer);
+      } else if (chartProvider === 'dexscreener') {
+        loadDexScreenerChart(chartContainer);
+      } else {
+        // Fallback to CoinGecko if TradingView doesn't have the token
+        setChartProvider('coingecko');
+        loadCoinGeckoChart(chartContainer);
       }
+    };
+
+    const loadTradingViewChart = (container: HTMLElement) => {
+      try {
+        const script = document.createElement('script');
+        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+          width: "100%",
+          height: isFullscreen ? "90vh" : "700",
+          symbol: `COINBASE:${crypto.symbol}USD`,
+          interval: "1D",
+          timezone: "Europe/Stockholm",
+          theme: "dark",
+          style: "1",
+          locale: "en",
+          toolbar_bg: "#000000",
+          enable_publishing: false,
+          hide_top_toolbar: false,
+          hide_legend: false,
+          save_image: true,
+          hide_side_toolbar: false,
+          allow_symbol_change: true,
+          studies: ["RSI@tv-basicstudies"],
+          container_id: "tradingview_chart"
+        });
+        container.appendChild(script);
+        setChartError(false);
+      } catch (error) {
+        console.error('Error loading TradingView chart:', error);
+        setChartError(true);
+      }
+    };
+
+    const loadCoinGeckoChart = (container: HTMLElement) => {
+      container.innerHTML = `
+        <div class="w-full h-full flex flex-col">
+          <div class="flex items-center justify-between mb-4 px-4">
+            <span class="text-sm text-muted-foreground">Powered by CoinGecko</span>
+            <a href="https://www.coingecko.com/sv/coins/${crypto.coingeckoId}" target="_blank" class="text-primary hover:underline text-sm flex items-center gap-1">
+              Visa på CoinGecko
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                <path d="M5 5a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2v-2a1 1 0 10-2 0v2H5V7h2a1 1 0 000-2H5z"></path>
+              </svg>
+            </a>
+          </div>
+          <iframe 
+            src="https://www.coingecko.com/sv/coins/${crypto.coingeckoId}/usd/advanced_chart_widget" 
+            width="100%" 
+            height="${isFullscreen ? 'calc(90vh - 60px)' : '650px'}"
+            frameborder="0"
+            style="border-radius: 8px; background: #000;"
+          ></iframe>
+        </div>
+      `;
+      setChartError(false);
+    };
+
+    const loadDexScreenerChart = (container: HTMLElement) => {
+      container.innerHTML = `
+        <div class="w-full h-full flex flex-col">
+          <div class="flex items-center justify-between mb-4 px-4">
+            <span class="text-sm text-muted-foreground">Powered by DexScreener</span>
+            <a href="https://dexscreener.com/${crypto.dexscreenerId}" target="_blank" class="text-primary hover:underline text-sm flex items-center gap-1">
+              Visa på DexScreener
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                <path d="M5 5a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2v-2a1 1 0 10-2 0v2H5V7h2a1 1 0 000-2H5z"></path>
+              </svg>
+            </a>
+          </div>
+          <iframe 
+            src="https://dexscreener.com/${crypto.dexscreenerId}?embed=1&theme=dark" 
+            width="100%" 
+            height="${isFullscreen ? 'calc(90vh - 60px)' : '650px'}"
+            frameborder="0"
+            style="border-radius: 8px;"
+          ></iframe>
+        </div>
+      `;
+      setChartError(false);
     };
 
     // Small delay to ensure DOM is ready
@@ -110,10 +209,15 @@ const CryptoDetailPage = () => {
         chartContainer.innerHTML = '';
       }
     };
-  }, [crypto, navigate, slug, isFullscreen]);
+  }, [crypto, navigate, slug, isFullscreen, chartProvider]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  const switchChartProvider = (provider: 'tradingview' | 'coingecko' | 'dexscreener') => {
+    setChartProvider(provider);
+    setChartError(false);
   };
 
   if (!crypto) {
@@ -251,11 +355,41 @@ const CryptoDetailPage = () => {
             isFullscreen ? 'fixed inset-0 z-50 bg-background p-4' : ''
           }`}>
             <Card className={`p-6 mb-8 bg-card/80 backdrop-blur-sm h-full`}>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-crypto text-2xl font-bold flex items-center gap-2">
-                  <BarChart3 className="h-6 w-6 text-primary" />
-                  {crypto.name} Kursutveckling
-                </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-crypto text-2xl font-bold flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-primary" />
+                {crypto.name} Kursutveckling
+              </h2>
+              <div className="flex items-center gap-2">
+                {/* Chart Provider Selector */}
+                <div className="flex bg-muted rounded-lg p-1">
+                  <Button
+                    variant={chartProvider === 'tradingview' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => switchChartProvider('tradingview')}
+                    disabled={!crypto.onTradingView}
+                    className="text-xs px-2 py-1"
+                  >
+                    TradingView
+                  </Button>
+                  <Button
+                    variant={chartProvider === 'coingecko' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => switchChartProvider('coingecko')}
+                    className="text-xs px-2 py-1"
+                  >
+                    CoinGecko
+                  </Button>
+                  <Button
+                    variant={chartProvider === 'dexscreener' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => switchChartProvider('dexscreener')}
+                    className="text-xs px-2 py-1"
+                  >
+                    DexScreener
+                  </Button>
+                </div>
+                
                 <Button
                   variant="outline"
                   size="sm"
@@ -275,12 +409,29 @@ const CryptoDetailPage = () => {
                   )}
                 </Button>
               </div>
-              <div 
-                id="tradingview_chart" 
-                className={`w-full bg-background rounded-lg border border-border ${
-                  isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[700px]'
-                }`}
-              ></div>
+            </div>
+            
+            {chartError && (
+              <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-2 text-destructive">
+                <AlertCircle size={16} />
+                <span className="text-sm">Chart kunde inte laddas. Försök med en annan provider.</span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setChartError(false)}
+                  className="ml-auto"
+                >
+                  <RefreshCw size={14} />
+                </Button>
+              </div>
+            )}
+            
+            <div 
+              id="tradingview_chart" 
+              className={`w-full bg-background rounded-lg border border-border ${
+                isFullscreen ? 'h-[calc(100vh-200px)]' : 'h-[700px]'
+              }`}
+            ></div>
             </Card>
           </div>
 
