@@ -65,11 +65,11 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className={`flex items-center ${isMobile ? 'h-12' : 'h-14'}`}>
-          {/* Logo - Positioned furthest left */}
+        <div className={`flex items-center justify-between ${isMobile ? 'h-12' : 'h-14'}`}>
+          {/* Logo */}
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer mr-auto"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
           >
             <img 
               src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
@@ -79,9 +79,11 @@ const Header = () => {
             {!isMobile && (
               <div>
                 <h1 className="font-crypto text-lg font-bold">
-                  <span style={{ color: '#12E19F' }}>CRYPTO</span>
+                  <span style={{ color: '#12E19F' }}>CRY</span>
+                  <span className="text-white">PTO</span>
                   <span className="text-white"> </span>
-                  <span style={{ color: '#12E19F' }}>NETWORK</span>
+                  <span className="text-white">NET</span>
+                  <span style={{ color: '#12E19F' }}>WORK</span>
                 </h1>
                 <p className="font-crypto text-xs text-muted-foreground">
                   SWEDEN
