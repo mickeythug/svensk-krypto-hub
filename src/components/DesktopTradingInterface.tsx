@@ -176,16 +176,16 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <span className="text-right font-semibold">Total</span>
               </div>
               
-              {/* Asks (Sell orders) - Red - Fixed height, no overflow */}
-              <div className="flex-shrink-0 p-2" style={{height: '220px'}}>
+              {/* Asks (Sell orders) - Red - Exactly 12 orders */}
+              <div className="flex-shrink-0 p-2" style={{height: '180px'}}>
                 <div className="space-y-0.5">
-                  {orderBook?.asks?.slice(-15).reverse().map((ask, i) => (
+                  {orderBook?.asks?.slice(-12).reverse().map((ask, i) => (
                     <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
                       <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
                       <span className="text-right font-mono text-xs">{formatSize(ask.size)}</span>
                       <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(ask.total)}</span>
                     </div>
-                  )) || Array.from({length: 15}).map((_, i) => (
+                  )) || Array.from({length: 12}).map((_, i) => (
                     <div key={`ask-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
                       <div className="h-3 bg-destructive/20 rounded animate-pulse"></div>
                       <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
@@ -195,24 +195,24 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 </div>
               </div>
               
-              {/* Current Price - Highlighted - Fixed position */}
-              <div className="border-y border-border/40 p-2 bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
+              {/* Current Price - SOLID Separator */}
+              <div className="border-y-2 border-border p-3 bg-card flex-shrink-0">
                 <div className="text-center">
-                  <div className="text-lg font-bold font-mono tracking-tight">{formatPrice(currentPrice)}</div>
-                  <div className="text-xs text-muted-foreground">Last Price</div>
+                  <div className="text-lg font-bold font-mono tracking-tight text-primary">{formatPrice(currentPrice)}</div>
+                  <div className="text-xs text-muted-foreground font-semibold">LAST PRICE</div>
                 </div>
               </div>
               
-              {/* Bids (Buy orders) - Green - Fixed height, no overflow */}
-              <div className="flex-shrink-0 p-2" style={{height: '220px'}}>
+              {/* Bids (Buy orders) - Green - Exactly 12 orders */}
+              <div className="flex-shrink-0 p-2" style={{height: '180px'}}>
                 <div className="space-y-0.5">
-                  {orderBook?.bids?.slice(0, 15).map((bid, i) => (
+                  {orderBook?.bids?.slice(0, 12).map((bid, i) => (
                     <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
                       <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
                       <span className="text-right font-mono text-xs">{formatSize(bid.size)}</span>
                       <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(bid.total)}</span>
                     </div>
-                  )) || Array.from({length: 15}).map((_, i) => (
+                  )) || Array.from({length: 12}).map((_, i) => (
                     <div key={`bid-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
                       <div className="h-3 bg-success/20 rounded animate-pulse"></div>
                       <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
