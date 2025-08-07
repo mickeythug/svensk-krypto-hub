@@ -411,7 +411,7 @@ class CryptoAPIClient {
   }
 
   private transformCoinGeckoResponse(data: any[]): CryptoPrice[] {
-    return data.slice(0, 15).map((coin, index) => ({
+    return data.map((coin, index) => ({
       symbol: coin.symbol.toUpperCase(),
       name: coin.name,
       price: coin.current_price,
