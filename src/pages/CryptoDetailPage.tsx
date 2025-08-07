@@ -25,7 +25,6 @@ const CryptoDetailPage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [chartProvider, setChartProvider] = useState<'tradingview' | 'coingecko' | 'dexscreener'>('tradingview');
   const [chartError, setChartError] = useState(false);
 
   // Mock data with additional chart info - in real app this would come from API
@@ -312,18 +311,7 @@ const CryptoDetailPage = () => {
 
       // Clear previous content
       chartContainer.innerHTML = '';
-
-      if (chartProvider === 'tradingview' && crypto.onTradingView) {
-        loadTradingViewChart(chartContainer);
-      } else if (chartProvider === 'coingecko') {
-        loadCoinGeckoChart(chartContainer);
-      } else if (chartProvider === 'dexscreener') {
-        loadDexScreenerChart(chartContainer);
-      } else {
-        // Fallback to CoinGecko if TradingView doesn't have the token
-        setChartProvider('coingecko');
-        loadCoinGeckoChart(chartContainer);
-      }
+      loadTradingViewChart(chartContainer);
     };
 
     const loadTradingViewChart = (container: HTMLElement) => {
@@ -347,7 +335,7 @@ const CryptoDetailPage = () => {
           save_image: true,
           hide_side_toolbar: false,
           allow_symbol_change: true,
-          studies: ["RSI@tv-basicstudies"],
+          studies: [],
           container_id: "tradingview_chart"
         });
         container.appendChild(script);
@@ -356,56 +344,6 @@ const CryptoDetailPage = () => {
         console.error('Error loading TradingView chart:', error);
         setChartError(true);
       }
-    };
-
-    const loadCoinGeckoChart = (container: HTMLElement) => {
-      container.innerHTML = `
-        <div class="w-full h-full flex flex-col">
-          <div class="flex items-center justify-between mb-4 px-4">
-            <span class="text-sm text-muted-foreground">Powered by CoinGecko</span>
-            <a href="https://www.coingecko.com/sv/coins/${crypto.coingeckoId}" target="_blank" class="text-primary hover:underline text-sm flex items-center gap-1">
-              Visa på CoinGecko
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                <path d="M5 5a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2v-2a1 1 0 10-2 0v2H5V7h2a1 1 0 000-2H5z"></path>
-              </svg>
-            </a>
-          </div>
-          <iframe 
-            src="https://www.coingecko.com/sv/coins/${crypto.coingeckoId}/usd/advanced_chart_widget" 
-            width="100%" 
-            height="${isFullscreen ? 'calc(90vh - 60px)' : '650px'}"
-            frameborder="0"
-            style="border-radius: 8px; background: #000;"
-          ></iframe>
-        </div>
-      `;
-      setChartError(false);
-    };
-
-    const loadDexScreenerChart = (container: HTMLElement) => {
-      container.innerHTML = `
-        <div class="w-full h-full flex flex-col">
-          <div class="flex items-center justify-between mb-4 px-4">
-            <span class="text-sm text-muted-foreground">Powered by DexScreener</span>
-            <a href="https://dexscreener.com/${crypto.dexscreenerId}" target="_blank" class="text-primary hover:underline text-sm flex items-center gap-1">
-              Visa på DexScreener
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
-                <path d="M5 5a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2v-2a1 1 0 10-2 0v2H5V7h2a1 1 0 000-2H5z"></path>
-              </svg>
-            </a>
-          </div>
-          <iframe 
-            src="https://dexscreener.com/${crypto.dexscreenerId}?embed=1&theme=dark" 
-            width="100%" 
-            height="${isFullscreen ? 'calc(90vh - 60px)' : '650px'}"
-            frameborder="0"
-            style="border-radius: 8px;"
-          ></iframe>
-        </div>
-      `;
-      setChartError(false);
     };
 
     // Small delay to ensure DOM is ready
@@ -418,16 +356,12 @@ const CryptoDetailPage = () => {
         chartContainer.innerHTML = '';
       }
     };
-  }, [crypto, navigate, slug, isFullscreen, chartProvider]);
+  }, [crypto, navigate, slug, isFullscreen]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
 
-  const switchChartProvider = (provider: 'tradingview' | 'coingecko' | 'dexscreener') => {
-    setChartProvider(provider);
-    setChartError(false);
-  };
 
   if (!crypto) {
     return null;
@@ -569,55 +503,25 @@ const CryptoDetailPage = () => {
                   <BarChart3 className="h-6 w-6 text-primary" />
                   {crypto.name} Kursutveckling
                 </h2>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
-                  {/* Chart Provider Selector */}
-                  <div className="flex bg-muted rounded-lg p-1 w-full sm:w-auto">
-                    <Button
-                      variant={chartProvider === 'tradingview' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => switchChartProvider('tradingview')}
-                      disabled={!crypto.onTradingView}
-                      className="text-xs px-2 py-1 flex-1 sm:flex-none"
-                    >
-                      TradingView
-                    </Button>
-                    <Button
-                      variant={chartProvider === 'coingecko' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => switchChartProvider('coingecko')}
-                      className="text-xs px-2 py-1 flex-1 sm:flex-none"
-                    >
-                      CoinGecko
-                    </Button>
-                    <Button
-                      variant={chartProvider === 'dexscreener' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => switchChartProvider('dexscreener')}
-                      className="text-xs px-2 py-1 flex-1 sm:flex-none"
-                    >
-                      DexScreener
-                    </Button>
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={toggleFullscreen}
-                    className="flex items-center gap-2 w-full sm:w-auto"
-                  >
-                    {isFullscreen ? (
-                      <>
-                        <Minimize size={16} />
-                        Minimera
-                      </>
-                    ) : (
-                      <>
-                        <Maximize size={16} />
-                        Fullskärm
-                      </>
-                    )}
-                  </Button>
-                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleFullscreen}
+                  className="flex items-center gap-2 w-full sm:w-auto"
+                >
+                  {isFullscreen ? (
+                    <>
+                      <Minimize size={16} />
+                      Minimera
+                    </>
+                  ) : (
+                    <>
+                      <Maximize size={16} />
+                      Fullskärm
+                    </>
+                  )}
+                </Button>
               </div>
               
               {chartError && (
