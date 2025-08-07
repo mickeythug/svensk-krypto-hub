@@ -15,6 +15,15 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { 
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
+import { 
   TrendingUp, 
   TrendingDown, 
   Search, 
@@ -31,14 +40,43 @@ import {
   MessageCircle,
   Zap,
   AlertCircle,
-  ChevronUp
+  ChevronUp,
+  Bitcoin,
+  CircleDollarSign,
+  Coins,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import Header from "@/components/Header";
 
 const MarketOverviewPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("top10");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
+
+  // Icon mapping for different cryptocurrencies
+  const getCryptoIcon = (symbol: string) => {
+    const iconMap: { [key: string]: any } = {
+      'BTC': Bitcoin,
+      'ETH': CircleDollarSign,
+      'BNB': Coins,
+      'XRP': Zap,
+      'ADA': Target,
+      'SOL': Flame,
+      'DOT': Globe,
+      'AVAX': Activity,
+      'LINK': MessageCircle,
+      'MATIC': BarChart3,
+      'PEPE': Target,
+      'BONK': Flame,
+      'FLOKI': Zap,
+      'DOGE': Target,
+      'SHIB': Flame
+    };
+    return iconMap[symbol] || CircleDollarSign;
+  };
 
   const marketSentiment = {
     overall: 68,
@@ -103,7 +141,17 @@ const MarketOverviewPage = () => {
     { rank: 7, name: "Polkadot", symbol: "DOT", slug: "polkadot", price: 85, change1h: -1.2, change24h: -2.11, change7d: -5.4, marketCap: "98B", volume: "892M", supply: "1.15B DOT" },
     { rank: 8, name: "Avalanche", symbol: "AVAX", slug: "avalanche", price: 450, change1h: 0.9, change24h: 1.99, change7d: 7.3, marketCap: "178B", volume: "1.2B", supply: "395.8M AVAX" },
     { rank: 9, name: "Chainlink", symbol: "LINK", slug: "chainlink", price: 180, change1h: 0.3, change24h: 4.5, change7d: 9.8, marketCap: "89B", volume: "654M", supply: "494.0M LINK" },
-    { rank: 10, name: "Polygon", symbol: "MATIC", slug: "polygon", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B MATIC" }
+    { rank: 10, name: "Polygon", symbol: "MATIC", slug: "polygon", price: 12, change1h: -0.8, change24h: 2.1, change7d: 6.7, marketCap: "76B", volume: "423M", supply: "6.3B MATIC" },
+    { rank: 11, name: "Uniswap", symbol: "UNI", slug: "uniswap", price: 78, change1h: 1.5, change24h: 3.2, change7d: 8.1, marketCap: "47B", volume: "321M", supply: "601M UNI" },
+    { rank: 12, name: "Litecoin", symbol: "LTC", slug: "litecoin", price: 890, change1h: -0.3, change24h: 1.8, change7d: 4.5, marketCap: "66B", volume: "567M", supply: "74M LTC" },
+    { rank: 13, name: "Internet Computer", symbol: "ICP", slug: "internet-computer", price: 125, change1h: 2.1, change24h: 6.7, change7d: 12.3, marketCap: "58B", volume: "289M", supply: "464M ICP" },
+    { rank: 14, name: "Cosmos", symbol: "ATOM", slug: "cosmos", price: 98, change1h: -1.1, change24h: -2.3, change7d: -4.8, marketCap: "38B", volume: "198M", supply: "388M ATOM" },
+    { rank: 15, name: "Near Protocol", symbol: "NEAR", slug: "near", price: 67, change1h: 3.2, change24h: 7.8, change7d: 18.9, marketCap: "71B", volume: "445M", supply: "1.06B NEAR" },
+    { rank: 16, name: "Algorand", symbol: "ALGO", slug: "algorand", price: 2.1, change1h: 0.8, change24h: 4.2, change7d: 9.6, marketCap: "16B", volume: "89M", supply: "7.6B ALGO" },
+    { rank: 17, name: "VeChain", symbol: "VET", slug: "vechain", price: 0.456, change1h: -0.6, change24h: 2.9, change7d: 6.1, marketCap: "33B", volume: "134M", supply: "72.7B VET" },
+    { rank: 18, name: "Fantom", symbol: "FTM", slug: "fantom", price: 3.4, change1h: 4.5, change24h: 12.1, change7d: 28.7, marketCap: "9.5B", volume: "167M", supply: "2.8B FTM" },
+    { rank: 19, name: "The Graph", symbol: "GRT", slug: "the-graph", price: 1.89, change1h: 1.2, change24h: 5.4, change7d: 14.2, marketCap: "18B", volume: "78M", supply: "9.5B GRT" },
+    { rank: 20, name: "Hedera", symbol: "HBAR", slug: "hedera", price: 0.34, change1h: -0.9, change24h: 1.7, change7d: 3.9, marketCap: "17B", volume: "56M", supply: "50B HBAR" }
   ];
 
   const trendingCryptos = [
@@ -140,8 +188,10 @@ const MarketOverviewPage = () => {
         return topGainers;
       case "losers":
         return topLosers;
-      default:
+      case "all":
         return allCryptos;
+      default:
+        return allCryptos.slice(0, 10); // Top 10 by default
     }
   };
 
@@ -149,6 +199,27 @@ const MarketOverviewPage = () => {
     crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentData = filteredData.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // Reset page when changing tabs or search
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
+    setCurrentPage(1);
+  };
 
   const formatPrice = (price: number) => {
     if (price >= 1000) {
@@ -266,7 +337,7 @@ const MarketOverviewPage = () => {
                       <Input
                         placeholder="Sök kryptovaluta..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         className="pl-7 md:pl-9 bg-background/50 border-border/50 w-full md:w-64 h-8 md:h-9 text-xs md:text-sm"
                       />
                     </div>
@@ -280,7 +351,7 @@ const MarketOverviewPage = () => {
 
               {/* Category Tabs */}
               <div className="px-3 pb-3 overflow-x-auto">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
                   <TabsList className="grid grid-cols-6 h-auto p-1 bg-secondary/20 min-w-[400px] md:min-w-0 max-w-7xl mx-auto">
                     <TabsTrigger 
                       value="top10" 
@@ -346,7 +417,7 @@ const MarketOverviewPage = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredData.map((crypto, index) => (
+                    {currentData.map((crypto, index) => (
                       <TableRow 
                         key={crypto.symbol}
                         className="hover:bg-secondary/20 cursor-pointer transition-all duration-200 border-b border-border/20 group h-12 md:h-16"
@@ -360,9 +431,10 @@ const MarketOverviewPage = () => {
                         <TableCell className="py-2 px-2 md:px-4">
                           <div className="flex items-center space-x-2">
                             <div className="w-4 h-4 md:w-8 md:h-8 bg-gradient-to-br from-primary/80 via-accent/80 to-secondary/80 rounded-full flex items-center justify-center shadow-sm">
-                              <span className="text-[7px] md:text-xs font-bold text-primary-foreground">
-                                {crypto.symbol.charAt(0)}
-                              </span>
+                              {(() => {
+                                const IconComponent = getCryptoIcon(crypto.symbol);
+                                return <IconComponent className="h-2 w-2 md:h-4 md:w-4 text-primary-foreground" />;
+                              })()}
                             </div>
                             <div className="min-w-0 flex-1">
                               <div className="font-semibold text-foreground truncate group-hover:text-primary transition-colors text-[9px] md:text-sm">
@@ -409,6 +481,56 @@ const MarketOverviewPage = () => {
                   </TableBody>
                 </Table>
               </div>
+
+              {/* Pagination */}
+              <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50 py-3 px-3">
+                <div className="flex items-center justify-between max-w-7xl mx-auto">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-muted-foreground">
+                      Visar {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
+                    </span>
+                  </div>
+                  
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                          className={`h-8 px-3 text-xs ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-secondary'}`}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        const page = i + 1;
+                        return (
+                          <PaginationItem key={page}>
+                            <PaginationLink
+                              onClick={() => handlePageChange(page)}
+                              isActive={currentPage === page}
+                              className="h-8 w-8 text-xs cursor-pointer"
+                            >
+                              {page}
+                            </PaginationLink>
+                          </PaginationItem>
+                        );
+                      })}
+                      
+                      {totalPages > 5 && (
+                        <PaginationItem>
+                          <PaginationEllipsis className="h-8 w-8" />
+                        </PaginationItem>
+                      )}
+                      
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                          className={`h-8 px-3 text-xs ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-secondary'}`}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -419,8 +541,33 @@ const MarketOverviewPage = () => {
         <Header />
         
         <div className="pt-16 bg-background">
-          {/* Mobile Header */}
+          {/* Mobile Search and Tabs */}
           <div className="sticky top-16 z-20 bg-background border-b border-border/30">
+            <div className="p-3">
+              <div className="relative mb-3">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Sök kryptovaluta..."
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-8 bg-background/50 border-border/50 h-9 text-sm"
+                />
+              </div>
+              
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+                <TabsList className="grid grid-cols-3 h-auto p-1 bg-secondary/20 w-full">
+                  <TabsTrigger value="top10" className="text-xs py-2">TOP 10</TabsTrigger>
+                  <TabsTrigger value="trending" className="text-xs py-2">Trend</TabsTrigger>
+                  <TabsTrigger value="meme" className="text-xs py-2">Meme</TabsTrigger>
+                </TabsList>
+                <TabsList className="grid grid-cols-3 h-auto p-1 bg-secondary/20 w-full mt-1">
+                  <TabsTrigger value="gainers" className="text-xs py-2">Toppar</TabsTrigger>
+                  <TabsTrigger value="losers" className="text-xs py-2">Fallande</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs py-2">Alla</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            
             <div className="flex items-center justify-between p-4 text-muted-foreground text-xs font-medium">
               <div className="flex items-center space-x-1">
                 <span>#</span>
@@ -436,7 +583,7 @@ const MarketOverviewPage = () => {
 
           {/* Mobile List */}
           <div className="divide-y divide-border/20">
-            {filteredData.map((crypto, index) => (
+            {currentData.map((crypto, index) => (
               <div
                 key={crypto.symbol}
                 className="flex items-center justify-between p-4 hover:bg-secondary/10 cursor-pointer transition-colors"
@@ -450,9 +597,10 @@ const MarketOverviewPage = () => {
                 {/* Coin Info */}
                 <div className="flex-1 flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-br from-primary/80 via-accent/80 to-secondary/80 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-primary-foreground">
-                      {crypto.symbol.charAt(0)}
-                    </span>
+                    {(() => {
+                      const IconComponent = getCryptoIcon(crypto.symbol);
+                      return <IconComponent className="h-4 w-4 text-primary-foreground" />;
+                    })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-foreground text-sm">
@@ -488,6 +636,41 @@ const MarketOverviewPage = () => {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Mobile Pagination */}
+          <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50 py-3 px-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">
+                {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
+              </span>
+              
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <span className="text-sm font-medium">
+                  {currentPage} / {totalPages}
+                </span>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-8 w-8 p-0"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
