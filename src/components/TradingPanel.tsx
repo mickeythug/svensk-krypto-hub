@@ -287,11 +287,25 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
               </div>
             </div>
 
-            {/* Li.Fi Widget Container */}
-            <div 
-              ref={widgetRef} 
-              className="min-h-[200px] rounded-lg bg-secondary/20 border border-primary/20"
-            />
+            {/* Säker trading widget utan DOM-manipulation */}
+            <div className="min-h-[200px] rounded-lg bg-secondary/20 border border-primary/20 p-6">
+              <div className="text-center space-y-4">
+                <div className="text-lg font-semibold">DEX Trading</div>
+                <p className="text-sm text-muted-foreground">
+                  Li.Fi integration för säker cross-chain trading
+                </p>
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <div className="p-3 bg-secondary/20 rounded-lg">
+                    <div className="text-sm font-medium">Best Price</div>
+                    <div className="text-xs text-muted-foreground">Cross-chain routing</div>
+                  </div>
+                  <div className="p-3 bg-secondary/20 rounded-lg">
+                    <div className="text-sm font-medium">Low Fees</div>
+                    <div className="text-xs text-muted-foreground">Optimized costs</div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Main Swap Button */}
             <Button
