@@ -83,7 +83,14 @@ const Header = () => {
                   <span className="text-white">PTO</span>
                   <span className="text-white"> </span>
                   <span className="text-white">NET</span>
-                  <span style={{ color: '#12E19F' }}>WORK</span>
+                  <span 
+                    className="matrix-glitch-effect relative" 
+                    style={{ color: '#12E19F' }}
+                    data-text="WORK"
+                  >
+                    WORK
+                    <div className="scan-line"></div>
+                  </span>
                 </h1>
                 <p className="font-crypto text-xs text-muted-foreground">
                   SWEDEN
@@ -157,7 +164,14 @@ const Header = () => {
                       <span className="text-white">PTO</span>
                       <span className="text-white"> </span>
                       <span className="text-white">NET</span>
-                      <span style={{ color: '#12E19F' }}>WORK</span>
+                      <span 
+                        className="matrix-glitch-effect relative" 
+                        style={{ color: '#12E19F' }}
+                        data-text="WORK"
+                      >
+                        WORK
+                        <div className="scan-line"></div>
+                      </span>
                     </h1>
                     <p className="font-crypto text-xs text-muted-foreground">
                       SWEDEN
