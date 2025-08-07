@@ -11,7 +11,7 @@ const SocialMediaSection = () => {
       icon: MessageCircle,
       description: "Ställ frågor, lär dig, få gratis krypto-information och hjälp. Vi hjälps åt att hitta möjligheter tillsammans!",
       members: "3.2k",
-      link: "#",
+      link: "https://t.me/cryptonetworksweden",
       color: "text-blue-400",
       bgColor: "bg-blue-400/10"
     },
