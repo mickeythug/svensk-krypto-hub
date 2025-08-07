@@ -17,7 +17,11 @@ export default {
 				'2xl': '1400px'
 			}
 		},
-		extend: {
+    extend: {
+      fontFamily: {
+        'mono': ['Roboto Mono', 'monospace'],
+        'sans': ['Inter', 'sans-serif'],
+      },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -81,6 +85,8 @@ export default {
 				'glow-secondary': 'var(--glow-secondary)',
 			},
 			fontFamily: {
+				'mono': ['Roboto Mono', 'monospace'],
+				'sans': ['Inter', 'sans-serif'],
 				'crypto': ['Orbitron', 'monospace'],
 				'display': ['Exo 2', 'sans-serif'],
 			},
