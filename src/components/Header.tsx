@@ -67,7 +67,10 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className={`flex items-center justify-between ${isMobile ? 'h-14' : 'h-16'}`}>
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
+          >
             <img 
               src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
               alt="Crypto Network Sweden"
@@ -87,7 +90,7 @@ const Header = () => {
                 </p>
               </div>
             )}
-          </div>
+          </button>
 
           {/* Desktop Navigation */}
           {!isMobile && (
@@ -139,7 +142,10 @@ const Header = () => {
               className={`${isMobile ? 'w-full' : 'w-80'} bg-background/98 backdrop-blur-xl border-l border-border z-[60]`}
             >
               <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center space-x-3">
+                <button 
+                  onClick={() => navigate('/')}
+                  className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
+                >
                   <img 
                     src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
                     alt="Crypto Network Sweden"
@@ -157,7 +163,7 @@ const Header = () => {
                       SWEDEN
                     </p>
                   </div>
-                </div>
+                </button>
                 <Button 
                   variant="ghost" 
                   size="sm" 

@@ -45,7 +45,9 @@ import {
   CircleDollarSign,
   Coins,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Grid3X3,
+  List
 } from "lucide-react";
 import Header from "@/components/Header";
 
@@ -68,6 +70,7 @@ const MarketOverviewPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("top10");
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
@@ -389,10 +392,28 @@ const MarketOverviewPage = () => {
                       className="pl-10 w-full sm:w-80 bg-background border-border/50 focus:border-primary h-11"
                     />
                   </div>
-                  <Button variant="outline" className="h-11 px-6 border-border/50 hover:border-primary">
-                    <Star className="h-4 w-4 mr-2" />
-                    Favoriter
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant={viewMode === "table" ? "default" : "outline"} 
+                      size="sm"
+                      onClick={() => setViewMode("table")}
+                      className="h-11 px-4"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant={viewMode === "grid" ? "default" : "outline"} 
+                      size="sm"
+                      onClick={() => setViewMode("grid")}
+                      className="h-11 px-4"
+                    >
+                      <Grid3X3 className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" className="h-11 px-6 border-border/50 hover:border-primary">
+                      <Star className="h-4 w-4 mr-2" />
+                      Favoriter
+                    </Button>
+                  </div>
                 </div>
               </div>
 
@@ -448,131 +469,210 @@ const MarketOverviewPage = () => {
             </div>
           </div>
 
-          {/* Table Section - Modern CoinMarketCap Style */}
+          {/* Data Display - Table or Grid */}
           <div className="bg-background">
             <div className="max-w-7xl mx-auto px-6">
-              <div className="bg-background/50 backdrop-blur-sm rounded-t-xl border border-border/20 border-b-0 overflow-hidden">
-                <Table className="w-full">
-                  <TableHeader>
-                    <TableRow className="hover:bg-transparent border-b border-border/20 bg-secondary/10">
-                      <TableHead className="text-center font-semibold py-4 px-6 text-muted-foreground w-16">#</TableHead>
-                      <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">Namn</TableHead>
-                      <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Pris</TableHead>
-                      <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">1h %</TableHead>
-                      <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">24h %</TableHead>
-                      <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">7d %</TableHead>
-                      <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-40">Market Cap</TableHead>
-                      <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Volym (24h)</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {currentData.map((crypto, index) => (
-                      <TableRow 
-                        key={crypto.symbol}
-                        className="hover:bg-secondary/10 cursor-pointer transition-all duration-200 border-b border-border/10 group h-16"
-                        onClick={() => navigate(`/crypto/${crypto.slug}`)}
-                      >
-                        {/* Rank */}
-                        <TableCell className="text-center py-4 px-6">
-                          <Badge variant="secondary" className="text-xs px-2 py-1 bg-secondary/30 text-muted-foreground font-medium">
-                            #{crypto.rank}
-                          </Badge>
-                        </TableCell>
-                        
-                        {/* Name & Logo */}
-                        <TableCell className="py-4 px-6">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
-                              <img 
-                                src={getCryptoLogo(crypto.symbol)} 
-                                alt={crypto.name}
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="font-semibold text-foreground group-hover:text-primary transition-colors text-base">
-                                {crypto.name}
-                              </div>
-                              <div className="text-sm text-muted-foreground font-mono font-medium">
-                                {crypto.symbol}
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-                        
-                        {/* Price */}
-                        <TableCell className="py-4 px-6 text-right">
-                          <div className="font-mono font-semibold text-foreground text-base">
-                            {formatPrice(crypto.price)}
-                          </div>
-                        </TableCell>
-                        
-                        {/* 1h Change */}
-                        <TableCell className="py-4 px-6 text-right">
-                          <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium ${
-                            crypto.change1h >= 0 
-                              ? 'text-success bg-success/10' 
-                              : 'text-destructive bg-destructive/10'
-                          }`}>
-                            {crypto.change1h >= 0 ? (
-                              <TrendingUp className="h-3 w-3" />
-                            ) : (
-                              <TrendingDown className="h-3 w-3" />
-                            )}
-                            <span>{crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%</span>
-                          </div>
-                        </TableCell>
-                        
-                        {/* 24h Change */}
-                        <TableCell className="py-4 px-6 text-right">
-                          <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium ${
-                            crypto.change24h >= 0 
-                              ? 'text-success bg-success/10' 
-                              : 'text-destructive bg-destructive/10'
-                          }`}>
-                            {crypto.change24h >= 0 ? (
-                              <TrendingUp className="h-3 w-3" />
-                            ) : (
-                              <TrendingDown className="h-3 w-3" />
-                            )}
-                            <span>{crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%</span>
-                          </div>
-                        </TableCell>
-                        
-                        {/* 7d Change */}
-                        <TableCell className="py-4 px-6 text-right">
-                          <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium ${
-                            crypto.change7d >= 0 
-                              ? 'text-success bg-success/10' 
-                              : 'text-destructive bg-destructive/10'
-                          }`}>
-                            {crypto.change7d >= 0 ? (
-                              <TrendingUp className="h-3 w-3" />
-                            ) : (
-                              <TrendingDown className="h-3 w-3" />
-                            )}
-                            <span>{crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%</span>
-                          </div>
-                        </TableCell>
-                        
-                        {/* Market Cap */}
-                        <TableCell className="py-4 px-6 text-right">
-                          <div className="font-mono text-muted-foreground text-sm">
-                            ${crypto.marketCap}
-                          </div>
-                        </TableCell>
-                        
-                        {/* Volume */}
-                        <TableCell className="py-4 px-6 text-right">
-                          <div className="font-mono text-muted-foreground text-sm">
-                            ${crypto.volume}
-                          </div>
-                        </TableCell>
+              
+              {viewMode === "table" ? (
+                // Table View
+                <div className="bg-background/50 backdrop-blur-sm rounded-t-xl border border-border/20 border-b-0 overflow-hidden">
+                  <Table className="w-full">
+                    <TableHeader>
+                      <TableRow className="hover:bg-transparent border-b border-border/20 bg-secondary/10">
+                        <TableHead className="text-center font-semibold py-4 px-6 text-muted-foreground w-16">#</TableHead>
+                        <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">Namn</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Pris</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">1h %</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">24h %</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">7d %</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-40">Market Cap</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Volym (24h)</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {currentData.map((crypto, index) => (
+                        <TableRow 
+                          key={crypto.symbol}
+                          className="hover:bg-secondary/10 cursor-pointer transition-all duration-200 border-b border-border/10 group h-16"
+                          onClick={() => navigate(`/crypto/${crypto.slug}`)}
+                        >
+                          {/* Rank */}
+                          <TableCell className="text-center py-4 px-6">
+                            <Badge variant="secondary" className="text-xs px-2 py-1 bg-secondary/30 text-muted-foreground font-medium">
+                              #{crypto.rank}
+                            </Badge>
+                          </TableCell>
+                          
+                          {/* Name & Logo */}
+                          <TableCell className="py-4 px-6">
+                            <div className="flex items-center space-x-4">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
+                                <img 
+                                  src={getCryptoLogo(crypto.symbol)} 
+                                  alt={crypto.name}
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="font-semibold text-foreground group-hover:text-primary transition-colors text-base">
+                                  {crypto.name}
+                                </div>
+                                <div className="text-sm text-muted-foreground font-mono font-medium">
+                                  {crypto.symbol}
+                                </div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          
+                          {/* Price */}
+                          <TableCell className="py-4 px-6 text-right">
+                            <div className="font-mono font-semibold text-foreground text-base">
+                              {formatPrice(crypto.price)}
+                            </div>
+                          </TableCell>
+                          
+                          {/* 1h Change */}
+                          <TableCell className="py-4 px-6 text-right">
+                            <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium ${
+                              crypto.change1h >= 0 
+                                ? 'text-success bg-success/10' 
+                                : 'text-destructive bg-destructive/10'
+                            }`}>
+                              {crypto.change1h >= 0 ? (
+                                <TrendingUp className="h-3 w-3" />
+                              ) : (
+                                <TrendingDown className="h-3 w-3" />
+                              )}
+                              <span>{crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%</span>
+                            </div>
+                          </TableCell>
+                          
+                          {/* 24h Change */}
+                          <TableCell className="py-4 px-6 text-right">
+                            <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium ${
+                              crypto.change24h >= 0 
+                                ? 'text-success bg-success/10' 
+                                : 'text-destructive bg-destructive/10'
+                            }`}>
+                              {crypto.change24h >= 0 ? (
+                                <TrendingUp className="h-3 w-3" />
+                              ) : (
+                                <TrendingDown className="h-3 w-3" />
+                              )}
+                              <span>{crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%</span>
+                            </div>
+                          </TableCell>
+                          
+                          {/* 7d Change */}
+                          <TableCell className="py-4 px-6 text-right">
+                            <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium ${
+                              crypto.change7d >= 0 
+                                ? 'text-success bg-success/10' 
+                                : 'text-destructive bg-destructive/10'
+                            }`}>
+                              {crypto.change7d >= 0 ? (
+                                <TrendingUp className="h-3 w-3" />
+                              ) : (
+                                <TrendingDown className="h-3 w-3" />
+                              )}
+                              <span>{crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%</span>
+                            </div>
+                          </TableCell>
+                          
+                          {/* Market Cap */}
+                          <TableCell className="py-4 px-6 text-right">
+                            <div className="font-mono text-muted-foreground text-sm">
+                              ${crypto.marketCap}
+                            </div>
+                          </TableCell>
+                          
+                          {/* Volume */}
+                          <TableCell className="py-4 px-6 text-right">
+                            <div className="font-mono text-muted-foreground text-sm">
+                              ${crypto.volume}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                // Grid View
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 py-6">
+                  {currentData.map((crypto) => (
+                    <Card 
+                      key={crypto.symbol}
+                      className="p-6 hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 bg-background/50 backdrop-blur-sm"
+                      onClick={() => navigate(`/crypto/${crypto.slug}`)}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
+                            <img 
+                              src={getCryptoLogo(crypto.symbol)} 
+                              alt={crypto.name}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-foreground text-lg">{crypto.name}</h3>
+                            <p className="text-muted-foreground font-mono">{crypto.symbol}</p>
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="text-xs px-2 py-1 bg-secondary/30">
+                          #{crypto.rank}
+                        </Badge>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">Pris</span>
+                          <span className="font-mono font-semibold text-lg">{formatPrice(crypto.price)}</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground mb-1">1h</p>
+                            <div className={`text-sm font-medium ${
+                              crypto.change1h >= 0 ? 'text-success' : 'text-destructive'
+                            }`}>
+                              {crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground mb-1">24h</p>
+                            <div className={`text-sm font-medium ${
+                              crypto.change24h >= 0 ? 'text-success' : 'text-destructive'
+                            }`}>
+                              {crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-muted-foreground mb-1">7d</p>
+                            <div className={`text-sm font-medium ${
+                              crypto.change7d >= 0 ? 'text-success' : 'text-destructive'
+                            }`}>
+                              {crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="pt-2 border-t border-border/20">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">Market Cap</span>
+                            <span className="font-mono">${crypto.marketCap}</span>
+                          </div>
+                          <div className="flex justify-between text-sm mt-1">
+                            <span className="text-muted-foreground">Volume</span>
+                            <span className="font-mono">${crypto.volume}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
 
               {/* Pagination - Modern Style */}
               <div className="bg-background/50 backdrop-blur-sm border border-border/20 border-t-0 rounded-b-xl px-6 py-4">
