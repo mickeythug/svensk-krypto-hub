@@ -19,9 +19,11 @@ import {
   AlertCircle,
   Menu,
   Search,
-  Bell
+  Bell,
+  Star
 } from "lucide-react";
 import TradingPanel from "@/components/TradingPanel";
+import DesktopTradingInterface from "@/components/DesktopTradingInterface";
 import MobileTradingPanel from "@/components/MobileTradingPanel";
 import MobileChart from "@/components/MobileChart";
 import Header from "@/components/Header";
@@ -516,239 +518,71 @@ const CryptoDetailPage = () => {
     );
   }
 
-  // Desktop Layout
+  // Desktop Layout - Fullscreen Trading Interface
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <div className="pt-20 pb-12">
-        <div className="container mx-auto px-4 max-w-7xl">
-          {/* Desktop content remains the same */}
-          <div className="flex items-center gap-4 mb-8">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate('/marknad')}
-              className="flex items-center gap-2"
-            >
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Top Header Bar - Similar to Hyperliquid */}
+      <div className="h-14 bg-card/40 border-b border-border/20 flex items-center justify-between px-4">
+        <div className="flex items-center gap-6">
+          {/* Trading Pair */}
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/marknad')} className="h-8 w-8 p-0">
               <ArrowLeft size={16} />
-              Tillbaka till Marknadsöversikt
             </Button>
-          </div>
-
-          {/* Crypto Header - Fixed responsive layout */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-10">
-            <div className="flex items-center gap-4 w-full lg:w-auto">
-              <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                <span className="font-crypto text-2xl font-bold text-primary">
-                  {crypto.name.charAt(0)}
-                </span>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-primary">{crypto.name.charAt(0)}</span>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-3 mb-2 flex-wrap">
-                  <h1 className="font-crypto text-2xl md:text-3xl font-bold">{crypto.name}</h1>
-                  <Badge variant="outline" className="font-crypto">
-                    #{crypto.rank}
-                  </Badge>
-                </div>
-                <p className="text-muted-foreground font-crypto text-lg">{crypto.symbol}</p>
-              </div>
-            </div>
-            
-            <div className="text-left lg:text-right w-full lg:w-auto">
-              <div className="font-crypto text-3xl md:text-4xl font-bold mb-3">
-                {formatPrice(crypto.price)}
-              </div>
-              <div className="flex flex-wrap items-center gap-4 justify-start lg:justify-end">
-                <div className="text-sm">{formatChange(crypto.change24h)}</div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-lg">{symbol}/USDC</span>
+                <Badge variant="secondary" className="text-xs">Spot</Badge>
               </div>
             </div>
           </div>
 
-          {/* Stats Cards - Fixed responsive grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
-            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <DollarSign className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">Marknadskapital</span>
-              </div>
-              <div className="font-display font-bold text-sm md:text-base">${crypto.marketCap}</div>
-            </Card>
-            
-            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <BarChart3 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">Volym (24h)</span>
-              </div>
-              <div className="font-display font-bold text-sm md:text-base">${crypto.volume}</div>
-            </Card>
-            
-            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Coins className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">Cirkulerande</span>
-              </div>
-              <div className="font-display font-bold text-sm md:text-base">{info.supply}</div>
-            </Card>
-            
-            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Volume2 className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">Max Utbud</span>
-              </div>
-              <div className="font-display font-bold text-sm md:text-base">{info.maxSupply}</div>
-            </Card>
-            
-            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">24h Förändring</span>
-              </div>
-              <div className="font-display font-bold text-xs md:text-sm">{formatChange(crypto.change24h)}</div>
-            </Card>
-            
-            <Card className="p-4 bg-card/80 backdrop-blur-sm shadow-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-xs md:text-sm text-muted-foreground">Rank</span>
-              </div>
-              <div className="font-display font-bold text-xs md:text-sm">#{crypto.rank}</div>
-            </Card>
-          </div>
-
-          {/* Main Content Grid - Chart and Trading Panel */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-            {/* TradingView Chart - Säker version utan DOM-manipulation */}
-            <div className="xl:col-span-2">
-              <Card className="p-6 bg-card/80 backdrop-blur-sm shadow-lg">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="font-crypto text-xl font-bold">Live Chart</h2>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={reloadChart}
-                      className="flex items-center gap-2"
-                      disabled={isLoading}
-                    >
-                      <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
-                      {isLoading ? "Laddar..." : "Uppdatera"}
-                    </Button>
-                  </div>
-                </div>
-                
-                {chartError ? (
-                  <div className="text-center py-12">
-                    <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                    <h3 className="text-lg font-semibold mb-2">Chart kunde inte laddas</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Det gick inte att ladda chart för {crypto.symbol}. Prova att uppdatera.
-                    </p>
-                    <Button onClick={reloadChart} variant="outline">
-                      <RefreshCw size={16} className="mr-2" />
-                      Försök igen
-                    </Button>
-                  </div>
-                ) : (
-                  <div 
-                    className="w-full rounded-lg overflow-hidden relative bg-card/20"
-                    style={{ 
-                      height: '700px',
-                      minHeight: '700px'
-                    }}
-                  >
-                    {isLoading ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-                        <div className="flex items-center space-x-2">
-                          <RefreshCw className="animate-spin h-6 w-6 text-primary" />
-                          <span className="font-crypto">Laddar chart...</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center space-y-4">
-                          <BarChart3 className="mx-auto h-16 w-16 text-primary/50" />
-                          <div>
-                            <h3 className="text-lg font-semibold">TradingView Chart</h3>
-                            <p className="text-muted-foreground">Chart för {crypto.symbol} kommer att visas här</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </Card>
+          {/* Price Stats */}
+          <div className="flex items-center gap-6 text-sm">
+            <div>
+              <div className="text-xs text-muted-foreground">Price</div>
+              <div className="font-bold">{formatPrice(crypto.price)}</div>
             </div>
-
-            {/* Trading Panel */}
-            <div className="xl:col-span-1">
-              <TradingPanel
-                symbol={crypto.symbol}
-                currentPrice={crypto.price}
-                priceChange24h={crypto.change24h}
-                tokenName={crypto.name}
-              />
+            <div>
+              <div className="text-xs text-muted-foreground">24h Change</div>
+              <div className={`font-bold ${crypto.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
+                {crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%
+              </div>
             </div>
-          </div>
-
-          {/* Description and Links */}
-          <div className="mt-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="p-6 bg-card/80 backdrop-blur-sm">
-                <h3 className="font-crypto text-xl font-bold mb-4">Om {crypto.name}</h3>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  {info.description}
-                </p>
-                
-                <div className="flex flex-wrap gap-4">
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={info.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                      <Globe size={16} />
-                      Officiell Webbplats
-                      <ExternalLink size={14} />
-                    </a>
-                  </Button>
-                  
-                  {info.whitepaper && (
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={info.whitepaper} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                        <DollarSign size={16} />
-                        Whitepaper
-                        <ExternalLink size={14} />
-                      </a>
-                    </Button>
-                  )}
-                </div>
-              </Card>
-
-              <Card className="p-6 bg-card/80 backdrop-blur-sm">
-                <h3 className="font-crypto text-xl font-bold mb-4">Marknadsstatistik</h3>
-                
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-2 border-b border-border/50">
-                    <span className="text-muted-foreground">Ranking</span>
-                    <span className="font-display font-semibold">#{crypto.rank}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center py-2 border-b border-border/50">
-                    <span className="text-muted-foreground">Aktuellt Pris</span>
-                    <span className="font-display font-semibold">{formatPrice(crypto.price)}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center py-2 border-b border-border/50">
-                    <span className="text-muted-foreground">24h Förändring</span>
-                    {formatChange(crypto.change24h)}
-                  </div>
-                  
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-muted-foreground">Marknadskapital</span>
-                    <span className="font-display font-semibold">${crypto.marketCap}</span>
-                  </div>
-                </div>
-              </Card>
+            <div>
+              <div className="text-xs text-muted-foreground">24h Volume</div>
+              <div className="font-bold">{crypto.volume} USDC</div>
+            </div>
+            <div>
+              <div className="text-xs text-muted-foreground">Market Cap</div>
+              <div className="font-bold">{crypto.marketCap}</div>
             </div>
           </div>
         </div>
+
+        {/* Right Side Actions */}
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Star className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <Bell className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Trading Interface */}
+      <div className="flex-1 overflow-hidden">
+        <DesktopTradingInterface
+          symbol={crypto.symbol}
+          currentPrice={crypto.price}
+          priceChange24h={crypto.change24h}
+          tokenName={crypto.name}
+          crypto={crypto}
+        />
       </div>
     </div>
   );
