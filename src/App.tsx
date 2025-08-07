@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { Suspense, lazy, memo } from "react";
 
 // Lazy load pages för optimal bundling
@@ -53,23 +54,25 @@ const App = memo(() => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <div className={`min-h-screen bg-background ${isMobile ? 'pb-16' : ''}`}>
-            <Suspense fallback={<LoadingFallback />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/nyheter" element={<NewsPage />} />
-                <Route path="/artikel/:id" element={<ArticleDetailPage />} />
-                <Route path="/marknad" element={<MarketOverviewPage />} />
-                <Route path="/verktyg" element={<ToolsPage />} />
-                <Route path="/portfolio" element={<PortfolioPage />} />
-                <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-            {isMobile && <MobileBottomNavigation />}
-          </div>
-        </BrowserRouter>
+        <ErrorBoundary>
+          <BrowserRouter>
+            <div className={`min-h-screen bg-background ${isMobile ? 'pb-16' : ''}`}>
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/nyheter" element={<NewsPage />} />
+                  <Route path="/artikel/:id" element={<ArticleDetailPage />} />
+                  <Route path="/marknad" element={<MarketOverviewPage />} />
+                  <Route path="/verktyg" element={<ToolsPage />} />
+                  <Route path="/portfolio" element={<PortfolioPage />} />
+                  <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+              {isMobile && <MobileBottomNavigation />}
+            </div>
+          </BrowserRouter>
+        </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   );
