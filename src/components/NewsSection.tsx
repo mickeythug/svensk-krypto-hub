@@ -196,11 +196,18 @@ const NewsSection = () => {
                 DAGLIG KRYPTO RAPPORT
               </h3>
               <p className="text-sm mb-4 opacity-90">
-                Få de viktigaste kryptonotiserna levererade direkt till din inkorg varje morgon.
+                Få de viktigaste kryptonotiserna levererade direkt via vår Telegram-community varje dag.
               </p>
-              <Button variant="outline" className="w-full border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                Prenumerera Gratis
-              </Button>
+              <a 
+                href="https://t.me/cryptonetworksweden" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Button className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                  Gå med i Telegram
+                </Button>
+              </a>
             </Card>
 
             {/* Market Alert */}
