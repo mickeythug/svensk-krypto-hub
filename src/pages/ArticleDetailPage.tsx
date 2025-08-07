@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, User, Eye, BookOpen, Calendar, Tag, Share2, Bookmark, ChevronRight } from 'lucide-react';
 import Header from '@/components/Header';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -72,6 +73,48 @@ const ArticleDetailPage = () => {
     trending: true,
     source: "CryptoNews Sverige"
   };
+
+  // SEO and meta setup
+  useEffect(() => {
+    document.title = `${article.title} | Crypto Network Sweden`;
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', article.summary);
+    }
+
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', `https://cryptonetworksweden.se/artikel/${id}`);
+    }
+
+    // Add article structured data
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": article.title,
+      "description": article.summary,
+      "author": {
+        "@type": "Person",
+        "name": article.author
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Crypto Network Sweden",
+        "logo": "https://cryptonetworksweden.se/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
+      },
+      "datePublished": article.publishedAt,
+      "articleSection": article.category,
+      "keywords": article.tags.join(", ")
+    });
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, [article, id]);
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {

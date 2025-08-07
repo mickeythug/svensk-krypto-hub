@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 
 interface NewsArticle {
@@ -100,6 +101,23 @@ const NewsPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<"date" | "impact" | "trending">("date");
   const [isLoading, setIsLoading] = useState(false);
+
+  // SEO Setup
+  useEffect(() => {
+    document.title = "Krypto Nyheter | Senaste Nyheterna från Kryptovaluta-världen | Crypto Network Sweden";
+    
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 
+        'Läs de senaste krypto-nyheterna från Bitcoin, Ethereum, DeFi och mer. Expertanalys och marknadsinsikter från Sveriges ledande krypto-community.'
+      );
+    }
+
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', 'https://cryptonetworksweden.se/nyheter');
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
