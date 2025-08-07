@@ -394,7 +394,7 @@ const NewsPage = () => {
                 </div>
               </div>
 
-              {/* All News - Enhanced */}
+              {/* All News - Enhanced with Grid/List View */}
               <div>
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="font-crypto text-2xl font-bold text-primary">ALLA NYHETER</h2>
@@ -409,41 +409,115 @@ const NewsPage = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-4">
-                  {filteredNews.map((article) => (
-                    <Card key={article.id} className="p-6 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
-                      <div className="flex items-start gap-6">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <Badge variant="outline" className="border-primary text-primary text-sm px-2 py-1">
+                {/* Grid View */}
+                {viewMode === "grid" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {filteredNews.map((article) => (
+                      <Card key={article.id} className="p-5 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group">
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
+                              {article.sentiment === 'positive' ? '📈 Positiv' : 
+                               article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
+                            </Badge>
+                            <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1`}>
+                              {article.impact === 'high' ? '🔥 Hög' : 
+                               article.impact === 'medium' ? '⚡ Medium' : '💭 Låg'}
+                            </Badge>
+                            <Badge variant="outline" className="border-primary text-primary text-xs">
                               {article.category}
                             </Badge>
-                            <span className={`text-lg ${getSentimentColor(article.sentiment)}`}>
-                              {article.sentiment === 'positive' ? '📈' : 
-                               article.sentiment === 'negative' ? '📉' : '➡️'}
-                            </span>
-                            <span className="text-sm text-muted-foreground">{article.source}</span>
                           </div>
                           
-                          <h3 className="font-display font-semibold text-xl mb-3 hover:text-primary cursor-pointer transition-colors leading-tight">
+                          <h3 className="font-display font-bold text-lg mb-3 hover:text-primary cursor-pointer transition-colors leading-tight group-hover:text-primary">
                             {article.title}
                           </h3>
                           
-                          <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
+                          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
                             {article.summary}
                           </p>
+
+                          <div className="flex flex-wrap gap-1">
+                            {article.tags.slice(0, 3).map((tag, index) => (
+                              <Badge key={index} variant="secondary" className="text-xs">
+                                #{tag}
+                              </Badge>
+                            ))}
+                          </div>
                           
-                          <div className="flex items-center text-sm text-muted-foreground mt-3">
-                            <Calendar className="h-4 w-4 mr-2" />
-                            <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
-                            <span className="mx-2">•</span>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
+                            <div className="flex items-center">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
+                            </div>
                             <span>{article.source}</span>
                           </div>
                         </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+
+                {/* List View */}
+                {viewMode === "list" && (
+                  <div className="space-y-4">
+                    {filteredNews.map((article) => (
+                      <Card key={article.id} className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-md hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group">
+                        <div className="flex flex-col md:flex-row gap-4">
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
+                                {article.sentiment === 'positive' ? '📈' : 
+                                 article.sentiment === 'negative' ? '📉' : '➡️'}
+                              </Badge>
+                              <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1`}>
+                                {article.impact === 'high' ? 'Hög' : 
+                                 article.impact === 'medium' ? 'Medium' : 'Låg'}
+                              </Badge>
+                              <Badge variant="outline" className="border-primary text-primary text-xs">
+                                {article.category}
+                              </Badge>
+                            </div>
+                            
+                            <h3 className="font-display font-bold text-lg hover:text-primary cursor-pointer transition-colors leading-tight group-hover:text-primary">
+                              {article.title}
+                            </h3>
+                            
+                            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
+                              {article.summary}
+                            </p>
+
+                            <div className="flex items-center justify-between">
+                              <div className="flex flex-wrap gap-1">
+                                {article.tags.slice(0, 2).map((tag, index) => (
+                                  <Badge key={index} variant="secondary" className="text-xs">
+                                    #{tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                              
+                              <div className="flex items-center text-xs text-muted-foreground">
+                                <Calendar className="h-3 w-3 mr-1" />
+                                <span>{new Date(article.publishedAt).toLocaleDateString('sv-SE')}</span>
+                                <span className="mx-2">•</span>
+                                <span>{article.source}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 md:flex-col md:justify-center">
+                            <Button variant="outline" size="sm" className="text-xs hover:bg-primary hover:text-primary-foreground">
+                              Läs mer
+                            </Button>
+                            <Button variant="ghost" size="sm" className="hover:text-primary">
+                              <Bookmark className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
