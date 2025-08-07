@@ -7,9 +7,8 @@ import {
   X, 
   TrendingUp, 
   Users, 
-  BookOpen, 
-  MessageCircle, 
-  Newspaper 
+  Newspaper,
+  Settings
 } from "lucide-react";
 
 const Header = () => {
@@ -28,10 +27,9 @@ const Header = () => {
 
   const navItems = [
     { name: "Marknadsöversikt", href: "/marknad", icon: TrendingUp, route: true },
-    { name: "Community", href: "#community", icon: Users, route: false },
-    { name: "Utbildning", href: "#education", icon: BookOpen, route: false },
+    { name: "Verktyg", href: "/verktyg", icon: Settings, route: true },
     { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true },
-    { name: "Kontakt", href: "#contact", icon: MessageCircle, route: false },
+    { name: "Community", href: "#community", icon: Users, route: false }
   ];
 
   const handleNavigation = (item: typeof navItems[0]) => {
