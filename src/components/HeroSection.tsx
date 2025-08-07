@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Hexagon, Users, TrendingUp, BookOpen } from "lucide-react";
-import TransparentLogo from "@/components/TransparentLogo";
+
 import hexPattern from "@/assets/hex-pattern.jpg";
 
 const HeroSection = () => {
@@ -34,13 +34,11 @@ const HeroSection = () => {
           {/* Logo and Title */}
           <div className="mb-8 animate-fade-in">
             <div className="flex items-center justify-center mb-6">
-              <div className="relative">
-                <TransparentLogo
-                  originalSrc="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png"
-                  alt="Crypto Network Sweden"
-                  className="h-32 w-auto animate-pulse-glow"
-                />
-              </div>
+              <img 
+                src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
+                alt="Crypto Network Sweden"
+                className="h-40 w-auto animate-pulse-glow drop-shadow-[0_0_30px_rgba(0,255,204,0.5)]"
+              />
             </div>
             
             <h1 className="font-crypto text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

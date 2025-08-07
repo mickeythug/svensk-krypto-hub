@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import TransparentLogo from "@/components/TransparentLogo";
+
 import { MessageCircle, Video, Twitter, Instagram, Youtube, Users, Mail, MapPin, Phone } from "lucide-react";
 
 const FooterSection = () => {
@@ -38,10 +38,10 @@ const FooterSection = () => {
           {/* Brand Section */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <TransparentLogo
-                originalSrc="/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png"
+              <img 
+                src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
                 alt="Crypto Network Sweden"
-                className="h-16 w-auto mb-4"
+                className="h-16 w-auto mb-4 drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
               />
               <h3 className="font-crypto text-xl font-bold text-primary mb-2">
                 CRYPTO NETWORK SWEDEN
