@@ -65,8 +65,30 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     <div className="flex h-full bg-background">
       {/* Main Chart Area */}
       <div className="flex-1 flex flex-col min-h-0">
+        {/* Price Display - Separate container above chart */}
+        <div className="mx-3 mt-3 mb-2">
+          <Card className="bg-background/95 backdrop-blur-sm border-border/20 p-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold font-mono text-foreground">
+                  ${currentPrice.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {symbol}/USDT • BINANCE
+                </div>
+              </div>
+              <div className={`flex items-center gap-2 ${
+                priceChange24h >= 0 ? 'text-success' : 'text-destructive'
+              }`}>
+                {priceChange24h >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+                <span className="text-xl font-bold">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
+              </div>
+            </div>
+          </Card>
+        </div>
+
         {/* Chart Container - Perfect spacing */}
-        <div className="flex-1 m-3 rounded-lg overflow-hidden shadow-lg">
+        <div className="flex-1 mx-3 mb-2 rounded-lg overflow-hidden shadow-lg">
           <ModernTradingViewChart symbol={symbol} currentPrice={currentPrice} />
         </div>
 
@@ -124,10 +146,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
       {/* Right Sidebar - Perfect spacing and alignment */}
       <div className="w-80 flex flex-col bg-card/20 border-l border-border/30">
-        {/* Orderbook - Top section */}
-        <div className="flex-1 m-3 mb-2">
-          <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
-            <div className="p-3 border-b border-border/30 bg-background/40">
+        {/* Orderbook - Top section with fixed height and proper spacing */}
+        <div className="flex-1 m-3 mb-2 max-h-[600px]">
+          <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg flex flex-col">
+            <div className="p-3 border-b border-border/30 bg-background/40 flex-shrink-0">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-sm">Order Book</h3>
@@ -146,59 +168,58 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               )}
             </div>
             
-            <div className="h-full overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-0">
               {/* Header */}
-              <div className="grid grid-cols-3 text-xs text-muted-foreground p-3 border-b border-border/20 bg-background/20">
+              <div className="grid grid-cols-3 text-xs text-muted-foreground p-2 border-b border-border/20 bg-background/20 flex-shrink-0">
                 <span className="font-semibold">Price (USDT)</span>
                 <span className="text-right font-semibold">Size ({symbol})</span>
                 <span className="text-right font-semibold">Total</span>
               </div>
               
-              {/* Asks (Sell orders) - Red - No scrollbar */}
-              <div className="space-y-0.5 p-2 h-44">
-                {orderBook?.asks?.slice(0, 12).map((ask, i) => (
-                  <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-1 px-2 rounded cursor-pointer transition-colors">
-                    <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
-                    <span className="text-right font-mono">{formatSize(ask.size)}</span>
-                    <span className="text-right font-mono text-muted-foreground">{formatSize(ask.total)}</span>
-                  </div>
-                )) || Array.from({length: 12}).map((_, i) => (
-                  <div key={`ask-skeleton-${i}`} className="grid grid-cols-3 text-xs py-1 px-2">
-                    <div className="h-3 bg-destructive/20 rounded animate-pulse"></div>
-                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Current Price - Highlighted */}
-              <div className="border-y border-border/40 p-3 bg-gradient-to-r from-primary/5 to-primary/10">
-                <div className="text-center">
-                  <div className="text-xl font-bold font-mono tracking-tight">{formatPrice(currentPrice)}</div>
-                  <div className={`text-sm flex items-center justify-center gap-2 ${
-                    priceChange24h >= 0 ? 'text-success' : 'text-destructive'
-                  }`}>
-                    {priceChange24h >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                    <span className="font-semibold">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
-                  </div>
+              {/* Asks (Sell orders) - Red - Fixed height, no overflow */}
+              <div className="flex-shrink-0 p-2" style={{height: '220px'}}>
+                <div className="space-y-0.5">
+                  {orderBook?.asks?.slice(-15).reverse().map((ask, i) => (
+                    <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
+                      <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
+                      <span className="text-right font-mono text-xs">{formatSize(ask.size)}</span>
+                      <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(ask.total)}</span>
+                    </div>
+                  )) || Array.from({length: 15}).map((_, i) => (
+                    <div key={`ask-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
+                      <div className="h-3 bg-destructive/20 rounded animate-pulse"></div>
+                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
+                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
+                    </div>
+                  ))}
                 </div>
               </div>
               
-              {/* Bids (Buy orders) - Green - No scrollbar */}
-              <div className="space-y-0.5 p-2 h-44">
-                {orderBook?.bids?.slice(0, 12).map((bid, i) => (
-                  <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-1 px-2 rounded cursor-pointer transition-colors">
-                    <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
-                    <span className="text-right font-mono">{formatSize(bid.size)}</span>
-                    <span className="text-right font-mono text-muted-foreground">{formatSize(bid.total)}</span>
-                  </div>
-                )) || Array.from({length: 12}).map((_, i) => (
-                  <div key={`bid-skeleton-${i}`} className="grid grid-cols-3 text-xs py-1 px-2">
-                    <div className="h-3 bg-success/20 rounded animate-pulse"></div>
-                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                    <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
-                  </div>
-                ))}
+              {/* Current Price - Highlighted - Fixed position */}
+              <div className="border-y border-border/40 p-2 bg-gradient-to-r from-primary/5 to-primary/10 flex-shrink-0">
+                <div className="text-center">
+                  <div className="text-lg font-bold font-mono tracking-tight">{formatPrice(currentPrice)}</div>
+                  <div className="text-xs text-muted-foreground">Last Price</div>
+                </div>
+              </div>
+              
+              {/* Bids (Buy orders) - Green - Fixed height, no overflow */}
+              <div className="flex-shrink-0 p-2" style={{height: '220px'}}>
+                <div className="space-y-0.5">
+                  {orderBook?.bids?.slice(0, 15).map((bid, i) => (
+                    <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
+                      <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
+                      <span className="text-right font-mono text-xs">{formatSize(bid.size)}</span>
+                      <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(bid.total)}</span>
+                    </div>
+                  )) || Array.from({length: 15}).map((_, i) => (
+                    <div key={`bid-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
+                      <div className="h-3 bg-success/20 rounded animate-pulse"></div>
+                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
+                      <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </Card>

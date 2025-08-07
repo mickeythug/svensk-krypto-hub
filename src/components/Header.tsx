@@ -65,7 +65,7 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className={`flex items-center justify-between ${isMobile ? 'h-14' : 'h-16'}`}>
+        <div className={`flex items-center justify-between ${isMobile ? 'h-12' : 'h-14'}`}>
           {/* Logo */}
           <button 
             onClick={() => navigate('/')}
