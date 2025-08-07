@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Menu, 
   X, 
@@ -16,6 +17,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,15 +65,15 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className={`flex items-center justify-between ${isMobile ? 'h-14' : 'h-16'}`}>
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <img 
               src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
               alt="Crypto Network Sweden"
-              className="h-10 w-auto drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
+              className={`${isMobile ? 'h-8' : 'h-10'} w-auto drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`}
             />
-            <div className="hidden md:block">
+            <div className={`${isMobile ? 'hidden' : 'hidden md:block'}`}>
               <h1 className="font-crypto text-lg font-bold">
                 <span style={{ color: '#12E19F' }}>CRY</span>
                 <span className="text-white">PTO</span>
@@ -86,47 +88,54 @@ const Header = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navItems.map((item) => {
-              const IconComponent = item.icon;
-              return (
-                <button
-                  key={item.name}
-                  onClick={() => handleNavigation(item)}
-                  className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-display font-medium"
-                >
-                  <IconComponent size={16} />
-                  <span>{item.name}</span>
-                </button>
-              );
-            })}
-          </nav>
+          {!isMobile && (
+            <nav className="hidden lg:flex items-center space-x-8">
+              {navItems.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => handleNavigation(item)}
+                    className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-display font-medium"
+                  >
+                    <IconComponent size={16} />
+                    <span>{item.name}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          )}
 
           {/* CTA Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-            >
-              Logga in
-            </Button>
-            <Button 
-              size="sm"
-              className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
-            >
-              Gå med
-            </Button>
-          </div>
+          {!isMobile && (
+            <div className="hidden md:flex items-center space-x-4">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                Logga in
+              </Button>
+              <Button 
+                size="sm"
+                className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+              >
+                Gå med
+              </Button>
+            </div>
+          )}
 
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className="lg:hidden">
+            <SheetTrigger asChild className={`${isMobile ? 'block' : 'lg:hidden'}`}>
               <Button variant="ghost" size="sm">
-                <Menu size={20} />
+                <Menu size={isMobile ? 18 : 20} />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-background/98 backdrop-blur-xl border-l border-border z-[60]">
+            <SheetContent 
+              side="right" 
+              className={`${isMobile ? 'w-full' : 'w-80'} bg-background/98 backdrop-blur-xl border-l border-border z-[60]`}
+            >
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center space-x-3">
                   <img 

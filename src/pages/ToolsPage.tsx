@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,18 @@ import {
   MessageCircle,
   ArrowRight,
   CheckCircle,
-  Sparkles
+  Sparkles,
+  Download,
+  Smartphone,
+  ChevronRight,
+  Play
 } from "lucide-react";
 import Header from "@/components/Header";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ToolsPage = () => {
   const [hoveredBot, setHoveredBot] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const telegramBots = [
     {
@@ -116,164 +122,286 @@ const ToolsPage = () => {
     }
   ];
 
+  // Mobile Bot Card Component
+  const MobileBotCard = ({ bot }: { bot: typeof telegramBots[0] }) => {
+    const IconComponent = bot.icon;
+    
+    return (
+      <Card className="relative overflow-hidden bg-card/90 backdrop-blur-sm border-border/50 shadow-lg">
+        {/* Background Gradient */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${bot.gradient} opacity-10`} />
+        
+        {bot.popular && (
+          <div className="absolute top-3 right-3 z-10">
+            <Badge className="bg-success/20 text-success border-success/30 text-xs px-2 py-1">
+              <Star className="w-3 h-3 mr-1" />
+              HOT
+            </Badge>
+          </div>
+        )}
+
+        <div className="relative z-10 p-4">
+          <div className="flex items-start space-x-4">
+            {/* Icon */}
+            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${bot.gradient} p-3 flex-shrink-0 shadow-lg`}>
+              <IconComponent className="w-full h-full text-white" />
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-crypto text-lg font-bold mb-1 truncate">{bot.name}</h3>
+              <p className="text-muted-foreground text-sm mb-3 line-clamp-2 leading-relaxed">
+                {bot.description}
+              </p>
+
+              {/* Features - Mobile optimized */}
+              <div className="grid grid-cols-2 gap-1 mb-4">
+                {bot.features.slice(0, 4).map((feature, index) => (
+                  <div key={index} className="flex items-center text-xs text-muted-foreground">
+                    <CheckCircle className="w-3 h-3 text-success mr-1 flex-shrink-0" />
+                    <span className="truncate">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Price & Action */}
+              <div className="flex items-center justify-between">
+                <span className="font-display font-semibold text-primary text-sm">{bot.price}</span>
+                
+                <Button 
+                  size="sm"
+                  asChild
+                  className={`bg-gradient-to-r ${bot.gradient} hover:opacity-90 text-white shadow-lg text-xs px-4 py-2`}
+                >
+                  <a 
+                    href={bot.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2"
+                  >
+                    <Play className="w-3 h-3" />
+                    Starta
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
+  };
+
+  // Desktop Bot Card Component  
+  const DesktopBotCard = ({ bot }: { bot: typeof telegramBots[0] }) => {
+    const IconComponent = bot.icon;
+    
+    return (
+      <Card 
+        className={`relative p-6 bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden group ${
+          hoveredBot === bot.id ? 'ring-2 ring-primary/50' : ''
+        }`}
+        onMouseEnter={() => setHoveredBot(bot.id)}
+        onMouseLeave={() => setHoveredBot(null)}
+      >
+        {/* Background Gradient */}
+        <div className={`absolute inset-0 bg-gradient-to-br ${bot.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
+        
+        {/* Popular Badge */}
+        {bot.popular && (
+          <div className="absolute top-4 right-4">
+            <Badge className="bg-success/20 text-success border-success/30 text-xs">
+              <Star className="w-3 h-3 mr-1" />
+              POPULÄR
+            </Badge>
+          </div>
+        )}
+
+        <div className="relative z-10">
+          {/* Icon */}
+          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${bot.gradient} p-3 mb-4 group-hover:scale-110 transition-transform duration-300`}>
+            <IconComponent className="w-full h-full text-white" />
+          </div>
+
+          {/* Content */}
+          <h3 className="font-crypto text-xl font-bold mb-2">{bot.name}</h3>
+          <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+            {bot.description}
+          </p>
+
+          {/* Features */}
+          <div className="space-y-2 mb-6">
+            {bot.features.map((feature, index) => (
+              <div key={index} className="flex items-center text-xs text-muted-foreground">
+                <CheckCircle className="w-3 h-3 text-success mr-2 flex-shrink-0" />
+                <span>{feature}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Price & Action */}
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="font-display font-semibold text-primary">{bot.price}</span>
+            </div>
+            
+            <Button 
+              variant="outline"
+              size="sm"
+              asChild
+              className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300"
+            >
+              <a 
+                href={bot.link} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Starta Bot
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="pt-20 pb-12">
-        <div className="container mx-auto px-4">
-          {/* Hero Section */}
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
-                <Sparkles className="w-4 h-4 mr-2" />
-                VERKTYG
-              </Badge>
-            </div>
-            
-            <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              TELEGRAM BOTS
-            </h1>
-            
-            <p className="font-display text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
-              Automatisera din kryptohandel med våra kraftfulla Telegram bots. Från snabb trading till price alerts - allt du behöver för att hålla dig steget före marknaden.
-            </p>
-
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-success" />
-                <span>50,000+ Aktiva användare</span>
+      <div className={`${isMobile ? 'pt-16' : 'pt-20'} pb-12`}>
+        <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
+          {/* Mobile Hero Section */}
+          {isMobile ? (
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Badge className="bg-primary/20 text-primary border-primary/30 px-3 py-1 text-xs">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  VERKTYG
+                </Badge>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-success" />
-                <span>99.9% Uptime</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-success" />
-                <span>Säker & Pålitlig</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Bots Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {telegramBots.map((bot) => {
-              const IconComponent = bot.icon;
               
-              return (
-                <Card 
-                  key={bot.id}
-                  className={`relative p-6 bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 cursor-pointer overflow-hidden group ${
-                    hoveredBot === bot.id ? 'ring-2 ring-primary/50' : ''
-                  }`}
-                  onMouseEnter={() => setHoveredBot(bot.id)}
-                  onMouseLeave={() => setHoveredBot(null)}
-                >
-                  {/* Background Gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${bot.gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
-                  
-                  {/* Popular Badge */}
-                  {bot.popular && (
-                    <div className="absolute top-4 right-4">
-                      <Badge className="bg-success/20 text-success border-success/30 text-xs">
-                        <Star className="w-3 h-3 mr-1" />
-                        POPULÄR
-                      </Badge>
-                    </div>
-                  )}
+              <h1 className="font-crypto text-2xl sm:text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                TELEGRAM BOTS
+              </h1>
+              
+              <p className="font-display text-sm text-muted-foreground mb-6 leading-relaxed px-2">
+                Automatisera din kryptohandel med våra kraftfulla Telegram bots
+              </p>
 
-                  <div className="relative z-10">
-                    {/* Icon */}
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${bot.gradient} p-3 mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className="w-full h-full text-white" />
-                    </div>
+              <div className="flex flex-col gap-2 text-xs text-muted-foreground">
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span>50k+ Användare</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-success" />
+                  <span>99.9% Uptime</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Desktop Hero Section */
+            <div className="text-center mb-16">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  VERKTYG
+                </Badge>
+              </div>
+              
+              <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                TELEGRAM BOTS
+              </h1>
+              
+              <p className="font-display text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
+                Automatisera din kryptohandel med våra kraftfulla Telegram bots. Från snabb trading till price alerts - allt du behöver för att hålla dig steget före marknaden.
+              </p>
 
-                    {/* Content */}
-                    <h3 className="font-crypto text-xl font-bold mb-2">{bot.name}</h3>
-                    <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                      {bot.description}
-                    </p>
+              <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  <span>50,000+ Aktiva användare</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  <span>99.9% Uptime</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  <span>Säker & Pålitlig</span>
+                </div>
+              </div>
+            </div>
+          )}
 
-                    {/* Features */}
-                    <div className="space-y-2 mb-6">
-                      {bot.features.map((feature, index) => (
-                        <div key={index} className="flex items-center text-xs text-muted-foreground">
-                          <CheckCircle className="w-3 h-3 text-success mr-2 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Price & Action */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="font-display font-semibold text-primary">{bot.price}</span>
-                      </div>
-                      
-                      <Button 
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300"
-                      >
-                        <a 
-                          href={bot.link} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                          Starta Bot
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })}
+          {/* Bots Grid - Responsive */}
+          <div className={`${
+            isMobile 
+              ? 'space-y-4 mb-8' 
+              : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16'
+          }`}>
+            {telegramBots.map((bot) => (
+              isMobile ? (
+                <MobileBotCard key={bot.id} bot={bot} />
+              ) : (
+                <DesktopBotCard key={bot.id} bot={bot} />
+              )
+            ))}
           </div>
 
-          {/* Features Section */}
-          <Card className="p-8 bg-gradient-secondary border-border shadow-lg mb-16">
-            <div className="text-center mb-12">
-              <h2 className="font-crypto text-3xl font-bold mb-4">
+          {/* Features Section - Responsive */}
+          <Card className={`${isMobile ? 'p-4 mb-8' : 'p-8 mb-16'} bg-gradient-secondary border-border shadow-lg`}>
+            <div className="text-center mb-8">
+              <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-3xl'} font-bold mb-4`}>
                 Varför Välja Våra Verktyg?
               </h2>
-              <p className="font-display text-muted-foreground text-lg max-w-2xl mx-auto">
+              <p className={`font-display text-muted-foreground ${isMobile ? 'text-sm' : 'text-lg'} max-w-2xl mx-auto`}>
                 Vi har byggt plattformen som traders behöver - snabb, säker och användarvänlig
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className={`${
+              isMobile 
+                ? 'grid grid-cols-2 gap-4' 
+                : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'
+            }`}>
               {features.map((feature, index) => {
                 const IconComponent = feature.icon;
                 
                 return (
                   <div key={index} className="text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-8 h-8 text-primary" />
+                    <div className={`${
+                      isMobile ? 'w-10 h-10' : 'w-16 h-16'
+                    } rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}>
+                      <IconComponent className={`${isMobile ? 'w-5 h-5' : 'w-8 h-8'} text-primary`} />
                     </div>
-                    <h3 className="font-display font-semibold text-lg mb-2">{feature.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
+                    <h3 className={`font-display font-semibold ${isMobile ? 'text-sm' : 'text-lg'} mb-2`}>
+                      {feature.title}
+                    </h3>
+                    <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed`}>
+                      {feature.description}
+                    </p>
                   </div>
                 );
               })}
             </div>
           </Card>
 
-          {/* CTA Section */}
-          <Card className="p-8 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 text-center">
-            <h2 className="font-crypto text-2xl font-bold mb-4">
+          {/* CTA Section - Responsive */}
+          <Card className={`${isMobile ? 'p-4' : 'p-8'} bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 text-center`}>
+            <h2 className={`font-crypto ${isMobile ? 'text-lg' : 'text-2xl'} font-bold mb-4`}>
               Redo att Börja?
             </h2>
-            <p className="font-display text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Gå med i tusentals traders som redan använder våra verktyg för att maximera sina vinster
+            <p className={`font-display text-muted-foreground ${isMobile ? 'text-sm mb-4' : 'mb-6'} max-w-2xl mx-auto`}>
+              Gå med i tusentals traders som redan använder våra verktyg
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'} gap-4 justify-center`}>
               <Button 
-                size="lg"
+                size={isMobile ? "default" : "lg"}
                 asChild
                 className="bg-primary hover:bg-primary/90"
               >
@@ -283,15 +411,15 @@ const ToolsPage = () => {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <MessageCircle className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
                   Gå med i Telegram
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
                 </a>
               </Button>
               
               <Button 
                 variant="outline" 
-                size="lg"
+                size={isMobile ? "default" : "lg"}
                 asChild
               >
                 <a 
@@ -299,7 +427,7 @@ const ToolsPage = () => {
                   className="flex items-center gap-2"
                 >
                   Utforska Marknaden
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
                 </a>
               </Button>
             </div>
