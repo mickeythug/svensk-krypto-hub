@@ -6,7 +6,7 @@ import hexPattern from "@/assets/hex-pattern.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background with hex pattern */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
@@ -29,7 +29,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 text-center relative z-10">
+      <div className="container mx-auto px-4 text-center relative z-30">
         <div className="max-w-4xl mx-auto">
           {/* Logo and Title */}
           <div className="mb-8 animate-fade-in">

@@ -43,8 +43,8 @@ const Header = () => {
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? "bg-background/95 backdrop-blur-lg border-b border-border shadow-lg" 
-          : "bg-transparent"
+          ? "bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl" 
+          : "bg-background/90 backdrop-blur-md"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -111,7 +111,7 @@ const Header = () => {
                 <Menu size={20} />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80">
+            <SheetContent side="right" className="w-80 bg-background/98 backdrop-blur-xl border-l border-border z-[60]">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center space-x-3">
                   <img 

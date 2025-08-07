@@ -41,20 +41,20 @@ const CryptoPriceTicker = () => {
   };
 
   return (
-    <div className="bg-card/90 backdrop-blur-sm border-y border-border py-4 overflow-hidden">
+    <section className="bg-background border-b border-border py-3 mt-16 relative z-40 w-full">
       <div className="container mx-auto px-4 mb-2">
         <h3 className="font-display font-semibold text-sm text-muted-foreground text-center">
           LIVE KRYPTO PRISER
         </h3>
       </div>
       
-      <div className="relative">
+      <div className="relative overflow-hidden">
         <div className="flex animate-ticker space-x-8 whitespace-nowrap">
           {/* Duplicate the array for seamless loop */}
           {[...cryptoPrices, ...cryptoPrices].map((crypto, index) => (
             <div
               key={`${crypto.symbol}-${index}`}
-              className="flex items-center space-x-3 bg-secondary/50 rounded-lg px-4 py-2 border border-border/50"
+              className="flex items-center space-x-3 bg-secondary/50 rounded-lg px-4 py-2 border border-border/50 flex-shrink-0"
             >
               <div className="flex items-center space-x-2">
                 <span className="font-crypto font-bold text-primary text-sm">
@@ -81,7 +81,7 @@ const CryptoPriceTicker = () => {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
