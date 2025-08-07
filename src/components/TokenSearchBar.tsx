@@ -14,7 +14,7 @@ interface TokenSearchBarProps {
 
 const TokenSearchBar: React.FC<TokenSearchBarProps> = ({ 
   currentSymbol, 
-  placeholder = "Sök token (t.ex. SOLUSDT)", 
+  placeholder = "Sök token", 
   className 
 }) => {
   const [query, setQuery] = useState("");

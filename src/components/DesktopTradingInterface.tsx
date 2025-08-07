@@ -83,7 +83,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <div className="w-64">
                   <TokenSearchBar 
                     currentSymbol={symbol}
-                    placeholder="Sök token (t.ex. SOLUSDT)"
+                    placeholder="Sök token"
                   />
                 </div>
               </div>

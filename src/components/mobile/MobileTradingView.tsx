@@ -63,7 +63,7 @@ const MobileTradingView = ({
         <div className="mb-3">
           <TokenSearchBar 
             currentSymbol={symbol}
-            placeholder="Sök token (t.ex. SOLUSDT)"
+            placeholder="Sök token"
             className="w-full"
           />
         </div>
