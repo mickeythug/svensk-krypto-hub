@@ -146,8 +146,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
       {/* Right Sidebar - Perfect spacing and alignment */}
       <div className="w-80 flex flex-col bg-card/20 border-l border-border/30">
-        {/* Orderbook - Top section with fixed height and proper spacing */}
-        <div className="flex-1 m-3 mb-2 max-h-[600px]">
+        {/* Orderbook - Top section with increased height and proper spacing */}
+        <div className="flex-1 m-3 mb-2 max-h-[800px]">
           <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg flex flex-col">
             <div className="p-3 border-b border-border/30 bg-background/40 flex-shrink-0">
               <div className="flex justify-between items-center">
@@ -176,16 +176,16 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <span className="text-right font-semibold">Total</span>
               </div>
               
-              {/* Asks (Sell orders) - Red - Exactly 12 orders */}
-              <div className="flex-shrink-0 p-2" style={{height: '180px'}}>
+              {/* Asks (Sell orders) - Red - Exactly 15 orders - Higher prices than current */}
+              <div className="flex-shrink-0 p-2" style={{height: '240px'}}>
                 <div className="space-y-0.5">
-                  {orderBook?.asks?.sort((a, b) => b.price - a.price).slice(0, 12).map((ask, i) => (
+                  {orderBook?.asks?.sort((a, b) => a.price - b.price).slice(0, 15).reverse().map((ask, i) => (
                     <div key={`ask-${i}`} className="grid grid-cols-3 text-xs hover:bg-destructive/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
                       <span className="text-destructive font-mono font-semibold">{formatPrice(ask.price)}</span>
                       <span className="text-right font-mono text-xs">{formatSize(ask.size)}</span>
                       <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(ask.total)}</span>
                     </div>
-                  )) || Array.from({length: 12}).map((_, i) => (
+                  )) || Array.from({length: 15}).map((_, i) => (
                     <div key={`ask-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
                       <div className="h-3 bg-destructive/20 rounded animate-pulse"></div>
                       <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
@@ -195,24 +195,24 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 </div>
               </div>
               
-              {/* Current Price - SOLID Separator */}
-              <div className="border-y-2 border-border p-3 bg-card flex-shrink-0">
+              {/* Current Price - SOLID Separator - More prominent */}
+              <div className="border-y-2 border-primary/60 p-4 bg-gradient-to-r from-primary/10 to-primary/5 flex-shrink-0">
                 <div className="text-center">
-                  <div className="text-lg font-bold font-mono tracking-tight text-primary">{formatPrice(currentPrice)}</div>
-                  <div className="text-xs text-muted-foreground font-semibold">LAST PRICE</div>
+                  <div className="text-xl font-bold font-mono tracking-tight text-primary">{formatPrice(currentPrice)}</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wide">LAST PRICE</div>
                 </div>
               </div>
               
-              {/* Bids (Buy orders) - Green - Exactly 12 orders */}
-              <div className="flex-shrink-0 p-2" style={{height: '180px'}}>
+              {/* Bids (Buy orders) - Green - Exactly 15 orders - Lower prices than current */}
+              <div className="flex-shrink-0 p-2" style={{height: '240px'}}>
                 <div className="space-y-0.5">
-                  {orderBook?.bids?.sort((a, b) => b.price - a.price).slice(0, 12).map((bid, i) => (
+                  {orderBook?.bids?.sort((a, b) => b.price - a.price).slice(0, 15).map((bid, i) => (
                     <div key={`bid-${i}`} className="grid grid-cols-3 text-xs hover:bg-success/10 py-0.5 px-1 rounded cursor-pointer transition-colors">
                       <span className="text-success font-mono font-semibold">{formatPrice(bid.price)}</span>
                       <span className="text-right font-mono text-xs">{formatSize(bid.size)}</span>
                       <span className="text-right font-mono text-muted-foreground text-xs">{formatSize(bid.total)}</span>
                     </div>
-                  )) || Array.from({length: 12}).map((_, i) => (
+                  )) || Array.from({length: 15}).map((_, i) => (
                     <div key={`bid-skeleton-${i}`} className="grid grid-cols-3 text-xs py-0.5 px-1">
                       <div className="h-3 bg-success/20 rounded animate-pulse"></div>
                       <div className="h-3 bg-muted/20 rounded animate-pulse"></div>
@@ -225,8 +225,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           </Card>
         </div>
 
-        {/* Trading Panel - Bottom section with perfect spacing */}
-        <div className="h-96 m-3 mt-2">
+        {/* Trading Panel - Bottom section with reduced height */}
+        <div className="h-80 m-3 mt-2">
           <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
             <div className="p-3 border-b border-border/30 bg-background/40">
               <div className="flex gap-1">
