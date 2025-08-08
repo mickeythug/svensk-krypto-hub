@@ -3,7 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import SocialMediaSection from "@/components/SocialMediaSection";
 import MarketOverview from "@/components/MarketOverview";
-import MemeTokenSection from "@/components/MemeTokenSection";
+import MemeTokenSection from "@/pages/memepage/components/MemeTokenSection";
 import NewsSection from "@/components/NewsSection";
 import CommunitySection from "@/components/CommunitySection";
 import FooterSection from "@/components/FooterSection";
