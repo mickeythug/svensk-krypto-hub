@@ -29,10 +29,11 @@ const Header = () => {
   }, []);
 
   const navItems = [
-    { name: "Marknadsöversikt", href: "/marknad", icon: TrendingUp, route: true },
+    { name: "Marknad", href: "/marknad", icon: TrendingUp, route: true },
     { name: "Verktyg", href: "/verktyg", icon: Settings, route: true },
-    { name: "Trade", href: "/crypto/btc", icon: BarChart3, route: true },
+    { name: "Handel", href: "/crypto/btc", icon: BarChart3, route: true },
     { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true },
+    { name: "Meme Zone", href: "/meme", icon: Users, route: true },
     { name: "Community", href: "#community", icon: Users, route: false }
   ];
 
@@ -80,12 +81,8 @@ const Header = () => {
             />
             {!isMobile && (
               <div>
-                <h1 className="font-crypto text-lg font-bold">
-                  <span style={{ color: '#12E19F' }}>CRY</span>
-                  <span className="text-white">PTO</span>
-                  <span className="text-white"> </span>
-                  <span className="text-white">NET</span>
-                  <span style={{ color: '#12E19F' }}>WORK</span>
+                <h1 className="font-crypto text-lg font-bold text-foreground">
+                  CRYPTO NETWORK
                 </h1>
                 <p className="font-crypto text-xs text-muted-foreground">
                   SWEDEN
@@ -103,9 +100,8 @@ const Header = () => {
                   <button
                     key={item.name}
                     onClick={() => handleNavigation(item)}
-                    className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-display font-medium"
+                    className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-crypto font-bold tracking-wider uppercase text-sm"
                   >
-                    <IconComponent size={16} />
                     <span>{item.name}</span>
                   </button>
                 );
@@ -119,10 +115,10 @@ const Header = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                className="font-crypto font-bold tracking-wider uppercase text-xs border-2 border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground hover:border-foreground transition-all duration-300 transform hover:scale-105"
                 onClick={() => window.open('https://t.me/cryptonetworksweden', '_blank')}
               >
-                Logga in
+                LOGGA IN
               </Button>
               <a 
                 href="https://t.me/cryptonetworksweden" 
@@ -131,9 +127,9 @@ const Header = () => {
               >
                 <Button 
                   size="sm"
-                  className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+                  className="font-crypto font-bold tracking-wider uppercase text-xs bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary/25"
                 >
-                  Gå med
+                  GÅ MED
                 </Button>
               </a>
             </div>
@@ -161,12 +157,8 @@ const Header = () => {
                     className="h-8 w-auto"
                   />
                   <div>
-                    <h1 className="font-crypto text-sm font-bold">
-                      <span style={{ color: '#12E19F' }}>CRY</span>
-                      <span className="text-white">PTO</span>
-                      <span className="text-white"> </span>
-                      <span className="text-white">NET</span>
-                      <span style={{ color: '#12E19F' }}>WORK</span>
+                    <h1 className="font-crypto text-sm font-bold text-foreground">
+                      CRYPTO NETWORK
                     </h1>
                     <p className="font-crypto text-xs text-muted-foreground">
                       SWEDEN
@@ -189,9 +181,8 @@ const Header = () => {
                     <button
                       key={item.name}
                       onClick={() => handleNavigation(item)}
-                      className="flex items-center space-x-3 w-full p-3 rounded-lg hover:bg-muted transition-colors font-display"
+                      className="flex items-center space-x-3 w-full p-3 rounded-lg hover:bg-muted transition-colors font-crypto font-bold tracking-wider uppercase"
                     >
-                      <IconComponent size={20} className="text-primary" />
                       <span>{item.name}</span>
                     </button>
                   );
@@ -201,10 +192,10 @@ const Header = () => {
               <div className="mt-8 space-y-3">
                 <Button 
                   variant="outline" 
-                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  className="w-full font-crypto font-bold tracking-wider uppercase text-xs border-2 border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground hover:border-foreground transition-all duration-300"
                   onClick={() => window.open('https://t.me/cryptonetworksweden', '_blank')}
                 >
-                  Logga in
+                  LOGGA IN
                 </Button>
                 <a 
                   href="https://t.me/cryptonetworksweden" 
@@ -213,9 +204,9 @@ const Header = () => {
                   className="block"
                 >
                   <Button 
-                    className="w-full bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+                    className="w-full font-crypto font-bold tracking-wider uppercase text-xs bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25"
                   >
-                    Gå med i Communityn
+                    GÅ MED I COMMUNITYN
                   </Button>
                 </a>
               </div>
