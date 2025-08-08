@@ -115,47 +115,49 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
               <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="min-w-0">
-                    <h3 className="truncate font-crypto font-extrabold text-lg md:text-xl">{token.emoji} {token.symbol}</h3>
-                    <p className="truncate text-xs md:text-sm text-muted-foreground font-crypto">{token.name}</p>
+                    <h3 className="truncate font-crypto font-extrabold text-xl md:text-2xl tracking-wide">{token.emoji} {token.symbol}</h3>
+                    <p className="truncate text-sm md:text-base text-muted-foreground font-crypto font-medium">{token.name}</p>
                   </div>
                   {token.isHot && (
-                    <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30">HOT</Badge>
+                    <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30 font-crypto font-bold">HOT</Badge>
                   )}
                 </div>
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="tabular-nums font-crypto font-bold">{formatPrice(token.price)}</span>
+                <div className="flex items-center justify-between text-base md:text-lg mb-3">
+                  <span className="tabular-nums font-crypto font-black text-xl">{formatPrice(token.price)}</span>
                   <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                     {getTrendIcon(token.change24h)}
-                    <span className="font-crypto font-semibold tabular-nums text-xs">
+                    <span className="font-crypto font-bold tabular-nums text-base">
                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                  <span>MC: {formatMarketCap(token.marketCap)}</span>
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between text-sm md:text-base text-muted-foreground mb-3">
+                  <span className="font-crypto font-semibold">MC: {formatMarketCap(token.marketCap)}</span>
+                  <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
+                      <Users className="h-4 w-4" />
+                      <span className="font-crypto font-bold text-foreground">
+                        {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
+                      </span>
                     </span>
                     <span className="flex items-center gap-1">
-                      <Eye className="h-3 w-3" />
-                      {token.views}
+                      <Eye className="h-4 w-4" />
+                      <span className="font-crypto font-bold text-foreground">{token.views}</span>
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-1 mb-2">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {token.tags.slice(0, 2).map((tag, i) => (
-                    <Badge key={i} variant="secondary" className="text-xs bg-primary/10 text-primary border border-primary/20">
+                    <Badge key={i} variant="secondary" className="text-sm font-crypto font-semibold bg-primary/10 text-primary border border-primary/20">
                       {tag}
                     </Badge>
                   ))}
                 </div>
                 <Button 
-                  className="w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs"
+                  className="w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-sm h-10"
                   size="sm"
                 >
-                  <Eye className="mr-1 h-3 w-3" />
+                  <Eye className="mr-2 h-4 w-4" />
                   VISA DETALJER
                 </Button>
               </div>
