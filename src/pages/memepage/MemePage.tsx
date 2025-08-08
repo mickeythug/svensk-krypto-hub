@@ -53,6 +53,9 @@ const MemePage: React.FC = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
+      {/* Live Ticker - Full Width at Top */}
+      <MemeLiveTicker />
+
       {/* Animated background elements */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
@@ -63,9 +66,6 @@ const MemePage: React.FC = () => {
 
       {/* Hero Section */}
       <MemeHeroNew />
-
-      {/* Live Ticker */}
-      <MemeLiveTicker />
 
       {/* Stats Banner */}
       <MemeStatsBanner />

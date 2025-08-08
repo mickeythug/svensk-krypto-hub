@@ -67,29 +67,27 @@ const MemeLiveTicker = () => {
   if (error) return null;
 
   return (
-    <section className="py-8 px-4">
-      <div className="container mx-auto">
-        <Card className="overflow-hidden border-2 border-primary/30 bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm shadow-glow-primary">
-          <div className="relative">
-            {/* Rainbow gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-rainbow opacity-10 pointer-events-none"></div>
-            
-            {/* Scrolling content */}
-            <div className="flex whitespace-nowrap animate-ticker will-change-transform">
-              <div className="flex gap-6 px-6 py-6">
-                {list.map((t: any, i: number) => (
-                  <TokenChip key={`a-${t.id ?? i}`} {...t} />
-                ))}
-              </div>
-              <div className="flex gap-6 px-6 py-6" aria-hidden="true">
-                {list.map((t: any, i: number) => (
-                  <TokenChip key={`b-${t.id ?? i}`} {...t} />
-                ))}
-              </div>
+    <section className="w-full">
+      <Card className="overflow-hidden border-0 border-t-2 border-b-2 border-primary/30 bg-gradient-to-r from-card/80 to-card/60 backdrop-blur-sm shadow-glow-primary rounded-none">
+        <div className="relative">
+          {/* Rainbow gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-rainbow opacity-10 pointer-events-none"></div>
+          
+          {/* Scrolling content */}
+          <div className="flex whitespace-nowrap animate-ticker will-change-transform">
+            <div className="flex gap-6 px-6 py-6">
+              {list.map((t: any, i: number) => (
+                <TokenChip key={`a-${t.id ?? i}`} {...t} />
+              ))}
+            </div>
+            <div className="flex gap-6 px-6 py-6" aria-hidden="true">
+              {list.map((t: any, i: number) => (
+                <TokenChip key={`b-${t.id ?? i}`} {...t} />
+              ))}
             </div>
           </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
     </section>
   );
 };
