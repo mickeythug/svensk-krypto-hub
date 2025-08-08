@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import MemeCreatorSection from './components/MemeCreatorSection';
+import MemeTokenCreator from './components/MemeTokenCreator';
 
 const CreateTokenPage: React.FC = () => {
   const navigate = useNavigate();
@@ -69,19 +69,19 @@ const CreateTokenPage: React.FC = () => {
               variant="outline" 
               size="lg"
               onClick={() => navigate('/meme')}
-              className="border-primary/50 hover:bg-primary/10"
+              className="font-crypto font-bold border-2 border-primary/50 hover:bg-primary/10 text-primary hover:text-primary-foreground hover:border-primary"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
-              Tillbaka till Meme Tokens
+              TILLBAKA TILL MEME TOKENS
             </Button>
           </div>
           
           <div className="text-center mb-12">
-            <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow">
-              🎨 SKAPA DIN MEME TOKEN
+            <h1 className="font-crypto text-4xl md:text-6xl font-black mb-6 bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow tracking-wider">
+              SKAPA DIN MEME TOKEN
             </h1>
-            <p className="font-display text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              Designa och lansera din egen meme token med vår avancerade creator
+            <p className="font-crypto text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto font-semibold">
+              DESIGNA OCH LANSERA DIN EGEN MEME TOKEN MED VÅR AVANCERADE CREATOR
             </p>
           </div>
         </div>
@@ -90,7 +90,7 @@ const CreateTokenPage: React.FC = () => {
       {/* Creator Section */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <MemeCreatorSection />
+          <MemeTokenCreator />
         </div>
       </section>
     </main>
