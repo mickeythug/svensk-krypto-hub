@@ -1,19 +1,15 @@
 import { useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import { Zap } from 'lucide-react';
-import MemeHeroPro from './components/MemeHeroPro';
-import MemeShowcaseGrid from './components/MemeShowcaseGrid';
-import MemeTokenGallery from './components/MemeTokenGallery';
-import MemeMarqueeTicker from './components/MemeMarqueeTicker';
-import MemeTokenCreator from './components/MemeTokenCreator';
-import GeneratedMemeWall from './components/GeneratedMemeWall';
+import MemeHeroNew from './components/MemeHeroNew';
+import MemeLiveTicker from './components/MemeLiveTicker';
+import MemeTopCoins from './components/MemeTopCoins';
+import MemeTokenGrid from './components/MemeTokenGrid';
+import MemeCreatorSection from './components/MemeCreatorSection';
+import MemeStatsBanner from './components/MemeStatsBanner';
 
-interface MemePage {}
-
-const MemePage: React.FC<MemePage> = () => {
+const MemePage: React.FC = () => {
   useEffect(() => {
-    const title = 'Meme Tokens – Mega-Zon | Crypto Network Sweden';
-    const description = 'Världsklass meme token-sida: stora bilder, stabilt, snabbt och produktionredo. Upptäck trending och alla meme-coins.';
+    const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
+    const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
     document.title = title;
 
     const ensureTag = (selector: string, create: () => HTMLElement) => {
@@ -48,7 +44,7 @@ const MemePage: React.FC<MemePage> = () => {
     ld.text = JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: 'Meme Tokens – Mega-Zon',
+      name: 'Meme Tokens – Ultimate Meme Coin Universe',
       description,
       url: `${origin}/meme`
     });
@@ -56,58 +52,53 @@ const MemePage: React.FC<MemePage> = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {/* HERO */}
-        <MemeHeroPro />
-
-        {/* LIVE TICKER */}
-        <div className="mt-6">
-          <MemeMarqueeTicker />
-        </div>
-
-        {/* TRENDING SHOWCASE */}
-        <section className="mb-12" aria-labelledby="trending-heading">
-          <h2 id="trending-heading" className="mb-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            🔥 Heta just nu
-          </h2>
-          <MemeShowcaseGrid />
-        </section>
-
-        {/* CREATOR */}
-        <section className="mb-12" aria-labelledby="creator-heading">
-          <h2 id="creator-heading" className="mb-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            🧪 Skapa din egen Meme Token
-          </h2>
-          <MemeTokenCreator />
-        </section>
-
-        {/* GALLERY */}
-        <section className="mb-12" aria-labelledby="all-heading">
-          <h2 id="all-heading" className="mb-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-accent to-accent bg-clip-text text-transparent">
-            🚀 Alla Meme Tokens
-          </h2>
-          <MemeTokenGallery />
-          <div className="mt-10">
-            <GeneratedMemeWall />
-          </div>
-        </section>
-
-        {/* Varning */}
-        <section aria-labelledby="warning-heading">
-          <Card className="p-6 border-warning/50 bg-gradient-to-r from-warning/10 to-warning/10">
-            <div className="flex items-start gap-3">
-              <Zap className="h-6 w-6 text-warning mt-1" />
-              <div>
-                <h3 id="warning-heading" className="font-bold text-warning mb-2">⚠️ Meme Token Varning</h3>
-                <p className="text-sm text-muted-foreground">
-                  Meme tokens är extremt volatila och riskfyllda investeringar. Investera endast vad du har råd att förlora. Gör alltid egen research (DYOR). Denna sida är för utbildning och underhållning.
-                </p>
-              </div>
-            </div>
-          </Card>
-        </section>
+    <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
+        <div className="absolute top-40 right-20 w-24 h-24 bg-accent rounded-full animate-bounce"></div>
+        <div className="absolute bottom-32 left-32 w-28 h-28 bg-secondary rounded-full animate-pulse-glow"></div>
+        <div className="absolute bottom-20 right-10 w-20 h-20 bg-primary-glow rounded-full animate-spin"></div>
       </div>
+
+      {/* Hero Section */}
+      <MemeHeroNew />
+
+      {/* Live Ticker */}
+      <MemeLiveTicker />
+
+      {/* Stats Banner */}
+      <MemeStatsBanner />
+
+      {/* Top Meme Coins with Large Images */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <h2 className="text-4xl md:text-6xl font-bold text-center mb-12 bg-gradient-rainbow bg-clip-text text-transparent animate-pulse-glow">
+            🚀 TOP MEME COINS 🚀
+          </h2>
+          <MemeTopCoins />
+        </div>
+      </section>
+
+      {/* All Meme Tokens Grid */}
+      <section className="py-16 px-4 bg-meme-grid-bg/50">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-neon bg-clip-text text-transparent">
+            🎯 ALLA MEME TOKENS
+          </h2>
+          <MemeTokenGrid category="all" />
+        </div>
+      </section>
+
+      {/* Creator Section */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-primary bg-clip-text text-transparent">
+            🎨 SKAPA DIN EGEN MEME TOKEN
+          </h2>
+          <MemeCreatorSection />
+        </div>
+      </section>
     </main>
   );
 };
