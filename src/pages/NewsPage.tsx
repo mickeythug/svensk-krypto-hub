@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -147,76 +147,7 @@ const NewsPage = () => {
     return recencyBoost || (hotWords && trusted);
   };
 
-  // Breaking News auto-translation (zero-cost, local)
-  const translatorRef = useRef<any>(null);
-  const [breakingSv, setBreakingSv] = useState<{ title: string; summary: string } | null>(null);
-  const [isTranslatingBreaking, setIsTranslatingBreaking] = useState(false);
-
-  const isSwedish = (text: string) => {
-    const t = (text || '').toLowerCase();
-    const hasDiacritics = /[åäö]/i.test(t);
-    const svWords = ['och','att','det','som','är','för','på','med','inte','den','har','en','ett','de','vi','ni','till','från','över','under','senaste','nyheter','nytt'];
-    const enWords = ['the','and','for','with','from','by','of','to','is','are','was','were','have','has','just','breaking','news'];
-    const svCount = svWords.reduce((c,w)=> c + (t.includes(` ${w} `) ? 1 : 0), 0);
-    const enCount = enWords.reduce((c,w)=> c + (t.includes(` ${w} `) ? 1 : 0), 0);
-    return hasDiacritics || svCount >= Math.max(2, enCount + 1);
-  };
-
-  const ensureTranslator = async () => {
-    if (!translatorRef.current) {
-      const mod = await import('@huggingface/transformers');
-      const pipeline = (mod as any).pipeline;
-      try {
-        // Primary: lightweight EN->SV model converted for browsers
-        translatorRef.current = await pipeline('translation', 'Xenova/opus-mt-en-sv');
-      } catch (e) {
-        console.warn('Primary translator failed, falling back to NLLB', e);
-        // Fallback: NLLB with explicit language codes
-        translatorRef.current = await pipeline('translation', 'Xenova/nllb-200-distilled-600M');
-        // Wrap to mimic same interface with src/tgt
-        const base = translatorRef.current;
-        translatorRef.current = async (text: string) => base(text, { src_lang: 'eng_Latn', tgt_lang: 'swe_Latn' });
-      }
-    }
-    return translatorRef.current;
-  };
-
-  useEffect(() => {
-    const item = news[0];
-    if (!item) return;
-
-    const original = { title: item.title || '', summary: item.summary || '' };
-    if (isSwedish(`${original.title} ${original.summary}`)) {
-      setBreakingSv(original);
-      return;
-    }
-
-    let cancelled = false;
-    (async () => {
-      try {
-        setIsTranslatingBreaking(true);
-        const translator = await ensureTranslator();
-        const outTitle = await translator(original.title);
-        const outSummary = await translator(original.summary);
-        const getText = (o: any, fallback: string) => {
-          if (!o) return fallback;
-          if (Array.isArray(o)) return o[0]?.translation_text || o[0]?.generated_text || fallback;
-          return o.translation_text || o.generated_text || fallback;
-        };
-        if (!cancelled) setBreakingSv({
-          title: getText(outTitle, original.title),
-          summary: getText(outSummary, original.summary)
-        });
-      } catch (e) {
-        console.error('Auto-translation failed', e);
-        if (!cancelled) setBreakingSv(original);
-      } finally {
-        if (!cancelled) setIsTranslatingBreaking(false);
-      }
-    })();
-
-    return () => { cancelled = true; };
-  }, [news.length ? news[0]?.id : null]);
+  // Översättningslogik borttagen enligt begäran
 
   // SEO Setup
   useEffect(() => {
@@ -588,21 +519,12 @@ const NewsPage = () => {
                           <span className="text-white/80 text-sm font-medium">
                             {formatTimeAgo(news[0].publishedAt)}
                           </span>
-                          {isTranslatingBreaking ? (
-                            <span className="text-white/70 text-xs font-medium">Översätter…</span>
-                          ) : (
-                            breakingSv && (breakingSv.title !== (news[0].title || '') || breakingSv.summary !== (news[0].summary || '')) ? (
-                              <span className="text-white/80 text-xs font-semibold bg-white/20 px-2 py-0.5 rounded">
-                                Automatiskt översatt
-                              </span>
-                            ) : null
-                          )}
                         </div>
                         <h3 className="font-black text-2xl md:text-3xl leading-tight mb-4 text-shadow-lg">
-                          {breakingSv?.title || news[0].title}
+                          {news[0].title}
                         </h3>
                         <p className="text-white/90 text-lg leading-relaxed mb-6 line-clamp-2 font-medium">
-                          {breakingSv?.summary || news[0].summary}
+                          {news[0].summary}
                         </p>
                         <div className="flex items-center gap-4">
                           {news[0].url && (
