@@ -81,7 +81,7 @@ const MemePage: React.FC = () => {
 
         {/* Main Content Area - Full Width */}
         <section className="w-full py-16 bg-gradient-to-b from-transparent to-muted/20">
-          <div className="w-full px-6">
+          <div className="w-full px-2 md:px-4 max-w-[1600px] mx-auto">
             {/* Category Header */}
             <div className="max-w-7xl mx-auto mb-12">
               <div className="text-center mb-8">

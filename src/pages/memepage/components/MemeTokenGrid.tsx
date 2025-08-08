@@ -72,7 +72,7 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-3 md:gap-4">
         {[...Array(limit || 12)].map((_, i) => (
           <Card key={i} className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
             <AspectRatio ratio={4/5}>
@@ -96,7 +96,7 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-3 md:gap-4 w-full">
       {tokensWithCovers.map((token, index) => (
         <motion.div
           key={token.id}
