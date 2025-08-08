@@ -374,32 +374,42 @@ class CryptoAPIClient {
     try {
       await apiRateLimiter.acquire();
 
-      // Use direct CoinGecko API since it's working
-      const url = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h';
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+      // Use direct CoinGecko API and fetch top 200 (2 pages of 100)
+      const urls = [
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h',
+        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=2&sparkline=false&price_change_percentage=24h'
+      ];
 
-      const response = await fetch(url, {
-        headers: {
-          'Accept': 'application/json',
-          'Cache-Control': 'no-cache'
-        },
-        signal: controller.signal
+      const controllers = urls.map(() => new AbortController());
+      const timers = controllers.map((c) => setTimeout(() => c.abort(), 10000));
+
+      const responses = await Promise.all(
+        urls.map((url, idx) =>
+          fetch(url, {
+            headers: {
+              Accept: 'application/json',
+              'Cache-Control': 'no-cache',
+            },
+            signal: controllers[idx].signal,
+          })
+        )
+      );
+
+      timers.forEach((t) => clearTimeout(t));
+
+      responses.forEach((response) => {
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
       });
 
-      clearTimeout(timeoutId);
+      const arrays = await Promise.all(responses.map((r) => r.json()));
+      const combined = arrays.flat();
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      
       // Reset circuit breaker on success
       this.failureCount = 0;
-      
-      return this.transformCoinGeckoResponse(result);
+
+      return this.transformCoinGeckoResponse(combined);
       
     } catch (error) {
       this.recordFailure();

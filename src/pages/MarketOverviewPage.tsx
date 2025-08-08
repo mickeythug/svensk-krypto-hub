@@ -52,6 +52,7 @@ import {
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useCryptoData } from "@/hooks/useCryptoData";
+import { useMarketIntel } from "@/hooks/useMarketIntel";
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
@@ -103,58 +104,24 @@ const MarketOverviewPage = () => {
     return logoMap[crypto.symbol] || btcLogo;
   };
 
-  const marketSentiment = {
-    overall: 68,
-    fearGreedIndex: 72,
-    socialVolume: 85,
-    newsVolume: 76,
-    trend: 'bullish' as const,
-    change24h: 4.2
-  };
-  
-  const marketData = {
-    totalMarketCap: "2.1T",
-    totalVolume: "89.5B",
-    btcDominance: 52.3,
-    ethDominance: 17.8,
-    activeAddresses: "1.2M",
-    defiTvl: "45.2B"
+  const { data: intel } = useMarketIntel();
+
+  // Helpers
+  const formatCurrencyCompact = (n?: number | null) => {
+    if (n === null || n === undefined) return '—';
+    return new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 2 }).format(n);
   };
 
-  const marketStats = [
-    {
-      title: "Total Marknadskapital",
-      value: "2.1T",
-      unit: "USD",
-      change: "+2.34%",
-      positive: true,
-      icon: DollarSign
-    },
-    {
-      title: "24h Volym",
-      value: "95.2B",
-      unit: "USD", 
-      change: "-5.67%",
-      positive: false,
-      icon: BarChart3
-    },
-    {
-      title: "Bitcoin Dominans",
-      value: "52.8",
-      unit: "%",
-      change: "+0.12%",
-      positive: true,
-      icon: PieChart
-    },
-    {
-      title: "DeFi TVL",
-      value: "48.9B",
-      unit: "USD",
-      change: "+8.91%",
-      positive: true,
-      icon: Activity
-    }
-  ];
+  // Derived market overview + sentiment
+  const totalMarketCap = formatCurrencyCompact(intel?.overview.totalMarketCap);
+  const totalVolume = formatCurrencyCompact(intel?.overview.totalVolume24h);
+  const trend24 = Number(((intel?.sentiment.trend24hPct ?? 0)).toFixed(1));
+  const fearGreed = Math.round(intel?.sentiment.fearGreedIndex ?? 0);
+  const greedLabel = fearGreed >= 60 ? 'Greed' : fearGreed <= 40 ? 'Fear' : 'Neutral';
+  const btcDom = Number(((intel?.overview.btcDominance ?? 0)).toFixed(1));
+  // Simple proxy for Alt Season (no free official API): inverse of BTC dominance
+  const altSeason = Math.max(0, Math.min(100, Math.round(100 - (intel?.overview.btcDominance ?? 50))));
+  const altSeasonLabel = altSeason >= 60 ? 'Alt Season' : altSeason <= 40 ? 'BTC Season' : 'Neutral';
 
   const getCurrentData = () => {
     // Använd riktig top 100 data från CoinGecko API
@@ -331,8 +298,8 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">Total Market Cap</h3>
                     <DollarSign className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="text-3xl font-bold text-primary mb-2">${marketData.totalMarketCap}</div>
-                  <div className="text-sm text-success font-medium">+2.4% (24h)</div>
+                  <div className="text-3xl font-bold text-primary mb-2">{totalMarketCap}</div>
+                  <div className={`text-sm font-medium ${trend24 >= 0 ? 'text-success' : 'text-destructive'}`}>{trend24 >= 0 ? `+${trend24}% (24h)` : `${trend24}% (24h)`}</div>
                 </div>
 
                 {/* Fear & Greed Index */}
@@ -341,14 +308,14 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">Fear & Greed Index</h3>
                     <Activity className="h-5 w-5 text-success" />
                   </div>
-                  <div className="text-3xl font-bold text-success mb-2">{marketSentiment.fearGreedIndex}</div>
+                  <div className="text-3xl font-bold text-success mb-2">{fearGreed}</div>
                   <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${marketSentiment.fearGreedIndex}%` }}
+                      style={{ width: `${fearGreed}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-success font-medium">Greed</div>
+                  <div className="text-sm text-success font-medium">{greedLabel}</div>
                 </div>
 
                 {/* Alt Season Index */}
@@ -357,14 +324,14 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">Alt Season Index</h3>
                     <BarChart3 className="h-5 w-5 text-accent" />
                   </div>
-                  <div className="text-3xl font-bold text-accent mb-2">65</div>
+                  <div className="text-3xl font-bold text-accent mb-2">{altSeason}</div>
                   <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
-                      style={{ width: '65%' }}
+                      style={{ width: `${altSeason}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-accent font-medium">Alt Season</div>
+                  <div className="text-sm text-accent font-medium">{altSeasonLabel}</div>
                 </div>
 
                 {/* BTC Dominance */}
@@ -373,11 +340,11 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">BTC Dominance</h3>
                     <Bitcoin className="h-5 w-5 text-warning" />
                   </div>
-                  <div className="text-3xl font-bold text-warning mb-2">{marketData.btcDominance}%</div>
+                  <div className="text-3xl font-bold text-warning mb-2">{btcDom}%</div>
                   <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-warning to-destructive h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${marketData.btcDominance}%` }}
+                      style={{ width: `${btcDom}%` }}
                     ></div>
                   </div>
                   <div className="text-sm text-warning font-medium">BTC Season</div>
@@ -778,9 +745,9 @@ const MarketOverviewPage = () => {
                     <span className="text-xs text-muted-foreground font-medium">Market Cap</span>
                   </div>
                   <div className="text-lg font-bold text-primary mb-1">
-                    ${marketData.totalMarketCap}
+                    {totalMarketCap}
                   </div>
-                  <div className="text-xs text-success font-medium">+2.4%</div>
+                  <div className="text-xs font-medium ${trend24 >= 0 ? 'text-success' : 'text-destructive'}">{trend24 >= 0 ? `+${trend24}%` : `${trend24}%`}</div>
                 </Card>
 
                 <Card className="p-4 bg-gradient-to-br from-secondary/10 to-accent/10 border-border/30">
@@ -789,9 +756,9 @@ const MarketOverviewPage = () => {
                     <span className="text-xs text-muted-foreground font-medium">24h Volume</span>
                   </div>
                   <div className="text-lg font-bold text-secondary mb-1">
-                    ${marketData.totalVolume}
+                    {totalVolume}
                   </div>
-                  <div className="text-xs text-destructive font-medium">-1.2%</div>
+                  <div className="text-xs text-muted-foreground font-medium">24h</div>
                 </Card>
               </div>
 
@@ -802,15 +769,15 @@ const MarketOverviewPage = () => {
                     <Activity className="h-4 w-4 text-success" />
                     <span className="text-xs text-muted-foreground font-medium">Fear & Greed Index</span>
                   </div>
-                  <div className="text-lg font-bold text-success">{marketSentiment.fearGreedIndex}</div>
-                </div>
-                <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
-                  <div 
-                    className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${marketSentiment.fearGreedIndex}%` }}
-                  ></div>
-                </div>
-                <div className="text-xs text-success font-medium">Greed</div>
+                   <div className="text-lg font-bold text-success">{fearGreed}</div>
+                 </div>
+                 <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
+                   <div 
+                     className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
+                     style={{ width: `${fearGreed}%` }}
+                   ></div>
+                 </div>
+                 <div className="text-xs text-success font-medium">{greedLabel}</div>
               </Card>
 
               {/* Alt Season & BTC Dominance Row */}
@@ -820,14 +787,14 @@ const MarketOverviewPage = () => {
                     <Coins className="h-4 w-4 text-accent" />
                     <span className="text-xs text-muted-foreground font-medium">Alt Season</span>
                   </div>
-                  <div className="text-lg font-bold text-accent mb-1">65</div>
+                  <div className="text-lg font-bold text-accent mb-1">{altSeason}</div>
                   <div className="w-full bg-secondary/30 rounded-full h-1.5 mb-1">
                     <div 
                       className="bg-gradient-to-r from-primary to-accent h-1.5 rounded-full transition-all duration-500"
-                      style={{ width: '65%' }}
+                      style={{ width: `${altSeason}%` }}
                     ></div>
                   </div>
-                  <div className="text-xs text-accent font-medium">Alt Season</div>
+                  <div className="text-xs text-accent font-medium">{altSeasonLabel}</div>
                 </Card>
 
                 <Card className="p-4 bg-gradient-to-br from-warning/10 to-destructive/10 border-border/30">
@@ -835,11 +802,11 @@ const MarketOverviewPage = () => {
                     <Bitcoin className="h-4 w-4 text-warning" />
                     <span className="text-xs text-muted-foreground font-medium">BTC Dom</span>
                   </div>
-                  <div className="text-lg font-bold text-warning mb-1">{marketData.btcDominance}%</div>
+                  <div className="text-lg font-bold text-warning mb-1">{btcDom}%</div>
                   <div className="w-full bg-secondary/30 rounded-full h-1.5 mb-1">
                     <div 
                       className="bg-gradient-to-r from-warning to-destructive h-1.5 rounded-full transition-all duration-500"
-                      style={{ width: `${marketData.btcDominance}%` }}
+                      style={{ width: `${btcDom}%` }}
                     ></div>
                   </div>
                   <div className="text-xs text-warning font-medium">BTC Season</div>
