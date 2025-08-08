@@ -207,19 +207,10 @@ const MemeTokenCreator = () => {
                   type="button" 
                   variant="outline" 
                   onClick={() => fileRef.current?.click()}
-                  className="font-crypto font-bold border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground"
+                  className="font-crypto font-bold border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground w-full"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   LADDA UPP EGEN BILD
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={handleRandomize}
-                  className="font-crypto font-bold border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-                >
-                  <Shuffle className="w-4 h-4 mr-2" />
-                  SLUMPA
                 </Button>
               </div>
             </div>
@@ -302,14 +293,6 @@ const MemeTokenCreator = () => {
               </Card>
             )}
 
-            {/* Action Button */}
-            <Button 
-              className="w-full font-crypto font-black text-lg bg-gradient-primary hover:shadow-glow-primary h-12"
-              size="lg"
-            >
-              <Rocket className="mr-3 h-5 w-5" />
-              GENERERA DELNINGSBILD
-            </Button>
           </div>
         </Card>
       </div>
