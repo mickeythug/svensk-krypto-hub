@@ -166,7 +166,17 @@ const NewsPage = () => {
     if (!translatorRef.current) {
       const mod = await import('@huggingface/transformers');
       const pipeline = (mod as any).pipeline;
-      translatorRef.current = await pipeline('translation', 'Helsinki-NLP/opus-mt-en-sv');
+      try {
+        // Primary: lightweight EN->SV model converted for browsers
+        translatorRef.current = await pipeline('translation', 'Xenova/opus-mt-en-sv');
+      } catch (e) {
+        console.warn('Primary translator failed, falling back to NLLB', e);
+        // Fallback: NLLB with explicit language codes
+        translatorRef.current = await pipeline('translation', 'Xenova/nllb-200-distilled-600M');
+        // Wrap to mimic same interface with src/tgt
+        const base = translatorRef.current;
+        translatorRef.current = async (text: string) => base(text, { src_lang: 'eng_Latn', tgt_lang: 'swe_Latn' });
+      }
     }
     return translatorRef.current;
   };
