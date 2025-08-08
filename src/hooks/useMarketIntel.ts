@@ -235,7 +235,7 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
 
 export function useMarketIntel(newsCount24h?: number) {
   return useQuery<MarketIntel>({
-    queryKey: ["market-intel"],
+    queryKey: ["market-intel", newsCount24h ?? 0],
     queryFn: () => fetchMarketIntel(newsCount24h),
     staleTime: 3 * 60 * 1000,
     refetchInterval: 3 * 60 * 1000,

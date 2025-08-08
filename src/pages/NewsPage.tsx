@@ -37,7 +37,7 @@ import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useMarketIntel } from "@/hooks/useMarketIntel";
 
 interface NewsArticle {
   id: string;
@@ -80,23 +80,8 @@ const NewsPage = () => {
   const navigate = useNavigate();
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [filteredNews, setFilteredNews] = useState<NewsArticle[]>([]);
-  const [marketSentiment, setMarketSentiment] = useState<MarketSentiment>({
-    overall: 68,
-    fearGreedIndex: 72,
-    socialVolume: 85,
-    newsVolume: 76,
-    trend: 'bullish',
-    change24h: 4.2
-  });
-  
-  const [marketData, setMarketData] = useState<MarketData>({
-    totalMarketCap: "2.1T",
-    totalVolume: "89.5B",
-    btcDominance: 52.3,
-    ethDominance: 17.8,
-    activeAddresses: "1.2M",
-    defiTvl: "45.2B"
-  });
+  const [newsCount24h, setNewsCount24h] = useState<number>(0);
+  const { data: intel } = useMarketIntel(newsCount24h);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -204,6 +189,9 @@ const NewsPage = () => {
         if (!active) return;
         setNews(mapped);
         setFilteredNews(mapped);
+        const nowMs = Date.now();
+        const count24 = mapped.filter(a => (nowMs - new Date(a.publishedAt).getTime()) <= 24 * 60 * 60 * 1000).length;
+        setNewsCount24h(count24);
       } catch (e) {
         console.error('Failed to load news', e);
       } finally {
@@ -288,81 +276,41 @@ const NewsPage = () => {
     { id: "trending", label: "TRENDING" }
   ];
 
-  // Load real crypto market data from existing crypto-prices endpoint
-  useEffect(() => {
-    const loadMarketData = async () => {
-      try {
-        const projectRef = "jcllcrvomxdrhtkqpcbr";
-        const url = `https://${projectRef}.supabase.co/functions/v1/crypto-prices`;
-        const res = await fetch(url);
-        const data = await res.json();
-        
-        if (data?.topMovers?.length > 0) {
-          const movers = data.topMovers.slice(0, 5).map((coin: any) => ({
-            name: coin.name,
-            symbol: coin.symbol,
-            change: `${coin.change24h >= 0 ? '+' : ''}${coin.change24h.toFixed(2)}%`,
-            price: `$${coin.price.toFixed(coin.price < 1 ? 6 : 2)}`,
-            volume: `$${(coin.volume / 1e9).toFixed(1)}B`,
-            logo: `/src/assets/crypto-logos/${coin.symbol.toLowerCase()}.png`,
-            isPositive: coin.change24h >= 0
-          }));
-          setTopMovers(movers);
-        }
-      } catch (e) {
-        console.error('Failed to load market data', e);
-      }
+  // Helpers for compact formatting
+  const formatNumberCompact = (n?: number | null) => {
+    if (n === null || n === undefined) return '—';
+    return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 }).format(n);
     };
-    loadMarketData();
-  }, []);
+  const formatCurrencyCompact = (n?: number | null) => {
+    if (n === null || n === undefined) return '—';
+    return new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 2 }).format(n);
+  };
 
-  const [topMovers, setTopMovers] = useState([
-    { 
-      name: "Bitcoin", 
-      symbol: "BTC", 
-      change: "+2.1%", 
-      price: "$116,924", 
-      volume: "34.6B",
-      logo: "/src/assets/crypto-logos/btc.png",
-      isPositive: true
-    },
-    { 
-      name: "Ethereum", 
-      symbol: "ETH", 
-      change: "+3.9%", 
-      price: "$4,033", 
-      volume: "39.4B",
-      logo: "/src/assets/crypto-logos/eth.png",
-      isPositive: true
-    },
-    { 
-      name: "Dogecoin", 
-      symbol: "DOGE", 
-      change: "+4.6%", 
-      price: "$0.2299", 
-      volume: "2.8B",
-      logo: "/src/assets/crypto-logos/doge.png",
-      isPositive: true
-    },
-    { 
-      name: "Solana", 
-      symbol: "SOL", 
-      change: "+2.2%", 
-      price: "$177.86", 
-      volume: "6.7B",
-      logo: "/src/assets/crypto-logos/sol.png",
-      isPositive: true
-    },
-    { 
-      name: "Cardano", 
-      symbol: "ADA", 
-      change: "+2.2%", 
-      price: "$0.7947", 
-      volume: "1.6B",
-      logo: "/src/assets/crypto-logos/ada.png",
-      isPositive: true
-    }
-  ]);
+  // Derive UI models from centralized intel
+  const sentiment = {
+    fearGreedIndex: intel?.sentiment.fearGreedIndex ?? 0,
+    socialVolume: intel?.sentiment.socialVolumePct ?? 0,
+    newsVolume: intel?.sentiment.newsVolumePct ?? 0,
+    change24h: intel?.sentiment.trend24hPct ?? 0,
+  };
+
+  const marketDataUI = {
+    totalMarketCap: formatCurrencyCompact(intel?.overview.totalMarketCap),
+    totalVolume: formatCurrencyCompact(intel?.overview.totalVolume24h),
+    btcDominance: intel?.overview.btcDominance ?? 0,
+    ethDominance: intel?.overview.ethDominance ?? 0,
+    activeAddresses: formatNumberCompact(intel?.overview.activeAddresses24h),
+    defiTvl: formatCurrencyCompact(intel?.overview.defiTVL),
+  };
+
+  const topMoversUI = (intel?.topMovers ?? []).map((m) => ({
+    symbol: m.symbol,
+    name: m.name,
+    logo: m.image || `/src/assets/crypto-logos/${m.symbol.toLowerCase()}.png`,
+    change: `${m.change24h >= 0 ? '+' : ''}${(m.change24h ?? 0).toFixed(2)}%`,
+    price: m.price !== undefined ? (m.price < 1 ? `$${m.price.toFixed(6)}` : new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(m.price)) : '—',
+    isPositive: (m.change24h ?? 0) >= 0,
+  }));
 
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
@@ -830,30 +778,30 @@ const NewsPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Fear & Greed Index</span>
-                    <span className="font-bold text-success">{marketSentiment.fearGreedIndex}/100</span>
+                    <span className="font-bold text-success">{sentiment.fearGreedIndex}/100</span>
                   </div>
-                  <Progress value={marketSentiment.fearGreedIndex} className="h-2" />
+                  <Progress value={sentiment.fearGreedIndex} className="h-2" />
                   
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Social Volym</span>
-                    <span className="font-bold">{marketSentiment.socialVolume}%</span>
+                    <span className="font-bold">{sentiment.socialVolume}%</span>
                   </div>
-                  <Progress value={marketSentiment.socialVolume} className="h-2" />
+                  <Progress value={sentiment.socialVolume} className="h-2" />
                   
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Nyhetsvolym</span>
-                    <span className="font-bold">{marketSentiment.newsVolume}%</span>
+                    <span className="font-bold">{sentiment.newsVolume}%</span>
                   </div>
-                  <Progress value={marketSentiment.newsVolume} className="h-2" />
+                  <Progress value={sentiment.newsVolume} className="h-2" />
 
                   <div className="pt-4 border-t border-border">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">24h Trend</span>
                       <div className={`flex items-center gap-1 ${
-                        marketSentiment.change24h >= 0 ? 'text-success' : 'text-destructive'
+                        sentiment.change24h >= 0 ? 'text-success' : 'text-destructive'
                       }`}>
-                        {marketSentiment.change24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                        <span className="font-bold">{marketSentiment.change24h >= 0 ? '+' : ''}{marketSentiment.change24h}%</span>
+                        {sentiment.change24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                        <span className="font-bold">{sentiment.change24h >= 0 ? '+' : ''}{sentiment.change24h}%</span>
                       </div>
                     </div>
                   </div>
@@ -864,8 +812,8 @@ const NewsPage = () => {
               <Card className="p-6">
                 <h3 className="font-crypto text-xl font-bold mb-6 text-primary">TOP MOVERS</h3>
                 <div className="space-y-4">
-                  {topMovers.map((token, index) => (
-                    <div key={token.symbol} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer group">
+                  {topMoversUI.map((token, index) => (
+                    <div key={`${token.symbol}-${index}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer group">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-secondary flex items-center justify-center">
                           <img 
@@ -873,7 +821,7 @@ const NewsPage = () => {
                             alt={token.symbol}
                             className="w-6 h-6 object-contain"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = `data:image/svg+xml;base64,${btoa(`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#12E19F"/><text x="12" y="16" text-anchor="middle" fill="white" font-size="8" font-weight="bold">${token.symbol.charAt(0)}</text></svg>`)}`;
+                              (e.target as HTMLImageElement).src = `data:image/svg+xml;base64,${btoa(`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"#12E19F\"/><text x=\"12\" y=\"16\" text-anchor=\"middle\" fill=\"white\" font-size=\"8\" font-weight=\"bold\">${token.symbol.charAt(0)}</text></svg>`)}`;
                             }}
                           />
                         </div>
@@ -902,27 +850,27 @@ const NewsPage = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">Total Market Cap</span>
-                    <span className="font-mono font-bold">${marketData.totalMarketCap}</span>
+                    <span className="font-mono font-bold">{marketDataUI.totalMarketCap}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">24h Volym</span>
-                    <span className="font-mono font-bold">${marketData.totalVolume}</span>
+                    <span className="font-mono font-bold">{marketDataUI.totalVolume}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">BTC Dominans</span>
-                    <span className="font-mono font-bold">{marketData.btcDominance}%</span>
+                    <span className="font-mono font-bold">{marketDataUI.btcDominance}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">ETH Dominans</span>
-                    <span className="font-mono font-bold">{marketData.ethDominance}%</span>
+                    <span className="font-mono font-bold">{marketDataUI.ethDominance}%</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">Aktiva Adresser</span>
-                    <span className="font-mono font-bold">{marketData.activeAddresses}</span>
+                    <span className="font-mono font-bold">{marketDataUI.activeAddresses}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground text-sm">DeFi TVL</span>
-                    <span className="font-mono font-bold">${marketData.defiTvl}</span>
+                    <span className="font-mono font-bold">{marketDataUI.defiTvl}</span>
                   </div>
                 </div>
               </Card>
