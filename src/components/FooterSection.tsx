@@ -14,7 +14,7 @@ const FooterSection = () => {
 
 
   return (
-    <footer className="bg-gradient-secondary border-t border-border">
+    <footer className="bg-background border-t border-border">
       <div className={`container mx-auto ${isMobile ? 'px-6 py-8' : 'px-4 py-12'}`}>
 
         {/* Social Media Links */}

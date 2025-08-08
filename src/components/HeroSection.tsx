@@ -46,12 +46,8 @@ const HeroSection = () => {
               />
             </div>
             
-            <h1 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'} font-bold ${isMobile ? 'mb-2' : 'mb-4'}`}>
-              <span style={{ color: '#12E19F' }}>CRY</span>
-              <span className="text-white">PTO</span>
-              <span className="text-white"> </span>
-              <span className="text-white">NET</span>
-              <span style={{ color: '#12E19F' }}>WORK</span>
+            <h1 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'} font-bold ${isMobile ? 'mb-2' : 'mb-4'} text-foreground`}>
+              CRYPTO NETWORK
             </h1>
             <h2 className={`font-crypto ${isMobile ? 'text-lg' : 'text-2xl md:text-4xl'} text-muted-foreground ${isMobile ? 'mb-4' : 'mb-6'}`}>
               SWEDEN
@@ -72,7 +68,7 @@ const HeroSection = () => {
               rel="noopener noreferrer"
               className="block"
             >
-              <Button size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 transform hover:scale-105`}>
+              <Button size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-105`}>
                 Gå med i Communityn
               </Button>
             </a>
@@ -84,7 +80,7 @@ const HeroSection = () => {
                 }
               }}
             >
-              <Button variant="outline" size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300`}>
+              <Button variant="outline" size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}>
                 Lär dig mer
               </Button>
             </button>

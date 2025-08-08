@@ -33,10 +33,10 @@ const SocialMediaSection = () => {
   ];
 
   return (
-    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-gradient-secondary`}>
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
       <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-foreground`}>
             FÖLJ OSS ÖVERALLT
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-6'}`}>
@@ -70,7 +70,7 @@ const SocialMediaSection = () => {
                   
                   <Button 
                     variant="outline" 
-                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+                    className="w-full border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300"
                     onClick={() => window.open(platform.link, '_blank')}
                   >
                     Följ oss
