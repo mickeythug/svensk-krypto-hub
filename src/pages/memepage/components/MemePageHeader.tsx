@@ -6,25 +6,25 @@ const MemePageHeader = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/20 z-50 py-3">
+    <header className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/20 z-50 py-4">
       <div className="container mx-auto px-4">
-        <div className="flex justify-end items-center gap-4">
+        <div className="flex justify-end items-center gap-6">
           <Button 
-            size="sm" 
-            className="font-display bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-4 py-2"
+            size="lg" 
+            className="font-crypto text-base font-bold tracking-wider bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-8 py-3 h-12 text-primary-foreground border-0 uppercase"
             onClick={() => {/* TODO: Connect wallet functionality */}}
           >
-            <Wallet className="w-4 h-4 mr-2" />
-            🔗 Anslut Wallet
+            <Wallet className="w-5 h-5 mr-3" />
+            ANSLUT WALLET
           </Button>
           <Button 
-            size="sm" 
+            size="lg" 
             variant="outline" 
-            className="font-display border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 px-4 py-2"
+            className="font-crypto text-base font-bold tracking-wider border-2 border-primary bg-transparent text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 px-8 py-3 h-12 uppercase hover:shadow-glow-primary"
             onClick={() => navigate('/meme/create')}
           >
-            <PlusCircle className="w-4 h-4 mr-2" />
-            🚀 Skapa Din Coin
+            <PlusCircle className="w-5 h-5 mr-3" />
+            SKAPA DIN COIN
           </Button>
         </div>
       </div>
