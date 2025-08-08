@@ -1,14 +1,11 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Wallet, PlusCircle } from 'lucide-react';
 import MemeHeroNew from './components/MemeHeroNew';
 import MemeLiveTicker from './components/MemeLiveTicker';
 import MemeTopCoins from './components/MemeTopCoins';
 import MemeTokenGrid from './components/MemeTokenGrid';
 import MemeStatsBanner from './components/MemeStatsBanner';
+import MemePageHeader from './components/MemePageHeader';
 const MemePage: React.FC = () => {
-  const navigate = useNavigate();
   useEffect(() => {
     const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
     const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
@@ -48,23 +45,14 @@ const MemePage: React.FC = () => {
     });
     document.head.appendChild(ld);
   }, []);
-  return <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
-      {/* Live Ticker - Full Width at Top */}
-      <MemeLiveTicker />
-
-      {/* Action Buttons - Top Right */}
-      <div className="absolute top-32 right-4 z-50">
-        <div className="flex gap-4">
-          <Button size="lg" className="font-display bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 text-lg px-6 py-3" onClick={() => {/* TODO: Connect wallet functionality */}}>
-            <Wallet className="w-5 h-5 mr-2" />
-            🔗 Anslut Wallet
-          </Button>
-          <Button size="lg" variant="outline" className="font-display border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg px-6 py-3" onClick={() => navigate('/meme/create')}>
-            <PlusCircle className="w-5 h-5 mr-2" />
-            🚀 Skapa Din Coin
-          </Button>
-        </div>
-      </div>
+  return (
+    <>
+      {/* Minimal Header with Action Buttons */}
+      <MemePageHeader />
+      
+      <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
+        {/* Live Ticker - Full Width at Top */}
+        <MemeLiveTicker />
 
       {/* Animated background elements */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">
@@ -98,6 +86,8 @@ const MemePage: React.FC = () => {
         </div>
       </section>
 
-    </main>;
+      </main>
+    </>
+  );
 };
 export default MemePage;
