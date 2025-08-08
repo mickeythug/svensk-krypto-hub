@@ -227,53 +227,81 @@ const NewsPage = () => {
     { id: "trending", label: "Trending" }
   ];
 
-  const topMovers = [
+  // Load real crypto market data from existing crypto-prices endpoint
+  useEffect(() => {
+    const loadMarketData = async () => {
+      try {
+        const projectRef = "jcllcrvomxdrhtkqpcbr";
+        const url = `https://${projectRef}.supabase.co/functions/v1/crypto-prices`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data?.topMovers?.length > 0) {
+          const movers = data.topMovers.slice(0, 5).map((coin: any) => ({
+            name: coin.name,
+            symbol: coin.symbol,
+            change: `${coin.change24h >= 0 ? '+' : ''}${coin.change24h.toFixed(2)}%`,
+            price: `$${coin.price.toFixed(coin.price < 1 ? 6 : 2)}`,
+            volume: `$${(coin.volume / 1e9).toFixed(1)}B`,
+            logo: `/src/assets/crypto-logos/${coin.symbol.toLowerCase()}.png`,
+            isPositive: coin.change24h >= 0
+          }));
+          setTopMovers(movers);
+        }
+      } catch (e) {
+        console.error('Failed to load market data', e);
+      }
+    };
+    loadMarketData();
+  }, []);
+
+  const [topMovers, setTopMovers] = useState([
     { 
-      name: "SHIB", 
-      symbol: "SHIB", 
-      change: "+23.45%", 
-      price: "0.000025 SEK", 
-      volume: "2.1B SEK",
-      logo: "/src/assets/crypto-logos/shib.png",
+      name: "Bitcoin", 
+      symbol: "BTC", 
+      change: "+2.1%", 
+      price: "$116,924", 
+      volume: "34.6B",
+      logo: "/src/assets/crypto-logos/btc.png",
+      isPositive: true
+    },
+    { 
+      name: "Ethereum", 
+      symbol: "ETH", 
+      change: "+3.9%", 
+      price: "$4,033", 
+      volume: "39.4B",
+      logo: "/src/assets/crypto-logos/eth.png",
       isPositive: true
     },
     { 
       name: "Dogecoin", 
       symbol: "DOGE", 
-      change: "+18.92%", 
-      price: "0.95 SEK", 
-      volume: "1.8B SEK",
+      change: "+4.6%", 
+      price: "$0.2299", 
+      volume: "2.8B",
       logo: "/src/assets/crypto-logos/doge.png",
       isPositive: true
     },
     { 
-      name: "Pepe", 
-      symbol: "PEPE", 
-      change: "+15.67%", 
-      price: "0.000012 SEK", 
-      volume: "890M SEK",
-      logo: "/src/assets/crypto-logos/eth.png", // Using ETH as placeholder for PEPE
+      name: "Solana", 
+      symbol: "SOL", 
+      change: "+2.2%", 
+      price: "$177.86", 
+      volume: "6.7B",
+      logo: "/src/assets/crypto-logos/sol.png",
       isPositive: true
-    },
-    { 
-      name: "Chainlink", 
-      symbol: "LINK", 
-      change: "-8.23%", 
-      price: "180.45 SEK", 
-      volume: "1.2B SEK",
-      logo: "/src/assets/crypto-logos/link.png",
-      isPositive: false
     },
     { 
       name: "Cardano", 
       symbol: "ADA", 
-      change: "-5.67%", 
-      price: "4.23 SEK", 
-      volume: "967M SEK",
+      change: "+2.2%", 
+      price: "$0.7947", 
+      volume: "1.6B",
       logo: "/src/assets/crypto-logos/ada.png",
-      isPositive: false
+      isPositive: true
     }
-  ];
+  ]);
 
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
@@ -461,127 +489,171 @@ const NewsPage = () => {
                            style={{ animationDelay: `${index * 100}ms` }}
                            onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
                          >
-                          <div className="space-y-4">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
-                                {article.sentiment === 'positive' ? '📈 Positiv' : 
-                                 article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
-                              </Badge>
-                              <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1`}>
-                                {article.impact === 'high' ? '🔥 Hög' : 
-                                 article.impact === 'medium' ? '⚡ Medium' : '💭 Låg'}
-                              </Badge>
-                              {article.trending && (
-                                <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30 text-xs px-2 py-1">
-                                  🔥 Trending
-                                </Badge>
-                              )}
-                            </div>
-                            
-                            <h3 className="font-display font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                              {article.title}
-                            </h3>
-                            
-                            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
-                              {article.summary}
-                            </p>
+                           <div className="space-y-4">
+                             {/* Article Image */}
+                             <div className="relative overflow-hidden rounded-lg">
+                               <div className="aspect-video w-full bg-gradient-to-br from-primary/20 to-secondary/20">
+                                 {article.imageUrl ? (
+                                   <img 
+                                     src={article.imageUrl} 
+                                     alt={article.title}
+                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                     onError={(e) => {
+                                       (e.target as HTMLImageElement).style.display = 'none';
+                                       (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                     }}
+                                   />
+                                 ) : null}
+                                 <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 to-secondary/30 backdrop-blur-sm ${article.imageUrl ? 'hidden' : ''}`}>
+                                   <div className="text-center">
+                                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
+                                       <Bitcoin className="w-8 h-8 text-primary" />
+                                     </div>
+                                     <p className="text-primary font-crypto font-bold text-sm">CRYPTO NEWS</p>
+                                   </div>
+                                 </div>
+                               </div>
+                               
+                               {/* Overlay badges */}
+                               <div className="absolute top-3 left-3 flex gap-2">
+                                 <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1 backdrop-blur-sm`}>
+                                   {article.sentiment === 'positive' ? '📈 Positiv' : 
+                                    article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
+                                 </Badge>
+                                 {article.trending && (
+                                   <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 animate-pulse backdrop-blur-sm">
+                                     🔥 HOT
+                                   </Badge>
+                                 )}
+                               </div>
+                               
+                               {/* Impact badge */}
+                               <div className="absolute top-3 right-3">
+                                 <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1 backdrop-blur-sm`}>
+                                   {article.impact === 'high' ? '🔥 Hög' : 
+                                    article.impact === 'medium' ? '⚡ Medium' : '💭 Låg'}
+                                 </Badge>
+                               </div>
+                             </div>
+                             
+                             <h3 className="font-display font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
+                               {article.title}
+                             </h3>
+                             
+                             <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 min-h-[4rem]">
+                               {article.summary}
+                             </p>
 
-                            <div className="flex flex-wrap gap-1">
-                              {article.tags.slice(0, 3).map((tag, tagIndex) => (
-                                <Badge key={tagIndex} variant="secondary" className="text-xs hover:bg-primary/20 transition-colors">
-                                  #{tag}
-                                </Badge>
-                              ))}
-                            </div>
-                            
-                            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
-                              <div className="flex items-center gap-4">
-                                <div className="flex items-center">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  <span>{formatTimeAgo(article.publishedAt)}</span>
-                                </div>
-                                <div className="flex items-center">
-                                  <BookOpen className="h-3 w-3 mr-1" />
-                                  <span>{article.readTime} min</span>
-                                </div>
-                              </div>
-                              <div className="flex items-center">
-                                <User className="h-3 w-3 mr-1" />
-                                <span>{article.author}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
+                             <div className="flex flex-wrap gap-1">
+                               {article.tags.slice(0, 3).map((tag, tagIndex) => (
+                                 <Badge key={tagIndex} variant="secondary" className="text-xs hover:bg-primary/20 transition-colors">
+                                   #{tag}
+                                 </Badge>
+                               ))}
+                             </div>
+                             
+                             <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/50">
+                               <div className="flex items-center gap-4">
+                                 <div className="flex items-center">
+                                   <Clock className="h-3 w-3 mr-1" />
+                                   <span>{formatTimeAgo(article.publishedAt)}</span>
+                                 </div>
+                                 <div className="flex items-center">
+                                   <BookOpen className="h-3 w-3 mr-1" />
+                                   <span>{article.readTime} min</span>
+                                 </div>
+                               </div>
+                               <div className="flex items-center">
+                                 <User className="h-3 w-3 mr-1" />
+                                 <span className="truncate max-w-[100px]">{article.author}</span>
+                               </div>
+                             </div>
+                           </div>
+                         </Card>
+                       ))}
+                     </div>
+                   )}
 
-                  {/* List View */}
-                  {viewMode === "list" && (
-                    <div className="space-y-4 animate-fade-in">
-                      {filteredNews.map((article, index) => (
-                         <Card 
-                           key={article.id} 
-                           className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
-                           style={{ animationDelay: `${index * 50}ms` }}
-                           onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
-                         >
-                          <div className="flex gap-4">
-                            <div className="flex-1 space-y-3">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
-                                  {article.sentiment === 'positive' ? '📈' : 
-                                   article.sentiment === 'negative' ? '📉' : '➡️'}
-                                </Badge>
-                                <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1`}>
-                                  {article.impact === 'high' ? '🔥' : 
-                                   article.impact === 'medium' ? '⚡' : '💭'}
-                                </Badge>
-                                <Badge variant="outline" className="text-xs">
-                                  {article.category}
-                                </Badge>
-                                {article.trending && (
-                                  <Badge className="bg-orange-500/20 text-orange-500 text-xs">
-                                    Trending
-                                  </Badge>
-                                )}
-                              </div>
-                              
-                              <h3 className="font-display font-bold text-xl leading-tight group-hover:text-primary transition-colors">
-                                {article.title}
-                              </h3>
-                              
-                              <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-                                {article.summary}
-                              </p>
+                   {/* List View */}
+                   {viewMode === "list" && (
+                     <div className="space-y-6 animate-fade-in">
+                       {filteredNews.map((article, index) => (
+                          <Card 
+                            key={article.id} 
+                            className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
+                            style={{ animationDelay: `${index * 50}ms` }}
+                            onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
+                          >
+                           <div className="flex gap-4">
+                             {/* Article Image - List View */}
+                             <div className="flex-shrink-0 w-32 h-24 relative overflow-hidden rounded-lg">
+                               {article.imageUrl ? (
+                                 <img 
+                                   src={article.imageUrl} 
+                                   alt={article.title}
+                                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                   onError={(e) => {
+                                     (e.target as HTMLImageElement).style.display = 'none';
+                                     (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                   }}
+                                 />
+                               ) : null}
+                               <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 to-secondary/30 ${article.imageUrl ? 'hidden' : ''}`}>
+                                 <Bitcoin className="w-6 h-6 text-primary" />
+                               </div>
+                             </div>
+                             
+                             <div className="flex-1 space-y-3">
+                               <div className="flex items-center gap-2 flex-wrap">
+                                 <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
+                                   {article.sentiment === 'positive' ? '📈' : 
+                                    article.sentiment === 'negative' ? '📉' : '➡️'}
+                                 </Badge>
+                                 <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1`}>
+                                   {article.impact === 'high' ? '🔥' : 
+                                    article.impact === 'medium' ? '⚡' : '💭'}
+                                 </Badge>
+                                 <Badge variant="outline" className="text-xs">
+                                   {article.category}
+                                 </Badge>
+                                 {article.trending && (
+                                   <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs animate-pulse">
+                                     🔥 HOT
+                                   </Badge>
+                                 )}
+                               </div>
+                               
+                               <h3 className="font-display font-bold text-xl leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                                 {article.title}
+                               </h3>
+                               
+                               <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
+                                 {article.summary}
+                               </p>
 
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                  <div className="flex items-center">
-                                    <User className="h-3 w-3 mr-1" />
-                                    <span>{article.author}</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    <span>{formatTimeAgo(article.publishedAt)}</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <BookOpen className="h-3 w-3 mr-1" />
-                                    <span>{article.readTime} min läsning</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <Eye className="h-3 w-3 mr-1" />
-                                    <span>{article.views.toLocaleString()} visningar</span>
-                                  </div>
-                                </div>
-                                 <Button variant="outline" size="sm" className="hover:bg-primary hover:text-primary-foreground" onClick={(e) => { e.stopPropagation(); if (article.url) window.open(article.url, '_blank'); }}>
+                               <div className="flex items-center justify-between">
+                                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                   <div className="flex items-center">
+                                     <User className="h-3 w-3 mr-1" />
+                                     <span className="truncate max-w-[80px]">{article.author}</span>
+                                   </div>
+                                   <div className="flex items-center">
+                                     <Clock className="h-3 w-3 mr-1" />
+                                     <span>{formatTimeAgo(article.publishedAt)}</span>
+                                   </div>
+                                   <div className="flex items-center">
+                                     <BookOpen className="h-3 w-3 mr-1" />
+                                     <span>{article.readTime} min</span>
+                                   </div>
+                                 </div>
+                                 <Button variant="outline" size="sm" className="hover:bg-primary hover:text-primary-foreground shrink-0" onClick={(e) => { e.stopPropagation(); if (article.url) window.open(article.url, '_blank'); }}>
                                    <ExternalLink className="h-3 w-3 mr-1" />
                                    Läs mer
                                  </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
+                               </div>
+                             </div>
+                           </div>
+                         </Card>
                       ))}
                     </div>
                   )}
