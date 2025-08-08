@@ -25,7 +25,7 @@ const MemeHeroNew = () => {
           {/* Main Title */}
           <div className="space-y-4">
             <Badge className="font-display text-lg px-6 py-2 bg-gradient-rainbow text-foreground animate-pulse-glow">
-              🌟 WORLD'S BEST MEME TOKEN PAGE 🌟
+              🌟 VÄRLDENS BÄSTA MEME TOKEN SIDA 🌟
             </Badge>
             <h1 className="font-crypto text-6xl md:text-8xl lg:text-9xl font-black bg-gradient-rainbow bg-clip-text text-transparent animate-float leading-tight">
               MEME<br />
@@ -36,20 +36,20 @@ const MemeHeroNew = () => {
 
           {/* Subtitle */}
           <p className="font-display text-xl md:text-2xl lg:text-3xl text-foreground/90 max-w-4xl mx-auto leading-relaxed">
-            Discover the hottest meme coins with <span className="text-primary font-bold">large images</span>, 
-            <span className="text-accent font-bold"> live data</span> and 
-            <span className="text-secondary font-bold"> interactive design</span>!
+            Upptäck de hetaste meme-coinsen med <span className="text-primary font-bold">stora bilder</span>, 
+            <span className="text-accent font-bold"> live-data</span> och 
+            <span className="text-secondary font-bold"> interaktiv design</span>!
           </p>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
             <Button size="lg" className="font-display text-xl px-12 py-6 bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 animate-pulse-glow">
               <Rocket className="mr-3 h-6 w-6" />
-              Explore Tokens
+              Utforska Tokens
             </Button>
             <Button variant="outline" size="lg" className="font-display text-xl px-12 py-6 border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all duration-300">
               <TrendingUp className="mr-3 h-6 w-6" />
-              Live Trends
+              Live Trender
             </Button>
           </div>
 

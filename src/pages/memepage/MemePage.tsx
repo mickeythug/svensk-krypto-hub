@@ -59,6 +59,29 @@ const MemePage: React.FC = () => {
       {/* Live Ticker - Full Width at Top */}
       <MemeLiveTicker />
 
+      {/* Action Buttons - Top Right */}
+      <div className="absolute top-4 right-4 z-50">
+        <div className="flex gap-4">
+          <Button 
+            size="lg" 
+            className="font-display bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 text-lg px-6 py-3"
+            onClick={() => {/* TODO: Connect wallet functionality */}}
+          >
+            <Wallet className="w-5 h-5 mr-2" />
+            🔗 Anslut Wallet
+          </Button>
+          <Button 
+            size="lg" 
+            variant="outline"
+            className="font-display border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg px-6 py-3"
+            onClick={() => navigate('/meme/create')}
+          >
+            <PlusCircle className="w-5 h-5 mr-2" />
+            🚀 Skapa Din Coin
+          </Button>
+        </div>
+      </div>
+
       {/* Animated background elements */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
@@ -70,31 +93,6 @@ const MemePage: React.FC = () => {
       {/* Hero Section */}
       <MemeHeroNew />
 
-      {/* Action Buttons */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button 
-              size="lg" 
-              className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 text-lg px-8 py-6 h-auto"
-              onClick={() => {/* TODO: Connect wallet functionality */}}
-            >
-              <Wallet className="w-6 h-6 mr-3" />
-              🔗 Connect Wallet
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg px-8 py-6 h-auto"
-              onClick={() => navigate('/meme/create')}
-            >
-              <PlusCircle className="w-6 h-6 mr-3" />
-              🚀 Create Your Coin
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Stats Banner */}
       <MemeStatsBanner />
 
@@ -102,7 +100,7 @@ const MemePage: React.FC = () => {
       <section className="py-16 px-4">
         <div className="container mx-auto">
           <h2 className="font-crypto text-4xl md:text-6xl font-bold text-center mb-12 bg-gradient-rainbow bg-clip-text text-transparent animate-pulse-glow">
-            🚀 TOP MEME COINS 🚀
+            🚀 TOPP MEME COINS 🚀
           </h2>
           <MemeTopCoins />
         </div>
@@ -112,7 +110,7 @@ const MemePage: React.FC = () => {
       <section className="py-16 px-4 bg-meme-grid-bg/50">
         <div className="container mx-auto">
           <h2 className="font-crypto text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-neon bg-clip-text text-transparent">
-            🎯 ALL MEME TOKENS
+            🎯 ALLA MEME TOKENS
           </h2>
           <MemeTokenGrid category="all" />
         </div>
