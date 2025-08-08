@@ -88,8 +88,8 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
     return (
       <Card className="p-8 text-center">
         <div className="text-destructive mb-4">⚠️ Fel vid laddning av tokens</div>
-        <Button variant="outline" onClick={() => window.location.reload()}>
-          Försök igen
+        <Button variant="outline" onClick={() => window.location.reload()} className="font-crypto">
+          FÖRSÖK IGEN
         </Button>
       </Card>
     );
@@ -115,18 +115,18 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
               <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="min-w-0">
-                    <h3 className="truncate font-extrabold text-lg md:text-xl">{token.emoji} {token.symbol}</h3>
-                    <p className="truncate text-xs md:text-sm text-muted-foreground">{token.name}</p>
+                    <h3 className="truncate font-crypto font-extrabold text-lg md:text-xl">{token.emoji} {token.symbol}</h3>
+                    <p className="truncate text-xs md:text-sm text-muted-foreground font-crypto">{token.name}</p>
                   </div>
                   {token.isHot && (
                     <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30">HOT</Badge>
                   )}
                 </div>
                 <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="tabular-nums font-bold">{formatPrice(token.price)}</span>
+                  <span className="tabular-nums font-crypto font-bold">{formatPrice(token.price)}</span>
                   <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                     {getTrendIcon(token.change24h)}
-                    <span className="font-semibold tabular-nums text-xs">
+                    <span className="font-crypto font-semibold tabular-nums text-xs">
                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                     </span>
                   </div>
@@ -152,11 +152,11 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
                   ))}
                 </div>
                 <Button 
-                  className="w-full bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs"
+                  className="w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs"
                   size="sm"
                 >
                   <Eye className="mr-1 h-3 w-3" />
-                  Visa Detaljer
+                  VISA DETALJER
                 </Button>
               </div>
             </AspectRatio>

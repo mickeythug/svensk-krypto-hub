@@ -120,7 +120,7 @@ const MemeTopCoins = () => {
               {/* Overlay info */}
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-2xl font-black text-white">{token.symbol}</h3>
+                  <h3 className="text-2xl font-crypto font-black text-white">{token.symbol}</h3>
                   <Badge 
                     variant="outline" 
                     className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-bold text-lg backdrop-blur-sm`}
@@ -129,7 +129,7 @@ const MemeTopCoins = () => {
                     {positive ? '+' : ''}{token.change24h.toFixed(2)}%
                   </Badge>
                 </div>
-                <p className="text-white/90 text-sm truncate font-medium">{token.name}</p>
+                <p className="text-white/90 text-sm truncate font-crypto font-medium">{token.name}</p>
               </div>
             </div>
 
@@ -141,14 +141,14 @@ const MemeTopCoins = () => {
                     <DollarSign className="w-4 h-4" />
                     Price
                   </div>
-                  <div className="text-xl font-bold text-foreground">{formatPrice(token.price)}</div>
+                  <div className="text-xl font-crypto font-bold text-foreground">{formatPrice(token.price)}</div>
                 </div>
                 <div>
                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
                     <Star className="w-4 h-4" />
                     Market Cap
                   </div>
-                  <div className="text-xl font-bold text-foreground">{formatMarketCap(token.marketCap)}</div>
+                  <div className="text-xl font-crypto font-bold text-foreground">{formatMarketCap(token.marketCap)}</div>
                 </div>
               </div>
 
@@ -156,12 +156,12 @@ const MemeTopCoins = () => {
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">Holders:</span>
-                  <span className="font-bold text-foreground">{token.holders.toLocaleString()}</span>
+                  <span className="font-crypto font-bold text-foreground">{token.holders.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Eye className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">Views:</span>
-                  <span className="font-bold text-foreground">{token.views?.toLocaleString() || 'N/A'}</span>
+                  <span className="font-crypto font-bold text-foreground">{token.views?.toLocaleString() || 'N/A'}</span>
                 </div>
               </div>
 
@@ -176,11 +176,11 @@ const MemeTopCoins = () => {
 
               {/* Action Button */}
               <Button 
-                className="w-full bg-gradient-primary hover:shadow-glow-primary transition-all duration-300" 
+                className="w-full font-crypto bg-gradient-primary hover:shadow-glow-primary transition-all duration-300" 
                 size="lg"
               >
                 <Zap className="w-4 h-4 mr-2" />
-                Visa Detaljer
+                VISA DETALJER
               </Button>
             </div>
           </Card>

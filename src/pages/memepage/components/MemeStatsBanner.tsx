@@ -15,9 +15,9 @@ const MemeStatsBanner = () => {
                   <TrendingUp className="w-8 h-8 text-primary-foreground" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-black text-primary mb-1">500+</div>
-              <div className="text-sm text-muted-foreground font-medium">Meme Tokens</div>
-              <Badge className="mt-2 bg-success/20 text-success border-success">Live</Badge>
+              <div className="text-3xl md:text-4xl font-crypto font-black text-primary mb-1">500+</div>
+              <div className="text-sm text-muted-foreground font-crypto font-medium">MEME TOKENS</div>
+              <Badge className="mt-2 bg-success/20 text-success border-success font-crypto">LIVE</Badge>
             </div>
 
             <div className="text-center group hover:scale-110 transition-transform duration-300">
@@ -26,9 +26,9 @@ const MemeStatsBanner = () => {
                   <DollarSign className="w-8 h-8 text-secondary-foreground" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-black text-secondary mb-1">$2.1B</div>
-              <div className="text-sm text-muted-foreground font-medium">Total Market Cap</div>
-              <Badge className="mt-2 bg-secondary/20 text-secondary border-secondary">24h</Badge>
+              <div className="text-3xl md:text-4xl font-crypto font-black text-secondary mb-1">$2.1B</div>
+              <div className="text-sm text-muted-foreground font-crypto font-medium">TOTAL MARKET CAP</div>
+              <Badge className="mt-2 bg-secondary/20 text-secondary border-secondary font-crypto">24H</Badge>
             </div>
 
             <div className="text-center group hover:scale-110 transition-transform duration-300">
@@ -37,9 +37,9 @@ const MemeStatsBanner = () => {
                   <Users className="w-8 h-8 text-foreground" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-black text-accent mb-1">1.2M</div>
-              <div className="text-sm text-muted-foreground font-medium">Total Holders</div>
-              <Badge className="mt-2 bg-accent/20 text-accent border-accent">Growing</Badge>
+              <div className="text-3xl md:text-4xl font-crypto font-black text-accent mb-1">1.2M</div>
+              <div className="text-sm text-muted-foreground font-crypto font-medium">TOTAL HOLDERS</div>
+              <Badge className="mt-2 bg-accent/20 text-accent border-accent font-crypto">GROWING</Badge>
             </div>
 
             <div className="text-center group hover:scale-110 transition-transform duration-300">
@@ -48,9 +48,9 @@ const MemeStatsBanner = () => {
                   <Activity className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-black text-orange-400 mb-1">85%</div>
-              <div className="text-sm text-muted-foreground font-medium">24h Volume +</div>
-              <Badge className="mt-2 bg-orange-500/20 text-orange-400 border-orange-400">🔥 Hot</Badge>
+              <div className="text-3xl md:text-4xl font-crypto font-black text-orange-400 mb-1">85%</div>
+              <div className="text-sm text-muted-foreground font-crypto font-medium">24H VOLUME +</div>
+              <Badge className="mt-2 bg-orange-500/20 text-orange-400 border-orange-400 font-crypto">HOT</Badge>
             </div>
 
             <div className="text-center group hover:scale-110 transition-transform duration-300">
@@ -59,9 +59,9 @@ const MemeStatsBanner = () => {
                   <Zap className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-black text-purple-400 mb-1">99.9%</div>
-              <div className="text-sm text-muted-foreground font-medium">Data Accuracy</div>
-              <Badge className="mt-2 bg-purple-500/20 text-purple-400 border-purple-400">Verified</Badge>
+              <div className="text-3xl md:text-4xl font-crypto font-black text-purple-400 mb-1">99.9%</div>
+              <div className="text-sm text-muted-foreground font-crypto font-medium">DATA ACCURACY</div>
+              <Badge className="mt-2 bg-purple-500/20 text-purple-400 border-purple-400 font-crypto">VERIFIED</Badge>
             </div>
 
             <div className="text-center group hover:scale-110 transition-transform duration-300">
@@ -70,19 +70,19 @@ const MemeStatsBanner = () => {
                   <Clock className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-black text-green-400 mb-1">24/7</div>
-              <div className="text-sm text-muted-foreground font-medium">Live Updates</div>
-              <Badge className="mt-2 bg-green-500/20 text-green-400 border-green-400">Real-time</Badge>
+              <div className="text-3xl md:text-4xl font-crypto font-black text-green-400 mb-1">24/7</div>
+              <div className="text-sm text-muted-foreground font-crypto font-medium">LIVE UPDATES</div>
+              <Badge className="mt-2 bg-green-500/20 text-green-400 border-green-400 font-crypto">REAL-TIME</Badge>
             </div>
 
           </div>
 
           {/* Bottom text */}
           <div className="text-center mt-8 pt-6 border-t border-border/30">
-            <p className="text-lg text-muted-foreground">
-              🚀 <span className="text-primary font-bold">Världens mest kompletta</span> meme token databas med 
-              <span className="text-accent font-bold"> realtidsdata</span> och 
-              <span className="text-secondary font-bold"> avancerad analys</span> 🚀
+            <p className="text-lg text-muted-foreground font-crypto">
+              <span className="text-primary font-bold">VÄRLDENS MEST KOMPLETTA</span> meme token databas med 
+              <span className="text-accent font-bold"> REALTIDSDATA</span> och 
+              <span className="text-secondary font-bold"> AVANCERAD ANALYS</span>
             </p>
           </div>
         </Card>

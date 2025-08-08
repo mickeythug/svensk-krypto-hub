@@ -80,7 +80,7 @@ const MemePage: React.FC = () => {
       <section className="py-16 px-4 bg-meme-grid-bg/50">
         <div className="container mx-auto">
           <h2 className="font-crypto text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-neon bg-clip-text text-transparent">
-            🎯 ALLA MEME TOKENS
+            ALLA MEME TOKENS
           </h2>
           <MemeTokenGrid category="all" />
         </div>
