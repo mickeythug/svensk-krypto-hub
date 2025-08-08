@@ -279,7 +279,7 @@ const NewsPage = () => {
   // Helpers for compact formatting
   const formatNumberCompact = (n?: number | null) => {
     if (n === null || n === undefined) return '—';
-    return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 2 }).format(n);
+    return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 0 }).format(n);
     };
   const formatCurrencyCompact = (n?: number | null) => {
     if (n === null || n === undefined) return '—';
@@ -288,21 +288,20 @@ const NewsPage = () => {
 
   // Derive UI models from centralized intel
   const sentiment = {
-    fearGreedIndex: intel?.sentiment.fearGreedIndex ?? 0,
-    socialVolume: intel?.sentiment.socialVolumePct ?? 0,
-    newsVolume: intel?.sentiment.newsVolumePct ?? 0,
-    change24h: intel?.sentiment.trend24hPct ?? 0,
+    fearGreedIndex: Math.round(intel?.sentiment.fearGreedIndex ?? 0),
+    socialVolume: Math.round(intel?.sentiment.socialVolumePct ?? 0),
+    newsVolume: Math.round(intel?.sentiment.newsVolumePct ?? 0),
+    change24h: Number(((intel?.sentiment.trend24hPct ?? 0)).toFixed(1)),
   };
 
   const marketDataUI = {
     totalMarketCap: formatCurrencyCompact(intel?.overview.totalMarketCap),
     totalVolume: formatCurrencyCompact(intel?.overview.totalVolume24h),
-    btcDominance: intel?.overview.btcDominance ?? 0,
-    ethDominance: intel?.overview.ethDominance ?? 0,
+    btcDominance: Number(((intel?.overview.btcDominance ?? 0)).toFixed(1)),
+    ethDominance: Number(((intel?.overview.ethDominance ?? 0)).toFixed(1)),
     activeAddresses: formatNumberCompact(intel?.overview.activeAddresses24h),
     defiTvl: formatCurrencyCompact(intel?.overview.defiTVL),
   };
-
   const topMoversUI = (intel?.topMovers ?? []).map((m) => ({
     symbol: m.symbol,
     name: m.name,
