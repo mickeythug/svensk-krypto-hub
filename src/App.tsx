@@ -17,6 +17,7 @@ const PortfolioPage = lazy(() => import("./pages/PortfolioPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
 const MemePage = lazy(() => import("./pages/memepage"));
+const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Optimerad QueryClient konfiguration
@@ -68,6 +69,7 @@ const App = memo(() => {
                   <Route path="/portfolio" element={<PortfolioPage />} />
                   <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
                   <Route path="/meme" element={<MemePage />} />
+                  <Route path="/meme/create" element={<CreateTokenPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

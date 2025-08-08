@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Wallet, PlusCircle } from 'lucide-react';
 import MemeHeroNew from './components/MemeHeroNew';
 import MemeLiveTicker from './components/MemeLiveTicker';
 import MemeTopCoins from './components/MemeTopCoins';
 import MemeTokenGrid from './components/MemeTokenGrid';
-import MemeCreatorSection from './components/MemeCreatorSection';
 import MemeStatsBanner from './components/MemeStatsBanner';
 
 const MemePage: React.FC = () => {
+  const navigate = useNavigate();
   useEffect(() => {
     const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
     const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
@@ -67,6 +70,31 @@ const MemePage: React.FC = () => {
       {/* Hero Section */}
       <MemeHeroNew />
 
+      {/* Action Buttons */}
+      <section className="py-8 px-4">
+        <div className="container mx-auto">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 text-lg px-8 py-6 h-auto"
+              onClick={() => {/* TODO: Connect wallet functionality */}}
+            >
+              <Wallet className="w-6 h-6 mr-3" />
+              🔗 Anslut Wallet
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg px-8 py-6 h-auto"
+              onClick={() => navigate('/meme/create')}
+            >
+              <PlusCircle className="w-6 h-6 mr-3" />
+              🚀 Skapa Din Coin
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Banner */}
       <MemeStatsBanner />
 
@@ -90,15 +118,6 @@ const MemePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Creator Section */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-primary bg-clip-text text-transparent">
-            🎨 SKAPA DIN EGEN MEME TOKEN
-          </h2>
-          <MemeCreatorSection />
-        </div>
-      </section>
     </main>
   );
 };
