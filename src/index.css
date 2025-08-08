@@ -25,13 +25,13 @@ All colors MUST be HSL.
     /* Market cap specific color */
     --market-cap: 165 85% 45%; /* #12E19F - exact hex color requested */
 
-    --secondary: 200 100% 50%; /* Electric blue */
+    --secondary: 165 85% 45%; /* Same as primary - no more blue */
     --secondary-foreground: 280 25% 8%;
 
     --muted: 280 20% 15%;
     --muted-foreground: 280 10% 65%;
 
-    --accent: 60 100% 50%; /* Electric yellow */
+    --accent: 165 70% 60%; /* Lighter version of the green */
     --accent-foreground: 280 25% 8%;
 
     --destructive: 0 100% 60%;
@@ -51,21 +51,21 @@ All colors MUST be HSL.
 
     /* Meme-specific gradients */
     --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(200 100% 50%), hsl(180 80% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
     --gradient-hero: linear-gradient(135deg, hsl(280 25% 8%), hsl(300 30% 15%));
-    --gradient-rainbow: linear-gradient(90deg, hsl(0 100% 60%), hsl(60 100% 60%), hsl(120 100% 60%), hsl(165 85% 45%), hsl(240 100% 60%), hsl(300 100% 60%));
-    --gradient-neon: linear-gradient(135deg, hsl(165 85% 45%), hsl(200 100% 50%), hsl(60 100% 50%));
+    --gradient-rainbow: linear-gradient(90deg, hsl(0 100% 60%), hsl(60 100% 60%), hsl(120 100% 60%), hsl(165 85% 45%), hsl(165 70% 60%), hsl(300 100% 60%));
+    --gradient-neon: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%), hsl(60 100% 50%));
     
     /* Meme token specific colors */
     --meme-pink: 330 100% 70%;
-    --meme-cyan: 180 100% 60%;
+    --meme-cyan: 165 85% 45%; /* Changed from blue to our green */
     --meme-lime: 90 100% 60%;
     --meme-orange: 30 100% 60%;
 
     /* Enhanced glowing effects */
     --glow-primary: 0 0 30px hsl(165 85% 45% / 0.8);
-    --glow-secondary: 0 0 25px hsl(200 100% 50% / 0.6);
-    --glow-rainbow: 0 0 40px hsl(165 85% 45% / 0.5), 0 0 60px hsl(200 100% 50% / 0.3);
+    --glow-secondary: 0 0 25px hsl(165 85% 45% / 0.6);
+    --glow-rainbow: 0 0 40px hsl(165 85% 45% / 0.5), 0 0 60px hsl(165 70% 60% / 0.3);
 
     /* Meme backgrounds */
     --meme-grid-bg: 280 40% 5%;
@@ -89,27 +89,27 @@ All colors MUST be HSL.
     --card-foreground: 180 100% 95%;
     --popover: 214 28% 12%;
     --popover-foreground: 180 100% 95%;
-    --primary: 180 100% 50%;
+    --primary: 165 85% 45%; /* Changed to our green */
     --primary-foreground: 214 32% 8%;
-    --secondary: 214 25% 18%;
-    --secondary-foreground: 180 100% 85%;
+    --secondary: 165 85% 45%; /* Changed to our green */
+    --secondary-foreground: 214 32% 8%;
     --muted: 214 25% 15%;
     --muted-foreground: 180 50% 65%;
-    --accent: 180 80% 45%;
+    --accent: 165 70% 60%; /* Changed to lighter green */
     --accent-foreground: 214 32% 8%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 25% 20%;
     --input: 214 25% 18%;
-    --ring: 180 100% 50%;
+    --ring: 165 85% 45%; /* Changed to our green */
     --sidebar-background: 214 28% 10%;
     --sidebar-foreground: 180 100% 85%;
-    --sidebar-primary: 180 100% 50%;
+    --sidebar-primary: 165 85% 45%; /* Changed to our green */
     --sidebar-primary-foreground: 214 32% 8%;
     --sidebar-accent: 214 25% 18%;
     --sidebar-accent-foreground: 180 100% 85%;
     --sidebar-border: 214 25% 20%;
-    --sidebar-ring: 180 100% 50%;
+    --sidebar-ring: 165 85% 45%; /* Changed to our green */
   }
 }
 
