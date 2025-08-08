@@ -19,6 +19,14 @@ import c12 from '@/assets/meme-covers/meme-cover-12.jpg';
 
 const covers = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12];
 
+// Prefer real token logos when available
+import doge from '@/assets/crypto-logos/doge.png';
+import shib from '@/assets/crypto-logos/shib.png';
+const tokenImages: Record<string, string> = {
+  doge,
+  shib,
+};
+
 const MemeTokenGallery = () => {
   const { tokens, loading, error } = useMemeTokens('all');
   const items = useMemo(() => tokens.map((t, i) => ({ ...t, cover: covers[i % covers.length], ratio: (i % 3 === 0 ? 1 : 4/5) })), [tokens]);
@@ -35,8 +43,8 @@ const MemeTokenGallery = () => {
             ) : (
               <>
                 <OptimizedImage
-                  src={(item as any).cover}
-                  alt={`${(item as any).name} – bild`}
+                  src={tokenImages[((item as any).symbol || '').toLowerCase()] ?? (item as any).cover}
+                  alt={`${(item as any).name} – logotyp / bild`}
                   className="h-full w-full object-cover"
                   fallbackSrc="/placeholder.svg"
                 />
