@@ -74,10 +74,14 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
         {[...Array(limit || 12)].map((_, i) => (
-          <Card key={i} className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
+          <Card key={i} className="overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
             <AspectRatio ratio={4/5}>
               <div className="h-full w-full bg-muted animate-pulse" />
             </AspectRatio>
+            <CardContent className="p-3">
+              <div className="h-4 bg-muted rounded mb-2" />
+              <div className="h-3 bg-muted rounded w-2/3" />
+            </CardContent>
           </Card>
         ))}
       </div>
@@ -103,70 +107,82 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
           whileHover={{ scale: 1.02 }}
           className="group"
         >
-          <Card className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300">
-            <AspectRatio ratio={4/5}>
-              <OptimizedImage
-                src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
-                alt={`${token.name} – logotyp / omslagsbild`}
-                className="h-full w-full object-cover"
-                fallbackSrc="/placeholder.svg"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-3">
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-crypto font-extrabold text-lg tracking-wide">{token.emoji} {token.symbol}</h3>
-                    <p className="truncate text-xs text-muted-foreground font-crypto font-medium">{token.name}</p>
-                  </div>
-                  {token.isHot && (
-                    <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30 font-crypto font-bold text-xs">HOT</Badge>
-                  )}
+          <Card className="overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300">
+            {/* Image Section - Clean without text overlay */}
+            <div className="relative">
+              <AspectRatio ratio={4/5}>
+                <OptimizedImage
+                  src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
+                  alt={`${token.name} – logotyp / omslagsbild`}
+                  className="h-full w-full object-cover"
+                  fallbackSrc="/placeholder.svg"
+                />
+              </AspectRatio>
+              
+              {/* Only HOT badge on image */}
+              {token.isHot && (
+                <div className="absolute top-2 right-2">
+                  <Badge className="bg-primary/20 text-primary border border-primary/30 font-crypto font-bold text-xs">HOT</Badge>
                 </div>
-                
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="tabular-nums font-crypto font-black">{formatPrice(token.price)}</span>
-                  <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
-                    {getTrendIcon(token.change24h)}
-                    <span className="font-crypto font-bold tabular-nums text-xs">
-                      {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="text-xs text-muted-foreground mb-2">
-                  <span className="font-crypto font-semibold text-primary">MC: {formatMarketCap(token.marketCap)}</span>
-                </div>
-                
-                <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                  <span className="flex items-center gap-1">
-                    <Users className="h-3 w-3" />
-                    <span className="font-crypto font-bold text-foreground">
-                      {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
-                    </span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Eye className="h-3 w-3" />
-                    <span className="font-crypto font-bold text-foreground">{token.views}</span>
+              )}
+            </div>
+
+            {/* Content Section - All text below image */}
+            <CardContent className="p-3 space-y-2">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <h3 className="font-crypto font-extrabold text-lg tracking-wide">{token.emoji} {token.symbol}</h3>
+                <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
+                  {getTrendIcon(token.change24h)}
+                  <span className="font-crypto font-bold text-xs">
+                    {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(1)}%
                   </span>
                 </div>
-                
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {token.tags.slice(0, 2).map((tag, i) => (
-                    <Badge key={i} variant="secondary" className="text-xs font-crypto font-semibold bg-primary/10 text-primary border border-primary/20 px-1 py-0">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                
-                <Button 
-                  className="w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs h-8"
-                  size="sm"
-                >
-                  <Eye className="mr-1 h-3 w-3" />
-                  VISA DETALJER
-                </Button>
               </div>
-            </AspectRatio>
+              
+              {/* Token name */}
+              <p className="text-sm text-muted-foreground font-crypto font-medium truncate">{token.name}</p>
+              
+              {/* Price */}
+              <div className="text-lg font-crypto font-black">{formatPrice(token.price)}</div>
+              
+              {/* Market Cap */}
+              <div className="text-sm">
+                <span className="font-crypto font-semibold text-primary">MC: {formatMarketCap(token.marketCap)}</span>
+              </div>
+              
+              {/* Stats */}
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Users className="h-3 w-3" />
+                  <span className="font-crypto font-bold text-foreground">
+                    {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
+                  </span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <Eye className="h-3 w-3" />
+                  <span className="font-crypto font-bold text-foreground">{token.views}</span>
+                </span>
+              </div>
+              
+              {/* Tags */}
+              <div className="flex flex-wrap gap-1">
+                {token.tags.slice(0, 2).map((tag, i) => (
+                  <Badge key={i} variant="secondary" className="text-xs font-crypto font-semibold bg-primary/10 text-primary border border-primary/20">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+              
+              {/* Button */}
+              <Button 
+                className="w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs h-8"
+                size="sm"
+              >
+                <Eye className="mr-1 h-3 w-3" />
+                VISA DETALJER
+              </Button>
+            </CardContent>
           </Card>
         </motion.div>
       ))}
