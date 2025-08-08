@@ -80,7 +80,7 @@ const MemePage: React.FC = () => {
               onClick={() => {/* TODO: Connect wallet functionality */}}
             >
               <Wallet className="w-6 h-6 mr-3" />
-              🔗 Anslut Wallet
+              🔗 Connect Wallet
             </Button>
             <Button 
               size="lg" 
@@ -89,7 +89,7 @@ const MemePage: React.FC = () => {
               onClick={() => navigate('/meme/create')}
             >
               <PlusCircle className="w-6 h-6 mr-3" />
-              🚀 Skapa Din Coin
+              🚀 Create Your Coin
             </Button>
           </div>
         </div>

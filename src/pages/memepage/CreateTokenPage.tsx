@@ -8,8 +8,8 @@ const CreateTokenPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const title = 'Skapa Din Meme Token – Token Creator | Crypto Network Sweden';
-    const description = 'Skapa din egen meme token med vår avancerade token creator. Ladda upp bilder, anpassa metadata och lansera din token på blockchain.';
+    const title = 'Create Your Meme Token – Token Creator | Crypto Network Sweden';
+    const description = 'Create your own meme token with our advanced token creator. Upload images, customize metadata and launch your token on blockchain.';
     document.title = title;
 
     const ensureTag = (selector: string, create: () => HTMLElement) => {
@@ -44,7 +44,7 @@ const CreateTokenPage: React.FC = () => {
     ld.text = JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: 'Skapa Din Meme Token – Token Creator',
+      name: 'Create Your Meme Token – Token Creator',
       description,
       url: `${origin}/meme/create`
     });
@@ -72,16 +72,16 @@ const CreateTokenPage: React.FC = () => {
               className="border-primary/50 hover:bg-primary/10"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
-              Tillbaka till Meme Tokens
+              Back to Meme Tokens
             </Button>
           </div>
           
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow">
-              🎨 SKAPA DIN MEME TOKEN
+              🎨 CREATE YOUR MEME TOKEN
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              Designa och lansera din egen meme token med vår avancerade creator
+              Design and launch your own meme token with our advanced creator
             </p>
           </div>
         </div>
