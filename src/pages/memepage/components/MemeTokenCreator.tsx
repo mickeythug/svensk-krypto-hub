@@ -169,22 +169,27 @@ const MemeTokenCreator = () => {
               <Label className="font-crypto font-bold text-lg text-foreground">TOKEN BILD</Label>
               <div className="grid grid-cols-3 gap-3 mt-4">
                 {generatedImages.map((img, index) => (
-                  <Card 
+                  <div
                     key={index}
-                    className={`p-2 cursor-pointer transition-all duration-300 hover:scale-105 ${
-                      selectedImage === img ? 'border-2 border-primary shadow-glow-primary' : 'border border-border/50 hover:border-primary/50'
+                    className={`p-2 cursor-pointer transition-all duration-300 hover:scale-105 rounded-lg border-2 ${
+                      selectedImage === img 
+                        ? 'border-primary shadow-glow-primary bg-primary/10' 
+                        : 'border-border/50 hover:border-primary/70 bg-card/50'
                     }`}
-                    onClick={() => setSelectedImage(img)}
+                    onClick={() => {
+                      console.log('Image clicked:', index, img);
+                      setSelectedImage(img);
+                    }}
                   >
                     <AspectRatio ratio={1}>
                       <OptimizedImage
                         src={img}
                         alt={`AI genererad bild ${index + 1}`}
-                        className="w-full h-full object-cover rounded"
+                        className="w-full h-full object-cover rounded pointer-events-none"
                         fallbackSrc="/placeholder.svg"
                       />
                     </AspectRatio>
-                  </Card>
+                  </div>
                 ))}
               </div>
               
