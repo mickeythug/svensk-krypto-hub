@@ -21,7 +21,7 @@ const MemePage: React.FC<MemePage> = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-purple-900/20 to-pink-900/20">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Hero Header */}
         <MemeHeader />
@@ -39,8 +39,8 @@ const MemePage: React.FC<MemePage> = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <TrendingUp className="h-8 w-8 text-primary animate-pulse" />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+              <TrendingUp className="h-8 w-8 text-primary" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
                 🔥 Trending Meme Tokens
               </h2>
             </div>
@@ -56,8 +56,8 @@ const MemePage: React.FC<MemePage> = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <Star className="h-8 w-8 text-warning animate-bounce" />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-warning to-orange-400 bg-clip-text text-transparent">
+              <Star className="h-8 w-8 text-warning" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-warning to-warning bg-clip-text text-transparent">
                 💎 Top Gems Under 1M Market Cap
               </h2>
             </div>
@@ -73,8 +73,8 @@ const MemePage: React.FC<MemePage> = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <Sparkles className="h-8 w-8 text-accent animate-spin" />
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-accent to-cyan-400 bg-clip-text text-transparent">
+              <Sparkles className="h-8 w-8 text-accent" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-accent to-accent bg-clip-text text-transparent">
                 🚀 All Meme Tokens
               </h2>
             </div>
@@ -89,7 +89,7 @@ const MemePage: React.FC<MemePage> = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="mb-8"
         >
-          <Card className="p-6 border-warning/50 bg-gradient-to-r from-warning/10 to-orange-500/10">
+          <Card className="p-6 border-warning/50 bg-gradient-to-r from-warning/10 to-warning/10">
             <div className="flex items-start gap-3">
               <Zap className="h-6 w-6 text-warning mt-1 animate-pulse" />
               <div>

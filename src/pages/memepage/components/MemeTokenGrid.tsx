@@ -76,9 +76,6 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
       {tokens.map((token, index) => (
         <motion.div
           key={token.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
           whileHover={{ scale: 1.02 }}
           className="group"
         >
@@ -112,14 +109,14 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Pris</span>
-                  <span className="font-bold">{formatPrice(token.price)}</span>
+                  <span className="font-bold tabular-nums">{formatPrice(token.price)}</span>
                 </div>
                 
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">24h</span>
                   <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                     {getTrendIcon(token.change24h)}
-                    <span className="font-semibold">
+                    <span className="font-semibold tabular-nums">
                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                     </span>
                   </div>

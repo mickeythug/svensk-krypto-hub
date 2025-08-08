@@ -146,14 +146,9 @@ export const useMemeTokens = (category: 'trending' | 'under1m' | 'all', limit?: 
     const fetchTokens = async () => {
       setLoading(true);
       setError(null);
-      
       try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
         const mockTokens = generateMockTokens(category);
         const limitedTokens = limit ? mockTokens.slice(0, limit) : mockTokens;
-        
         setTokens(limitedTokens);
       } catch (err) {
         setError('Failed to fetch meme tokens');

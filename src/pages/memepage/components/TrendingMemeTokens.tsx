@@ -67,10 +67,7 @@ const TrendingMemeTokens = () => {
       {tokens.map((token, index) => (
         <motion.div
           key={token.id}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.03 }}
         >
           <Card className={`relative overflow-hidden hover:shadow-lg transition-all duration-300 ${
             index < 3 
@@ -117,14 +114,14 @@ const TrendingMemeTokens = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Pris</span>
-                  <span className="font-bold">{formatPrice(token.price)}</span>
+                  <span className="font-bold tabular-nums">{formatPrice(token.price)}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">24h</span>
                   <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                     {getTrendIcon(token.change24h, index)}
-                    <span className="font-semibold">
+                    <span className="font-semibold tabular-nums">
                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                     </span>
                   </div>
