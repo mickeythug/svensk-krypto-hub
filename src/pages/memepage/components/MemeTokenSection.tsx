@@ -94,7 +94,7 @@ const MemeTokenSection = () => {
   };
 
   return (
-    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-gradient-secondary`}>
+    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
       <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
@@ -131,8 +131,11 @@ const MemeTokenSection = () => {
                   Följ de senaste trenderna och upptäck nästa stora meme-coin!
                 </p>
                 
-                <Button className="w-full bg-gradient-primary hover:shadow-glow-primary">
-                  Läs vår Meme Token Guide
+                <Button 
+                  className="w-full bg-gradient-primary hover:shadow-glow-primary"
+                  onClick={() => window.location.href = '/meme'}
+                >
+                  Se vad som trendar
                 </Button>
               </div>
             </Card>
