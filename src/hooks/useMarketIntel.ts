@@ -25,7 +25,7 @@ export interface MarketSentimentData {
 }
 
 async function fetchJSON<T = any>(url: string): Promise<T> {
-  const res = await fetch(url, { headers: { "Content-Type": "application/json" } });
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`${url} -> ${res.status}`);
   return res.json();
 }
