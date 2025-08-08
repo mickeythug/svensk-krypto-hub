@@ -8,14 +8,14 @@ import OptimizedImage from '@/components/OptimizedImage';
 import btc from '@/assets/crypto-logos/btc.png';
 import eth from '@/assets/crypto-logos/eth.png';
 import doge from '@/assets/meme-tokens/doge.png';
-import shib from '@/assets/meme-tokens/shib.png';
-import pepe from '@/assets/meme-tokens/pepe.png';
-import bonk from '@/assets/meme-tokens/bonk.png';
-import wif from '@/assets/meme-tokens/wif.png';
-import floki from '@/assets/meme-tokens/floki.png';
+import shib from '@/assets/crypto-logos/shib.png';
+import link from '@/assets/crypto-logos/link.png';
+import bnb from '@/assets/crypto-logos/bnb.png';
+import sol from '@/assets/crypto-logos/sol.png';
+import ada from '@/assets/crypto-logos/ada.png';
 
 const logoMap: Record<string, string> = {
-  btc, eth, doge, shib, pepe, bonk, wif, floki,
+  btc, eth, doge, shib, link, bnb, sol, ada,
 };
 
 const TokenChip = ({ symbol, name, price, change24h }: any) => {

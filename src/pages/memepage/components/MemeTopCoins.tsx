@@ -8,11 +8,11 @@ import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
 
 import doge from '@/assets/meme-tokens/doge.png';
-import shib from '@/assets/meme-tokens/shib.png';
-import pepe from '@/assets/meme-tokens/pepe.png';
-import bonk from '@/assets/meme-tokens/bonk.png';
-import wif from '@/assets/meme-tokens/wif.png';
-import floki from '@/assets/meme-tokens/floki.png';
+import shib from '@/assets/crypto-logos/shib.png';
+import link from '@/assets/crypto-logos/link.png';
+import bnb from '@/assets/crypto-logos/bnb.png';
+import sol from '@/assets/crypto-logos/sol.png';
+import ada from '@/assets/crypto-logos/ada.png';
 
 // Cover images for tokens without specific logos
 import cover1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -23,7 +23,7 @@ import cover5 from '@/assets/meme-covers/meme-cover-5.jpg';
 import cover6 from '@/assets/meme-covers/meme-cover-6.jpg';
 
 const tokenImages: Record<string, string> = {
-  doge, shib, pepe, bonk, wif, floki,
+  doge, shib, link, bnb, sol, ada,
 };
 
 const covers = [cover1, cover2, cover3, cover4, cover5, cover6];
