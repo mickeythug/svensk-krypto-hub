@@ -74,7 +74,7 @@ const MemeTokenCreator = () => {
                   value={tokenName} 
                   onChange={(e) => setTokenName(e.target.value)} 
                   placeholder="t.ex. MegaFrog Coin"
-                  className="font-crypto text-lg border-primary/30 bg-input/80 focus:border-primary mt-2"
+                  className="text-lg font-sans border-primary/30 bg-input/80 focus:border-primary mt-2 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div>
@@ -84,7 +84,7 @@ const MemeTokenCreator = () => {
                   value={tokenSymbol} 
                   onChange={(e) => setTokenSymbol(e.target.value.toUpperCase().slice(0,6))} 
                   placeholder="MEGA"
-                  className="font-crypto text-lg border-primary/30 bg-input/80 focus:border-primary mt-2"
+                  className="text-lg font-sans border-primary/30 bg-input/80 focus:border-primary mt-2 text-foreground placeholder:text-muted-foreground"
                 />
               </div>
             </div>
@@ -96,7 +96,7 @@ const MemeTokenCreator = () => {
                 <Input 
                   value="1,000,000,000 (1B)"
                   disabled
-                  className="font-crypto text-lg border-primary/30 bg-muted/50 text-muted-foreground cursor-not-allowed"
+                  className="text-lg font-sans border-primary/30 bg-muted/50 text-muted-foreground cursor-not-allowed"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                   <span className="text-xs font-crypto text-primary bg-primary/10 px-2 py-1 rounded">LÅST</span>
@@ -113,7 +113,7 @@ const MemeTokenCreator = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Beskriv din meme token..."
-                className="font-crypto border-primary/30 bg-input/80 focus:border-primary resize-none mt-2"
+                className="font-sans border-primary/30 bg-input/80 focus:border-primary resize-none mt-2 text-foreground placeholder:text-muted-foreground"
                 rows={3}
               />
             </div>
@@ -132,7 +132,7 @@ const MemeTokenCreator = () => {
                     value={twitter} 
                     onChange={(e) => setTwitter(e.target.value)} 
                     placeholder="@username"
-                    className="font-crypto border-primary/30 bg-input/80 focus:border-primary mt-1"
+                    className="font-sans border-primary/30 bg-input/80 focus:border-primary mt-1 text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div>
@@ -145,7 +145,7 @@ const MemeTokenCreator = () => {
                     value={website} 
                     onChange={(e) => setWebsite(e.target.value)} 
                     placeholder="https://yoursite.com"
-                    className="font-crypto border-primary/30 bg-input/80 focus:border-primary mt-1"
+                    className="font-sans border-primary/30 bg-input/80 focus:border-primary mt-1 text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div>
@@ -158,7 +158,7 @@ const MemeTokenCreator = () => {
                     value={telegram} 
                     onChange={(e) => setTelegram(e.target.value)} 
                     placeholder="@channel"
-                    className="font-crypto border-primary/30 bg-input/80 focus:border-primary mt-1"
+                    className="font-sans border-primary/30 bg-input/80 focus:border-primary mt-1 text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
@@ -242,9 +242,9 @@ const MemeTokenCreator = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <div className="space-y-2">
-                    <h3 className="font-crypto font-black text-2xl text-foreground">{tokenName || 'Token Namn'}</h3>
-                    <p className="font-crypto font-bold text-lg text-primary">${tokenSymbol || 'SYMBOL'}</p>
-                    <p className="font-crypto text-sm text-muted-foreground line-clamp-2">{description || 'Token beskrivning visas här...'}</p>
+                    <h3 className="font-sans font-bold text-2xl text-foreground">{tokenName || 'Token Namn'}</h3>
+                    <p className="font-sans font-semibold text-lg text-primary">${tokenSymbol || 'SYMBOL'}</p>
+                    <p className="font-sans text-sm text-muted-foreground line-clamp-2">{description || 'Token beskrivning visas här...'}</p>
                   </div>
                 </div>
               </div>
@@ -254,12 +254,12 @@ const MemeTokenCreator = () => {
             <div className="grid grid-cols-2 gap-4">
               <Card className="p-4 border border-border/60 bg-secondary/10">
                 <div className="font-crypto text-xs text-muted-foreground">TOTAL SUPPLY</div>
-                <div className="font-crypto font-black text-lg text-foreground">1,000,000,000</div>
+                <div className="font-sans font-bold text-lg text-foreground">1,000,000,000</div>
                 <div className="font-crypto text-xs text-primary">1B TOKENS</div>
               </Card>
               <Card className="p-4 border border-border/60 bg-accent/10">
                 <div className="font-crypto text-xs text-muted-foreground">STATUS</div>
-                <div className="font-crypto font-black text-lg text-foreground">REDO</div>
+                <div className="font-sans font-bold text-lg text-foreground">REDO</div>
                 <div className="font-crypto text-xs text-accent">FÖR LANSERING</div>
               </Card>
             </div>
@@ -270,21 +270,21 @@ const MemeTokenCreator = () => {
                 <div className="font-crypto text-sm font-bold text-foreground mb-3">SOCIALA LÄNKAR</div>
                 <div className="space-y-2">
                   {twitter && (
-                    <div className="flex items-center gap-2 font-crypto text-sm">
+                    <div className="flex items-center gap-2 font-sans text-sm">
                       <Twitter className="w-4 h-4 text-[#1DA1F2]" />
                       <span className="text-muted-foreground">Twitter:</span>
                       <span className="text-foreground font-semibold">{twitter}</span>
                     </div>
                   )}
                   {website && (
-                    <div className="flex items-center gap-2 font-crypto text-sm">
+                    <div className="flex items-center gap-2 font-sans text-sm">
                       <Globe className="w-4 h-4 text-primary" />
                       <span className="text-muted-foreground">Hemsida:</span>
                       <span className="text-foreground font-semibold truncate">{website}</span>
                     </div>
                   )}
                   {telegram && (
-                    <div className="flex items-center gap-2 font-crypto text-sm">
+                    <div className="flex items-center gap-2 font-sans text-sm">
                       <MessageCircle className="w-4 h-4 text-[#0088cc]" />
                       <span className="text-muted-foreground">Telegram:</span>
                       <span className="text-foreground font-semibold">{telegram}</span>
