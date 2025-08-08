@@ -21,6 +21,9 @@ All colors MUST be HSL.
     --primary: 165 85% 45%; /* #12E19F converted to HSL */
     --primary-foreground: 280 25% 8%;
     --primary-glow: 165 70% 60%; /* Lighter version of #12E19F */
+    
+    /* Market cap specific color */
+    --market-cap: 165 85% 45%; /* #12E19F - exact hex color requested */
 
     --secondary: 200 100% 50%; /* Electric blue */
     --secondary-foreground: 280 25% 8%;

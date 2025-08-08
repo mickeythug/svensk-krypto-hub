@@ -132,7 +132,7 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between text-sm md:text-base text-muted-foreground mb-3">
-                  <span className="font-crypto font-semibold">MC: {formatMarketCap(token.marketCap)}</span>
+                  <span className="font-crypto font-semibold text-[#12E19F]">MC: {formatMarketCap(token.marketCap)}</span>
                   <div className="flex items-center gap-3">
                     <span className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
