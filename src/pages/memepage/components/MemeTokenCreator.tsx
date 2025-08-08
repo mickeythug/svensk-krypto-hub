@@ -22,7 +22,7 @@ const MemeTokenCreator = () => {
   const [tokenName, setTokenName] = useState('MegaFrog Coin');
   const [tokenSymbol, setTokenSymbol] = useState('MEGA');
   const [description, setDescription] = useState('Den ultimata meme token upplevelsen! 🚀');
-  const [selectedImage, setSelectedImage] = useState(generatedImages[0]);
+  const [selectedImage, setSelectedImage] = useState<string>(generatedImages[0]);
   const [twitter, setTwitter] = useState('');
   const [website, setWebsite] = useState('');
   const [telegram, setTelegram] = useState('');
@@ -178,7 +178,9 @@ const MemeTokenCreator = () => {
                     }`}
                     onClick={() => {
                       console.log('Image clicked:', index, img);
+                      console.log('Current selectedImage:', selectedImage);
                       setSelectedImage(img);
+                      console.log('Setting selectedImage to:', img);
                     }}
                   >
                     <AspectRatio ratio={1}>
@@ -241,7 +243,8 @@ const MemeTokenCreator = () => {
                     src={selectedImage} 
                     alt={`${tokenName} omslagsbild`} 
                     className="w-full h-full object-cover" 
-                    fallbackSrc="/placeholder.svg" 
+                    fallbackSrc="/placeholder.svg"
+                    key={selectedImage} 
                   />
                 </AspectRatio>
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
