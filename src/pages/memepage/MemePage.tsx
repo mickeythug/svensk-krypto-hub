@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Zap, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -12,18 +12,16 @@ import MemeHeader from './components/MemeHeader';
 interface MemePage {}
 
 const MemePage: React.FC<MemePage> = () => {
+  useEffect(() => {
+    document.title = 'Meme Tokens - Crypto Network Sweden';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Upptäck de hetaste meme tokens! Trending meme kryptovalutor, top tokens under 1M market cap, och mer. Gå med i meme token revolutionen!');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-purple-900/20 to-pink-900/20">
-      <Helmet>
-        <title>Meme Tokens - Crypto Network Sweden</title>
-        <meta name="description" content="Upptäck de hetaste meme tokens! Trending meme kryptovalutor, top tokens under 1M market cap, och mer. Gå med i meme token revolutionen!" />
-        <meta name="keywords" content="meme tokens, meme coins, crypto memes, trending tokens, small cap crypto, dogecoin, shiba inu" />
-        <meta property="og:title" content="Meme Tokens - Upptäck De Hetaste Meme Kryptovalutorna" />
-        <meta property="og:description" content="Utforska världen av meme tokens! Trending meme kryptovalutor, små market cap gems, och community-drivna tokens." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://cryptonetwork.se/meme" />
-      </Helmet>
-
       <div className="container mx-auto px-4 py-8">
         {/* Hero Header */}
         <MemeHeader />
