@@ -3,8 +3,32 @@ import { TrendingUp, TrendingDown, DollarSign, Users, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
+
+import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
+import c2 from '@/assets/meme-covers/meme-cover-2.jpg';
+import c3 from '@/assets/meme-covers/meme-cover-3.jpg';
+import c4 from '@/assets/meme-covers/meme-cover-4.jpg';
+import c5 from '@/assets/meme-covers/meme-cover-5.jpg';
+import c6 from '@/assets/meme-covers/meme-cover-6.jpg';
+import c7 from '@/assets/meme-covers/meme-cover-7.jpg';
+import c8 from '@/assets/meme-covers/meme-cover-8.jpg';
+import c9 from '@/assets/meme-covers/meme-cover-9.jpg';
+import c10 from '@/assets/meme-covers/meme-cover-10.jpg';
+import c11 from '@/assets/meme-covers/meme-cover-11.jpg';
+import c12 from '@/assets/meme-covers/meme-cover-12.jpg';
+
+const covers = [c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12];
+
+// Prefer real token logos when available
+import doge from '@/assets/crypto-logos/doge.png';
+import shib from '@/assets/crypto-logos/shib.png';
+const tokenImages: Record<string, string> = {
+  doge,
+  shib,
+};
 
 interface MemeTokenGridProps {
   category: 'trending' | 'under1m' | 'all';
@@ -13,6 +37,12 @@ interface MemeTokenGridProps {
 
 const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   const { tokens, loading, error } = useMemeTokens(category, limit);
+  
+  // Add cover images to tokens
+  const tokensWithCovers = tokens.map((token, index) => ({
+    ...token,
+    cover: covers[index % covers.length]
+  }));
 
   const formatPrice = (price: number): string => {
     if (price < 0.000001) return `$${price.toExponential(2)}`;
@@ -42,18 +72,12 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {[...Array(limit || 12)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-16 w-16 bg-muted rounded-full mx-auto mb-4" />
-              <div className="h-4 bg-muted rounded mb-2" />
-              <div className="h-3 bg-muted rounded mb-4" />
-              <div className="space-y-2">
-                <div className="h-3 bg-muted rounded" />
-                <div className="h-3 bg-muted rounded w-3/4" />
-              </div>
-            </CardContent>
+          <Card key={i} className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
+            <AspectRatio ratio={4/5}>
+              <div className="h-full w-full bg-muted animate-pulse" />
+            </AspectRatio>
           </Card>
         ))}
       </div>
@@ -72,92 +96,70 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {tokens.map((token, index) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      {tokensWithCovers.map((token, index) => (
         <motion.div
           key={token.id}
           whileHover={{ scale: 1.02 }}
           className="group"
         >
-          <Card className="h-full hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-card to-card/50 border-border/50 hover:border-primary/50">
-            <CardContent className="p-6">
-              {/* Token Header */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative">
-                  <OptimizedImage
-                    src={token.image}
-                    alt={`${token.name} logo`}
-                    className="h-12 w-12 rounded-full border-2 border-primary/20"
-                    fallbackSrc="/placeholder.svg"
-                    placeholder="🪙"
-                  />
+          <Card className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300">
+            <AspectRatio ratio={4/5}>
+              <OptimizedImage
+                src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
+                alt={`${token.name} – logotyp / omslagsbild`}
+                className="h-full w-full object-cover"
+                fallbackSrc="/placeholder.svg"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="min-w-0">
+                    <h3 className="truncate font-extrabold text-lg md:text-xl">{token.emoji} {token.symbol}</h3>
+                    <p className="truncate text-xs md:text-sm text-muted-foreground">{token.name}</p>
+                  </div>
                   {token.isHot && (
-                    <Badge className="absolute -top-1 -right-1 text-xs bg-destructive animate-pulse">
-                      🔥
-                    </Badge>
+                    <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30">HOT</Badge>
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-lg truncate group-hover:text-primary transition-colors">
-                    {token.emoji} {token.symbol}
-                  </h3>
-                  <p className="text-sm text-muted-foreground truncate">{token.name}</p>
-                </div>
-              </div>
-
-              {/* Price & Change */}
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Pris</span>
-                  <span className="font-bold tabular-nums">{formatPrice(token.price)}</span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">24h</span>
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="tabular-nums font-bold">{formatPrice(token.price)}</span>
                   <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                     {getTrendIcon(token.change24h)}
-                    <span className="font-semibold tabular-nums">
+                    <span className="font-semibold tabular-nums text-xs">
                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                     </span>
                   </div>
                 </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Market Cap</span>
-                  <span className="font-semibold text-sm">{formatMarketCap(token.marketCap)}</span>
+                <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                  <span>MC: {formatMarketCap(token.marketCap)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Eye className="h-3 w-3" />
+                      {token.views}
+                    </span>
+                  </div>
                 </div>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Users className="h-3 w-3" />
-                  <span>{token.holders.toLocaleString()}</span>
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {token.tags.slice(0, 2).map((tag, i) => (
+                    <Badge key={i} variant="secondary" className="text-xs bg-primary/10 text-primary border border-primary/20">
+                      {tag}
+                    </Badge>
+                  ))}
                 </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Eye className="h-3 w-3" />
-                  <span>{token.views}</span>
-                </div>
+                <Button 
+                  className="w-full bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs"
+                  size="sm"
+                >
+                  <Eye className="mr-1 h-3 w-3" />
+                  Visa Detaljer
+                </Button>
               </div>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-1 mb-4">
-                {token.tags.slice(0, 2).map((tag, i) => (
-                  <Badge key={i} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-
-              {/* Action Button */}
-              <Button 
-                className="w-full bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold"
-                size="sm"
-              >
-                <Eye className="mr-2 h-4 w-4" />
-                Visa Detaljer
-              </Button>
-            </CardContent>
+            </AspectRatio>
           </Card>
         </motion.div>
       ))}

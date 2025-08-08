@@ -38,21 +38,21 @@ const generateMockTokens = (category: string): MemeToken[] => {
       symbol: 'SHIB',
       name: 'Shiba Inu',
       emoji: '🐶',
-      tags: ['DeFi', 'NFT', 'Ecosystem'],
+      tags: ['DOG Meta', 'Community', 'CTO'],
       description: 'The Dogecoin killer'
     },
     {
       symbol: 'FLOKI',
       name: 'Floki',
       emoji: '🐕‍🦺',
-      tags: ['Gaming', 'Metaverse', 'Utility'],
+      tags: ['DOG Meta', 'Moon', 'Utility'],
       description: 'Named after Elon Musks dog'
     },
     {
       symbol: 'BABYDOGE',
       name: 'Baby Doge Coin',
       emoji: '🐕‍🦺',
-      tags: ['Charity', 'Community', 'Deflationary'],
+      tags: ['DOG Meta', 'Community', 'Cult'],
       description: 'Son of Doge'
     },
     {
@@ -66,42 +66,42 @@ const generateMockTokens = (category: string): MemeToken[] => {
       symbol: 'PEPECOIN',
       name: 'Pepecoin',
       emoji: '🐸',
-      tags: ['Alternative', 'Meme', 'New'],
+      tags: ['Frog Meta', 'Meme', 'CTO'],
       description: 'Another Pepe variant'
     },
     {
       symbol: 'MONKE',
       name: 'MonkeyBucks',
       emoji: '🐵',
-      tags: ['Ape', 'Gaming', 'Fun'],
+      tags: ['Ape Meta', 'Moon', 'Fun'],
       description: 'Ape together strong'
     },
     {
       symbol: 'MOON',
       name: 'MoonCoin',
       emoji: '🌙',
-      tags: ['Space', 'To the moon', 'Rocket'],
+      tags: ['Moon Meta', 'Rocket', 'Cult'],
       description: 'Going to the moon'
     },
     {
       symbol: 'DIAMOND',
       name: 'DiamondHands',
       emoji: '💎',
-      tags: ['Diamond hands', 'HODL', 'Strong'],
+      tags: ['Diamond', 'HODL', 'Strong'],
       description: 'Diamond hands only'
     },
     {
       symbol: 'ROCKET',
       name: 'RocketDoge',
       emoji: '🚀',
-      tags: ['Space', 'Fast', 'Moon'],
+      tags: ['DOG Meta', 'Moon', 'Fast'],
       description: 'Fastest rocket to the moon'
     },
     {
       symbol: 'FIRE',
       name: 'FireToken',
       emoji: '🔥',
-      tags: ['Burn', 'Deflationary', 'Hot'],
+      tags: ['Burn', 'CTO', 'Hot'],
       description: 'Burning supply daily'
     }
   ];

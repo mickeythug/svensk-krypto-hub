@@ -93,9 +93,6 @@ const MemePage: React.FC = () => {
       {/* Hero Section */}
       <MemeHeroNew />
 
-      {/* Stats Banner */}
-      <MemeStatsBanner />
-
       {/* Top Meme Coins with Large Images */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
@@ -105,6 +102,9 @@ const MemePage: React.FC = () => {
           <MemeTopCoins />
         </div>
       </section>
+
+      {/* Stats Banner */}
+      <MemeStatsBanner />
 
       {/* All Meme Tokens Grid */}
       <section className="py-16 px-4 bg-meme-grid-bg/50">
