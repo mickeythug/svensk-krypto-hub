@@ -101,7 +101,7 @@ const MemePage: React.FC = () => {
       {/* Top Meme Coins with Large Images */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold text-center mb-12 bg-gradient-rainbow bg-clip-text text-transparent animate-pulse-glow">
+          <h2 className="font-crypto text-4xl md:text-6xl font-bold text-center mb-12 bg-gradient-rainbow bg-clip-text text-transparent animate-pulse-glow">
             🚀 TOP MEME COINS 🚀
           </h2>
           <MemeTopCoins />
@@ -111,8 +111,8 @@ const MemePage: React.FC = () => {
       {/* All Meme Tokens Grid */}
       <section className="py-16 px-4 bg-meme-grid-bg/50">
         <div className="container mx-auto">
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-neon bg-clip-text text-transparent">
-            🎯 ALLA MEME TOKENS
+          <h2 className="font-crypto text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-neon bg-clip-text text-transparent">
+            🎯 ALL MEME TOKENS
           </h2>
           <MemeTokenGrid category="all" />
         </div>

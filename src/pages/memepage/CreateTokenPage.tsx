@@ -77,10 +77,10 @@ const CreateTokenPage: React.FC = () => {
           </div>
           
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow">
+            <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow">
               🎨 CREATE YOUR MEME TOKEN
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="font-display text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
               Design and launch your own meme token with our advanced creator
             </p>
           </div>
