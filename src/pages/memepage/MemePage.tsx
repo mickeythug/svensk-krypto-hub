@@ -7,14 +7,12 @@ import MemeLiveTicker from './components/MemeLiveTicker';
 import MemeTopCoins from './components/MemeTopCoins';
 import MemeTokenGrid from './components/MemeTokenGrid';
 import MemeStatsBanner from './components/MemeStatsBanner';
-
 const MemePage: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
     const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
     document.title = title;
-
     const ensureTag = (selector: string, create: () => HTMLElement) => {
       const existing = document.head.querySelector(selector);
       if (existing) return existing as HTMLElement;
@@ -22,14 +20,12 @@ const MemePage: React.FC = () => {
       document.head.appendChild(el);
       return el;
     };
-
     const md = ensureTag('meta[name="description"]', () => {
       const m = document.createElement('meta');
       m.setAttribute('name', 'description');
       return m;
     });
     md.setAttribute('content', description);
-
     const canonical = ensureTag('link[rel="canonical"]', () => {
       const l = document.createElement('link');
       l.setAttribute('rel', 'canonical');
@@ -37,7 +33,6 @@ const MemePage: React.FC = () => {
     });
     const origin = window.location.origin || 'https://cryptonetworksweden.se';
     canonical.setAttribute('href', `${origin}/meme`);
-
     const ldId = 'ld-json-meme-page';
     const oldLd = document.getElementById(ldId);
     if (oldLd) oldLd.remove();
@@ -53,29 +48,18 @@ const MemePage: React.FC = () => {
     });
     document.head.appendChild(ld);
   }, []);
-
-  return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
+  return <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
       {/* Live Ticker - Full Width at Top */}
       <MemeLiveTicker />
 
       {/* Action Buttons - Top Right */}
       <div className="absolute top-4 right-4 z-50">
         <div className="flex gap-4">
-          <Button 
-            size="lg" 
-            className="font-display bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 text-lg px-6 py-3"
-            onClick={() => {/* TODO: Connect wallet functionality */}}
-          >
+          <Button size="lg" className="font-display bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 text-lg px-6 py-3" onClick={() => {/* TODO: Connect wallet functionality */}}>
             <Wallet className="w-5 h-5 mr-2" />
             🔗 Anslut Wallet
           </Button>
-          <Button 
-            size="lg" 
-            variant="outline"
-            className="font-display border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg px-6 py-3"
-            onClick={() => navigate('/meme/create')}
-          >
+          <Button size="lg" variant="outline" className="font-display border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-lg px-6 py-3" onClick={() => navigate('/meme/create')}>
             <PlusCircle className="w-5 h-5 mr-2" />
             🚀 Skapa Din Coin
           </Button>
@@ -96,9 +80,7 @@ const MemePage: React.FC = () => {
       {/* Top Meme Coins with Large Images */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <h2 className="font-crypto text-4xl md:text-6xl font-bold text-center mb-12 bg-gradient-rainbow bg-clip-text text-transparent animate-pulse-glow">
-            🚀 TOPP MEME COINS 🚀
-          </h2>
+          
           <MemeTopCoins />
         </div>
       </section>
@@ -116,8 +98,6 @@ const MemePage: React.FC = () => {
         </div>
       </section>
 
-    </main>
-  );
+    </main>;
 };
-
 export default MemePage;
