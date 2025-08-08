@@ -106,6 +106,47 @@ const NewsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const articlesPerPage = 20;
 
+  // Smart zero-cost categorization helpers
+  const normalize = (s: string = "") => s.toLowerCase();
+  const hasAny = (s: string, patterns: RegExp[]) => patterns.some((re) => re.test(s));
+  const classifyCategory = (title: string, summary: string, tags: string[] = []) => {
+    const t = normalize(title);
+    const d = normalize(summary);
+    const tagStr = normalize(tags.join(" "));
+    const text = `${t} ${d} ${tagStr}`;
+
+    const reBTC = [/\bbitcoin\b/i, /\bbtc\b/i, /\bxbt\b/i, /\blightning\b/i, /\bhalving\b/i];
+    const reETH = [/\bethereum\b/i, /\beth\b/i, /\beth2\b/i, /\berc-?20\b/i, /\bevm\b/i, /\bvitalik\b/i];
+
+    const reMEME = [/\bmeme\b/i, /\bdoge\b/i, /\bdogecoin\b/i, /\bshib\b/i, /\bshiba\b/i, /\bpepe\b/i, /\bbonk\b/i, /\bwen\b/i, /\bfloki\b/i, /\bcat\b/i, /\bfrog\b/i];
+
+    const rePOL = [/\bsec\b/i, /\bregul\w*/i, /\bpolicy\b/i, /\bladstift\w*/i, /\blag\b/i, /\bmi\s?ca\b/i, /\beu\b/i, /\bsanction\w*/i, /\bskatt\w*/i, /\btax\b/i, /\bparliament\b/i, /\bregering\b/i];
+
+    if (hasAny(text, reBTC)) return "Bitcoin";
+    if (hasAny(text, reETH)) return "Ethereum";
+    if (hasAny(text, reMEME)) return "Meme Tokens";
+    if (hasAny(text, rePOL)) return "Politik";
+    return "Allmänt";
+  };
+
+  const isTrending = (title: string, summary: string, publishedAt: string, source?: string) => {
+    const now = Date.now();
+    const ts = new Date(publishedAt).getTime();
+    const minutes = Math.max(0, Math.floor((now - ts) / 60000));
+
+    const t = normalize(title);
+    const d = normalize(summary);
+    const text = `${t} ${d}`;
+
+    const reHot = [/breaking/i, /urgent/i, /just in/i, /flash/i, /rally/i, /plunge/i, /surge/i, /crash/i, /hack/i, /exploit/i, /etf/i, /lawsuit/i, /approved/i, /denied/i, /listing/i, /delist/i, /halving/i];
+
+    const recencyBoost = minutes <= 90; // last 90 minutes
+    const hotWords = hasAny(text, reHot);
+    const trusted = /cryptopanic|coindesk|cointelegraph|reuters|bloomberg/i.test(source || "");
+
+    return recencyBoost || (hotWords && trusted);
+  };
+
   // SEO Setup
   useEffect(() => {
     document.title = "Krypto Nyheter | Senaste Nyheterna från Kryptovaluta-världen | Crypto Network Sweden";
@@ -133,24 +174,31 @@ const NewsPage = () => {
         const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
         const json = await res.json();
         const items = (json.articles ?? []) as any[];
-        const mapped: NewsArticle[] = items.map((a) => ({
-          id: a.id,
-          title: a.title,
-          summary: a.description || "",
-          content: a.description || "",
-          publishedAt: a.publishedAt,
-          category: /bitcoin/i.test(a.title) ? "Bitcoin" : /ethereum|eth/i.test(a.title) ? "Ethereum" : /meme|doge|shib|pepe/i.test(a.title) ? "Meme Tokens" : "Allmänt",
-          sentiment: 'neutral',
-          imageUrl: a.imageUrl || undefined,
-          tags: Array.isArray(a.tickers) ? a.tickers : [],
-          trending: a.source === 'CryptoPanic',
-          impact: 'medium',
-          source: a.source,
-          url: a.url,
-          readTime: Math.max(1, Math.round(((a.description || '').split(' ').length) / 200)),
-          views: 0,
-          author: a.author || a.source || 'Okänd',
-        }));
+        const mapped: NewsArticle[] = items.map((a) => {
+          const title = a.title || '';
+          const desc = a.description || '';
+          const tags = Array.isArray(a.tickers) ? a.tickers : [];
+          const category = classifyCategory(title, desc, tags);
+          const trending = isTrending(title, desc, a.publishedAt, a.source);
+          return {
+            id: a.id,
+            title: title,
+            summary: desc,
+            content: desc,
+            publishedAt: a.publishedAt,
+            category,
+            sentiment: 'neutral',
+            imageUrl: a.imageUrl || undefined,
+            tags,
+            trending,
+            impact: trending ? 'high' : 'medium',
+            source: a.source,
+            url: a.url,
+            readTime: Math.max(1, Math.round(((desc).split(' ').length) / 200)),
+            views: 0,
+            author: a.author || a.source || 'Okänd',
+          } as NewsArticle;
+        });
         if (!active) return;
         setNews(mapped);
         setFilteredNews(mapped);
@@ -233,9 +281,9 @@ const NewsPage = () => {
     { id: "all", label: "ALLA" },
     { id: "Bitcoin", label: "BTC" },
     { id: "Ethereum", label: "ETH" },
-    { id: "Meme Tokens", label: "Memes" },
-    { id: "Politik", label: "Politik" },
-    { id: "trending", label: "Trending" }
+    { id: "Meme Tokens", label: "MEMES" },
+    { id: "Politik", label: "POLITIK" },
+    { id: "trending", label: "TRENDING" }
   ];
 
   // Load real crypto market data from existing crypto-prices endpoint
@@ -377,7 +425,7 @@ const NewsPage = () => {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6 text-sm text-muted-foreground">
                   <div className="flex items-center">
                     <Activity className="h-4 w-4 mr-2 text-success animate-pulse" />
-                    <span>Live uppdateringar varje minut</span>
+                    <span>Live uppdateringar var 3:e minut</span>
                   </div>
                   <div className="flex items-center">
                     <Star className="h-4 w-4 mr-2 text-warning" />
