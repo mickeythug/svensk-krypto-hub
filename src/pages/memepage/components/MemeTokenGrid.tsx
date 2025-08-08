@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, DollarSign, Users, Eye, Star } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { TrendingUp, TrendingDown, DollarSign, Users, Eye } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -45,34 +45,39 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   }));
 
   const formatPrice = (price: number): string => {
+    if (price < 0.000001) return `$${price.toExponential(2)}`;
     if (price < 0.01) return `$${price.toFixed(6)}`;
     if (price < 1) return `$${price.toFixed(4)}`;
     return `$${price.toFixed(2)}`;
   };
 
-  const formatMarketCap = (cap: number): string => {
-    if (cap >= 1e9) return `$${(cap / 1e9).toFixed(1)}B`;
-    if (cap >= 1e6) return `$${(cap / 1e6).toFixed(1)}M`;
-    if (cap >= 1e3) return `$${(cap / 1e3).toFixed(1)}K`;
-    return `$${cap.toFixed(0)}`;
+  const formatMarketCap = (marketCap: number): string => {
+    if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
+    if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
+    if (marketCap >= 1e3) return `$${(marketCap / 1e3).toFixed(2)}K`;
+    return `$${marketCap.toFixed(2)}`;
+  };
+
+  const getTrendColor = (change: number): string => {
+    if (change > 0) return 'text-success';
+    if (change < 0) return 'text-destructive';
+    return 'text-muted-foreground';
   };
 
   const getTrendIcon = (change: number) => {
-    if (change > 0) return <TrendingUp className="w-4 h-4 mr-1" />;
-    if (change < 0) return <TrendingDown className="w-4 h-4 mr-1" />;
-    return <DollarSign className="w-4 h-4 mr-1" />;
+    if (change > 0) return <TrendingUp className="h-3 w-3" />;
+    if (change < 0) return <TrendingDown className="h-3 w-3" />;
+    return <DollarSign className="h-3 w-3" />;
   };
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
         {[...Array(limit || 12)].map((_, i) => (
-          <Card key={i} className="p-6 animate-pulse">
-            <AspectRatio ratio={16/10}>
-              <div className="h-full bg-muted rounded-lg mb-4"></div>
+          <Card key={i} className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
+            <AspectRatio ratio={4/5}>
+              <div className="h-full w-full bg-muted animate-pulse" />
             </AspectRatio>
-            <div className="h-4 bg-muted rounded mb-2 mt-4"></div>
-            <div className="h-4 bg-muted rounded w-2/3"></div>
           </Card>
         ))}
       </div>
@@ -91,110 +96,80 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-4 md:gap-6 w-full">
-      {tokensWithCovers.map((token, index) => {
-        const positive = token.change24h > 0;
-        
-        return (
-          <motion.div
-            key={token.id}
-            whileHover={{ scale: 1.02 }}
-            className="group"
-          >
-            <Card className="group relative overflow-hidden border-2 border-border/50 bg-card hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:shadow-glow-rainbow">
-              {/* Hot Badge */}
-              {token.isHot && (
-                <div className="absolute top-4 right-4 z-20">
-                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse font-crypto font-bold">
-                    🔥 HOT
-                  </Badge>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
+      {tokensWithCovers.map((token, index) => (
+        <motion.div
+          key={token.id}
+          whileHover={{ scale: 1.02 }}
+          className="group"
+        >
+          <Card className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-glow-primary transition-all duration-300">
+            <AspectRatio ratio={4/5}>
+              <OptimizedImage
+                src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
+                alt={`${token.name} – logotyp / omslagsbild`}
+                className="h-full w-full object-cover"
+                fallbackSrc="/placeholder.svg"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-crypto font-extrabold text-lg tracking-wide">{token.emoji} {token.symbol}</h3>
+                    <p className="truncate text-xs text-muted-foreground font-crypto font-medium">{token.name}</p>
+                  </div>
+                  {token.isHot && (
+                    <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30 font-crypto font-bold text-xs">HOT</Badge>
+                  )}
                 </div>
-              )}
-
-              {/* Token Image */}
-              <div className="relative overflow-hidden">
-                <AspectRatio ratio={16/10}>
-                  <OptimizedImage
-                    src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
-                    alt={`${token.name} token image`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    fallbackSrc="/placeholder.svg"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                </AspectRatio>
                 
-                {/* Overlay info */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-2xl font-crypto font-black text-white">{token.emoji} {token.symbol}</h3>
-                    <Badge 
-                      variant="outline" 
-                      className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-bold text-lg backdrop-blur-sm`}
-                    >
-                      {getTrendIcon(token.change24h)}
-                      {positive ? '+' : ''}{token.change24h.toFixed(2)}%
-                    </Badge>
-                  </div>
-                  <p className="text-white/90 text-sm truncate font-crypto font-medium">{token.name}</p>
-                </div>
-              </div>
-
-              {/* Token Details */}
-              <div className="p-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                      <DollarSign className="w-4 h-4" />
-                      Price
-                    </div>
-                    <div className="text-xl font-crypto font-bold text-foreground">{formatPrice(token.price)}</div>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
-                      <Star className="w-4 h-4" />
-                      Market Cap
-                    </div>
-                    <div className="text-xl font-crypto font-bold text-foreground">{formatMarketCap(token.marketCap)}</div>
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="tabular-nums font-crypto font-black">{formatPrice(token.price)}</span>
+                  <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
+                    {getTrendIcon(token.change24h)}
+                    <span className="font-crypto font-bold tabular-nums text-xs">
+                      {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(1)}%
+                    </span>
                   </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Holders:</span>
+                
+                <div className="text-xs text-muted-foreground mb-2">
+                  <span className="font-crypto font-semibold text-primary">MC: {formatMarketCap(token.marketCap)}</span>
+                </div>
+                
+                <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                  <span className="flex items-center gap-1">
+                    <Users className="h-3 w-3" />
                     <span className="font-crypto font-bold text-foreground">
                       {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
                     </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Eye className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">Views:</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye className="h-3 w-3" />
                     <span className="font-crypto font-bold text-foreground">{token.views}</span>
-                  </div>
+                  </span>
                 </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {token.tags?.slice(0, 3).map((tag: string, i: number) => (
-                    <Badge key={i} variant="secondary" className="text-xs font-crypto">
+                
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {token.tags.slice(0, 2).map((tag, i) => (
+                    <Badge key={i} variant="secondary" className="text-xs font-crypto font-semibold bg-primary/10 text-primary border border-primary/20 px-1 py-0">
                       {tag}
                     </Badge>
                   ))}
                 </div>
-
-                {/* Action Button */}
+                
                 <Button 
-                  className="w-full font-crypto bg-gradient-primary hover:shadow-glow-primary transition-all duration-300" 
-                  size="lg"
+                  className="w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold text-xs h-8"
+                  size="sm"
                 >
-                  <Eye className="w-4 h-4 mr-2" />
+                  <Eye className="mr-1 h-3 w-3" />
                   VISA DETALJER
                 </Button>
               </div>
-            </Card>
-          </motion.div>
-        );
-      })}
+            </AspectRatio>
+          </Card>
+        </motion.div>
+      ))}
     </div>
   );
 };
