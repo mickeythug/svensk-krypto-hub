@@ -89,6 +89,7 @@ export default {
 				'sans': ['Inter', 'sans-serif'],
 				'crypto': ['Orbitron', 'monospace'],
 				'display': ['Exo 2', 'sans-serif'],
+				'orbitron': ['Orbitron', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

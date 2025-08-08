@@ -104,7 +104,7 @@ const NewsPage = () => {
   const [sortBy, setSortBy] = useState<"date" | "impact" | "trending">("date");
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 50;
+  const articlesPerPage = 20;
 
   // SEO Setup
   useEffect(() => {
@@ -160,8 +160,17 @@ const NewsPage = () => {
         if (active) setIsLoading(false);
       }
     };
+    
+    // Initial load
     load();
-    return () => { active = false; };
+    
+    // Auto-refresh every 3 minutes
+    const interval = setInterval(load, 3 * 60 * 1000);
+    
+    return () => { 
+      active = false; 
+      clearInterval(interval);
+    };
   }, []);
 
   // Update filtered news when search, category, or sort changes
@@ -429,7 +438,7 @@ const NewsPage = () => {
                 <TabsTrigger
                   key={category.id}
                   value={category.id}
-                  className="font-display font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2 transition-all duration-300"
+                  className="font-orbitron font-black text-white text-sm tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2 transition-all duration-300 hover:text-primary"
                 >
                   {category.label}
                 </TabsTrigger>
