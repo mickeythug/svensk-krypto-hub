@@ -37,6 +37,7 @@ import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NewsArticle {
   id: string;
@@ -51,6 +52,7 @@ interface NewsArticle {
   trending: boolean;
   impact: 'high' | 'medium' | 'low';
   source: string;
+  url?: string;
   readTime: number;
   views: number;
   author: string;
@@ -120,26 +122,45 @@ const NewsPage = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-    // Mock expanded news data with more realistic content
-    const mockNews: NewsArticle[] = [
-      {
-        id: "1",
-        title: "Bitcoin når historiska höjder efter institutionella ETF-investeringar överstiger 50 miljarder dollar",
-        summary: "Bitcoin har nått nya rekordhöjder över $116,000 efter att institutionella investerare pumpat in över 50 miljarder dollar i Bitcoin ETF:er under den senaste månaden. Analytiker förutspår ytterligare tillväxt.",
-        content: "Detaljerad artikel om Bitcoin's exceptionella prisökning och institutionella adoption...",
-        publishedAt: "2025-01-07T10:30:00Z",
-        category: "Bitcoin",
-        sentiment: "positive",
-        imageUrl: "/crypto-charts.jpg",
-        tags: ["Bitcoin", "ETF", "Institutionella", "Rekord", "Adoption"],
-        trending: true,
-        impact: "high",
-        source: "CryptoNetwork Sverige",
-        readTime: 5,
-        views: 12547,
-        author: "Lars Andersson"
-      },
+    let active = true;
+    const load = async () => {
+      try {
+        setIsLoading(true);
+        const projectRef = "jcllcrvomxdrhtkqpcbr";
+        const url = `https://${projectRef}.supabase.co/functions/v1/news-aggregator?lang=sv&limit=50`;
+        const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+        const json = await res.json();
+        const items = (json.articles ?? []) as any[];
+        const mapped: NewsArticle[] = items.map((a) => ({
+          id: a.id,
+          title: a.title,
+          summary: a.description || "",
+          content: a.description || "",
+          publishedAt: a.publishedAt,
+          category: /bitcoin/i.test(a.title) ? "Bitcoin" : /ethereum|eth/i.test(a.title) ? "Ethereum" : /meme|doge|shib|pepe/i.test(a.title) ? "Meme Tokens" : "Allmänt",
+          sentiment: 'neutral',
+          imageUrl: a.imageUrl || undefined,
+          tags: Array.isArray(a.tickers) ? a.tickers : [],
+          trending: a.source === 'CryptoPanic',
+          impact: 'medium',
+          source: a.source,
+          url: a.url,
+          readTime: Math.max(1, Math.round(((a.description || '').split(' ').length) / 200)),
+          views: 0,
+          author: a.author || a.source || 'Okänd',
+        }));
+        if (!active) return;
+        setNews(mapped);
+        setFilteredNews(mapped);
+      } catch (e) {
+        console.error('Failed to load news', e);
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, []);
       {
         id: "2",
         title: "Ethereum 2.0 staking överstiger 32 miljoner ETH - Nätverkets säkerhet når nya nivåer",
@@ -459,26 +480,33 @@ const NewsPage = () => {
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             {/* News Content */}
             <div className="xl:col-span-3">
-              {/* Breaking News Alert */}
-              <Card className="p-6 bg-destructive/10 border-destructive/30 shadow-lg mb-8 animate-fade-in">
-                <div className="flex items-start gap-4">
-                  <AlertCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0 animate-pulse" />
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg text-destructive mb-3">🚨 BREAKING NEWS</h3>
-                    <p className="text-base text-foreground leading-relaxed mb-4">
-                      Bitcoin når nya all-time highs över $116,000 efter ETF-inflöden på rekordnivå. 
-                      Institutionella investerare fortsätter att pumpa in kapital i krypto-marknaden.
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="border-destructive text-destructive hover:bg-destructive hover:text-white transition-all duration-300"
-                    >
-                      Läs mer →
-                    </Button>
+              {/* Breaking News - dynamic from latest article */}
+              {news[0] && (
+                <Card className="p-6 bg-destructive/10 border-destructive/30 shadow-lg mb-8 animate-fade-in">
+                  <div className="flex items-start gap-4">
+                    <AlertCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0 animate-pulse" />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg text-destructive mb-3">🚨 BREAKING NEWS</h3>
+                      <p className="text-base text-foreground leading-relaxed mb-2 font-display font-semibold">
+                        {news[0].title}
+                      </p>
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
+                        {news[0].summary}
+                      </p>
+                      {news[0].url && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="border-destructive text-destructive hover:bg-destructive hover:text-white transition-all duration-300"
+                          onClick={() => window.open(news[0].url!, '_blank')}
+                        >
+                          Läs mer →
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              )}
 
               {/* Results Counter */}
               <div className="flex items-center justify-between mb-6">
@@ -516,7 +544,7 @@ const NewsPage = () => {
                            key={article.id} 
                            className="p-5 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer hover-scale"
                            style={{ animationDelay: `${index * 100}ms` }}
-                           onClick={() => navigate(`/artikel/${article.id}`)}
+                           onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
                          >
                           <div className="space-y-4">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -581,7 +609,7 @@ const NewsPage = () => {
                            key={article.id} 
                            className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
                            style={{ animationDelay: `${index * 50}ms` }}
-                           onClick={() => navigate(`/artikel/${article.id}`)}
+                           onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
                          >
                           <div className="flex gap-4">
                             <div className="flex-1 space-y-3">
@@ -631,10 +659,10 @@ const NewsPage = () => {
                                     <span>{article.views.toLocaleString()} visningar</span>
                                   </div>
                                 </div>
-                                <Button variant="outline" size="sm" className="hover:bg-primary hover:text-primary-foreground">
-                                  <ExternalLink className="h-3 w-3 mr-1" />
-                                  Läs mer
-                                </Button>
+                                 <Button variant="outline" size="sm" className="hover:bg-primary hover:text-primary-foreground" onClick={(e) => { e.stopPropagation(); if (article.url) window.open(article.url, '_blank'); }}>
+                                   <ExternalLink className="h-3 w-3 mr-1" />
+                                   Läs mer
+                                 </Button>
                               </div>
                             </div>
                           </div>
