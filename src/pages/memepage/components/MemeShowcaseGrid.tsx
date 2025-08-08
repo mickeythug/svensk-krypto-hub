@@ -59,34 +59,35 @@ const MemeShowcaseGrid = () => {
     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
       {(loading ? Array.from({ length: 8 }) : items).map((item, i) => (
         <Card key={i} className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm">
-          <AspectRatio ratio={4/5}>
-            {loading ? (
-              <div className="h-full w-full bg-muted animate-pulse" />
-            ) : (
-              <>
-                <OptimizedImage
-                  src={tokenImages[((item as any).symbol || '').toLowerCase()] ?? (item as any).cover}
-                  alt={`${(item as any).name} – logotyp / omslagsbild`}
-                  className="h-full w-full object-cover"
-                  fallbackSrc="/placeholder.svg"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <h3 className="truncate font-extrabold text-lg md:text-xl">{(item as any).emoji} {(item as any).symbol}</h3>
-                      <p className="truncate text-xs md:text-sm text-muted-foreground">{(item as any).name}</p>
-                    </div>
-                    <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30">HOT</Badge>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-sm">
-                    <span className="tabular-nums font-bold">{formatPrice((item as any).price)}</span>
-                    <Change value={(item as any).change24h} />
-                  </div>
-                </div>
-              </>
-            )}
-          </AspectRatio>
+           <AspectRatio ratio={4/5}>
+             {loading ? (
+               <div className="h-full w-full bg-muted animate-pulse" />
+             ) : (
+               <OptimizedImage
+                 src={tokenImages[((item as any).symbol || '').toLowerCase()] ?? (item as any).cover}
+                 alt={`${(item as any).name} – logotyp / omslagsbild`}
+                 className="h-full w-full object-cover"
+                 fallbackSrc="/placeholder.svg"
+               />
+             )}
+           </AspectRatio>
+           
+           {/* Token info below image */}
+           {!loading && (
+             <div className="p-3 md:p-4">
+               <div className="flex items-center justify-between gap-2">
+                 <div className="min-w-0">
+                   <h3 className="truncate font-extrabold text-lg md:text-xl">{(item as any).emoji} {(item as any).symbol}</h3>
+                   <p className="truncate text-xs md:text-sm text-muted-foreground">{(item as any).name}</p>
+                 </div>
+                 <Badge className="shrink-0 bg-primary/20 text-primary border border-primary/30">HOT</Badge>
+               </div>
+               <div className="mt-2 flex items-center justify-between text-sm">
+                 <span className="tabular-nums font-bold">{formatPrice((item as any).price)}</span>
+                 <Change value={(item as any).change24h} />
+               </div>
+             </div>
+           )}
         </Card>
       ))}
     </div>

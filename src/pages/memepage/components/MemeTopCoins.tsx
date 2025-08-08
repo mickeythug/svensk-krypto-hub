@@ -114,27 +114,24 @@ const MemeTopCoins = () => {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   fallbackSrc="/placeholder.svg"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
               </AspectRatio>
-              
-              {/* Overlay info */}
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-2xl font-crypto font-black text-white">{token.symbol}</h3>
-                  <Badge 
-                    variant="outline" 
-                    className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-bold text-lg backdrop-blur-sm`}
-                  >
-                    {positive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-                    {positive ? '+' : ''}{token.change24h.toFixed(2)}%
-                  </Badge>
-                </div>
-                <p className="text-white/90 text-sm truncate font-crypto font-medium">{token.name}</p>
-              </div>
             </div>
 
             {/* Token Details */}
             <div className="p-6 space-y-4">
+              {/* Token symbol and name */}
+              <div className="flex items-center gap-3 mb-4">
+                <h3 className="text-2xl font-crypto font-black">{token.symbol}</h3>
+                <Badge 
+                  variant="outline" 
+                  className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-bold text-lg`}
+                >
+                  {positive ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+                  {positive ? '+' : ''}{token.change24h.toFixed(2)}%
+                </Badge>
+              </div>
+              <p className="text-muted-foreground text-sm truncate font-crypto font-medium">{token.name}</p>
+              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
