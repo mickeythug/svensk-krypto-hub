@@ -46,7 +46,7 @@ const MemePage: React.FC = () => {
     document.head.appendChild(ld);
   }, []);
   return (
-    <>
+    <div className="meme-page">
       {/* Minimal Header with Action Buttons */}
       <MemePageHeader />
       
@@ -87,7 +87,7 @@ const MemePage: React.FC = () => {
       </section>
 
       </main>
-    </>
+    </div>
   );
 };
 export default MemePage;

@@ -18,21 +18,21 @@ All colors MUST be HSL.
     --popover: 280 30% 12%;
     --popover-foreground: 60 100% 98%;
 
-    --primary: 44 100% 50%; /* yellow-500 */
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 44 100% 70%; /* lighter yellow */
+    --primary: 165 85% 45%; /* #12E19F converted to HSL */
+    --primary-foreground: 280 25% 8%;
+    --primary-glow: 165 70% 60%; /* Lighter version of #12E19F */
     
     /* Market cap specific color */
-    --market-cap: 44 100% 50%; /* yellow-500 */
+    --market-cap: 165 85% 45%; /* #12E19F - exact hex color requested */
 
-    --secondary: 30 100% 50%; /* orange-500 */
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 165 85% 45%; /* Same as primary - no more blue */
+    --secondary-foreground: 280 25% 8%;
 
     --muted: 280 20% 15%;
     --muted-foreground: 280 10% 65%;
 
-    --accent: 0 84% 60%; /* red-500 for hot badges */
-    --accent-foreground: 0 0% 98%;
+    --accent: 165 70% 60%; /* Lighter version of the green */
+    --accent-foreground: 280 25% 8%;
 
     --destructive: 0 100% 60%;
     --destructive-foreground: 60 100% 98%;
@@ -45,27 +45,35 @@ All colors MUST be HSL.
 
     --border: 280 30% 20%;
     --input: 280 25% 18%;
-    --ring: 44 100% 50%;
+    --ring: 165 85% 45%;
 
     --radius: 1rem;
 
     /* Meme-specific gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(44 100% 50%), hsl(30 100% 50%)); /* yellow to orange */
-    --gradient-secondary: linear-gradient(135deg, hsl(44 100% 60%) 0%, hsl(30 100% 50%) 50%, hsl(340 75% 55%) 100%); /* yellow via orange to pink */
+    --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
     --gradient-hero: linear-gradient(135deg, hsl(280 25% 8%), hsl(300 30% 15%));
-    --gradient-rainbow: linear-gradient(90deg, hsl(0 100% 60%), hsl(60 100% 60%), hsl(120 100% 60%), hsl(44 100% 50%), hsl(30 100% 50%), hsl(300 100% 60%));
-    --gradient-neon: linear-gradient(135deg, hsl(44 100% 50%), hsl(30 100% 50%), hsl(60 100% 50%));
+    --gradient-rainbow: linear-gradient(90deg, hsl(0 100% 60%), hsl(60 100% 60%), hsl(120 100% 60%), hsl(165 85% 45%), hsl(165 70% 60%), hsl(300 100% 60%));
+    --gradient-neon: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%), hsl(60 100% 50%));
+    
+    /* Meme page specific colors */
+    --meme-primary: 44 100% 50%; /* yellow-500 */
+    --meme-secondary: 30 100% 50%; /* orange-500 */
+    --meme-accent: 0 84% 60%; /* red-500 for hot badges */
+    --meme-gradient-primary: linear-gradient(135deg, hsl(44 100% 50%), hsl(30 100% 50%));
+    --meme-gradient-secondary: linear-gradient(135deg, hsl(44 100% 60%) 0%, hsl(30 100% 50%) 50%, hsl(340 75% 55%) 100%);
+    --meme-gradient-hot: linear-gradient(135deg, hsl(30 100% 50%), hsl(0 84% 60%));
     
     /* Meme token specific colors */
     --meme-pink: 330 100% 70%;
-    --meme-cyan: 44 100% 50%; /* yellow-500 */
+    --meme-cyan: 165 85% 45%; /* Changed from blue to our green */
     --meme-lime: 90 100% 60%;
     --meme-orange: 30 100% 60%;
 
     /* Enhanced glowing effects */
-    --glow-primary: 0 0 30px hsl(44 100% 50% / 0.8);
-    --glow-secondary: 0 0 25px hsl(30 100% 50% / 0.6);
-    --glow-rainbow: 0 0 40px hsl(44 100% 50% / 0.5), 0 0 60px hsl(30 100% 50% / 0.3);
+    --glow-primary: 0 0 30px hsl(165 85% 45% / 0.8);
+    --glow-secondary: 0 0 25px hsl(165 85% 45% / 0.6);
+    --glow-rainbow: 0 0 40px hsl(165 85% 45% / 0.5), 0 0 60px hsl(165 70% 60% / 0.3);
 
     /* Meme backgrounds */
     --meme-grid-bg: 280 40% 5%;
@@ -73,12 +81,12 @@ All colors MUST be HSL.
 
     --sidebar-background: 214 28% 10%;
     --sidebar-foreground: 180 100% 85%;
-    --sidebar-primary: 44 100% 50%;
+    --sidebar-primary: 165 85% 45%;
     --sidebar-primary-foreground: 214 32% 8%;
     --sidebar-accent: 214 25% 18%;
     --sidebar-accent-foreground: 180 100% 85%;
     --sidebar-border: 214 25% 20%;
-    --sidebar-ring: 44 100% 50%;
+    --sidebar-ring: 165 85% 45%;
   }
 
   .dark {
@@ -89,27 +97,40 @@ All colors MUST be HSL.
     --card-foreground: 180 100% 95%;
     --popover: 214 28% 12%;
     --popover-foreground: 180 100% 95%;
-    --primary: 44 100% 50%; /* yellow-500 */
-    --primary-foreground: 0 0% 98%;
-    --secondary: 30 100% 50%; /* orange-500 */
-    --secondary-foreground: 0 0% 98%;
+    --primary: 165 85% 45%; /* Changed to our green */
+    --primary-foreground: 214 32% 8%;
+    --secondary: 165 85% 45%; /* Changed to our green */
+    --secondary-foreground: 214 32% 8%;
     --muted: 214 25% 15%;
     --muted-foreground: 180 50% 65%;
-    --accent: 0 84% 60%; /* red-500 for hot badges */
-    --accent-foreground: 0 0% 98%;
+    --accent: 165 70% 60%; /* Changed to lighter green */
+    --accent-foreground: 214 32% 8%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 25% 20%;
     --input: 214 25% 18%;
-    --ring: 44 100% 50%; /* yellow-500 */
+    --ring: 165 85% 45%; /* Changed to our green */
     --sidebar-background: 214 28% 10%;
     --sidebar-foreground: 180 100% 85%;
-    --sidebar-primary: 44 100% 50%; /* yellow-500 */
+    --sidebar-primary: 165 85% 45%; /* Changed to our green */
     --sidebar-primary-foreground: 214 32% 8%;
     --sidebar-accent: 214 25% 18%;
     --sidebar-accent-foreground: 180 100% 85%;
     --sidebar-border: 214 25% 20%;
-    --sidebar-ring: 44 100% 50%; /* yellow-500 */
+    --sidebar-ring: 165 85% 45%; /* Changed to our green */
+  }
+
+  /* Meme page specific styling */
+  .meme-page {
+    --primary: 44 100% 50%; /* yellow-500 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 30 100% 50%; /* orange-500 */
+    --secondary-foreground: 0 0% 98%;
+    --accent: 0 84% 60%; /* red-500 for hot badges */
+    --accent-foreground: 0 0% 98%;
+    --ring: 44 100% 50%;
+    --gradient-primary: var(--meme-gradient-primary);
+    --gradient-secondary: var(--meme-gradient-secondary);
   }
 }
 
