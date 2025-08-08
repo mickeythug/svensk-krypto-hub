@@ -4,6 +4,9 @@ import { Zap } from 'lucide-react';
 import MemeHeroPro from './components/MemeHeroPro';
 import MemeShowcaseGrid from './components/MemeShowcaseGrid';
 import MemeTokenGallery from './components/MemeTokenGallery';
+import MemeMarqueeTicker from './components/MemeMarqueeTicker';
+import MemeTokenCreator from './components/MemeTokenCreator';
+import GeneratedMemeWall from './components/GeneratedMemeWall';
 
 interface MemePage {}
 
@@ -58,6 +61,11 @@ const MemePage: React.FC<MemePage> = () => {
         {/* HERO */}
         <MemeHeroPro />
 
+        {/* LIVE TICKER */}
+        <div className="mt-6">
+          <MemeMarqueeTicker />
+        </div>
+
         {/* TRENDING SHOWCASE */}
         <section className="mb-12" aria-labelledby="trending-heading">
           <h2 id="trending-heading" className="mb-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
@@ -66,12 +74,23 @@ const MemePage: React.FC<MemePage> = () => {
           <MemeShowcaseGrid />
         </section>
 
+        {/* CREATOR */}
+        <section className="mb-12" aria-labelledby="creator-heading">
+          <h2 id="creator-heading" className="mb-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            🧪 Skapa din egen Meme Token
+          </h2>
+          <MemeTokenCreator />
+        </section>
+
         {/* GALLERY */}
         <section className="mb-12" aria-labelledby="all-heading">
           <h2 id="all-heading" className="mb-4 text-2xl md:text-3xl font-bold bg-gradient-to-r from-accent to-accent bg-clip-text text-transparent">
             🚀 Alla Meme Tokens
           </h2>
           <MemeTokenGallery />
+          <div className="mt-10">
+            <GeneratedMemeWall />
+          </div>
         </section>
 
         {/* Varning */}
