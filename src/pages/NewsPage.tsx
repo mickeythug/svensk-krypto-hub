@@ -103,6 +103,8 @@ const NewsPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<"date" | "impact" | "trending">("date");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 50;
 
   // SEO Setup
   useEffect(() => {
@@ -127,7 +129,7 @@ const NewsPage = () => {
       try {
         setIsLoading(true);
         const projectRef = "jcllcrvomxdrhtkqpcbr";
-        const url = `https://${projectRef}.supabase.co/functions/v1/news-aggregator?lang=sv&limit=50`;
+        const url = `https://${projectRef}.supabase.co/functions/v1/news-aggregator?lang=sv&limit=500`;
         const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
         const json = await res.json();
         const items = (json.articles ?? []) as any[];
@@ -306,14 +308,30 @@ const NewsPage = () => {
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
     const date = new Date(dateString);
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInHours < 1) return "Just nu";
+    if (diffInMinutes < 1) return "Just nu";
+    if (diffInMinutes < 60) return `${diffInMinutes} min sedan`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) return `${diffInHours}h sedan`;
+    
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) return `${diffInDays}d sedan`;
+    
     return date.toLocaleDateString('sv-SE');
   };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredNews.length / articlesPerPage);
+  const startIndex = (currentPage - 1) * articlesPerPage;
+  const endIndex = startIndex + articlesPerPage;
+  const currentArticles = filteredNews.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, sortBy]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -423,41 +441,59 @@ const NewsPage = () => {
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             {/* News Content */}
             <div className="xl:col-span-3">
-              {/* Breaking News - dynamic from latest article */}
+              {/* Enhanced Breaking News Banner */}
               {news[0] && (
-                <Card className="p-6 bg-destructive/10 border-destructive/30 shadow-lg mb-8 animate-fade-in">
-                  <div className="flex items-start gap-4">
-                    <AlertCircle className="h-6 w-6 text-destructive mt-1 flex-shrink-0 animate-pulse" />
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg text-destructive mb-3">🚨 BREAKING NEWS</h3>
-                      <p className="text-base text-foreground leading-relaxed mb-2 font-display font-semibold">
-                        {news[0].title}
-                      </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3">
-                        {news[0].summary}
-                      </p>
-                      {news[0].url && (
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="border-destructive text-destructive hover:bg-destructive hover:text-white transition-all duration-300"
-                          onClick={() => window.open(news[0].url!, '_blank')}
-                        >
-                          Läs mer →
-                        </Button>
-                      )}
+                <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-500 to-orange-500 rounded-2xl shadow-2xl mb-8 animate-fade-in">
+                  <div className="absolute inset-0 bg-black/20"></div>
+                  <div className="relative p-8">
+                    <div className="flex items-start gap-6">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center w-16 h-16 bg-white/20 rounded-full backdrop-blur-sm">
+                          <Flame className="h-8 w-8 text-white animate-pulse" />
+                        </div>
+                      </div>
+                      <div className="flex-1 text-white">
+                        <div className="flex items-center gap-3 mb-4">
+                          <Badge className="bg-white/30 text-white border-white/50 font-black text-sm px-4 py-1 tracking-wider backdrop-blur-sm">
+                            🚨 BREAKING NEWS
+                          </Badge>
+                          <span className="text-white/80 text-sm font-medium">
+                            {formatTimeAgo(news[0].publishedAt)}
+                          </span>
+                        </div>
+                        <h3 className="font-black text-2xl md:text-3xl leading-tight mb-4 text-shadow-lg">
+                          {news[0].title}
+                        </h3>
+                        <p className="text-white/90 text-lg leading-relaxed mb-6 line-clamp-2 font-medium">
+                          {news[0].summary}
+                        </p>
+                        <div className="flex items-center gap-4">
+                          {news[0].url && (
+                            <Button 
+                              className="bg-white text-red-600 hover:bg-white/90 font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                              onClick={() => window.open(news[0].url!, '_blank')}
+                            >
+                              Läs hela artikeln
+                              <ExternalLink className="ml-2 h-4 w-4" />
+                            </Button>
+                          )}
+                          <div className="text-white/70 text-sm font-medium">
+                            Källa: {news[0].source}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </Card>
+                </div>
               )}
 
-              {/* Results Counter */}
+              {/* Results Counter & Pagination Info */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="font-crypto text-2xl font-bold text-primary">
                   {searchQuery ? `SÖKRESULTAT (${filteredNews.length})` : 'ALLA NYHETER'}
                 </h2>
                 <div className="text-sm text-muted-foreground">
-                  Visar {filteredNews.length} av {news.length} artiklar
+                  Sida {currentPage} av {totalPages} | Visar {currentArticles.length} av {filteredNews.length} artiklar
                 </div>
               </div>
 
@@ -482,7 +518,7 @@ const NewsPage = () => {
                   {/* Grid View */}
                   {viewMode === "grid" && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                      {filteredNews.map((article, index) => (
+                      {currentArticles.map((article, index) => (
                          <Card 
                            key={article.id} 
                            className="p-5 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer hover-scale"
@@ -577,7 +613,7 @@ const NewsPage = () => {
                    {/* List View */}
                    {viewMode === "list" && (
                      <div className="space-y-6 animate-fade-in">
-                       {filteredNews.map((article, index) => (
+                       {currentArticles.map((article, index) => (
                           <Card 
                             key={article.id} 
                             className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
@@ -655,6 +691,50 @@ const NewsPage = () => {
                            </div>
                          </Card>
                       ))}
+                    </div>
+                  )}
+
+                  {/* Pagination Controls */}
+                  {filteredNews.length > articlesPerPage && (
+                    <div className="flex items-center justify-center gap-4 mt-12 mb-8">
+                      <Button
+                        variant="outline"
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-6 py-3"
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Föregående
+                      </Button>
+                      
+                      <div className="flex items-center gap-2">
+                        {/* Page numbers */}
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                          const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                          if (pageNum > totalPages) return null;
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={currentPage === pageNum ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setCurrentPage(pageNum)}
+                              className="w-10 h-10"
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      
+                      <Button
+                        variant="outline"
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-6 py-3"
+                      >
+                        Nästa
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
                     </div>
                   )}
 

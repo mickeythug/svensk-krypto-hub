@@ -142,4 +142,16 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
 }
