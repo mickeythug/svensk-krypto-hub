@@ -114,33 +114,8 @@ const Header = () => {
 
           {/* CTA Buttons */}
           {!isMobile && (
-            <div className="hidden md:flex items-center space-x-4">
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="font-crypto font-bold tracking-wider uppercase text-xs border-2 border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground hover:border-foreground transition-all duration-300 transform hover:scale-105"
-                onClick={() => window.open('https://t.me/cryptonetworksweden', '_blank')}
-              >
-                LOGGA IN
-              </Button>
-              {/* Connect Wallet */}
-              <div>
-                {/* Lazy import to avoid SSR/EME issues */}
-                {/* @ts-ignore */}
-                <ConnectWalletButton />
-              </div>
-              <a 
-                href="https://t.me/cryptonetworksweden" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <Button 
-                  size="sm"
-                  className="font-crypto font-bold tracking-wider uppercase text-xs bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-primary/25"
-                >
-                  GÅ MED
-                </Button>
-              </a>
+            <div className="hidden md:flex items-center gap-4 shrink-0">
+              <ConnectWalletButton />
             </div>
           )}
 
@@ -198,27 +173,6 @@ const Header = () => {
                 })}
               </nav>
 
-              <div className="mt-8 space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full font-crypto font-bold tracking-wider uppercase text-xs border-2 border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground hover:border-foreground transition-all duration-300"
-                  onClick={() => window.open('https://t.me/cryptonetworksweden', '_blank')}
-                >
-                  LOGGA IN
-                </Button>
-                <a 
-                  href="https://t.me/cryptonetworksweden" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="block"
-                >
-                  <Button 
-                    className="w-full font-crypto font-bold tracking-wider uppercase text-xs bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25"
-                  >
-                    GÅ MED I COMMUNITYN
-                  </Button>
-                </a>
-              </div>
             </SheetContent>
           </Sheet>
         </div>
