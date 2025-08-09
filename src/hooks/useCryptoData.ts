@@ -14,6 +14,7 @@ interface CryptoPrice {
   rank?: number;
   lastUpdated?: string;
   image?: string; // Riktig logo URL från CoinGecko
+  coinGeckoId?: string; // CoinGecko ID för exakt TV-mapping
 }
 
 interface CacheEntry<T> {
@@ -428,7 +429,8 @@ class CryptoAPIClient {
       volume: formatters.volume(coin.total_volume || 0),
       rank: coin.market_cap_rank || index + 1,
       lastUpdated: coin.last_updated || new Date().toISOString(),
-      image: coin.image
+      image: coin.image,
+      coinGeckoId: coin.id,
     }));
   }
 

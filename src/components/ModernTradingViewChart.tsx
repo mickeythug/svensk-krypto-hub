@@ -4,13 +4,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Settings, MoreHorizontal, Maximize2, BarChart3, AlertCircle, RefreshCw } from "lucide-react";
+import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 
 interface ModernTradingViewChartProps {
   symbol: string;
   currentPrice: number;
+  coinGeckoId?: string;
 }
 
-const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChartProps) => {
+const ModernTradingViewChart = ({ symbol, currentPrice, coinGeckoId }: ModernTradingViewChartProps) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [timeframe, setTimeframe] = useState("1D");
   const [isLoaded, setIsLoaded] = useState(false);
@@ -19,26 +21,8 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
   const containerRef = useRef<HTMLDivElement>(null);
   const chartLoadTimeout = useRef<NodeJS.Timeout>();
 
-  // Symbol mapping for TradingView format
-  const getTradingViewSymbol = (symbol: string) => {
-    const symbolMap: Record<string, string> = {
-      'BTC': 'BTCUSDT',
-      'ETH': 'ETHUSDT',
-      'BNB': 'BNBUSDT',
-      'XRP': 'XRPUSDT',
-      'ADA': 'ADAUSDT',
-      'SOL': 'SOLUSDT',
-      'DOT': 'DOTUSDT',
-      'AVAX': 'AVAXUSDT',
-      'LINK': 'LINKUSDT',
-      'MATIC': 'MATICUSDT',
-      'UNI': 'UNIUSDT',
-      'LTC': 'LTCUSDT',
-      'DOGE': 'DOGEUSDT',
-      'SHIB': 'SHIBUSDT'
-    };
-    return `BINANCE:${symbolMap[symbol.toUpperCase()] || symbol.toUpperCase() + 'USDT'}`;
-  };
+  // TradingView symbol mapping via CoinGecko tickers (Binance → Bybit → MEXC)
+  const { tvSymbol, exchange, isLoading: isTvLoading } = useTradingViewSymbol(symbol, coinGeckoId);
 
   // Interval mapping for timeframe
   const getInterval = (timeframe: string) => {
@@ -109,8 +93,7 @@ const handleRetry = () => {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  const tradingViewSymbol = getTradingViewSymbol(symbol);
-  console.log('Using TradingView symbol:', tradingViewSymbol);
+  console.log('Using TradingView symbol:', tvSymbol, 'exchange:', exchange);
 
   return (
     <Card className="h-full bg-background/95 backdrop-blur-sm border-border/20 relative overflow-hidden">
@@ -191,19 +174,19 @@ const handleRetry = () => {
             <div className="text-center">
               <div className="animate-spin mx-auto h-12 w-12 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
               <h3 className="text-lg font-semibold mb-2">Laddar TradingView Chart</h3>
-              <p className="text-muted-foreground">Hämtar live data från Binance...</p>
+              <p className="text-muted-foreground">Hämtar live data från TradingView...</p>
               <div className="mt-2 text-xs text-success">
-                Symbol: {tradingViewSymbol}
+                Symbol: {tvSymbol} {exchange ? `• ${exchange}` : ''}
               </div>
             </div>
           </div>
         ) : (
           <div className="w-full h-full">
             <AdvancedRealTimeChart
-              key={`${tradingViewSymbol}-${timeframe}-${refreshKey}`}
+              key={`${tvSymbol}-${timeframe}-${refreshKey}`}
               theme="dark"
               autosize
-              symbol={tradingViewSymbol}
+              symbol={tvSymbol}
               interval={getInterval(timeframe)}
               timezone="Etc/UTC"
               style="1"
