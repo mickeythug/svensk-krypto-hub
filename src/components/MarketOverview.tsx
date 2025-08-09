@@ -385,21 +385,21 @@ const MarketOverview = () => {
                               <Badge variant="outline" className="text-xs">Realtids AI</Badge>
                             </div>
                             <div className="space-y-3">
-                              <div className="flex justify-between items-center text-sm">
-                                <span className="text-muted-foreground">Aktuellt pris:</span>
-                                <span className="font-crypto font-bold">${levels.currentPrice.toLocaleString()}</span>
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
-                                  <span className="text-sm text-destructive">Nästa stöd:</span>
-                                  <span className="font-crypto text-sm text-destructive font-bold">${levels.nextSupport.price.toLocaleString()}</span>
-                                </div>
-                                
-                                <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
-                                  <span className="text-sm text-success">Nästa motstånd:</span>
-                                  <span className="font-crypto text-sm text-success font-bold">${levels.nextResistance.price.toLocaleString()}</span>
-                                </div>
+<div className="flex justify-between items-center text-sm">
+  <span className="text-muted-foreground">Aktuellt pris:</span>
+  <span className="font-crypto font-bold">{(typeof levels.currentPrice === 'number' && isFinite(levels.currentPrice) && levels.currentPrice > 0) ? `$${Math.round(levels.currentPrice).toLocaleString()}` : '—'}</span>
+</div>
+ 
+<div className="space-y-2">
+  <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
+    <span className="text-sm text-destructive">Nästa stöd:</span>
+    <span className="font-crypto text-sm text-destructive font-bold">{(typeof levels.nextSupport?.price === 'number' && isFinite(levels.nextSupport.price) && levels.nextSupport.price > 0) ? `$${Math.round(levels.nextSupport.price).toLocaleString()}` : '—'}</span>
+  </div>
+  
+  <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
+    <span className="text-sm text-success">Nästa motstånd:</span>
+    <span className="font-crypto text-sm text-success font-bold">{(typeof levels.nextResistance?.price === 'number' && isFinite(levels.nextResistance.price) && levels.nextResistance.price > 0) ? `$${Math.round(levels.nextResistance.price).toLocaleString()}` : '—'}</span>
+  </div>
                                 
                                 {levels.criticalLevel && (
                                   <div className={`p-2 rounded border ${

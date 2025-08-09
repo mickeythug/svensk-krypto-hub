@@ -149,6 +149,21 @@ async function getHourlyPrices(coinId: string, days = 14): Promise<number[]> {
     return prices.filter((n: number) => Number.isFinite(n));
   } catch { return []; }
 }
+
+// Simple price fallback to guarantee non-zero current prices
+async function getSimplePrices(ids: string[]): Promise<Record<string, number>> {
+  try {
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(',')}&vs_currencies=usd`;
+    const data = await fetchJSON<any>(url);
+    const out: Record<string, number> = {};
+    for (const id of ids) {
+      const v = Number(data?.[id]?.usd);
+      if (Number.isFinite(v) && v > 0) out[id] = v;
+    }
+    return out;
+  } catch { return {}; }
+}
+
 function downsample(values: number[], step: number): number[] {
   if (step <= 1) return values.slice();
   const result: number[] = [];
@@ -298,22 +313,33 @@ serve(async (req) => {
     const today = new Date().toISOString().slice(0, 10);
     const cacheKey = `ai:market:${today}`;
 
-    const [global, tvl, fng, socialPct, movers, btcDaily, ethDaily] = await Promise.all([
-      getGlobalMarket(),
-      getDefiTVL(),
-      getFearGreed(),
-      getSocialVolumePct(),
-      getTopMovers(),
-      getDailyPrices('bitcoin', 1825),
-      getDailyPrices('ethereum', 1825),
-    ]);
+const [global, tvl, fng, socialPct, movers, btcDaily, ethDaily, simple] = await Promise.all([
+  getGlobalMarket(),
+  getDefiTVL(),
+  getFearGreed(),
+  getSocialVolumePct(),
+  getTopMovers(),
+  getDailyPrices('bitcoin', 1825),
+  getDailyPrices('ethereum', 1825),
+  getSimplePrices(['bitcoin','ethereum']),
+]);
 
-    const btcTaD1 = diagnoseTA(btcDaily);
-    const ethTaD1 = diagnoseTA(ethDaily);
-    const btcTaD7 = diagnoseTA(downsample(btcDaily, 7));
-    const ethTaD7 = diagnoseTA(downsample(ethDaily, 7));
-    const btcTaM1 = diagnoseTA(downsample(btcDaily, 30));
-    const ethTaM1 = diagnoseTA(downsample(ethDaily, 30));
+const btcTaD1 = diagnoseTA(btcDaily);
+const ethTaD1 = diagnoseTA(ethDaily);
+const btcTaD7 = diagnoseTA(downsample(btcDaily, 7));
+const ethTaD7 = diagnoseTA(downsample(ethDaily, 7));
+const btcTaM1 = diagnoseTA(downsample(btcDaily, 30));
+const ethTaM1 = diagnoseTA(downsample(ethDaily, 30));
+
+// Ensure non-zero current prices using simple price fallback
+const btcSpot = Number(simple?.bitcoin);
+const ethSpot = Number(simple?.ethereum);
+if ((!btcTaD1.price || btcTaD1.price <= 0) && Number.isFinite(btcSpot) && btcSpot > 0) {
+  (btcTaD1 as any).price = btcSpot;
+}
+if ((!ethTaD1.price || ethTaD1.price <= 0) && Number.isFinite(ethSpot) && ethSpot > 0) {
+  (ethTaD1 as any).price = ethSpot;
+}
 
     const topMovers = movers
       .filter((m: any) => Number.isFinite(m.change24h))
@@ -353,20 +379,20 @@ serve(async (req) => {
       generatedAt: new Date().toISOString(),
     };
 
-    const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång till realtidsdata.\n\nKRAV: Returnera ENDAST giltig JSON enligt schema. Använd exakta siffror och nivåer. Inkludera tydliga texter för stöd/motstånd och breakout/breakdown.\n\nJSON SCHEMA (oförändrat): ${JSON.stringify({
-      trend: "Bullish|Bearish|Neutral",
-      summary: "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
-      positives: [],
-      negatives: [],
-      technicalLevels: {
-        btc: { currentPrice: 0, nextSupport: { price: 0, text: "" }, nextResistance: { price: 0, text: "" }, criticalLevel: { price: 0, text: "", type: "breakout" } },
-        eth: { currentPrice: 0, nextSupport: { price: 0, text: "" }, nextResistance: { price: 0, text: "" }, criticalLevel: { price: 0, text: "", type: "breakdown" } },
-      },
-      ta: { btc: { d1: {} as any, h4: {} as any, h1: {} as any }, eth: { d1: {} as any, h4: {} as any, h1: {} as any } },
-      sentiment: { fearGreed: 0, socialMediaTrend: "", institutionalFlow: "" },
-      generatedAt: new Date().toISOString(),
-      sources: []
-    })}\n`;
+const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång till realtidsdata.\n\nKRAV: Returnera ENDAST giltig JSON enligt schema. Använd exakta siffror och nivåer. Inkludera tydliga texter för stöd/motstånd och breakout/breakdown.\n\nJSON SCHEMA (oförändrat): ${JSON.stringify({
+  trend: "Bullish|Bearish|Neutral",
+  summary: "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
+  positives: [],
+  negatives: [],
+  technicalLevels: {
+    btc: { currentPrice: 0, nextSupport: { price: 0, text: "" }, nextResistance: { price: 0, text: "" }, criticalLevel: { price: 0, text: "", type: "breakout|breakdown|approaching" } },
+    eth: { currentPrice: 0, nextSupport: { price: 0, text: "" }, nextResistance: { price: 0, text: "" }, criticalLevel: { price: 0, text: "", type: "breakout|breakdown|approaching" } },
+  },
+  ta: { btc: { d1: {} as any, d7: {} as any, m1: {} as any }, eth: { d1: {} as any, d7: {} as any, m1: {} as any } },
+  sentiment: { fearGreed: 0, socialMediaTrend: "", institutionalFlow: "" },
+  generatedAt: new Date().toISOString(),
+  sources: []
+})}\n`;
 
     // Optional web research
     const perpFindings = await researchViaPerplexity(facts);
@@ -472,7 +498,7 @@ serve(async (req) => {
         btc: ensureLevels(parsed?.technicalLevels?.btc, facts.ta.btc.d1),
         eth: ensureLevels(parsed?.technicalLevels?.eth, facts.ta.eth.d1),
       },
-      ta: parsed.ta ?? facts.ta,
+      ta: facts.ta,
       sentiment: parsed.sentiment ?? {
         fearGreed: typeof facts?.sentiment?.fearGreedIndex === 'number' ? facts.sentiment.fearGreedIndex : null,
         socialMediaTrend: typeof facts?.sentiment?.socialVolumePct === 'number' ? `${Math.round(facts.sentiment.socialVolumePct)}% social aktivitet` : '—',
