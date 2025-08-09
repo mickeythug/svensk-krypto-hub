@@ -46,10 +46,14 @@ const SYMBOL_OVERRIDES: Record<string, TvSymbolResult> = {
   // 'TIA': { tvSymbol: 'BINANCE:TIAUSDT', exchange: 'BINANCE' },
 };
 
-async function fetchTickers(coinGeckoId: string) {
-  const url = `https://api.coingecko.com/api/v3/coins/${coinGeckoId}/tickers?include_exchange_logo=false`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Tickers fetch failed: ${res.status}`);
+async function fetchTickersViaProxy(coinGeckoId?: string, symbol?: string) {
+  const projectRef = 'jcllcrvomxdrhtkqpcbr';
+  const params = new URLSearchParams();
+  if (coinGeckoId) params.set('id', coinGeckoId);
+  if (symbol) params.set('symbol', symbol);
+  const url = `https://${projectRef}.supabase.co/functions/v1/tv-symbol-resolver?${params.toString()}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`tv-symbol-resolver failed: ${res.status}`);
   return res.json();
 }
 
@@ -62,37 +66,19 @@ function buildTvSymbol(exchangeName: string, base: string, target: string): TvSy
 export async function resolveTradingViewSymbol(symbol: string, coinGeckoId?: string): Promise<TvSymbolResult> {
   const sym = (symbol || '').toUpperCase();
   if (SYMBOL_OVERRIDES[sym]) return SYMBOL_OVERRIDES[sym];
-  if (!coinGeckoId) return { tvSymbol: `BINANCE:${sym}USDT`, exchange: 'BINANCE' };
 
-  const data = await fetchTickers(coinGeckoId);
-  const tickers: any[] = data?.tickers || [];
-
-  // Prefer USDT/USD/USDC on preferred exchanges by trust score & volume
-  for (const ex of PREFERRED_EXCHANGES) {
-    for (const tgt of PREFERRED_TARGETS) {
-      const candidates = tickers
-        .filter((t) => t?.market?.name?.includes(ex) && t?.target?.toUpperCase() === tgt)
-        .sort((a, b) => (b?.trust_score || 0) - (a?.trust_score || 0) || (b?.converted_volume?.usd || 0) - (a?.converted_volume?.usd || 0));
-      if (candidates.length) {
-        const { base, target, market } = candidates[0];
-        const built = buildTvSymbol(market.name, base, target);
-        if (built) return built;
-      }
+  try {
+    const res = await fetchTickersViaProxy(coinGeckoId, sym);
+    if (res?.ok && res?.tvSymbol && res?.exchange) {
+      return { tvSymbol: res.tvSymbol, exchange: res.exchange };
     }
+  } catch (e) {
+    // ignore and fallback below
   }
 
-  // Any market from preferred exchanges
-  for (const ex of PREFERRED_EXCHANGES) {
-    const anyCandidate = tickers.find((t) => t?.market?.name?.includes(ex));
-    if (anyCandidate) {
-      const { base, target, market } = anyCandidate;
-      const built = buildTvSymbol(market.name, base, target);
-      if (built) return built;
-    }
-  }
-
-  // Fallback guess
-  return { tvSymbol: `BINANCE:${sym}USDT`, exchange: 'BINANCE' };
+  // Fallback guesses across popular venues (non-Binance first)
+  const guesses = ['BYBIT', 'OKX', 'KUCOIN', 'MEXC', 'GATEIO', 'COINBASE', 'KRAKEN', 'BINANCE'];
+  return { tvSymbol: `${guesses[0]}:${sym}USDT`, exchange: guesses[0] };
 }
 
 export function useTradingViewSymbol(symbol: string, coinGeckoId?: string) {
