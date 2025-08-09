@@ -62,21 +62,43 @@ Deno.serve(async (req) => {
       })());
     }
 
-    // Return latest from DB
-    const { data, error } = await supabase
+    // Return latest from DB; if missing 1h/7d or stale > 3min, refresh immediately
+    let { data, error } = await supabase
       .from('latest_token_prices')
       .select('*')
       .order('market_cap', { ascending: false })
       .limit(pages * 100);
     if (error) throw error;
 
-    const lastUpdated = data && data.length ? data.reduce((acc, row) => Math.max(acc, new Date(row.updated_at).getTime()), 0) : null;
+    const now = Date.now();
+    const lastUpdated = data && data.length ? data.reduce((acc, row) => Math.max(acc, new Date(row.updated_at).getTime()), 0) : 0;
+    const missingPercents = !data || data.length === 0 || data.some((r: any) => r.change_1h == null || r.change_7d == null);
+    const stale = lastUpdated === 0 || (now - lastUpdated) > 180000; // > 3 minutes
+
+    if (missingPercents || stale) {
+      try {
+        const coins = await fetchCoinGeckoPages(pages);
+        await upsertLatestPrices(coins);
+        // Re-read fresh data
+        const reread = await supabase
+          .from('latest_token_prices')
+          .select('*')
+          .order('market_cap', { ascending: false })
+          .limit(pages * 100);
+        if (reread.error) throw reread.error;
+        data = reread.data as any[];
+      } catch (e) {
+        console.error('token-prices-refresh on-demand refresh failed', e);
+      }
+    }
+
+    const finalUpdated = data && data.length ? data.reduce((acc, row) => Math.max(acc, new Date(row.updated_at).getTime()), 0) : null;
 
     return new Response(JSON.stringify({
       ok: true,
       source: 'db',
       pages,
-      last_updated: lastUpdated ? new Date(lastUpdated).toISOString() : null,
+      last_updated: finalUpdated ? new Date(finalUpdated).toISOString() : null,
       count: data?.length ?? 0,
       data: data ?? [],
     }), { status: 200, headers: { 'content-type': 'application/json', ...corsHeaders } });
