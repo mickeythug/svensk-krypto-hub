@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, TrendingUp, TrendingDown } from "lucide-react";
 import { formatUsd } from "@/lib/utils";
+import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 
 interface SimpleMobileChartProps {
   symbol: string;
   currentPrice: number;
+  coinGeckoId?: string;
 }
 
-const SimpleMobileChart = ({ symbol, currentPrice }: SimpleMobileChartProps) => {
+const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileChartProps) => {
   const [selectedTimeframe, setSelectedTimeframe] = useState("1D");
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,14 +27,15 @@ const SimpleMobileChart = ({ symbol, currentPrice }: SimpleMobileChartProps) => 
     { label: "1M", value: "1M" }
   ];
 
+  const { tvSymbol, exchange } = useTradingViewSymbol(symbol, coinGeckoId);
+
   useEffect(() => {
-    console.log('SimpleMobileChart: Component mounted for symbol:', symbol);
+    console.log('SimpleMobileChart: Component mounted for symbol:', symbol, 'tvSymbol:', tvSymbol);
     initSimpleChart();
-    
     return () => {
       console.log('SimpleMobileChart: Component unmounting');
     };
-  }, [symbol]);
+  }, [symbol, tvSymbol, selectedTimeframe]);
 
   const initSimpleChart = async () => {
     console.log('SimpleMobileChart: Starting chart initialization');
@@ -51,7 +54,7 @@ const SimpleMobileChart = ({ symbol, currentPrice }: SimpleMobileChartProps) => 
       // Method 1: Try TradingView iframe embed (most reliable for mobile)
       const iframeHtml = `
         <iframe 
-          src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE%3A${symbol}USDT&interval=${selectedTimeframe}&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=&utm_medium=widget_new&utm_campaign=chart&utm_term=BINANCE%3A${symbol}USDT&utm_content=TradingView%20Chart"
+          src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${encodeURIComponent(tvSymbol)}&interval=${selectedTimeframe}&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&hideideas=1&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en"
           style="width: 100%; height: 300px; margin: 0 !important; padding: 0 !important; border: none;"
           frameborder="0"
           allowtransparency="true"
@@ -112,7 +115,7 @@ const SimpleMobileChart = ({ symbol, currentPrice }: SimpleMobileChartProps) => 
     <div className="flex flex-col h-full">
       {/* Debug info */}
       <div className="px-4 py-2 text-xs text-muted-foreground">
-        Debug: Loading={isLoading.toString()}, Loaded={chartLoaded.toString()}, Symbol={symbol}
+        Debug: Loading=${isLoading.toString()}, Loaded=${chartLoaded.toString()}, Symbol=${symbol}, tv=${tvSymbol}
       </div>
 
       {/* Timeframe Selector */}

@@ -110,7 +110,7 @@ const MobileTradingView = ({
         </TabsList>
 
         <TabsContent value="chart" className="flex-1 mt-0">
-          <SimpleMobileChart symbol={symbol} currentPrice={currentPrice} />
+          <SimpleMobileChart symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
         </TabsContent>
 
         <TabsContent value="orderbook" className="flex-1 mt-0 px-4">

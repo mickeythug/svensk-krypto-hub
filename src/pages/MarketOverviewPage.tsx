@@ -53,6 +53,9 @@ import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { prefetchTradingViewSymbols } from "@/hooks/useTradingViewSymbol";
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
@@ -77,6 +80,7 @@ const MarketOverviewPage = () => {
   const itemsPerPage = 15; // 15 tokens per sida som begärt
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
+  const queryClient = useQueryClient();
 
   // Använd riktiga logo bilder från CoinGecko API
   const getCryptoLogo = (crypto: any) => {
@@ -219,6 +223,14 @@ const MarketOverviewPage = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentData = filteredData.slice(startIndex, endIndex);
+
+  // Prefetch TV symbols for visible page (improves chart load)
+  useEffect(() => {
+    const toPrefetch = filteredData
+      .slice(startIndex, endIndex)
+      .map(c => ({ symbol: c.symbol, coinGeckoId: (cryptoPrices.find(p => p.symbol === c.symbol)?.coinGeckoId) }));
+    prefetchTradingViewSymbols(queryClient, toPrefetch);
+  }, [filteredData, startIndex, endIndex, queryClient, cryptoPrices]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
