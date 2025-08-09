@@ -4,6 +4,21 @@
 
 import bs58 from 'npm:bs58';
 import * as ed from 'npm:@noble/ed25519';
+import { sha512 } from 'npm:@noble/hashes/sha512';
+
+// Configure noble-ed25519 to use a sync sha512 implementation (required in Deno edge runtime)
+function concatBytes(...arrays: Uint8Array[]) {
+  const length = arrays.reduce((a, b) => a + b.length, 0);
+  const out = new Uint8Array(length);
+  let offset = 0;
+  for (const a of arrays) {
+    out.set(a, offset);
+    offset += a.length;
+  }
+  return out;
+}
+// @ts-ignore - noble's etc is not typed in our env
+(ed.etc || (ed as any).etc).sha512Sync = (...msgs: Uint8Array[]) => sha512(concatBytes(...msgs));
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,6 +36,7 @@ type VerifyBody = {
 
 function hexToBytes(hex: string): Uint8Array {
   const clean = hex.startsWith('0x') ? hex.slice(2) : hex;
+  if (clean.length % 2 !== 0) throw new Error('Invalid hex');
   const out = new Uint8Array(clean.length / 2);
   for (let i = 0; i < out.length; i++) out[i] = parseInt(clean.substr(i * 2, 2), 16);
   return out;
@@ -38,7 +54,7 @@ Deno.serve(async (req) => {
   }
   try {
     const body = (await req.json()) as VerifyBody;
-    const { address, signatureHex, message, nonce, issuedAt, domain } = body;
+    const { address, signatureHex, message, nonce, issuedAt } = body;
 
     if (!address || !signatureHex || !message || !nonce || !issuedAt) {
       return new Response(JSON.stringify({ ok: false, error: 'Missing fields' }), {
