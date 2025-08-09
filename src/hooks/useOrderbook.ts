@@ -2,6 +2,16 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTradingViewSymbol } from '@/hooks/useTradingViewSymbol';
 import { useBinanceOrderbook, OrderBook, OrderBookEntry } from '@/hooks/useBinanceOrderbook';
 
+// Pair format helpers
+const toHyphenPair = (p: string) => {
+  const m = p.match(/([A-Z]+)(USDT|USD|USDC|BTC|ETH)$/);
+  return m ? `${m[1]}-${m[2]}` : p;
+};
+const toUnderscorePair = (p: string) => {
+  const m = p.match(/([A-Z]+)(USDT|USD|USDC|BTC|ETH)$/);
+  return m ? `${m[1]}_${m[2]}` : p;
+};
+
 // Generic, exchange-aware orderbook hook (Binance → Bybit → MEXC)
 export const useOrderbook = (
   symbol: string,
@@ -53,17 +63,30 @@ export const useOrderbook = (
     const poll = async () => {
       try {
         let res: Response | null = null;
-        if (exchange === 'BYBIT' || tvSymbol.startsWith('BYBIT:')) {
+if (exchange === 'BYBIT' || tvSymbol.startsWith('BYBIT:')) {
           // Bybit Spot depth (public)
-          // Docs vary by version; try v1 then fallback to v3 path if needed
           res = await fetch(`https://api.bybit.com/spot/quote/v1/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
           if (!res.ok) {
-            // fallback attempt (if v1 not available)
             res = await fetch(`https://api.bybit.com/spot/quote/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
           }
         } else if (exchange === 'MEXC' || tvSymbol.startsWith('MEXC:')) {
           // MEXC depth API (Binance-like)
           res = await fetch(`https://api.mexc.com/api/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
+        } else if (exchange === 'OKX' || tvSymbol.startsWith('OKX:')) {
+          // OKX uses hyphen pairs and v5 books
+          const okxPair = toHyphenPair(pair);
+          res = await fetch(`https://www.okx.com/api/v5/market/books?instId=${okxPair}&sz=${Math.min(50, limit * 2)}`);
+        } else if (exchange === 'KUCOIN' || tvSymbol.startsWith('KUCOIN:')) {
+          // KuCoin uses hyphen pairs
+          const kp = toHyphenPair(pair);
+          res = await fetch(`https://api.kucoin.com/api/v1/market/orderbook/level2_${Math.min(100, limit * 5)}?symbol=${kp}`);
+        } else if (exchange === 'GATE' || tvSymbol.startsWith('GATE:') || exchange === 'GATEIO' || tvSymbol.startsWith('GATEIO:')) {
+          // Gate.io uses underscore pairs
+          const gp = toUnderscorePair(pair);
+          res = await fetch(`https://api.gateio.ws/api/v4/spot/order_book?currency_pair=${gp}&limit=${Math.min(50, limit * 2)}`);
+        } else if (exchange === 'COINBASE' || tvSymbol.startsWith('COINBASE:') || exchange === 'COINBASEPRO' || tvSymbol.startsWith('COINBASEPRO:')) {
+          const cp = toHyphenPair(pair);
+          res = await fetch(`https://api.exchange.coinbase.com/products/${cp}/book?level=2`);
         } else {
           // Unknown exchange → try MEXC-style as best-effort
           res = await fetch(`https://api.mexc.com/api/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });

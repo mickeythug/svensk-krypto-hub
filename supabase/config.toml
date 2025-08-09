@@ -5,3 +5,20 @@ verify_jwt = false
 
 [functions.crypto-prices]
 verify_jwt = false
+
+[functions.market-prefetch]
+verify_jwt = false
+
+[functions.token-prices-refresh]
+verify_jwt = false
+
+# Cron jobs to keep DB cache fresh
+[[cron.jobs]]
+name = "market-prefetch-hourly"
+schedule = "0 * * * *"
+endpoint = "/functions/v1/market-prefetch?refresh=true&pages=2"
+
+[[cron.jobs]]
+name = "token-prices-refresh-3min"
+schedule = "*/3 * * * *"
+endpoint = "/functions/v1/token-prices-refresh?refresh=true&pages=2"

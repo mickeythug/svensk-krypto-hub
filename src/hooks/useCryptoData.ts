@@ -310,10 +310,10 @@ const CACHE_KEYS = Object.freeze({
 
 // Cache durations
 const CACHE_DURATIONS = Object.freeze({
-  CRYPTO_PRICES: 60000, // 1 minut för priser
+  CRYPTO_PRICES: 180000, // 3 minuter för priser (målet)
   CRYPTO_METADATA: 3600000, // 1 timme för metadata
-  BACKGROUND_REFRESH: 30000, // 30s background refresh
-  STALE_WHILE_REVALIDATE: 180000 // 3 minuter stale
+  BACKGROUND_REFRESH: 180000, // 3 min bakgrundsrefresh
+  STALE_WHILE_REVALIDATE: 3600000 // 1 timme fallback-cache
 } as const);
 
 // Optimized formatter functions med memoization
@@ -366,58 +366,95 @@ class CryptoAPIClient {
   private readonly circuitBreakerThreshold = 3;
   private readonly circuitBreakerTimeout = 30000; // 30s
 
-  async fetchCryptoPrices(): Promise<CryptoPrice[]> {
-    // Circuit breaker check
-    if (this.isCircuitOpen()) {
-      throw new Error('Circuit breaker is open - too many recent failures');
-    }
+async fetchCryptoPrices(): Promise<CryptoPrice[]> {
+  // Circuit breaker check
+  if (this.isCircuitOpen()) {
+    throw new Error('Circuit breaker is open - too many recent failures');
+  }
 
+  const cacheKey = 'crypto-prices-cache-v1';
+  const projectRef = 'jcllcrvomxdrhtkqpcbr';
+  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=2`;
+
+  // Attempt via Edge Function (DB-backed, refreshed every 3 min via cron)
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    await apiRateLimiter.acquire();
+
+    const res = await fetch(fnUrl, {
+      headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' },
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error(`Edge error: ${res.status} ${res.statusText}`);
+
+    const body = await res.json();
+    const rows = (body?.data ?? []) as any[];
+
+    const transformed: CryptoPrice[] = rows.map((r: any, idx: number) => ({
+      symbol: String(r.symbol ?? r.symbol).toUpperCase(),
+      name: r.name ?? r.name,
+      price: Number(r.price ?? r.current_price ?? 0),
+      change24h: Number(r.change_24h ?? r.price_change_percentage_24h ?? 0),
+      marketCap: r.market_cap != null ? formatters.marketCap(Number(r.market_cap)) : undefined,
+      volume: r.total_volume != null ? formatters.volume(Number(r.total_volume)) : undefined,
+      rank: r.market_cap_rank ?? idx + 1,
+      lastUpdated: r.updated_at ?? r.last_updated ?? new Date().toISOString(),
+      image: r.image,
+      coinGeckoId: r.coin_gecko_id ?? r.id,
+    }));
+
+    // Persist to localStorage as 1h fallback
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: transformed }));
+    } catch {}
+
+    // Reset circuit breaker on success
+    this.failureCount = 0;
+    return transformed;
+  } catch (error: any) {
+    clearTimeout(timer);
+    this.recordFailure();
+
+    // Fallback 1: localStorage (max 1h)
+    try {
+      const raw = localStorage.getItem(cacheKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Date.now() - parsed.ts <= CACHE_DURATIONS.STALE_WHILE_REVALIDATE) {
+          return parsed.data as CryptoPrice[];
+        }
+      }
+    } catch {}
+
+    // Fallback 2: Direct CoinGecko (batched, sequential to respect limits)
     try {
       await apiRateLimiter.acquire();
-
-      // Use direct CoinGecko API and fetch top 200 (2 pages of 100)
-      const urls = [
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h',
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=2&sparkline=false&price_change_percentage=24h'
-      ];
-
-      const controllers = urls.map(() => new AbortController());
-      const timers = controllers.map((c) => setTimeout(() => c.abort(), 10000));
-
-      const responses = await Promise.all(
-        urls.map((url, idx) =>
-          fetch(url, {
-            headers: {
-              Accept: 'application/json',
-              'Cache-Control': 'no-cache',
-            },
-            signal: controllers[idx].signal,
-          })
-        )
-      );
-
-      timers.forEach((t) => clearTimeout(t));
-
-      responses.forEach((response) => {
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-      });
-
-      const arrays = await Promise.all(responses.map((r) => r.json()));
-      const combined = arrays.flat();
-
-      // Reset circuit breaker on success
+      const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false&price_change_percentage=24h';
+      const pages = [1, 2];
+      const results: any[] = [];
+      for (const p of pages) {
+        const c = new AbortController();
+        const t = setTimeout(() => c.abort(), 10000);
+        const r = await fetch(`${base}&page=${p}`, { headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' }, signal: c.signal });
+        clearTimeout(t);
+        if (!r.ok) throw new Error(`CG error: ${r.status} ${r.statusText}`);
+        const j = await r.json();
+        results.push(...j);
+        if (p !== pages[pages.length - 1]) await new Promise(res => setTimeout(res, 1200));
+      }
+      const transformed = this.transformCoinGeckoResponse(results);
+      try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: transformed })); } catch {}
       this.failureCount = 0;
-
-      return this.transformCoinGeckoResponse(combined);
-      
-    } catch (error: any) {
-      this.recordFailure();
-      // Do NOT fabricate data. Rely on React Query cache as fallback.
-      throw (error instanceof Error ? error : new Error(String(error)));
+      return transformed;
+    } catch (e2: any) {
+      // Do NOT fabricate data
+      throw (e2 instanceof Error ? e2 : new Error(String(e2)));
     }
   }
+}
 
   private transformCoinGeckoResponse(data: any[]): CryptoPrice[] {
     return data.map((coin, index) => ({
