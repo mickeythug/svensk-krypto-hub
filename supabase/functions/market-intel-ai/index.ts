@@ -294,42 +294,42 @@ serve(async (req) => {
     const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {} as any;
     const { newsCount24h, refresh } = body || {};
 
-    // Check daily cache first unless forced refresh
+    // Centralized TTL cache (ai_market_intel_cache) unless forced refresh
+    const cacheKey = 'ai:market:rolling:v1';
     if (!refresh) {
-      const today = new Date().toISOString().slice(0, 10);
-      const cacheKey = `ai:market:${today}`;
       const { data: cached } = await supabase
-        .from('news_cache')
-        .select('data')
+        .from('ai_market_intel_cache')
+        .select('data, expires_at')
         .eq('key', cacheKey)
         .gt('expires_at', new Date().toISOString())
         .single();
       if (cached?.data) {
-        console.log('Returning cached AI analysis for', today);
+        console.log('Returning cached AI analysis from centralized cache');
         return new Response(JSON.stringify(cached.data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
 
-    const today = new Date().toISOString().slice(0, 10);
-    const cacheKey = `ai:market:${today}`;
-
-const [global, tvl, fng, socialPct, movers, btcDaily, ethDaily, simple] = await Promise.all([
+const [global, tvl, fng, socialPct, movers, btcH3, ethH3, btcH8, ethH8, btcD120, ethD120, simple] = await Promise.all([
   getGlobalMarket(),
   getDefiTVL(),
   getFearGreed(),
   getSocialVolumePct(),
   getTopMovers(),
-  getDailyPrices('bitcoin', 1825),
-  getDailyPrices('ethereum', 1825),
+  getHourlyPrices('bitcoin', 3),
+  getHourlyPrices('ethereum', 3),
+  getHourlyPrices('bitcoin', 8),
+  getHourlyPrices('ethereum', 8),
+  getDailyPrices('bitcoin', 120),
+  getDailyPrices('ethereum', 120),
   getSimplePrices(['bitcoin','ethereum']),
 ]);
 
-const btcTaD1 = diagnoseTA(btcDaily);
-const ethTaD1 = diagnoseTA(ethDaily);
-const btcTaD7 = diagnoseTA(downsample(btcDaily, 7));
-const ethTaD7 = diagnoseTA(downsample(ethDaily, 7));
-const btcTaM1 = diagnoseTA(downsample(btcDaily, 30));
-const ethTaM1 = diagnoseTA(downsample(ethDaily, 30));
+const btcTaD1 = diagnoseTA(btcH3);
+const ethTaD1 = diagnoseTA(ethH3);
+const btcTaD7 = diagnoseTA(btcH8);
+const ethTaD7 = diagnoseTA(ethH8);
+const btcTaM1 = diagnoseTA(btcD120.slice(-60));
+const ethTaM1 = diagnoseTA(ethD120.slice(-60));
 
 // Ensure non-zero current prices using simple price fallback
 const btcSpot = Number(simple?.bitcoin);
@@ -355,17 +355,17 @@ if ((!ethTaD1.price || ethTaD1.price <= 0) && Number.isFinite(ethSpot) && ethSpo
       ta: { btc: { d1: btcTaD1, d7: btcTaD7, m1: btcTaM1 }, eth: { d1: ethTaD1, d7: ethTaD7, m1: ethTaM1 } },
       computed: {
         ethWeeklyChangePct: (() => {
-          const n = ethDaily.length;
+          const n = ethD120.length;
           if (n < 8) return null;
-          const last = ethDaily[n - 1];
-          const weekAgo = ethDaily[n - 8];
+          const last = ethD120[n - 1];
+          const weekAgo = ethD120[n - 8];
           return ((last - weekAgo) / weekAgo) * 100;
         })(),
         btcWeeklyChangePct: (() => {
-          const n = btcDaily.length;
+          const n = btcD120.length;
           if (n < 8) return null;
-          const last = btcDaily[n - 1];
-          const weekAgo = btcDaily[n - 8];
+          const last = btcD120[n - 1];
+          const weekAgo = btcD120[n - 8];
           return ((last - weekAgo) / weekAgo) * 100;
         })(),
       },
@@ -483,9 +483,14 @@ const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång 
       };
     }
 
+    const compactUSD = (n?: number | null) => {
+      if (typeof n !== 'number' || !isFinite(n)) return '—';
+      return `$${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 2 }).format(n)}`;
+    };
+
     const ensured = {
       trend: parsed.trend ?? (facts?.overview?.trend24hPct && facts.overview.trend24hPct >= 0 ? 'Bullish' : 'Neutral'),
-      summary: parsed.summary ?? `Marknadsvärde: ${facts?.overview?.totalMarketCap ? `$${Math.round(facts.overview.totalMarketCap).toLocaleString()}` : '—'} • 24h Volym: ${facts?.overview?.totalVolume24h ? `$${Math.round(facts.overview.totalVolume24h).toLocaleString()}` : '—'} • BTC-dominans: ${typeof facts?.overview?.btcDominance === 'number' ? `${facts.overview.btcDominance.toFixed(1)}%` : '—'} • 24h Förändring: ${typeof facts?.overview?.trend24hPct === 'number' ? `${facts.overview.trend24hPct.toFixed(2)}%` : '—'}`,
+      summary: parsed.summary ?? `Marknadsvärde: ${compactUSD(facts?.overview?.totalMarketCap)} • 24h Volym: ${compactUSD(facts?.overview?.totalVolume24h)} • BTC-dominans: ${typeof facts?.overview?.btcDominance === 'number' ? `${facts.overview.btcDominance.toFixed(2)}%` : '—'} • 24h Förändring: ${typeof facts?.overview?.trend24hPct === 'number' ? `${facts.overview.trend24hPct.toFixed(2)}%` : '—'}`,
       positives: Array.isArray(parsed.positives) && parsed.positives.length ? parsed.positives : [
         facts?.overview?.trend24hPct && facts.overview.trend24hPct > 0 ? `Globalt marknadsvärde ${facts.overview.trend24hPct.toFixed(2)}% senaste 24h` : undefined,
         typeof facts?.sentiment?.fearGreedIndex === 'number' ? `Sentiment: ${facts.sentiment.fearGreedIndex >= 60 ? 'Greed' : 'Neutral'} (${facts.sentiment.fearGreedIndex})` : undefined,
@@ -512,20 +517,13 @@ const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång 
       sources: Array.isArray(parsed.sources) && parsed.sources.length ? parsed.sources : facts.sources,
     };
 
-    // Cache the result for 24 hours
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(6, 0, 0, 0); // Expire at 6 AM next day
-    
+    // Cache the result for ~2 minutes (centralized cache)
+    const expires = new Date(Date.now() + 2 * 60 * 1000).toISOString();
     await supabase
-      .from('news_cache')
-      .upsert({
-        key: cacheKey,
-        data: out,
-        expires_at: tomorrow.toISOString(),
-      });
+      .from('ai_market_intel_cache')
+      .upsert({ key: cacheKey, data: out, expires_at: expires, source: 'openai', version: 'v1' });
 
-    console.log('Generated and cached new AI analysis for', today);
+    console.log('Generated and cached new AI analysis (TTL 2m)');
     return new Response(JSON.stringify(out), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err) {
     console.error("market-intel-ai error", err);

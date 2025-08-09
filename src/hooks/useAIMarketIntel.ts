@@ -69,7 +69,7 @@ export function useAIMarketIntel() {
 }
 
 async function fetchAiAnalysis(): Promise<AIMarketAnalysis> {
-  const { data, error } = await supabase.functions.invoke('market-intel-ai', { body: { refresh: true } });
+  const { data, error } = await supabase.functions.invoke('market-intel-ai');
   if (error) throw new Error(`AI analysis failed: ${error.message}`);
   return data;
 }

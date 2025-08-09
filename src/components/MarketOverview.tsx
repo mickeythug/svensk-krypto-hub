@@ -5,8 +5,10 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import cryptoCharts from "@/assets/crypto-charts.jpg";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useCryptoData } from "@/hooks/useCryptoData";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAIMarketIntel } from "@/hooks/useAIMarketIntel";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 function AIMarkets() {
   const { data, isLoading, error } = useAIMarketIntel();
@@ -45,6 +47,7 @@ const MarketOverview = () => {
   const isMobile = useIsMobile();
   const { data: intel } = useMarketIntel(); // Backup for market stats
   const { cryptoPrices } = useCryptoData();
+  const [openDetails, setOpenDetails] = useState(false);
 
   const formatAbbrev = (n?: number | null) => {
     if (typeof n !== 'number' || !isFinite(n)) return '—';
@@ -227,10 +230,10 @@ const MarketOverview = () => {
 
           {/* Market Analysis */}
           <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
-            <h3 className="font-crypto text-xl font-bold mb-6 text-primary">
-              MARKNADSANALYS
-            </h3>
-            
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-crypto text-xl font-bold text-primary">MARKNADSANALYS</h3>
+              <Button variant="outline" size="sm" onClick={() => setOpenDetails(true)}>Detaljerad info</Button>
+            </div>
             <div 
               className="rounded-lg overflow-hidden mb-4 h-48 bg-cover bg-center"
               style={{ backgroundImage: `url(${cryptoCharts})` }}
@@ -519,6 +522,42 @@ const MarketOverview = () => {
                 ) : null}
               </div>
             )}
+          <Dialog open={openDetails} onOpenChange={setOpenDetails}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Detaljerad AI-research</DialogTitle>
+                <DialogDescription>
+                  Senaste uppdatering: {aiIntel?.generatedAt ? new Date(aiIntel.generatedAt).toLocaleString() : '—'}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <p className="text-sm font-display">{aiIntel?.summary}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {(['btc','eth'] as const).map((asset) => {
+                    const t = aiIntel?.ta?.[asset as 'btc'|'eth'] as any;
+                    if (!t) return null;
+                    const label = (asset as string).toUpperCase();
+                    return (
+                      <Card key={asset} className="p-3 bg-card/70 border-border">
+                        <div className="font-crypto font-semibold text-primary mb-2">{label}</div>
+                        {(['d1','d7','m1'] as const).map(tf => (
+                          <div key={`${asset}-${tf}`} className="flex items-center justify-between text-sm py-1">
+                            <span className="text-muted-foreground">{tf.toUpperCase()}</span>
+                            <span className="font-display">{t?.[tf]?.trend ?? '—'}{typeof t?.[tf]?.rsi14 === 'number' ? ` · RSI ${t?.[tf]?.rsi14.toFixed(0)}` : ''}</span>
+                          </div>
+                        ))}
+                      </Card>
+                    );
+                  })}
+                </div>
+                {Array.isArray(aiIntel?.sources) && aiIntel?.sources?.length ? (
+                  <div className="text-xs text-muted-foreground">
+                    Källor: {(aiIntel?.sources as string[]).join(', ')}
+                  </div>
+                ) : null}
+              </div>
+            </DialogContent>
+          </Dialog>
           </Card>
         </div>
       </div>
