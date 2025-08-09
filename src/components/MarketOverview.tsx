@@ -193,37 +193,46 @@ const MarketOverview = () => {
             >
               <div className="w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end p-4">
                 <div className="text-foreground">
-                  <Badge className={`${(intel?.sentiment.trend24hPct ?? 0) >= 0 ? 'bg-success text-success-foreground' : 'bg-destructive text-destructive-foreground'} mb-2`}>
-                    {(intel?.sentiment.trend24hPct ?? 0) >= 0 ? 'Bullish Trend' : 'Bearish Trend'}
+                  <Badge className={`${intel?.analysis.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : intel?.analysis.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
+                    {intel?.analysis.trend || 'Neutral'} Trend
                   </Badge>
                   <p className="text-sm font-display">
-                    {typeof intel?.sentiment.trend24hPct === 'number' 
-                      ? `Globalt marknadsvärde ${(intel.sentiment.trend24hPct >= 0 ? '+' : '')}${intel.sentiment.trend24hPct.toFixed(2)}% senaste 24h.`
-                      : 'Marknadsdata uppdateras i realtid.'}
+                    {intel?.analysis.summary || 'Marknadsdata uppdateras i realtid.'}
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="p-4 rounded-lg bg-success/10 border border-success/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-success" />
                   <span className="font-display font-semibold text-success">Positiva Signaler</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Bitcoin ETF inflöden och ökad DeFi-aktivitet driver marknaden uppåt
-                </p>
+                {intel?.analysis.positives?.length ? (
+                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                    {intel.analysis.positives.map((p, i) => (
+                      <li key={`pos-${i}`}>{p}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Inga starka positiva signaler just nu.</p>
+                )}
               </div>
-              
               <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <Activity className="h-4 w-4 text-warning" />
                   <span className="font-display font-semibold text-warning">Att Bevaka</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Regulatoriska utvecklingar i EU och USA kan påverka volatiliteten
-                </p>
+                {intel?.analysis.negatives?.length ? (
+                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                    {intel.analysis.negatives.map((n, i) => (
+                      <li key={`neg-${i}`}>{n}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Inga större riskfaktorer identifierade.</p>
+                )}
               </div>
             </div>
           </Card>

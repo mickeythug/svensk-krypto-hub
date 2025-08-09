@@ -191,12 +191,113 @@ async function getTopMovers(): Promise<TopMover[]> {
   }
 }
 
+export type MarketAnalysis = {
+  trend: "Bullish" | "Bearish" | "Neutral";
+  summary: string;
+  positives: string[];
+  negatives: string[];
+  generatedAt: string;
+};
+
+function formatAbbrevUSD(n?: number | null) {
+  if (typeof n !== 'number' || !isFinite(n) || n <= 0) return '—';
+  if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T USD';
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B USD';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M USD';
+  return n.toFixed(2) + ' USD';
+}
+
+function computeMarketAnalysis(params: {
+  totalMarketCap: number | null;
+  totalVolume24h: number | null;
+  btcDominance: number | null;
+  defiTVL: number | null;
+  trend24hPct: number | null;
+  fearGreedIndex: number | null;
+  socialVolumePct: number | null;
+  topMovers: TopMover[];
+}): MarketAnalysis {
+  const {
+    totalMarketCap, totalVolume24h, btcDominance, defiTVL,
+    trend24hPct, fearGreedIndex, socialVolumePct, topMovers
+  } = params;
+
+  const positives: string[] = [];
+  const negatives: string[] = [];
+  let score = 0;
+
+  // Trend 24h
+  if (typeof trend24hPct === 'number') {
+    if (trend24hPct > 1.5) { score += 2; positives.push(`Globalt marknadsvärde +${trend24hPct.toFixed(2)}% senaste 24h`); }
+    else if (trend24hPct > 0.2) { score += 1; positives.push(`Globalt marknadsvärde +${trend24hPct.toFixed(2)}% senaste 24h`); }
+    else if (trend24hPct < -1.5) { score -= 2; negatives.push(`Globalt marknadsvärde ${trend24hPct.toFixed(2)}% senaste 24h`); }
+    else if (trend24hPct < -0.2) { score -= 1; negatives.push(`Globalt marknadsvärde ${trend24hPct.toFixed(2)}% senaste 24h`); }
+  }
+
+  // Fear & Greed
+  if (typeof fearGreedIndex === 'number') {
+    if (fearGreedIndex >= 60) { score += 1; positives.push(`Sentiment: Greed (${fearGreedIndex})`); }
+    else if (fearGreedIndex <= 40) { score -= 1; negatives.push(`Sentiment: Fear (${fearGreedIndex})`); }
+  }
+
+  // Social volume proxy
+  if (typeof socialVolumePct === 'number') {
+    if (socialVolumePct >= 50) { score += 1; positives.push(`Hög social aktivitet (${socialVolumePct.toFixed(0)}%)`); }
+    else if (socialVolumePct <= 30) { score -= 1; negatives.push(`Svag social aktivitet (${socialVolumePct.toFixed(0)}%)`); }
+  }
+
+  // Volume to Market Cap ratio
+  if (typeof totalMarketCap === 'number' && typeof totalVolume24h === 'number') {
+    const ratio = totalVolume24h / totalMarketCap;
+    if (ratio >= 0.04) { score += 1; positives.push(`Stark handelsaktivitet (volym/mcap ${(ratio*100).toFixed(1)}%)`); }
+    else if (ratio < 0.02) { score -= 1; negatives.push(`Låg handelsaktivitet (volym/mcap ${(ratio*100).toFixed(1)}%)`); }
+  }
+
+  // BTC Dominance heuristic
+  if (typeof btcDominance === 'number') {
+    if (btcDominance >= 55) { score -= 1; negatives.push(`Hög BTC-dominans (${btcDominance.toFixed(1)}%) – risk-off`); }
+    else if (btcDominance <= 45) { score += 1; positives.push(`Lägre BTC-dominans (${btcDominance.toFixed(1)}%) – altcoins gynnas`); }
+  }
+
+  // DeFi TVL
+  if (typeof defiTVL === 'number' && defiTVL > 0) {
+    const tvlText = formatAbbrevUSD(defiTVL);
+    if (defiTVL >= 4e10) { score += 1; positives.push(`Stark DeFi-aktivitet (TVL ${tvlText})`); }
+    else if (defiTVL < 2e10) { score -= 1; negatives.push(`Svag DeFi-aktivitet (TVL ${tvlText})`); }
+  }
+
+  // Top mover confirmation
+  if (topMovers && topMovers.length) {
+    const avgTop5 = topMovers.reduce((s, m) => s + (m.change24h || 0), 0) / Math.max(1, topMovers.length);
+    if (avgTop5 >= 5) { score += 1; positives.push(`Toppvinnare i snitt +${avgTop5.toFixed(1)}% (24h)`); }
+    else if (avgTop5 <= -5) { score -= 1; negatives.push(`Toppförlorare i snitt ${avgTop5.toFixed(1)}% (24h)`); }
+  }
+
+  const trend: MarketAnalysis["trend"] = score >= 2 ? "Bullish" : score <= -2 ? "Bearish" : "Neutral";
+  const summary = [
+    `Marknadsvärde: ${formatAbbrevUSD(totalMarketCap)}`,
+    `24h Volym: ${formatAbbrevUSD(totalVolume24h)}`,
+    typeof btcDominance === 'number' ? `BTC-dominans: ${btcDominance.toFixed(1)}%` : null,
+    typeof trend24hPct === 'number' ? `24h Förändring: ${(trend24hPct >= 0 ? '+' : '') + trend24hPct.toFixed(2)}%` : null,
+  ].filter(Boolean).join(" • ");
+
+  return {
+    trend,
+    summary,
+    positives,
+    negatives,
+    generatedAt: new Date().toISOString(),
+  };
+}
+
 export type MarketIntel = {
   overview: MarketOverviewData;
   sentiment: MarketSentimentData;
   topMovers: TopMover[];
+  analysis: MarketAnalysis;
   lastUpdated: string;
 }
+
 
 async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
   const [global, tvl, active, fng, socialPct, movers] = await Promise.all([
@@ -212,6 +313,29 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
   const newsPct = typeof newsCount24h === 'number' && newsCount24h >= 0
     ? Math.max(0, Math.min(100, (newsCount24h / 500) * 100))
     : null;
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  let analysis: MarketAnalysis | null = null;
+  try {
+    const cached = localStorage.getItem(`market-analysis:${todayKey}`);
+    if (cached) {
+      analysis = JSON.parse(cached) as MarketAnalysis;
+    }
+  } catch {}
+
+  if (!analysis) {
+    analysis = computeMarketAnalysis({
+      totalMarketCap: global.totalMarketCap,
+      totalVolume24h: global.totalVolume24h,
+      btcDominance: global.btcDominance,
+      defiTVL: tvl,
+      trend24hPct: global.trend24hPct,
+      fearGreedIndex: fng,
+      socialVolumePct: socialPct,
+      topMovers: movers,
+    });
+    try { localStorage.setItem(`market-analysis:${todayKey}`, JSON.stringify(analysis)); } catch {}
+  }
 
   return {
     overview: {
@@ -229,6 +353,7 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
       trend24hPct: global.trend24hPct,
     },
     topMovers: movers,
+    analysis,
     lastUpdated: new Date().toISOString(),
   };
 }
