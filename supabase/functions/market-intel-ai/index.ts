@@ -406,7 +406,7 @@ const prompt = `Du är en senior krypto-researchanalytiker med fokus på precisi
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "o3-2025-04-16",
+        model: "gpt-4o",
         temperature: 0.2,
         messages: [
           { role: "system", content: "Du är en extremt noggrann kryptoanalytiker. Svara endast med giltig JSON utan extra text." },
