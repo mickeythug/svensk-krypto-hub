@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 
 export function useSplTokenBalance(mint: string) {
   const { connection } = useConnection();
@@ -18,7 +19,8 @@ export function useSplTokenBalance(mint: string) {
       setLoading(true);
       setError(null);
       try {
-        const resp = await connection.getParsedTokenAccountsByOwner(publicKey, { mint });
+        const mintPk = new PublicKey(mint);
+        const resp = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: mintPk });
         const tokenAcc = resp.value.find((a) => a.account.data.parsed.info.tokenAmount);
         const tokenAmount = tokenAcc?.account.data.parsed.info.tokenAmount;
         if (!cancelled) setAmount(tokenAmount ? Number(tokenAmount.uiAmount) : 0);

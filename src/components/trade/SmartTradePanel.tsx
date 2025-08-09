@@ -4,8 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Wallet } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { Connection, Transaction } from '@solana/web3.js';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { Transaction } from '@solana/web3.js';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSplTokenBalance } from '@/hooks/useSplTokenBalance';
 import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/tokenMaps';
@@ -25,7 +25,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [chainMode, setChainMode] = useState<'SOL'|'EVM'>(defaultChainMode as any);
 
   // Solana
-  const { publicKey, signAndSendTransaction } = useWallet();
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const solTokenInfo = SOL_TOKENS[symbol.toUpperCase()];
@@ -51,7 +52,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
   async function executeSolanaMarket() {
     try {
-      if (!solAddress || !signAndSendTransaction) throw new Error('Solana wallet saknas');
+      if (!solAddress) throw new Error('Solana wallet saknas');
       const inputMint = side === 'buy' ? SOL_MINT : (solTokenInfo?.mint || SOL_MINT);
       const outputMint = side === 'buy' ? (solTokenInfo?.mint || SOL_MINT) : SOL_MINT;
       if (!inputMint || !outputMint) throw new Error('Okänd token');
@@ -69,9 +70,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
       const txBytes = Uint8Array.from(atob(swapTxB64), (c) => c.charCodeAt(0));
       const tx = Transaction.from(txBytes);
-      const conn = new Connection('https://api.mainnet-beta.solana.com');
-      const sig = await signAndSendTransaction(tx, { minContextSlot: 0 });
-      toast({ title: 'Order skickad', description: `Tx: ${JSON.stringify(sig)}` });
+      const sig = await sendTransaction(tx, connection);
+      toast({ title: 'Order skickad', description: `Tx: ${sig}` });
       setAmountInput('');
     } catch (e: any) {
       toast({ title: 'Solana fel', description: String(e.message || e), variant: 'destructive' });
