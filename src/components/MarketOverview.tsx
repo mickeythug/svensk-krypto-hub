@@ -12,20 +12,20 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import OptimizedImage from "@/components/OptimizedImage";
 
 // Coin logos
-import btcLogo from "@/assets/crypto-logos/btc.png";
-import ethLogo from "@/assets/crypto-logos/eth.png";
-import bnbLogo from "@/assets/crypto-logos/bnb.png";
-import adaLogo from "@/assets/crypto-logos/ada.png";
-import avaxLogo from "@/assets/crypto-logos/avax.png";
-import dogeLogo from "@/assets/crypto-logos/doge.png";
-import dotLogo from "@/assets/crypto-logos/dot.png";
-import linkLogo from "@/assets/crypto-logos/link.png";
-import ltcLogo from "@/assets/crypto-logos/ltc.png";
-import maticLogo from "@/assets/crypto-logos/matic.png";
-import shibLogo from "@/assets/crypto-logos/shib.png";
-import solLogo from "@/assets/crypto-logos/sol.png";
-import uniLogo from "@/assets/crypto-logos/uni.png";
-import xrpLogo from "@/assets/crypto-logos/xrp.png";
+import btcLogo from "@/assets/crypto-logos/svg/btc.svg";
+import ethLogo from "@/assets/crypto-logos/svg/eth.svg";
+import bnbLogo from "@/assets/crypto-logos/svg/bnb.svg";
+import adaLogo from "@/assets/crypto-logos/svg/ada.svg";
+import avaxLogo from "@/assets/crypto-logos/svg/avax.svg";
+import dogeLogo from "@/assets/crypto-logos/svg/doge.svg";
+import dotLogo from "@/assets/crypto-logos/svg/dot.svg";
+import linkLogo from "@/assets/crypto-logos/svg/link.svg";
+import ltcLogo from "@/assets/crypto-logos/svg/ltc.svg";
+import maticLogo from "@/assets/crypto-logos/svg/matic.svg";
+import shibLogo from "@/assets/crypto-logos/svg/shib.svg";
+import solLogo from "@/assets/crypto-logos/svg/sol.svg";
+import uniLogo from "@/assets/crypto-logos/svg/uni.svg";
+import xrpLogo from "@/assets/crypto-logos/svg/xrp.svg";
 
 const COIN_LOGOS: Record<string, string> = {
   BTC: btcLogo,
