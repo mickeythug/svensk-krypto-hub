@@ -24,9 +24,10 @@ function toUnderscorePair(p: string) {
 }
 
 async function fetchBybit(pair: string, limit: number) {
-  const url1 = `https://api.bybit.com/spot/quote/v1/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`;
+  const sym = (pair || '').toUpperCase().replace(/[-_]/g, '');
+  const url1 = `https://api.bybit.com/spot/quote/v1/depth?symbol=${sym}&limit=${Math.min(50, limit * 2)}`;
   let res = await fetch(url1);
-  if (!res.ok) res = await fetch(`https://api.bybit.com/spot/quote/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`);
+  if (!res.ok) res = await fetch(`https://api.bybit.com/spot/quote/v3/depth?symbol=${sym}&limit=${Math.min(50, limit * 2)}`);
   if (!res.ok) throw new Error(`Bybit error ${res.status}`);
   const data = await res.json();
   const bids = data?.bids || data?.result?.bids || [];
@@ -36,7 +37,8 @@ async function fetchBybit(pair: string, limit: number) {
 }
 
 async function fetchMexc(pair: string, limit: number) {
-  const url = `https://api.mexc.com/api/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`;
+  const sym = (pair || '').toUpperCase().replace(/[-_]/g, '');
+  const url = `https://api.mexc.com/api/v3/depth?symbol=${sym}&limit=${Math.min(50, limit * 2)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`MEXC error ${res.status}`);
   const data = await res.json();
@@ -126,20 +128,34 @@ Deno.serve(async (req) => {
     }
 
     let data;
-    switch (exch) {
-      case 'BYBIT': data = await fetchBybit(pair, limit); break;
-      case 'MEXC': data = await fetchMexc(pair, limit); break;
-      case 'OKX': data = await fetchOkx(pair, limit); break;
-      case 'KUCOIN':
-      case 'KCS': data = await fetchKucoin(pair, limit); break;
-      case 'GATE':
-      case 'GATEIO': data = await fetchGate(pair, limit); break;
-      case 'COINBASE':
-      case 'COINBASEPRO': data = await fetchCoinbase(pair, limit); break;
-      case 'KRAKEN': data = await fetchKraken(pair, limit); break;
-      default:
-        // Best-effort fallback to MEXC style
-        data = await fetchMexc(pair, limit);
+    const primary = exch;
+    const fallbacks = ['MEXC', 'OKX', 'KUCOIN', 'GATE', 'COINBASE', 'KRAKEN'].filter(e => e !== primary);
+
+    async function tryFetch(ex: string) {
+      switch (ex) {
+        case 'BYBIT': return await fetchBybit(pair, limit);
+        case 'MEXC': return await fetchMexc(pair, limit);
+        case 'OKX': return await fetchOkx(pair, limit);
+        case 'KUCOIN':
+        case 'KCS': return await fetchKucoin(pair, limit);
+        case 'GATE':
+        case 'GATEIO': return await fetchGate(pair, limit);
+        case 'COINBASE':
+        case 'COINBASEPRO': return await fetchCoinbase(pair, limit);
+        case 'KRAKEN': return await fetchKraken(pair, limit);
+        default: return await fetchMexc(pair, limit);
+      }
+    }
+
+    // Try primary exchange first, then fallbacks in order
+    try {
+      data = await tryFetch(primary);
+    } catch (e) {
+      let lastErr = e;
+      for (const ex of fallbacks) {
+        try { data = await tryFetch(ex); break; } catch (err) { lastErr = err; }
+      }
+      if (!data) throw lastErr;
     }
 
     return new Response(JSON.stringify({ ok: true, ...data }), { status: 200, headers: { 'content-type': 'application/json', ...corsHeaders } });
