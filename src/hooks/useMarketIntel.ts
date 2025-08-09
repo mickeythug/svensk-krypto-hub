@@ -307,6 +307,26 @@ async function getDailyPrices(coinId: string, days = 200): Promise<number[]> {
   }
 }
 
+async function getHourlyPrices(coinId: string, days = 14): Promise<number[]> {
+  try {
+    const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=hourly`;
+    const data = await fetchJSON<any>(url);
+    const prices = Array.isArray(data?.prices) ? data.prices.map((p: any[]) => Number(p[1])) : [];
+    return prices.filter((n: number) => Number.isFinite(n));
+  } catch {
+    return [];
+  }
+}
+
+function downsample(values: number[], step: number): number[] {
+  if (step <= 1) return values.slice();
+  const result: number[] = [];
+  for (let i = Math.max(0, values.length - 400); i < values.length; i += step) {
+    result.push(values[i]);
+  }
+  return result;
+}
+
 function diagnoseTA(values: number[]): TAResult {
   const price = values[values.length - 1] ?? null;
   const sma20 = sma(values, 20);
@@ -353,6 +373,7 @@ function diagnoseTA(values: number[]): TAResult {
   };
 }
 
+
 export type MarketAnalysis = {
   trend: "Bullish" | "Bearish" | "Neutral";
   summary: string;
@@ -380,6 +401,10 @@ function computeMarketAnalysis(params: {
   topMovers: TopMover[];
   btcTa?: TAResult;
   ethTa?: TAResult;
+  btcTa1h?: TAResult;
+  ethTa1h?: TAResult;
+  btcTa4h?: TAResult;
+  ethTa4h?: TAResult;
 }): MarketAnalysis {
   const {
     totalMarketCap, totalVolume24h, btcDominance, defiTVL,
@@ -439,7 +464,7 @@ function computeMarketAnalysis(params: {
   }
 
   // BTC/ETH teknisk analys
-  const taBullet = (label: string, ta?: TAResult) => {
+  const taBullet = (label: string, ta?: TAResult, weight = 1) => {
     if (!ta) return;
     const parts = [] as string[];
     if (ta.sma50 != null && ta.sma200 != null) parts.push(`SMA50 ${(ta.sma50).toFixed(0)}, SMA200 ${(ta.sma200).toFixed(0)}`);
@@ -447,12 +472,17 @@ function computeMarketAnalysis(params: {
     if (typeof ta.rsi14 === 'number') parts.push(`RSI ${ta.rsi14.toFixed(0)}`);
     if (typeof ta.macd === 'number' && typeof ta.macdSignal === 'number') parts.push(`MACD ${ta.macd.toFixed(2)}/${ta.macdSignal.toFixed(2)}`);
     const line = `${label}: ${parts.join(' • ')}`;
-    if (ta.trend === 'Bullish') { score += label === 'BTC' ? 2 : 1; positives.push(`${label} Bullish – ${line}`); }
-    else if (ta.trend === 'Bearish') { score -= label === 'BTC' ? 2 : 1; negatives.push(`${label} Bearish – ${line}`); }
+    if (ta.trend === 'Bullish') { score += weight; positives.push(`${label} Bullish – ${line}`); }
+    else if (ta.trend === 'Bearish') { score -= weight; negatives.push(`${label} Bearish – ${line}`); }
     else { positives.push(`${label} Sideways – ${line}`); }
   };
-  taBullet('BTC', arguments[0]?.btcTa);
-  taBullet('ETH', arguments[0]?.ethTa);
+  const args: any = arguments[0] || {};
+  taBullet('BTC 1D', args?.btcTa, 2);
+  taBullet('ETH 1D', args?.ethTa, 1.5);
+  taBullet('BTC 4H', args?.btcTa4h, 1);
+  taBullet('ETH 4H', args?.ethTa4h, 0.75);
+  taBullet('BTC 1H', args?.btcTa1h, 0.5);
+  taBullet('ETH 1H', args?.ethTa1h, 0.5);
 
   const trend: MarketAnalysis["trend"] = score >= 3 ? "Bullish" : score <= -3 ? "Bearish" : "Neutral";
   const summary = [
@@ -481,7 +511,7 @@ export type MarketIntel = {
 
 
 async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
-  const [global, tvl, active, fng, socialPct, movers, btcPrices, ethPrices] = await Promise.all([
+  const [global, tvl, active, fng, socialPct, movers, btcDaily, ethDaily, btcHourly, ethHourly] = await Promise.all([
     getGlobalMarket(),
     getDefiTVL(),
     getActiveAddresses(),
@@ -490,10 +520,16 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
     getTopMovers(),
     getDailyPrices('bitcoin', 200),
     getDailyPrices('ethereum', 200),
+    getHourlyPrices('bitcoin', 14),
+    getHourlyPrices('ethereum', 14),
   ]);
 
-  const btcTa = diagnoseTA(btcPrices);
-  const ethTa = diagnoseTA(ethPrices);
+  const btcTa = diagnoseTA(btcDaily);
+  const ethTa = diagnoseTA(ethDaily);
+  const btcTa1h = diagnoseTA(btcHourly);
+  const ethTa1h = diagnoseTA(ethHourly);
+  const btcTa4h = diagnoseTA(downsample(btcHourly, 4));
+  const ethTa4h = diagnoseTA(downsample(ethHourly, 4));
 
   // Derive news volume percentage from provided count (if present)
   const newsPct = typeof newsCount24h === 'number' && newsCount24h >= 0
@@ -521,6 +557,10 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
       topMovers: movers,
       btcTa,
       ethTa,
+      btcTa1h,
+      ethTa1h,
+      btcTa4h,
+      ethTa4h,
     });
     try { localStorage.setItem(`market-analysis:${todayKey}`, JSON.stringify(analysis)); } catch {}
   }
