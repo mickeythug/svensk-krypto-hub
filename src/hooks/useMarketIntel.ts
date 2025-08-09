@@ -191,6 +191,168 @@ async function getTopMovers(): Promise<TopMover[]> {
   }
 }
 
+// ---- Tekniska indikatorer (BTC/ETH) ----
+export type TATrend = "Bullish" | "Bearish" | "Sideways";
+export type TAResult = {
+  price: number;
+  sma20: number | null;
+  sma50: number | null;
+  sma200: number | null;
+  ema20: number | null;
+  ema50: number | null;
+  rsi14: number | null;
+  macd: number | null;
+  macdSignal: number | null;
+  macdHist: number | null;
+  bbUpper: number | null;
+  bbLower: number | null;
+  trend: TATrend;
+  positives: string[];
+  negatives: string[];
+};
+
+function sma(values: number[], period: number): number | null {
+  if (values.length < period) return null;
+  const slice = values.slice(-period);
+  const sum = slice.reduce((a, b) => a + b, 0);
+  return sum / period;
+}
+
+function ema(values: number[], period: number): number | null {
+  if (values.length < period) return null;
+  const k = 2 / (period + 1);
+  let emaPrev = values.slice(0, period).reduce((a, b) => a + b, 0) / period;
+  for (let i = period; i < values.length; i++) {
+    emaPrev = values[i] * k + emaPrev * (1 - k);
+  }
+  return emaPrev;
+}
+
+function rsi(values: number[], period = 14): number | null {
+  if (values.length < period + 1) return null;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const diff = values[i] - values[i - 1];
+    if (diff >= 0) gains += diff; else losses -= diff;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  for (let i = period + 1; i < values.length; i++) {
+    const diff = values[i] - values[i - 1];
+    const gain = Math.max(0, diff);
+    const loss = Math.max(0, -diff);
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+  }
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - 100 / (1 + rs);
+}
+
+function macdCalc(values: number[], fast = 12, slow = 26, signalP = 9): { macd: number | null, signal: number | null, hist: number | null } {
+  if (values.length < slow + signalP) return { macd: null, signal: null, hist: null };
+  const emaFast = [] as number[];
+  const emaSlow = [] as number[];
+  const kFast = 2 / (fast + 1);
+  const kSlow = 2 / (slow + 1);
+  let ef = values.slice(0, fast).reduce((a, b) => a + b, 0) / fast;
+  let es = values.slice(0, slow).reduce((a, b) => a + b, 0) / slow;
+  for (let i = fast; i < values.length; i++) {
+    ef = values[i] * kFast + ef * (1 - kFast);
+    emaFast.push(ef);
+  }
+  for (let i = slow; i < values.length; i++) {
+    es = values[i] * kSlow + es * (1 - kSlow);
+    emaSlow.push(es);
+  }
+  const start = values.length - Math.min(emaFast.length, emaSlow.length);
+  const macdArr = [] as number[];
+  for (let i = 0; i < Math.min(emaFast.length, emaSlow.length); i++) {
+    macdArr.push(emaFast[emaFast.length - 1 - (Math.min(emaFast.length, emaSlow.length) - 1 - i)] - emaSlow[emaSlow.length - 1 - (Math.min(emaFast.length, emaSlow.length) - 1 - i)]);
+  }
+  // Signal EMA on MACD
+  const kSig = 2 / (signalP + 1);
+  let sig = macdArr.slice(0, signalP).reduce((a, b) => a + b, 0) / signalP;
+  for (let i = signalP; i < macdArr.length; i++) {
+    sig = macdArr[i] * kSig + sig * (1 - kSig);
+  }
+  const macdVal = macdArr[macdArr.length - 1];
+  const signalVal = sig;
+  const hist = macdVal - signalVal;
+  return { macd: macdVal, signal: signalVal, hist };
+}
+
+function stddev(values: number[]): number {
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  const variance = values.reduce((acc, v) => acc + Math.pow(v - mean, 2), 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+function bollinger(values: number[], period = 20, k = 2): { upper: number | null, lower: number | null } {
+  if (values.length < period) return { upper: null, lower: null };
+  const slice = values.slice(-period);
+  const m = slice.reduce((a, b) => a + b, 0) / period;
+  const sd = stddev(slice);
+  return { upper: m + k * sd, lower: m - k * sd };
+}
+
+async function getDailyPrices(coinId: string, days = 200): Promise<number[]> {
+  try {
+    const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=daily`;
+    const data = await fetchJSON<any>(url);
+    const prices = Array.isArray(data?.prices) ? data.prices.map((p: any[]) => Number(p[1])) : [];
+    return prices.filter((n: number) => Number.isFinite(n));
+  } catch {
+    return [];
+  }
+}
+
+function diagnoseTA(values: number[]): TAResult {
+  const price = values[values.length - 1] ?? null;
+  const sma20 = sma(values, 20);
+  const sma50 = sma(values, 50);
+  const sma200 = sma(values, 200);
+  const ema20 = ema(values, 20);
+  const ema50 = ema(values, 50);
+  const rsi14 = rsi(values, 14);
+  const { macd, signal: macdSignal, hist: macdHist } = macdCalc(values, 12, 26, 9);
+  const bb = bollinger(values, 20, 2);
+
+  const positives: string[] = [];
+  const negatives: string[] = [];
+
+  let trend: TATrend = "Sideways";
+  if (price != null && sma50 != null && sma200 != null && ema20 != null && ema50 != null) {
+    const bull = price > sma50 && sma50 > sma200 && ema20 > ema50;
+    const bear = price < sma50 && sma50 < sma200 && ema20 < ema50;
+    trend = bull ? "Bullish" : bear ? "Bearish" : "Sideways";
+  }
+  if (trend === 'Bullish') positives.push('Trend: pris>SMA50>SMA200, EMA20>EMA50');
+  if (trend === 'Bearish') negatives.push('Trend: pris<SMA50<SMA200, EMA20<EMA50');
+
+  if (typeof macd === 'number' && typeof macdSignal === 'number') {
+    if (macd > macdSignal) positives.push(`MACD över signal (${macd.toFixed(2)} > ${macdSignal.toFixed(2)})`);
+    else negatives.push(`MACD under signal (${macd.toFixed(2)} < ${macdSignal.toFixed(2)})`);
+  }
+  if (typeof rsi14 === 'number') {
+    if (rsi14 > 70) negatives.push(`RSI överköpt (${rsi14.toFixed(0)})`);
+    else if (rsi14 < 30) positives.push(`RSI översåld (${rsi14.toFixed(0)})`);
+    else positives.push(`RSI neutral (${rsi14.toFixed(0)})`);
+  }
+
+  return {
+    price: price ?? 0,
+    sma20, sma50, sma200,
+    ema20, ema50,
+    rsi14,
+    macd, macdSignal, macdHist,
+    bbUpper: bb.upper, bbLower: bb.lower,
+    trend,
+    positives,
+    negatives,
+  };
+}
+
 export type MarketAnalysis = {
   trend: "Bullish" | "Bearish" | "Neutral";
   summary: string;
@@ -216,10 +378,13 @@ function computeMarketAnalysis(params: {
   fearGreedIndex: number | null;
   socialVolumePct: number | null;
   topMovers: TopMover[];
+  btcTa?: TAResult;
+  ethTa?: TAResult;
 }): MarketAnalysis {
   const {
     totalMarketCap, totalVolume24h, btcDominance, defiTVL,
-    trend24hPct, fearGreedIndex, socialVolumePct, topMovers
+    trend24hPct, fearGreedIndex, socialVolumePct, topMovers,
+    btcTa, ethTa
   } = params;
 
   const positives: string[] = [];
@@ -273,7 +438,23 @@ function computeMarketAnalysis(params: {
     else if (avgTop5 <= -5) { score -= 1; negatives.push(`Toppförlorare i snitt ${avgTop5.toFixed(1)}% (24h)`); }
   }
 
-  const trend: MarketAnalysis["trend"] = score >= 2 ? "Bullish" : score <= -2 ? "Bearish" : "Neutral";
+  // BTC/ETH teknisk analys
+  const taBullet = (label: string, ta?: TAResult) => {
+    if (!ta) return;
+    const parts = [] as string[];
+    if (ta.sma50 != null && ta.sma200 != null) parts.push(`SMA50 ${(ta.sma50).toFixed(0)}, SMA200 ${(ta.sma200).toFixed(0)}`);
+    if (ta.ema20 != null && ta.ema50 != null) parts.push(`EMA20 ${(ta.ema20).toFixed(0)}, EMA50 ${(ta.ema50).toFixed(0)}`);
+    if (typeof ta.rsi14 === 'number') parts.push(`RSI ${ta.rsi14.toFixed(0)}`);
+    if (typeof ta.macd === 'number' && typeof ta.macdSignal === 'number') parts.push(`MACD ${ta.macd.toFixed(2)}/${ta.macdSignal.toFixed(2)}`);
+    const line = `${label}: ${parts.join(' • ')}`;
+    if (ta.trend === 'Bullish') { score += label === 'BTC' ? 2 : 1; positives.push(`${label} Bullish – ${line}`); }
+    else if (ta.trend === 'Bearish') { score -= label === 'BTC' ? 2 : 1; negatives.push(`${label} Bearish – ${line}`); }
+    else { positives.push(`${label} Sideways – ${line}`); }
+  };
+  taBullet('BTC', arguments[0]?.btcTa);
+  taBullet('ETH', arguments[0]?.ethTa);
+
+  const trend: MarketAnalysis["trend"] = score >= 3 ? "Bullish" : score <= -3 ? "Bearish" : "Neutral";
   const summary = [
     `Marknadsvärde: ${formatAbbrevUSD(totalMarketCap)}`,
     `24h Volym: ${formatAbbrevUSD(totalVolume24h)}`,
@@ -300,14 +481,19 @@ export type MarketIntel = {
 
 
 async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
-  const [global, tvl, active, fng, socialPct, movers] = await Promise.all([
+  const [global, tvl, active, fng, socialPct, movers, btcPrices, ethPrices] = await Promise.all([
     getGlobalMarket(),
     getDefiTVL(),
     getActiveAddresses(),
     getFearGreed(),
     getSocialVolumePct(),
     getTopMovers(),
+    getDailyPrices('bitcoin', 200),
+    getDailyPrices('ethereum', 200),
   ]);
+
+  const btcTa = diagnoseTA(btcPrices);
+  const ethTa = diagnoseTA(ethPrices);
 
   // Derive news volume percentage from provided count (if present)
   const newsPct = typeof newsCount24h === 'number' && newsCount24h >= 0
@@ -333,6 +519,8 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
       fearGreedIndex: fng,
       socialVolumePct: socialPct,
       topMovers: movers,
+      btcTa,
+      ethTa,
     });
     try { localStorage.setItem(`market-analysis:${todayKey}`, JSON.stringify(analysis)); } catch {}
   }
