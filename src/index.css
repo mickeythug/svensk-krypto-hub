@@ -89,7 +89,7 @@ All colors MUST be HSL.
     --sidebar-ring: 165 85% 45%;
 
     /* Custom token for dark turquoise backgrounds */
-    --turquoise-dark: 186 65% 22%;
+    --turquoise-dark: 186 65% 15%;
   }
 
   .dark {
