@@ -26,6 +26,7 @@ import shibLogo from "@/assets/crypto-logos/svg/shib.svg";
 import solLogo from "@/assets/crypto-logos/svg/sol.svg";
 import uniLogo from "@/assets/crypto-logos/svg/uni.svg";
 import xrpLogo from "@/assets/crypto-logos/svg/xrp.svg";
+import trxLogo from "@/assets/crypto-logos/svg/trx.svg";
 
 const COIN_LOGOS: Record<string, string> = {
   BTC: btcLogo,
@@ -42,6 +43,7 @@ const COIN_LOGOS: Record<string, string> = {
   SOL: solLogo,
   UNI: uniLogo,
   XRP: xrpLogo,
+  TRX: trxLogo,
 };
 
 const EXCLUDED_STABLES = new Set(['USDT','USDC','DAI','TUSD','FDUSD','USDE','USDP','GUSD','EURT','PYUSD','BUSD','LUSD','FRAX','USDJ','USDD']);
