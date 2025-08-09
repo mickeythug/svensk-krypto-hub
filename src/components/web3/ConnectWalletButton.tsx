@@ -4,12 +4,20 @@ import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, 
 import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
+import { useSolBalance } from '@/hooks/useSolBalance';
 import type { Address } from 'viem';
 
 function formatAddress(addr?: string) {
   if (!addr) return '';
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+function toHex(bytes: Uint8Array) {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export default function ConnectWalletButton() {
@@ -18,28 +26,44 @@ export default function ConnectWalletButton() {
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
   const chains = useChains();
-  const { switchChainAsync, isPending: isSwitching } = useSwitchChain();
-  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
+  const { switchChainAsync } = useSwitchChain();
+
+  // Solana wallet
+  const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol } = useWallet();
+  const solAddress = publicKey?.toBase58();
+  const { balance: solBalance } = useSolBalance();
+
+  const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
+  const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(null);
   const [isAuthed, setIsAuthed] = useState(false);
   const [nonce, setNonce] = useState<string>('');
   const { data: balances } = useWalletBalances(address as Address | undefined);
-  const selectedChainBalance = useMemo(() => balances.find?.((b) => b.chainId === selectedChainId), [balances, selectedChainId]);
+  const selectedChainBalance = useMemo(() => balances.find?.((b) => b.chainId === selectedEvmChainId), [balances, selectedEvmChainId]);
 
   useEffect(() => {
-    const sig = sessionStorage.getItem('siwe_signature');
-    const addrStored = sessionStorage.getItem('siwe_address');
-    const ok = Boolean(sig && addrStored && address && addrStored.toLowerCase() === address.toLowerCase());
-    setIsAuthed(ok);
-  }, [address, isConnected]);
+    if (chainMode === 'EVM') {
+      const sig = sessionStorage.getItem('siwe_signature');
+      const addrStored = sessionStorage.getItem('siwe_address');
+      const ok = Boolean(sig && addrStored && address && addrStored.toLowerCase() === address.toLowerCase());
+      setIsAuthed(ok);
+    } else if (chainMode === 'SOL') {
+      const sig = sessionStorage.getItem('siws_signature');
+      const addrStored = sessionStorage.getItem('siws_address');
+      const ok = Boolean(sig && addrStored && solAddress && addrStored === solAddress);
+      setIsAuthed(ok);
+    } else {
+      setIsAuthed(false);
+    }
+  }, [chainMode, address, solAddress, isConnected, solConnected]);
 
   useEffect(() => {
-    if (!isConnected || selectedChainId == null) return;
+    if (chainMode !== 'EVM' || !isConnected || selectedEvmChainId == null) return;
     (async () => {
       try {
-        await switchChainAsync({ chainId: selectedChainId });
+        await switchChainAsync({ chainId: selectedEvmChainId });
       } catch {}
     })();
-  }, [selectedChainId, isConnected]);
+  }, [chainMode, selectedEvmChainId, isConnected]);
 
   useEffect(() => {
     setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
@@ -57,22 +81,36 @@ export default function ConnectWalletButton() {
 
   const handleConnect = async () => {
     try {
-      if (selectedChainId == null) {
+      if (!chainMode) {
         toast({ title: 'Välj kedja', description: 'Du måste välja kedja innan du ansluter.', variant: 'destructive' });
         return;
       }
-      // Prefer WalletConnect om tillgänglig, annars injected
-      const wc = connectors.find((c) => c.id === 'walletConnect') || connectors[0];
-      await connect({ connector: wc });
 
-      // Försök byta till vald kedja
-      try {
-        await switchChainAsync({ chainId: selectedChainId });
-      } catch (e) {
-        // Ignorera, vissa wallets hanterar detta själva
+      if (chainMode === 'SOL') {
+        // Solana connect + sign
+        await connectSol();
+        const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nKälla: Crypto Network Sweden`;
+        if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
+        const encoded = new TextEncoder().encode(message);
+        const signature = await signMessageSol(encoded);
+        sessionStorage.setItem('siws_signature', toHex(signature));
+        if (solAddress) sessionStorage.setItem('siws_address', solAddress);
+        setIsAuthed(true);
+        toast({ title: 'Wallet ansluten', description: 'Solana ansluten och signerad.' });
+        setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
+        return;
       }
 
-      // Signera automatiskt (SIWE-lik verifiering)
+      // EVM connect + optional chain switch + sign
+      if (selectedEvmChainId == null) {
+        toast({ title: 'Välj EVM-kedja', description: 'Välj t.ex. Ethereum eller BNB Smart Chain.', variant: 'destructive' });
+        return;
+      }
+      const wc = connectors.find((c) => c.id === 'walletConnect') || connectors[0];
+      await connect({ connector: wc });
+      try {
+        await switchChainAsync({ chainId: selectedEvmChainId });
+      } catch {}
       const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nKälla: Crypto Network Sweden`;
       try {
         const signature = await signMessageAsync({ message } as any);
@@ -80,17 +118,13 @@ export default function ConnectWalletButton() {
         if (address) sessionStorage.setItem('siwe_address', address);
         setIsAuthed(true);
       } catch (e) {
-        // Kräver signering: koppla från och rensa
         await disconnect();
-        try {
-          sessionStorage.removeItem('siwe_signature');
-          sessionStorage.removeItem('siwe_address');
-        } catch {}
+        sessionStorage.removeItem('siwe_signature');
+        sessionStorage.removeItem('siwe_address');
         toast({ title: 'Signering krävs', description: 'Du måste signera för att logga in.', variant: 'destructive' });
         return;
       }
-
-      toast({ title: 'Wallet ansluten', description: 'Ansluten och signerad.' });
+      toast({ title: 'Wallet ansluten', description: 'EVM ansluten och signerad.' });
       setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
     } catch (e: any) {
       toast({ title: 'Fel vid anslutning', description: String(e.message || e), variant: 'destructive' });
@@ -99,13 +133,23 @@ export default function ConnectWalletButton() {
 
   const handleDisconnect = async () => {
     try {
-      await disconnect();
+      if (chainMode === 'SOL') {
+        try { await disconnectSol(); } catch {}
+      } else {
+        await disconnect();
+      }
     } finally {
       try {
+        // Remove EVM auth
         sessionStorage.removeItem('siwe_signature');
         sessionStorage.removeItem('siwe_address');
         localStorage.removeItem('siwe_signature');
         localStorage.removeItem('siwe_address');
+        // Remove SOL auth
+        sessionStorage.removeItem('siws_signature');
+        sessionStorage.removeItem('siws_address');
+        localStorage.removeItem('siws_signature');
+        localStorage.removeItem('siws_address');
         // Rensa wagmi/walletconnect persistence
         const clearKeys = (store: Storage) => {
           for (const k of Object.keys(store)) {
@@ -122,12 +166,24 @@ export default function ConnectWalletButton() {
     }
   };
 
-  if (!isConnected || !isAuthed) {
+  const isConnectedForMode = chainMode === 'SOL' ? solConnected : isConnected;
+  if (!isConnectedForMode || !isAuthed) {
     return (
       <div className="flex items-center gap-2">
-        <Select value={selectedChainId ? String(selectedChainId) : undefined} onValueChange={(v) => setSelectedChainId(Number(v))}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Välj kedja" />
+        <Select
+          value={chainMode === 'SOL' ? 'sol' : selectedEvmChainId ? String(selectedEvmChainId) : undefined}
+          onValueChange={(v) => {
+            if (v === 'sol') {
+              setChainMode('SOL');
+              setSelectedEvmChainId(null);
+            } else {
+              setChainMode('EVM');
+              setSelectedEvmChainId(Number(v));
+            }
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Välj kedja (ETH/BNB/SOL)" />
           </SelectTrigger>
           <SelectContent>
             {chains.map((c) => (
@@ -135,9 +191,15 @@ export default function ConnectWalletButton() {
                 {c.name}
               </SelectItem>
             ))}
+            <SelectItem value="sol">Solana</SelectItem>
           </SelectContent>
         </Select>
-        <Button onClick={handleConnect} size="sm" className="font-crypto uppercase" disabled={isConnecting || !selectedChainId}>
+        <Button
+          onClick={handleConnect}
+          size="sm"
+          className="font-crypto uppercase"
+          disabled={!chainMode || (chainMode === 'EVM' && !selectedEvmChainId) || isConnecting}
+        >
           <Wallet className="w-4 h-4 mr-2" /> Anslut Wallet
         </Button>
       </div>
@@ -146,8 +208,19 @@ export default function ConnectWalletButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <Select value={selectedChainId ? String(selectedChainId) : undefined} onValueChange={(v) => setSelectedChainId(Number(v))}>
-        <SelectTrigger className="w-[140px]">
+      <Select
+        value={chainMode === 'SOL' ? 'sol' : selectedEvmChainId ? String(selectedEvmChainId) : undefined}
+        onValueChange={(v) => {
+          if (v === 'sol') {
+            setChainMode('SOL');
+            setSelectedEvmChainId(null);
+          } else {
+            setChainMode('EVM');
+            setSelectedEvmChainId(Number(v));
+          }
+        }}
+      >
+        <SelectTrigger className="w-[160px]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -156,10 +229,18 @@ export default function ConnectWalletButton() {
               {c.name}
             </SelectItem>
           ))}
+          <SelectItem value="sol">Solana</SelectItem>
         </SelectContent>
       </Select>
-      <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(address || '')}>
-        <CopyCheck className="w-4 h-4 mr-2" /> {formatAddress(address)}{selectedChainBalance ? ` · ${selectedChainBalance.symbol} ${Number(selectedChainBalance.balance).toFixed(4)}` : ''}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => navigator.clipboard.writeText(chainMode === 'SOL' ? (solAddress || '') : (address || ''))}
+      >
+        <CopyCheck className="w-4 h-4 mr-2" />
+        {chainMode === 'SOL'
+          ? `${formatAddress(solAddress)}${solBalance != null ? ` · SOL ${solBalance.toFixed(4)}` : ''}`
+          : `${formatAddress(address)}${selectedChainBalance ? ` · ${selectedChainBalance.symbol} ${Number(selectedChainBalance.balance).toFixed(4)}` : ''}`}
       </Button>
       <Button variant="ghost" size="sm" onClick={handleDisconnect}>
         <LogOut className="w-4 h-4" />
