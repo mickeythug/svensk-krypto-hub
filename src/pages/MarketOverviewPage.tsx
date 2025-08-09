@@ -170,9 +170,9 @@ const MarketOverviewPage = () => {
       symbol: crypto.symbol,
       slug: crypto.symbol.toLowerCase(),
       price: crypto.price,
-      change1h: 0, // CoinGecko markets API ger inte 1h data direkt
+      change1h: crypto.change1h ?? 0,
       change24h: crypto.change24h,
-      change7d: 0, // CoinGecko markets API ger inte 7d data direkt
+      change7d: crypto.change7d ?? 0,
       marketCap: crypto.marketCap || "0",
       volume: crypto.volume || "0",
       supply: `${crypto.supply || "0"} ${crypto.symbol}`,
