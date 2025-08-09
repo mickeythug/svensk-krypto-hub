@@ -3,20 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Rocket, Zap, TrendingUp, Star } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
-
 import heroImage from '@/assets/meme-hero.jpg';
-
 const MemeHeroNew = () => {
-  return (
-    <section className="relative py-20 px-4 overflow-hidden">
+  return <section className="relative py-20 px-4 overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <OptimizedImage 
-          src={heroImage} 
-          alt="Meme Token Universe Background" 
-          className="w-full h-full object-cover opacity-30"
-          fallbackSrc="/placeholder.svg"
-        />
+        <OptimizedImage src={heroImage} alt="Meme Token Universe Background" className="w-full h-full object-cover opacity-30" fallbackSrc="/placeholder.svg" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/30"></div>
       </div>
 
@@ -24,9 +16,9 @@ const MemeHeroNew = () => {
         <div className="text-center space-y-8">
           {/* Main Title */}
           <div className="space-y-4">
-            <Badge className="font-crypto text-lg px-6 py-2 bg-gradient-rainbow text-foreground animate-pulse-glow">
-              VÄRLDENS BÄSTA MEME TOKEN SIDA
-            </Badge>
+            <Badge className="font-crypto text-lg px-6 py-2 bg-gradient-rainbow text-foreground animate-pulse-glow">MEME TOKEN MADNESS
+
+          </Badge>
             <h1 className="font-crypto text-6xl md:text-8xl lg:text-9xl font-black bg-gradient-rainbow bg-clip-text text-transparent animate-float leading-tight">
               MEME<br />
               <span className="text-5xl md:text-7xl lg:text-8xl">TOKEN</span><br />
@@ -93,8 +85,6 @@ const MemeHeroNew = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default MemeHeroNew;
