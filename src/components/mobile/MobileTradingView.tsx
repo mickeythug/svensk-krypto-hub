@@ -15,6 +15,7 @@ import SimpleMobileChart from "./SimpleMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
 import MobileTradingPanel from "./MobileTradingPanel";
 import TokenSearchBar from "../TokenSearchBar";
+import { formatUsd } from "@/lib/utils";
 
 interface MobileTradingViewProps {
   symbol: string;
@@ -70,7 +71,7 @@ const MobileTradingView = ({
         
         <div className="flex items-end gap-3">
           <div className="text-3xl font-bold font-mono text-foreground">
-            ${currentPrice.toLocaleString()}
+            {formatUsd(currentPrice)}
           </div>
           <div className={`flex items-center gap-1 pb-1 ${
             isPositive ? 'text-success' : 'text-destructive'
@@ -86,9 +87,9 @@ const MobileTradingView = ({
           </div>
         </div>
         
-        <div className="text-sm text-muted-foreground mt-1">
-          ≈ ${currentPrice.toLocaleString()} USDT
-        </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            ≈ {formatUsd(currentPrice)} USDT
+          </div>
       </div>
 
       {/* Tab Navigation */}

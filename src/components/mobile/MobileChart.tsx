@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, TrendingUp, TrendingDown } from "lucide-react";
+import { formatUsd } from "@/lib/utils";
 
 interface MobileChartProps {
   symbol: string;
@@ -11,7 +12,7 @@ interface MobileChartProps {
 
 declare global {
   interface Window {
-    TradingView: any;
+    TradingView?: any;
   }
 }
 

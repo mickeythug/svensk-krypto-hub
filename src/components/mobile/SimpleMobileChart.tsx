@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BarChart3, TrendingUp, TrendingDown } from "lucide-react";
+import { formatUsd } from "@/lib/utils";
 
 interface SimpleMobileChartProps {
   symbol: string;
@@ -90,7 +91,7 @@ const SimpleMobileChart = ({ symbol, currentPrice }: SimpleMobileChartProps) => 
             <path d="M5 35 L15 30 L25 25 L35 20 L45 15 L55 10" stroke="#00ff88" stroke-width="1" fill="none" opacity="0.5"/>
           </svg>
           <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">${symbol}/USDT</div>
-          <div style="font-size: 24px; font-weight: bold; color: #00ff88;">$${currentPrice.toLocaleString()}</div>
+          <div style="font-size: 24px; font-weight: bold; color: #00ff88;">${formatUsd(currentPrice)}</div>
           <div style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Live Chart - ${selectedTimeframe}</div>
         </div>
       </div>
@@ -180,7 +181,7 @@ const SimpleMobileChart = ({ symbol, currentPrice }: SimpleMobileChartProps) => 
             {symbol}/USDT
           </Badge>
           <Badge variant="outline" className="text-xs bg-background/50">
-            ${currentPrice.toLocaleString()}
+            {formatUsd(currentPrice)}
           </Badge>
         </div>
         

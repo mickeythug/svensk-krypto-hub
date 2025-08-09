@@ -157,6 +157,12 @@ const CryptoDetailPage = () => {
           title={`${crypto.symbol.toUpperCase()}/USDT`}
           showNotifications={true}
         />
+        <div className="px-4 pt-2">
+          <Button variant="outline" size="sm" onClick={() => navigate('/marknad')} className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Tillbaka till Marknad
+          </Button>
+        </div>
         <MobileTradingView
           symbol={crypto.symbol.toUpperCase()}
           currentPrice={crypto.price}
@@ -172,6 +178,12 @@ const CryptoDetailPage = () => {
     <div className="min-h-screen bg-background">
       <CryptoPriceTicker />
       <Header />
+      <div className="container mx-auto px-4 mt-4">
+        <Button variant="outline" size="sm" onClick={() => navigate('/marknad')} className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Tillbaka till Marknad
+        </Button>
+      </div>
       <DesktopTradingInterface
         symbol={crypto.symbol.toUpperCase()}
         currentPrice={crypto.price}

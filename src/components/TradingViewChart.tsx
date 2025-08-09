@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Settings, MoreHorizontal, Maximize2, BarChart3 } from "lucide-react";
+import { loadTradingView } from "@/lib/tradingviewLoader";
+import { formatUsd } from "@/lib/utils";
 
 interface TradingViewChartProps {
   symbol: string;
@@ -23,25 +25,15 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
 
   useEffect(() => {
     console.log('TradingViewChart loading for symbol:', symbol);
-    
-    // Load TradingView script
-    if (!window.TradingView) {
-      console.log('Loading TradingView script...');
-      const script = document.createElement('script');
-      script.src = 'https://s3.tradingview.com/tv.js';
-      script.async = true;
-      script.onload = () => {
-        console.log('TradingView script loaded successfully');
+
+    loadTradingView()
+      .then(() => {
+        console.log('TradingView script ready');
         initChart();
-      };
-      script.onerror = (error) => {
+      })
+      .catch((error) => {
         console.error('Failed to load TradingView script:', error);
-      };
-      document.head.appendChild(script);
-    } else {
-      console.log('TradingView already loaded, initializing chart...');
-      initChart();
-    }
+      });
 
     return () => {
       if (widgetRef.current) {
@@ -224,7 +216,7 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
       {/* Price Display */}
       <div className="absolute top-16 left-4 z-10 bg-background/90 backdrop-blur-sm rounded-lg p-2">
         <div className="text-lg font-bold font-mono text-foreground">
-          ${currentPrice.toLocaleString()}
+          {formatUsd(currentPrice)}
         </div>
         <div className="text-xs text-muted-foreground">
           {symbol}/USDT

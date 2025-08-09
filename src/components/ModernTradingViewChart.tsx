@@ -15,6 +15,7 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
   const [timeframe, setTimeframe] = useState("1D");
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const chartLoadTimeout = useRef<NodeJS.Timeout>();
 
@@ -68,12 +69,11 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
     }
   };
 
-  const handleRetry = () => {
-    setHasError(false);
-    setIsLoaded(false);
-    // Force re-render by changing key
-    window.location.reload();
-  };
+const handleRetry = () => {
+  setHasError(false);
+  setIsLoaded(false);
+  setRefreshKey((k) => k + 1);
+};
 
   useEffect(() => {
     console.log('ModernTradingViewChart mounted for symbol:', symbol);
@@ -200,6 +200,7 @@ const ModernTradingViewChart = ({ symbol, currentPrice }: ModernTradingViewChart
         ) : (
           <div className="w-full h-full">
             <AdvancedRealTimeChart
+              key={`${tradingViewSymbol}-${timeframe}-${refreshKey}`}
               theme="dark"
               autosize
               symbol={tradingViewSymbol}

@@ -20,6 +20,7 @@ import ModernTradingViewChart from "./ModernTradingViewChart";
 import OrderBook from "./OrderBook";
 import TokenSearchBar from "./TokenSearchBar";
 import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
+import { formatUsd } from "@/lib/utils";
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -74,7 +75,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               <div className="flex items-center gap-4">
                 <div>
                   <div className="text-2xl font-bold font-mono text-foreground">
-                    ${currentPrice.toLocaleString()}
+                    {formatUsd(currentPrice)}
                   </div>
                   <div className="text-sm text-muted-foreground">
                     {symbol}/USDT • BINANCE
