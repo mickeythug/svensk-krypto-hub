@@ -379,7 +379,7 @@ if ((!ethTaD1.price || ethTaD1.price <= 0) && Number.isFinite(ethSpot) && ethSpo
       generatedAt: new Date().toISOString(),
     };
 
-const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång till realtidsdata.\n\nKRAV: Returnera ENDAST giltig JSON enligt schema. Använd exakta siffror och nivåer. Inkludera tydliga texter för stöd/motstånd och breakout/breakdown.\n\nJSON SCHEMA (oförändrat): ${JSON.stringify({
+const prompt = `Du är en senior krypto-researchanalytiker med fokus på precision och riskhantering.\n\nMål: Producera ENDAST giltig JSON enligt schemat nedan. Använd exakta nivåer och siffror. Skriv korta, klara texter på svenska.\n\nKrav för analysen:\n- Konsolidera all realtidsdata som skickas i Fakta till en heltäckande bedömning\n- Teknisk analys för BTC och ETH på 1D, 7D och 1M baserat på givna indikatorer (SMA20/50/200, EMA20/50, RSI14, MACD, Bollinger-band)\n- Ange nästa stöd/motstånd i USD och avgör criticalLevel.type: 'breakout' | 'breakdown' | 'approaching' med en tydlig, kort text\n- Sentiment: inkludera Fear & Greed, social aktivitet och (om ej kända) sätt institutionalFlow till '—'\n- Makro: nämn kort ev. kända faktorer från fynden (räntor, reglering, ETF-flöden); om okänt, utelämna\n- Summera exakt 5 positiva och 5 risker (om färre, fyll på med de starkaste signalerna från TA och volym/mcap)\n- Svara endast med JSON, inga förklaringar utanför JSON\n\nJSON SCHEMA (oförändrat): ${JSON.stringify({
   trend: "Bullish|Bearish|Neutral",
   summary: "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
   positives: [],
@@ -406,7 +406,7 @@ const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4.1-2025-04-14",
+        model: "gpt-4o",
         temperature: 0.2,
         messages: [
           { role: "system", content: "Du är en extremt noggrann kryptoanalytiker. Svara endast med giltig JSON utan extra text." },
