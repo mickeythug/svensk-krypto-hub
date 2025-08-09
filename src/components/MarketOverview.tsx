@@ -279,6 +279,62 @@ const MarketOverview = () => {
                 )}
               </div>
 
+              {aiIntel?.technicalLevels ? (
+                <div className="md:col-span-2 mt-4">
+                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Tekniska Nivåer (AI-Research med Realtidsdata)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(['btc', 'eth'] as const).map((asset) => {
+                      const levels = aiIntel.technicalLevels?.[asset];
+                      const label = asset.toUpperCase();
+                      if (!levels) return null;
+                      
+                      return (
+                        <Card key={asset} className="p-4 bg-card/70 border-border">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="font-crypto font-semibold text-primary">{label}</span>
+                            <Badge variant="outline" className="text-xs">Realtids AI</Badge>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">Aktuellt pris:</span>
+                              <span className="font-crypto font-bold">${levels.currentPrice.toLocaleString()}</span>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
+                                <span className="text-sm text-destructive">Nästa stöd:</span>
+                                <span className="font-crypto text-sm text-destructive font-bold">${levels.nextSupport.price.toLocaleString()}</span>
+                              </div>
+                              
+                              <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
+                                <span className="text-sm text-success">Nästa motstånd:</span>
+                                <span className="font-crypto text-sm text-success font-bold">${levels.nextResistance.price.toLocaleString()}</span>
+                              </div>
+                              
+                              {levels.criticalLevel && (
+                                <div className={`p-2 rounded border ${
+                                  levels.criticalLevel.type === 'breakout' ? 'bg-success/10 border-success/20' :
+                                  levels.criticalLevel.type === 'breakdown' ? 'bg-destructive/10 border-destructive/20' :
+                                  'bg-warning/10 border-warning/20'
+                                }`}>
+                                  <div className={`text-xs font-medium ${
+                                    levels.criticalLevel.type === 'breakout' ? 'text-success' :
+                                    levels.criticalLevel.type === 'breakdown' ? 'text-destructive' :
+                                    'text-warning'
+                                  }`}>
+                                    {levels.criticalLevel.text}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : null}
+
               {aiIntel?.ta ? (
                 <div className="md:col-span-2 mt-2">
                   <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (AI-verifierad med webbsökning)</h4>
@@ -314,6 +370,26 @@ const MarketOverview = () => {
                       );
                     })}
                   </div>
+                  
+                  {aiIntel?.sentiment && (
+                    <div className="mt-4 p-4 rounded-lg bg-secondary/20 border border-secondary">
+                      <h5 className="font-crypto text-sm font-semibold mb-2">Sentimentanalys</h5>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Fear & Greed:</span>
+                          <span className="ml-2 font-semibold">{aiIntel.sentiment.fearGreed}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Social Media:</span>
+                          <span className="ml-2 font-semibold">{aiIntel.sentiment.socialMediaTrend}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Institutionella flöden:</span>
+                          <span className="ml-2 font-semibold">{aiIntel.sentiment.institutionalFlow}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : intel?.ta ? (
                 <div className="md:col-span-2 mt-2">

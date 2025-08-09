@@ -16,14 +16,41 @@ export type TAResult = {
   trend: "Bullish" | "Bearish" | "Sideways";
 };
 
+export type TechnicalLevel = {
+  price: number;
+  text: string;
+  type?: "breakout" | "breakdown" | "approaching";
+};
+
+export type TechnicalLevels = {
+  btc: {
+    currentPrice: number;
+    nextSupport: TechnicalLevel;
+    nextResistance: TechnicalLevel;
+    criticalLevel: TechnicalLevel;
+  };
+  eth: {
+    currentPrice: number;
+    nextSupport: TechnicalLevel;
+    nextResistance: TechnicalLevel;
+    criticalLevel: TechnicalLevel;
+  };
+};
+
 export type AIMarketAnalysis = {
   trend: "Bullish" | "Bearish" | "Neutral";
   summary: string;
   positives: string[];
   negatives: string[];
+  technicalLevels?: TechnicalLevels;
   ta?: {
     btc: { d1: TAResult; h4: TAResult; h1: TAResult };
     eth: { d1: TAResult; h4: TAResult; h1: TAResult };
+  };
+  sentiment?: {
+    fearGreed: number;
+    socialMediaTrend: string;
+    institutionalFlow: string;
   };
   generatedAt: string;
   sources?: string[];

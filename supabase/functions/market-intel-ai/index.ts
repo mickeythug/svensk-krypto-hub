@@ -272,37 +272,77 @@ serve(async (req) => {
       generatedAt: new Date().toISOString(),
     };
 
-    const prompt = `Du är en strikt och pålitlig kryptomarknadsanalytiker med tillgång till realtidsdata från webben. 
+    const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång till realtidsdata via webben. 
 
-VIKTIGT: Använd webben för att hämta de senaste priserna för BTC och ETH från de senaste 7 dagarna för att verifiera trenderna i teknisk analys data.
+UPPDRAG: Genomför en OMFATTANDE marknadsanalys på svenska med följande komponenter:
 
-Uppgift: Leverera en omfattande, konsekvent och verifierbar marknadsanalys på svenska baserad på MINST 10 faktorer: 
-(1) Globalt marknadsvärde 24h-trend, (2) Volym/Mcap, (3) BTC-dominans, (4) DeFi TVL, (5) Fear & Greed, (6) Social aktivitet, (7) Toppvinnare/Topplistan, (8) BTC TA 1D/4H/1H, (9) ETH TA 1D/4H/1H, (10) Valuta-veckotrend (t.ex. ETH/BTC senaste 7 dagar) och (11) Bollinger/RSI/MACD signaler. 
+1. REALTIDS WEBBSÖKNING - Sök webben för:
+   - Senaste BTC/ETH priser och volymer från de senaste 24-48 timmarna
+   - Aktuella stöd- och motståndslinjer för BTC och ETH
+   - Senaste breakouts/breakdowns som har skett
+   - Aktuella marknadssentiment från Twitter, Reddit, news
+   - Institutionella flöden och whale movements
 
-VIKTIGT: Sök webben för de senaste BTC och ETH priserna från de senaste 7 dagarna och jämför med den tekniska analysdatan jag ger dig för att säkerställa korrekthet.
+2. TEKNISK ANALYS MED EXAKTA NIVÅER:
+   - Beräkna EXAKTA stöd- och motståndslinjer för BTC/ETH
+   - Identifiera kritiska breakout/breakdown nivåer
+   - Ange om vi "Närmar oss breakout på $XX,XXX" eller "Närmar oss breakdown $XX,XXX"
+   - RSI/MACD/Bollinger Band signaler med precisa värden
 
-Krav: 
-- Bygg en helhetsbedömning: Bullish, Bearish eller Neutral (Sideways). 
-- Inga påhitt: ALLT måste kunna härledas från datan OCH webbsökning. 
-- Om ETH veckoförändring > 15% kan analysen inte vara Sideways. 
-- Samma sak för BTC. 
-- Svara ENDAST med strikt JSON enligt följande schema.
+3. SENTIMENTANALYS:
+   - Fear & Greed Index tolkning
+   - Social media sentiment (sök Twitter/Reddit för senaste 24h)
+   - Institutional sentiment och flöden
+   - Regulatory news påverkan
 
-Schema: {
+4. MARKNADSKONTEXT:
+   - Globala makroekonomiska faktorer som påverkar crypto
+   - Institutionella adoptionsignaler
+   - DeFi/NFT/Layer2 utvecklingar
+
+VIKTIGA KRAV:
+- Alla priser och nivåer måste vara EXAKTA från webbsökning (inte uppskattningar)
+- Använd format: "Nästa stöd $63,420" eller "Närmar oss breakout $67,890" 
+- Om vi redan brutit genom nivåer, ange: "Brutit genom motstånd $65,500, nästa mål $68,200"
+- Inkludera tidsramar: "4H stöd $64,100" vs "Dagligt stöd $62,800"
+
+JSON SCHEMA:
+{
   "trend": "Bullish|Bearish|Neutral",
-  "summary": "Marknadsvärde: <...> • 24h Volym: <...> • BTC-dominans: <...>% • 24h Förändring: <...>%",
+  "summary": "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
   "positives": string[],
   "negatives": string[],
+  "technicalLevels": {
+    "btc": {
+      "currentPrice": number,
+      "nextSupport": { "price": number, "text": "string" },
+      "nextResistance": { "price": number, "text": "string" },
+      "criticalLevel": { "price": number, "text": "string", "type": "breakout|breakdown|approaching" }
+    },
+    "eth": {
+      "currentPrice": number,
+      "nextSupport": { "price": number, "text": "string" },
+      "nextResistance": { "price": number, "text": "string" },
+      "criticalLevel": { "price": number, "text": "string", "type": "breakout|breakdown|approaching" }
+    }
+  },
   "ta": {
     "btc": { "d1": any, "h4": any, "h1": any },
     "eth": { "d1": any, "h4": any, "h1": any }
+  },
+  "sentiment": {
+    "fearGreed": number,
+    "socialMediaTrend": "string",
+    "institutionalFlow": "string"
   },
   "generatedAt": string,
   "sources": string[]
 }
 
-Data:
-${JSON.stringify(facts)}`;
+REALTIDSDATA ATT ANALYSERA:
+${JSON.stringify(facts)}
+
+SÖK WEBBEN NU för de senaste priserna och tekniska nivåerna innan du svarar!`;
 
     const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -311,10 +351,10 @@ ${JSON.stringify(facts)}`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "o4-mini-deep-research",
-        temperature: 0.2,
+        model: "o3-deep-research",
+        temperature: 0.1,
         messages: [
-          { role: "system", content: "Du är en strikt, konservativ och pålitlig marknadsanalytiker. Använd webben för att hämta senaste prisdata. Svara endast med JSON enligt schema." },
+          { role: "system", content: "Du är en expert kryptoanalytiker med tillgång till realtidsdata via webben. Använd ALLTID webbsökning för att få de senaste priserna och tekniska nivåerna. Svara endast med exakt JSON enligt schema." },
           { role: "user", content: prompt },
         ],
       }),
