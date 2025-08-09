@@ -236,199 +236,289 @@ const MarketOverview = () => {
               style={{ backgroundImage: `url(${cryptoCharts})` }}
             >
               <div className="w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end p-4">
-                <div className="text-foreground">
-                  <Badge className={`${aiIntel?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : aiIntel?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
-                    {(aiIntel?.trend ?? 'Neutral')} Trend
-                  </Badge>
-                  <p className="text-sm font-display">
-                    {aiLoading ? 'Laddar AI-analys...' : (aiIntel?.summary || 'AI-marknadsanalys från OpenAI o4-mini-deep-research med realtidsdata')}
-                  </p>
+                <div className="text-foreground w-full">
+                  {aiLoading ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                        <Badge className="bg-primary text-primary-foreground animate-pulse">
+                          AI Research Pågår
+                        </Badge>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-sm font-display font-semibold text-primary">
+                          OpenAI o3-Deep-Research modellen analyserar marknaden...
+                        </p>
+                        <div className="text-xs text-muted-foreground space-y-1">
+                          <p>• Hämtar realtidsdata från 10+ källor</p>
+                          <p>• Analyserar tekniska indikatorer (RSI, MACD, MA)</p>
+                          <p>• Beräknar exakta stöd- och motståndsnivåer</p>
+                          <p>• Identifierar breakout/breakdown-möjligheter</p>
+                          <p>• Verifierar sentimentdata från sociala medier</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <Badge className={`${aiIntel?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : aiIntel?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
+                        {(aiIntel?.trend ?? 'Neutral')} Trend
+                      </Badge>
+                      <p className="text-sm font-display">
+                        {aiIntel?.summary || 'AI-marknadsanalys från OpenAI o3-deep-research med realtidsdata'}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="p-4 rounded-lg bg-success/10 border border-success/20">
-                <div className="flex items-center space-x-2 mb-2">
-                  <TrendingUp className="h-4 w-4 text-success" />
-                  <span className="font-display font-semibold text-success">Positiva Signaler (AI)</span>
-                </div>
-                {aiIntel?.positives?.length ? (
-                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {aiIntel.positives.map((p, i) => (
-                      <li key={`ai-pos-${i}`}>{p}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">{aiLoading ? 'Laddar positiva signaler...' : 'Inga starka positiva signaler just nu.'}</p>
-                )}
-              </div>
-              <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Activity className="h-4 w-4 text-warning" />
-                  <span className="font-display font-semibold text-warning">Att Bevaka (AI)</span>
-                </div>
-                {aiIntel?.negatives?.length ? (
-                  <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {aiIntel.negatives.map((n, i) => (
-                      <li key={`ai-neg-${i}`}>{n}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">{aiLoading ? 'Laddar varningssignaler...' : 'Inga större riskfaktorer identifierade.'}</p>
-                )}
-              </div>
-
-              {aiIntel?.technicalLevels ? (
-                <div className="md:col-span-2 mt-4">
-                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Tekniska Nivåer (AI-Research med Realtidsdata)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {(['btc', 'eth'] as const).map((asset) => {
-                      const levels = aiIntel.technicalLevels?.[asset];
-                      const label = asset.toUpperCase();
-                      if (!levels) return null;
-                      
-                      return (
-                        <Card key={asset} className="p-4 bg-card/70 border-border">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="font-crypto font-semibold text-primary">{label}</span>
-                            <Badge variant="outline" className="text-xs">Realtids AI</Badge>
-                          </div>
-                          <div className="space-y-3">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-muted-foreground">Aktuellt pris:</span>
-                              <span className="font-crypto font-bold">${levels.currentPrice.toLocaleString()}</span>
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
-                                <span className="text-sm text-destructive">Nästa stöd:</span>
-                                <span className="font-crypto text-sm text-destructive font-bold">${levels.nextSupport.price.toLocaleString()}</span>
-                              </div>
-                              
-                              <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
-                                <span className="text-sm text-success">Nästa motstånd:</span>
-                                <span className="font-crypto text-sm text-success font-bold">${levels.nextResistance.price.toLocaleString()}</span>
-                              </div>
-                              
-                              {levels.criticalLevel && (
-                                <div className={`p-2 rounded border ${
-                                  levels.criticalLevel.type === 'breakout' ? 'bg-success/10 border-success/20' :
-                                  levels.criticalLevel.type === 'breakdown' ? 'bg-destructive/10 border-destructive/20' :
-                                  'bg-warning/10 border-warning/20'
-                                }`}>
-                                  <div className={`text-xs font-medium ${
-                                    levels.criticalLevel.type === 'breakout' ? 'text-success' :
-                                    levels.criticalLevel.type === 'breakdown' ? 'text-destructive' :
-                                    'text-warning'
-                                  }`}>
-                                    {levels.criticalLevel.text}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </Card>
-                      );
-                    })}
+            {aiLoading ? (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="p-4 rounded-lg bg-success/10 border border-success/20">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="animate-spin h-4 w-4 border-2 border-success border-t-transparent rounded-full"></div>
+                    <span className="font-display font-semibold text-success">Analyserar Positiva Signaler</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-success/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-success/20 rounded animate-pulse w-3/4"></div>
+                    <div className="h-3 bg-success/20 rounded animate-pulse w-1/2"></div>
                   </div>
                 </div>
-              ) : null}
-
-              {aiIntel?.ta ? (
-                <div className="md:col-span-2 mt-2">
-                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (AI-verifierad med webbsökning)</h4>
+                <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="animate-spin h-4 w-4 border-2 border-warning border-t-transparent rounded-full"></div>
+                    <span className="font-display font-semibold text-warning">Analyserar Riskfaktorer</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-warning/20 rounded animate-pulse"></div>
+                    <div className="h-3 bg-warning/20 rounded animate-pulse w-4/5"></div>
+                    <div className="h-3 bg-warning/20 rounded animate-pulse w-2/3"></div>
+                  </div>
+                </div>
+                
+                <div className="md:col-span-2 mt-4">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                    <h4 className="font-crypto text-sm text-primary font-semibold">Beräknar Tekniska Nivåer med Realtidsdata</h4>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {(['btc','eth'] as const).map((asset) => {
-                      const set = aiIntel.ta?.[asset];
-                      const label = asset.toUpperCase();
-                      const row = (tf: 'd1'|'h4'|'h1', name: string) => {
-                        const t = set?.[tf];
-                        const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
-                        return (
-                          <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
-                            <span className="font-display text-sm">{name}</span>
-                            <div className={`font-display text-sm ${color}`}>
-                              <span className="mr-2">{t?.trend ?? '—'}</span>
-                              {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
-                            </div>
+                    {(['BTC', 'ETH'] as const).map((asset) => (
+                      <Card key={asset} className="p-4 bg-card/70 border-border">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-crypto font-semibold text-primary">{asset}</span>
+                          <div className="flex items-center space-x-1">
+                            <div className="animate-spin h-3 w-3 border border-primary border-t-transparent rounded-full"></div>
+                            <Badge variant="outline" className="text-xs">Beräknar...</Badge>
                           </div>
-                        );
-                      };
-                      return (
-                        <Card key={asset} className="p-4 bg-card/70 border-border">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="font-crypto font-semibold text-primary">{label}</span>
-                            <Badge variant="outline" className="text-xs">AI-verifierad</Badge>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Aktuellt pris:</span>
+                            <div className="h-4 bg-secondary/50 rounded animate-pulse w-20"></div>
                           </div>
                           <div className="space-y-2">
-                            {row('d1','1D')}
-                            {row('h4','4H')}
-                            {row('h1','1H')}
+                            <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
+                              <span className="text-sm text-destructive">Nästa stöd:</span>
+                              <div className="h-4 bg-destructive/20 rounded animate-pulse w-16"></div>
+                            </div>
+                            <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
+                              <span className="text-sm text-success">Nästa motstånd:</span>
+                              <div className="h-4 bg-success/20 rounded animate-pulse w-16"></div>
+                            </div>
+                            <div className="p-2 rounded border bg-warning/10 border-warning/20">
+                              <div className="h-3 bg-warning/20 rounded animate-pulse w-full"></div>
+                            </div>
                           </div>
-                        </Card>
-                      );
-                    })}
+                        </div>
+                      </Card>
+                    ))}
                   </div>
-                  
-                  {aiIntel?.sentiment && (
-                    <div className="mt-4 p-4 rounded-lg bg-secondary/20 border border-secondary">
-                      <h5 className="font-crypto text-sm font-semibold mb-2">Sentimentanalys</h5>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Fear & Greed:</span>
-                          <span className="ml-2 font-semibold">{aiIntel.sentiment.fearGreed}</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Social Media:</span>
-                          <span className="ml-2 font-semibold">{aiIntel.sentiment.socialMediaTrend}</span>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Institutionella flöden:</span>
-                          <span className="ml-2 font-semibold">{aiIntel.sentiment.institutionalFlow}</span>
-                        </div>
-                      </div>
-                    </div>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="p-4 rounded-lg bg-success/10 border border-success/20">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <TrendingUp className="h-4 w-4 text-success" />
+                    <span className="font-display font-semibold text-success">Positiva Signaler (AI)</span>
+                  </div>
+                  {aiIntel?.positives?.length ? (
+                    <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                      {aiIntel.positives.map((p, i) => (
+                        <li key={`ai-pos-${i}`}>{p}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Inga starka positiva signaler just nu.</p>
                   )}
                 </div>
-              ) : intel?.ta ? (
-                <div className="md:col-span-2 mt-2">
-                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (Fallback)</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {(['btc','eth'] as const).map((asset) => {
-                      const set = intel.ta?.[asset];
-                      const label = asset.toUpperCase();
-                      const row = (tf: 'd1'|'h4'|'h1', name: string) => {
-                        const t = set?.[tf];
-                        const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
-                        return (
-                          <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
-                            <span className="font-display text-sm">{name}</span>
-                            <div className={`font-display text-sm ${color}`}>
-                              <span className="mr-2">{t?.trend ?? '—'}</span>
-                              {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
-                            </div>
-                          </div>
-                        );
-                      };
-                      return (
-                        <Card key={asset} className="p-4 bg-card/70 border-border">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="font-crypto font-semibold text-primary">{label}</span>
-                          </div>
-                          <div className="space-y-2">
-                            {row('d1','1D')}
-                            {row('h4','4H')}
-                            {row('h1','1H')}
-                          </div>
-                        </Card>
-                      );
-                    })}
+                <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Activity className="h-4 w-4 text-warning" />
+                    <span className="font-display font-semibold text-warning">Att Bevaka (AI)</span>
                   </div>
+                  {aiIntel?.negatives?.length ? (
+                    <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                      {aiIntel.negatives.map((n, i) => (
+                        <li key={`ai-neg-${i}`}>{n}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">Inga större riskfaktorer identifierade.</p>
+                  )}
                 </div>
-              ) : null}
 
-            </div>
+                {aiIntel?.technicalLevels ? (
+                  <div className="md:col-span-2 mt-4">
+                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">Tekniska Nivåer (AI-Research med Realtidsdata)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {(['btc', 'eth'] as const).map((asset) => {
+                        const levels = aiIntel.technicalLevels?.[asset];
+                        const label = asset.toUpperCase();
+                        if (!levels) return null;
+                        
+                        return (
+                          <Card key={asset} className="p-4 bg-card/70 border-border">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="font-crypto font-semibold text-primary">{label}</span>
+                              <Badge variant="outline" className="text-xs">Realtids AI</Badge>
+                            </div>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-muted-foreground">Aktuellt pris:</span>
+                                <span className="font-crypto font-bold">${levels.currentPrice.toLocaleString()}</span>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
+                                  <span className="text-sm text-destructive">Nästa stöd:</span>
+                                  <span className="font-crypto text-sm text-destructive font-bold">${levels.nextSupport.price.toLocaleString()}</span>
+                                </div>
+                                
+                                <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
+                                  <span className="text-sm text-success">Nästa motstånd:</span>
+                                  <span className="font-crypto text-sm text-success font-bold">${levels.nextResistance.price.toLocaleString()}</span>
+                                </div>
+                                
+                                {levels.criticalLevel && (
+                                  <div className={`p-2 rounded border ${
+                                    levels.criticalLevel.type === 'breakout' ? 'bg-success/10 border-success/20' :
+                                    levels.criticalLevel.type === 'breakdown' ? 'bg-destructive/10 border-destructive/20' :
+                                    'bg-warning/10 border-warning/20'
+                                  }`}>
+                                    <div className={`text-xs font-medium ${
+                                      levels.criticalLevel.type === 'breakout' ? 'text-success' :
+                                      levels.criticalLevel.type === 'breakdown' ? 'text-destructive' :
+                                      'text-warning'
+                                    }`}>
+                                      {levels.criticalLevel.text}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+
+                {aiIntel?.ta ? (
+                  <div className="md:col-span-2 mt-2">
+                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (AI-verifierad med webbsökning)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {(['btc','eth'] as const).map((asset) => {
+                        const set = aiIntel.ta?.[asset];
+                        const label = asset.toUpperCase();
+                        const row = (tf: 'd1'|'h4'|'h1', name: string) => {
+                          const t = set?.[tf];
+                          const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
+                          return (
+                            <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
+                              <span className="font-display text-sm">{name}</span>
+                              <div className={`font-display text-sm ${color}`}>
+                                <span className="mr-2">{t?.trend ?? '—'}</span>
+                                {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                              </div>
+                            </div>
+                          );
+                        };
+                        return (
+                          <Card key={asset} className="p-4 bg-card/70 border-border">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="font-crypto font-semibold text-primary">{label}</span>
+                              <Badge variant="outline" className="text-xs">AI-verifierad</Badge>
+                            </div>
+                            <div className="space-y-2">
+                              {row('d1','1D')}
+                              {row('h4','4H')}
+                              {row('h1','1H')}
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                    
+                    {aiIntel?.sentiment && (
+                      <div className="mt-4 p-4 rounded-lg bg-secondary/20 border border-secondary">
+                        <h5 className="font-crypto text-sm font-semibold mb-2">Sentimentanalys</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Fear & Greed:</span>
+                            <span className="ml-2 font-semibold">{aiIntel.sentiment.fearGreed}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Social Media:</span>
+                            <span className="ml-2 font-semibold">{aiIntel.sentiment.socialMediaTrend}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Institutionella flöden:</span>
+                            <span className="ml-2 font-semibold">{aiIntel.sentiment.institutionalFlow}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : intel?.ta ? (
+                  <div className="md:col-span-2 mt-2">
+                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (Fallback)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {(['btc','eth'] as const).map((asset) => {
+                        const set = intel.ta?.[asset];
+                        const label = asset.toUpperCase();
+                        const row = (tf: 'd1'|'h4'|'h1', name: string) => {
+                          const t = set?.[tf];
+                          const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
+                          return (
+                            <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
+                              <span className="font-display text-sm">{name}</span>
+                              <div className={`font-display text-sm ${color}`}>
+                                <span className="mr-2">{t?.trend ?? '—'}</span>
+                                {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                              </div>
+                            </div>
+                          );
+                        };
+                        return (
+                          <Card key={asset} className="p-4 bg-card/70 border-border">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="font-crypto font-semibold text-primary">{label}</span>
+                            </div>
+                            <div className="space-y-2">
+                              {row('d1','1D')}
+                              {row('h4','4H')}
+                              {row('h1','1H')}
+                            </div>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
           </Card>
         </div>
       </div>
