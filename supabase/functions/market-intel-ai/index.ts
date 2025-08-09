@@ -318,7 +318,6 @@ ${JSON.stringify(facts)}`;
           { role: "user", content: prompt },
         ],
       }),
-      }),
     });
 
     if (!aiRes.ok) {
