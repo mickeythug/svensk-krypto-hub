@@ -244,7 +244,7 @@ async function researchViaPerplexity(facts: any): Promise<any | null> {
       "criticalLevel": { "price": 0, "text": "", "type": "breakout|breakdown|approaching" }
     }
   },
-  "ta": { "btc": {"d1": {}, "h4": {}, "h1": {}}, "eth": {"d1": {}, "h4": {}, "h1": {}} },
+  "ta": { "btc": {"d1": {}, "d7": {}, "m1": {}}, "eth": {"d1": {}, "d7": {}, "m1": {}} },
   "sentiment": { "fearGreed": 0, "socialMediaTrend": "", "institutionalFlow": "" },
   "generatedAt": "",
   "sources": []
@@ -298,24 +298,22 @@ serve(async (req) => {
     const today = new Date().toISOString().slice(0, 10);
     const cacheKey = `ai:market:${today}`;
 
-    const [global, tvl, fng, socialPct, movers, btcDaily, ethDaily, btcHourly, ethHourly] = await Promise.all([
+    const [global, tvl, fng, socialPct, movers, btcDaily, ethDaily] = await Promise.all([
       getGlobalMarket(),
       getDefiTVL(),
       getFearGreed(),
       getSocialVolumePct(),
       getTopMovers(),
-      getDailyPrices('bitcoin', 200),
-      getDailyPrices('ethereum', 200),
-      getHourlyPrices('bitcoin', 14),
-      getHourlyPrices('ethereum', 14),
+      getDailyPrices('bitcoin', 1825),
+      getDailyPrices('ethereum', 1825),
     ]);
 
     const btcTaD1 = diagnoseTA(btcDaily);
     const ethTaD1 = diagnoseTA(ethDaily);
-    const btcTaH1 = diagnoseTA(btcHourly);
-    const ethTaH1 = diagnoseTA(ethHourly);
-    const btcTaH4 = diagnoseTA(downsample(btcHourly, 4));
-    const ethTaH4 = diagnoseTA(downsample(ethHourly, 4));
+    const btcTaD7 = diagnoseTA(downsample(btcDaily, 7));
+    const ethTaD7 = diagnoseTA(downsample(ethDaily, 7));
+    const btcTaM1 = diagnoseTA(downsample(btcDaily, 30));
+    const ethTaM1 = diagnoseTA(downsample(ethDaily, 30));
 
     const topMovers = movers
       .filter((m: any) => Number.isFinite(m.change24h))
@@ -328,7 +326,7 @@ serve(async (req) => {
       overview: { ...global, defiTVL: tvl },
       sentiment: { fearGreedIndex: fng, newsVolumePct: newsPct, socialVolumePct: socialPct },
       topMovers,
-      ta: { btc: { d1: btcTaD1, h4: btcTaH4, h1: btcTaH1 }, eth: { d1: ethTaD1, h4: ethTaH4, h1: ethTaH1 } },
+      ta: { btc: { d1: btcTaD1, d7: btcTaD7, m1: btcTaM1 }, eth: { d1: ethTaD1, d7: ethTaD7, m1: ethTaM1 } },
       computed: {
         ethWeeklyChangePct: (() => {
           const n = ethDaily.length;

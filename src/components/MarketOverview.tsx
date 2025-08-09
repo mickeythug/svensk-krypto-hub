@@ -432,32 +432,32 @@ const MarketOverview = () => {
                       {(['btc','eth'] as const).map((asset) => {
                         const set = aiIntel.ta?.[asset];
                         const label = asset.toUpperCase();
-                        const row = (tf: 'd1'|'h4'|'h1', name: string) => {
-                          const t = set?.[tf];
-                          const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
-                          return (
-                            <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
-                              <span className="font-display text-sm">{name}</span>
-                              <div className={`font-display text-sm ${color}`}>
-                                <span className="mr-2">{t?.trend ?? '—'}</span>
-                                {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                          const row = (tf: 'd1'|'d7'|'m1', name: string) => {
+                            const t = set?.[tf];
+                            const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
+                            return (
+                              <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
+                                <span className="font-display text-sm">{name}</span>
+                                <div className={`font-display text-sm ${color}`}>
+                                  <span className="mr-2">{t?.trend ?? '—'}</span>
+                                  {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                                </div>
                               </div>
-                            </div>
+                            );
+                          };
+                          return (
+                            <Card key={asset} className="p-4 bg-card/70 border-border">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="font-crypto font-semibold text-primary">{label}</span>
+                                <Badge variant="outline" className="text-xs">AI-verifierad</Badge>
+                              </div>
+                              <div className="space-y-2">
+                                {row('d1','1D')}
+                                {row('d7','7D')}
+                                {row('m1','1M')}
+                              </div>
+                            </Card>
                           );
-                        };
-                        return (
-                          <Card key={asset} className="p-4 bg-card/70 border-border">
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="font-crypto font-semibold text-primary">{label}</span>
-                              <Badge variant="outline" className="text-xs">AI-verifierad</Badge>
-                            </div>
-                            <div className="space-y-2">
-                              {row('d1','1D')}
-                              {row('h4','4H')}
-                              {row('h1','1H')}
-                            </div>
-                          </Card>
-                        );
                       })}
                     </div>
                     
@@ -488,7 +488,7 @@ const MarketOverview = () => {
                       {(['btc','eth'] as const).map((asset) => {
                         const set = intel.ta?.[asset];
                         const label = asset.toUpperCase();
-                        const row = (tf: 'd1'|'h4'|'h1', name: string) => {
+                        const row = (tf: 'd1'|'d7'|'m1', name: string) => {
                           const t = set?.[tf];
                           const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
                           return (
@@ -506,11 +506,11 @@ const MarketOverview = () => {
                             <div className="flex items-center justify-between mb-3">
                               <span className="font-crypto font-semibold text-primary">{label}</span>
                             </div>
-                            <div className="space-y-2">
-                              {row('d1','1D')}
-                              {row('h4','4H')}
-                              {row('h1','1H')}
-                            </div>
+                              <div className="space-y-2">
+                                {row('d1','1D')}
+                                {row('d7','7D')}
+                                {row('m1','1M')}
+                              </div>
                           </Card>
                         );
                       })}

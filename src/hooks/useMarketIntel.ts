@@ -401,10 +401,10 @@ function computeMarketAnalysis(params: {
   topMovers: TopMover[];
   btcTa?: TAResult;
   ethTa?: TAResult;
-  btcTa1h?: TAResult;
-  ethTa1h?: TAResult;
-  btcTa4h?: TAResult;
-  ethTa4h?: TAResult;
+  btcTaD7?: TAResult;
+  ethTaD7?: TAResult;
+  btcTaM1?: TAResult;
+  ethTaM1?: TAResult;
 }): MarketAnalysis {
   const {
     totalMarketCap, totalVolume24h, btcDominance, defiTVL,
@@ -479,10 +479,10 @@ function computeMarketAnalysis(params: {
   const args: any = arguments[0] || {};
   taBullet('BTC 1D', args?.btcTa, 2);
   taBullet('ETH 1D', args?.ethTa, 1.5);
-  taBullet('BTC 4H', args?.btcTa4h, 1);
-  taBullet('ETH 4H', args?.ethTa4h, 0.75);
-  taBullet('BTC 1H', args?.btcTa1h, 0.5);
-  taBullet('ETH 1H', args?.ethTa1h, 0.5);
+  taBullet('BTC 7D', args?.btcTaD7, 1);
+  taBullet('ETH 7D', args?.ethTaD7, 0.75);
+  taBullet('BTC 1M', args?.btcTaM1, 0.5);
+  taBullet('ETH 1M', args?.ethTaM1, 0.5);
 
   const trend: MarketAnalysis["trend"] = score >= 3 ? "Bullish" : score <= -3 ? "Bearish" : "Neutral";
   const summary = [
@@ -507,33 +507,31 @@ export type MarketIntel = {
   topMovers: TopMover[];
   analysis: MarketAnalysis;
   ta: {
-    btc: { d1: TAResult; h4: TAResult; h1: TAResult };
-    eth: { d1: TAResult; h4: TAResult; h1: TAResult };
+    btc: { d1: TAResult; d7: TAResult; m1: TAResult };
+    eth: { d1: TAResult; d7: TAResult; m1: TAResult };
   };
   lastUpdated: string;
 }
 
 
 async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
-  const [global, tvl, active, fng, socialPct, movers, btcDaily, ethDaily, btcHourly, ethHourly] = await Promise.all([
+  const [global, tvl, active, fng, socialPct, movers, btcDaily, ethDaily] = await Promise.all([
     getGlobalMarket(),
     getDefiTVL(),
     getActiveAddresses(),
     getFearGreed(),
     getSocialVolumePct(),
     getTopMovers(),
-    getDailyPrices('bitcoin', 200),
-    getDailyPrices('ethereum', 200),
-    getHourlyPrices('bitcoin', 14),
-    getHourlyPrices('ethereum', 14),
+    getDailyPrices('bitcoin', 1825),
+    getDailyPrices('ethereum', 1825),
   ]);
 
   const btcTa = diagnoseTA(btcDaily);
   const ethTa = diagnoseTA(ethDaily);
-  const btcTa1h = diagnoseTA(btcHourly);
-  const ethTa1h = diagnoseTA(ethHourly);
-  const btcTa4h = diagnoseTA(downsample(btcHourly, 4));
-  const ethTa4h = diagnoseTA(downsample(ethHourly, 4));
+  const btcTaD7 = diagnoseTA(downsample(btcDaily, 7));
+  const ethTaD7 = diagnoseTA(downsample(ethDaily, 7));
+  const btcTaM1 = diagnoseTA(downsample(btcDaily, 30));
+  const ethTaM1 = diagnoseTA(downsample(ethDaily, 30));
 
   // Derive news volume percentage from provided count (if present)
   const newsPct = typeof newsCount24h === 'number' && newsCount24h >= 0
@@ -561,10 +559,10 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
       topMovers: movers,
       btcTa,
       ethTa,
-      btcTa1h,
-      ethTa1h,
-      btcTa4h,
-      ethTa4h,
+      btcTaD7,
+      ethTaD7,
+      btcTaM1,
+      ethTaM1,
     });
     try { localStorage.setItem(`market-analysis:${todayKey}`, JSON.stringify(analysis)); } catch {}
   }
@@ -587,8 +585,8 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
     topMovers: movers,
     analysis,
     ta: {
-      btc: { d1: btcTa, h4: btcTa4h, h1: btcTa1h },
-      eth: { d1: ethTa, h4: ethTa4h, h1: ethTa1h },
+      btc: { d1: btcTa, d7: btcTaD7, m1: btcTaM1 },
+      eth: { d1: ethTa, d7: ethTaD7, m1: ethTaM1 },
     },
     lastUpdated: new Date().toISOString(),
   };

@@ -45,8 +45,8 @@ export type AIMarketAnalysis = {
   negatives: string[];
   technicalLevels?: TechnicalLevels;
   ta?: {
-    btc: { d1: TAResult; h4: TAResult; h1: TAResult };
-    eth: { d1: TAResult; h4: TAResult; h1: TAResult };
+    btc: { d1: TAResult; d7: TAResult; m1: TAResult };
+    eth: { d1: TAResult; d7: TAResult; m1: TAResult };
   };
   sentiment?: {
     fearGreed: number;
