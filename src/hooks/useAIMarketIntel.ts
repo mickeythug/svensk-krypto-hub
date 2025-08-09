@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export type TAResult = {
   price: number;
@@ -56,13 +57,10 @@ export type AIMarketAnalysis = {
   sources?: string[];
 };
 
-const PROJECT_REF = "jcllcrvomxdrhtkqpcbr"; // Supabase project ref used elsewhere in app
-
 async function fetchAiAnalysis(): Promise<AIMarketAnalysis> {
-  const url = `https://${PROJECT_REF}.supabase.co/functions/v1/market-intel-ai`;
-  const res = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' }, cache: 'no-store' });
-  if (!res.ok) throw new Error(`AI analysis failed: ${res.status}`);
-  return res.json();
+  const { data, error } = await supabase.functions.invoke('market-intel-ai');
+  if (error) throw new Error(`AI analysis failed: ${error.message}`);
+  return data;
 }
 
 export function useAIMarketIntel() {
