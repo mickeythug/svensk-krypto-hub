@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { useAIMarketIntel } from "@/hooks/useAIMarketIntel";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import OptimizedImage from "@/components/OptimizedImage";
 
 // Coin logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
@@ -42,6 +43,10 @@ const COIN_LOGOS: Record<string, string> = {
   UNI: uniLogo,
   XRP: xrpLogo,
 };
+
+const EXCLUDED_STABLES = new Set(['USDT','USDC','DAI','TUSD','FDUSD','USDE','USDP','GUSD','EURT','PYUSD','BUSD','LUSD','FRAX','USDJ','USDD']);
+const EXCLUDED_STAKED = new Set(['STETH','WSTETH','RETH','CBETH','FRXETH','ANKRETH','WBETH','SFRXETH']);
+
 function AIMarkets() {
   const { data, isLoading, error } = useAIMarketIntel();
   if (error) return null;
@@ -135,13 +140,18 @@ const MarketOverview = () => {
   ];
 
   const topCoins = useMemo(() => {
-    return (cryptoPrices ?? [])
+    const filtered = (cryptoPrices ?? []).filter((c) => {
+      const sym = (c.symbol || '').toUpperCase();
+      return sym && !EXCLUDED_STABLES.has(sym) && !EXCLUDED_STAKED.has(sym);
+    });
+
+    return filtered
       .slice()
       .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999))
       .slice(0, 8)
       .map((c, idx) => ({
         rank: c.rank ?? idx + 1,
-        symbol: c.symbol,
+        symbol: (c.symbol || '').toUpperCase(),
         name: c.name,
         price: c.price,
         change: c.change24h ?? 0,
@@ -221,13 +231,16 @@ const MarketOverview = () => {
                   key={`${coin.symbol}-${coin.rank}`}
                   className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors duration-200"
                 >
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src={COIN_LOGOS[coin.symbol] || '/placeholder.svg'}
-                      alt={`${coin.name} logotyp`}
-                      className="h-6 w-6 rounded-full border border-border object-contain bg-muted/20"
-                      loading="lazy"
-                    />
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 rounded-xl border border-border bg-muted ring-1 ring-border/50 shadow-sm flex items-center justify-center overflow-hidden">
+                      <OptimizedImage
+                        src={COIN_LOGOS[coin.symbol] || '/placeholder.svg'}
+                        alt={`${coin.name} logotyp`}
+                        className="h-10 w-10 object-contain"
+                        fallbackSrc="/placeholder.svg"
+                        loading="lazy"
+                      />
+                    </div>
                     <Badge variant="outline" className="font-crypto text-xs">
                       #{coin.rank}
                     </Badge>
