@@ -6,6 +6,40 @@ import cryptoCharts from "@/assets/crypto-charts.jpg";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useMemo } from "react";
+import { useAIMarketIntel } from "@/hooks/useAIMarketIntel";
+
+function AIMarkets() {
+  const { data, isLoading, error } = useAIMarketIntel();
+  if (error) return null;
+  return (
+    <Card className="p-4 bg-card/80 border-border mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-crypto text-sm text-muted-foreground">AI-MARKNADSANALYS (OpenAI)</span>
+        <Badge className={`${data?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : data?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'}`}>
+          {data?.trend ?? 'Neutral'}
+        </Badge>
+      </div>
+      <p className="text-sm font-display mb-3">
+        {isLoading ? 'Laddar AI-analys…' : (data?.summary || 'AI sammanfattning otillgänglig just nu.')}
+      </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <div className="font-display text-success mb-1">Positiva</div>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+            {(data?.positives ?? []).slice(0,5).map((p, i) => (<li key={`ai-pos-${i}`}>{p}</li>))}
+          </ul>
+        </div>
+        <div>
+          <div className="font-display text-warning mb-1">Att Bevaka</div>
+          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+            {(data?.negatives ?? []).slice(0,5).map((n, i) => (<li key={`ai-neg-${i}`}>{n}</li>))}
+          </ul>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 const MarketOverview = () => {
   const isMobile = useIsMobile();
   const { data: intel } = useMarketIntel();
@@ -202,6 +236,9 @@ const MarketOverview = () => {
                 </div>
               </div>
             </div>
+
+            {/* AI-Marknadsanalys (OpenAI) */}
+            <AIMarkets />
             
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="p-4 rounded-lg bg-success/10 border border-success/20">
