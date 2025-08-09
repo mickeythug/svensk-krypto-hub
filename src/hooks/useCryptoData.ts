@@ -372,7 +372,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     throw new Error('Circuit breaker is open - too many recent failures');
   }
 
-  const cacheKey = 'crypto-prices-cache-v1';
+  const cacheKey = 'crypto-prices-cache-v2';
   const projectRef = 'jcllcrvomxdrhtkqpcbr';
   const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=2&refresh=true`;
 
