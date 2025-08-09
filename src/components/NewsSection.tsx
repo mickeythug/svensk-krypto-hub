@@ -3,81 +3,139 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Newspaper, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 const NewsSection = () => {
   const isMobile = useIsMobile();
-  const cryptoNews = [
-    {
-      id: 1,
-      title: "Bitcoin ETF får rekordinflöden från institutionella investerare",
-      excerpt: "Spot Bitcoin ETF:er har sett över 2 miljarder dollar i inflöden den senaste veckan, vilket signalerar stark institutionell efterfrågan.",
-      category: "Institutionellt",
-      time: "2 timmar sedan",
-      readTime: "3 min",
-      image: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=400",
-      trending: true
-    },
-    {
-      id: 2,
-      title: "Ethereum staking når nya rekordnivåer inför Shanghai upgrade",
-      excerpt: "Över 15 miljoner ETH är nu staket på Ethereum 2.0, vilket representerar nästan 13% av det totala utbudet.",
-      category: "DeFi",
-      time: "4 timmar sedan", 
-      readTime: "5 min",
-      image: "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=400",
-      trending: false
-    },
-    {
-      id: 3,
-      title: "Ny EU-reglering MiCA träder i kraft - vad det betyder för svenska användare",
-      excerpt: "Markets in Crypto-Assets förordningen kommer att påverka hur kryptotjänster erbjuds i Sverige och resten av EU.",
-      category: "Reglering",
-      time: "6 timmar sedan",
-      readTime: "7 min", 
-      image: "https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?w=400",
-      trending: false
-    },
-    {
-      id: 4,
-      title: "Solana DeFi ekosystem exploderar med ny rekordvolym",
-      excerpt: "Solana-baserade DEX:er processade över 1 miljard dollar i volym förra veckan, driven av meme coin-mani.",
-      category: "DeFi",
-      time: "8 timmar sedan",
-      readTime: "4 min",
-      image: "https://images.unsplash.com/photo-1639322537228-f710d846310a?w=400",
-      trending: true
-    },
-    {
-      id: 5,
-      title: "Svenska banker börjar erbjuda kryptotjänster till privatkunder",
-      excerpt: "Flera svenska storbanker meddelar planer på att erbjuda kryptohandel och förvaring till sina privatkunder under 2024.",
-      category: "Adoption",
-      time: "12 timmar sedan",
-      readTime: "6 min",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400",
-      trending: false
-    },
-    {
-      id: 6,
-      title: "NFT-marknaden ser återhämtning med fokus på verklig nytta",
-      excerpt: "NFT-försäljningar ökar för första gången på månader, drivet av projekt med verklig användning snarare än spekulation.",
-      category: "NFT",
-      time: "1 dag sedan",
-      readTime: "5 min",
-      image: "https://images.unsplash.com/photo-1618044733300-9472054094ee?w=400",
-      trending: false
-    }
-  ];
+
+  type NewsItem = {
+    id: string;
+    title: string;
+    excerpt: string;
+    category: string;
+    publishedAt: string;
+    time: string;
+    readTime: number;
+    imageUrl?: string | null;
+    trending: boolean;
+    url: string;
+    source?: string;
+  };
+
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const normalize = (s: string = "") => s.toLowerCase();
+  const hasAny = (s: string, patterns: RegExp[]) => patterns.some((re) => re.test(s));
+  const classifyCategory = (title: string, summary: string, tags: string[] = []) => {
+    const t = normalize(title);
+    const d = normalize(summary);
+    const tagStr = normalize(tags.join(" "));
+    const text = `${t} ${d} ${tagStr}`;
+
+    const reBTC = [/\bbitcoin\b/i, /\bbtc\b/i, /\bxbt\b/i, /\blightning\b/i, /\bhalving\b/i];
+    const reETH = [/\bethereum\b/i, /\beth\b/i, /\beth2\b/i, /\berc-?20\b/i, /\bevm\b/i, /\bvitalik\b/i];
+    const reMEME = [/\bmeme\b/i, /\bdoge\b/i, /\bdogecoin\b/i, /\bshib\b/i, /\bshiba\b/i, /\bpepe\b/i, /\bbonk\b/i, /\bwen\b/i, /\bfloki\b/i, /\bcat\b/i, /\bfrog\b/i];
+    const rePOL = [/\bsec\b/i, /\bregul\w*/i, /\bpolicy\b/i, /\bladstift\w*/i, /\blag\b/i, /\bmi\s?ca\b/i, /\beu\b/i, /\bsanction\w*/i, /\bskatt\w*/i, /\btax\b/i, /\bparliament\b/i, /\bregering\b/i];
+
+    if (hasAny(text, reBTC)) return "Bitcoin";
+    if (hasAny(text, reETH)) return "Ethereum";
+    if (hasAny(text, reMEME)) return "Meme Tokens";
+    if (hasAny(text, rePOL)) return "Politik";
+    return "Allmänt";
+  };
+
+  const isTrending = (title: string, summary: string, publishedAt: string, source?: string) => {
+    const now = Date.now();
+    const ts = new Date(publishedAt).getTime();
+    const minutes = Math.max(0, Math.floor((now - ts) / 60000));
+
+    const t = normalize(title);
+    const d = normalize(summary);
+    const text = `${t} ${d}`;
+
+    const reHot = [/breaking/i, /urgent/i, /just in/i, /flash/i, /rally/i, /plunge/i, /surge/i, /crash/i, /hack/i, /exploit/i, /etf/i, /lawsuit/i, /approved/i, /denied/i, /listing/i, /delist/i, /halving/i];
+
+    const recencyBoost = minutes <= 90; // last 90 minutes
+    const hotWords = hasAny(text, reHot);
+    const trusted = /cryptopanic|coindesk|cointelegraph|reuters|bloomberg/i.test(source || "");
+
+    return recencyBoost || (hotWords && trusted);
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    if (diffInMinutes < 1) return "Just nu";
+    if (diffInMinutes < 60) return `${diffInMinutes} min sedan`;
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h sedan`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays}d sedan`;
+    return date.toLocaleDateString('sv-SE');
+  };
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        setIsLoading(true);
+        const projectRef = "jcllcrvomxdrhtkqpcbr";
+        const url = `https://${projectRef}.supabase.co/functions/v1/news-aggregator?lang=sv&limit=50`;
+        const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+        const json = await res.json();
+        const items = (json.articles ?? []) as any[];
+        const mapped: NewsItem[] = items.map((a) => {
+          const title = a.title || '';
+          const desc = a.description || '';
+          const publishedAt = a.publishedAt || new Date().toISOString();
+          return {
+            id: a.id || a.url,
+            title,
+            excerpt: desc,
+            category: classifyCategory(title, desc, Array.isArray(a.tickers) ? a.tickers : []),
+            publishedAt,
+            time: formatTimeAgo(publishedAt),
+            readTime: Math.max(1, Math.round(desc.split(' ').length / 200)),
+            imageUrl: a.imageUrl || null,
+            trending: isTrending(title, desc, publishedAt, a.source),
+            url: a.url,
+            source: a.source || ''
+          } as NewsItem;
+        });
+        if (!active) return;
+        mapped.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+        setNews(mapped);
+      } catch (e) {
+        console.error('Failed to load news for home section', e);
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    };
+    load();
+    const interval = setInterval(load, 3 * 60 * 1000);
+    return () => { active = false; clearInterval(interval); };
+  }, []);
+
+  const featured = useMemo(() => news.slice(0, 2), [news]);
+  const trendingList = useMemo(() => news.slice(2, 8), [news]);
+
 
   const getCategoryColor = (category: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       "Institutionellt": "bg-blue-500/20 text-blue-400 border-blue-500/30",
       "DeFi": "bg-purple-500/20 text-purple-400 border-purple-500/30", 
       "Reglering": "bg-orange-500/20 text-orange-400 border-orange-500/30",
       "Adoption": "bg-green-500/20 text-green-400 border-green-500/30",
-      "NFT": "bg-pink-500/20 text-pink-400 border-pink-500/30"
+      "NFT": "bg-pink-500/20 text-pink-400 border-pink-500/30",
+      "Bitcoin": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+      "Ethereum": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      "Meme Tokens": "bg-pink-500/20 text-pink-400 border-pink-500/30",
+      "Politik": "bg-orange-500/20 text-orange-400 border-orange-500/30",
+      "Allmänt": "bg-muted/20 text-muted-foreground border-muted/30",
     };
-    return colors[category as keyof typeof colors] || "bg-gray-500/20 text-gray-400";
+    return colors[category] || "bg-muted/20 text-muted-foreground border-muted/30";
   };
 
   return (
@@ -97,12 +155,12 @@ const NewsSection = () => {
           {/* Featured News */}
           <div className="lg:col-span-2">
             <div className="grid gap-6">
-              {cryptoNews.slice(0, 2).map((article) => (
+              {featured.map((article) => (
                 <Card key={article.id} className="overflow-hidden border-border bg-card/80 backdrop-blur-sm hover:shadow-glow-secondary transition-all duration-300 group">
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     <div 
                       className="h-48 md:h-auto bg-cover bg-center relative"
-                      style={{ backgroundImage: `url(${article.image})` }}
+                      style={{ backgroundImage: `url(${article.imageUrl || '/placeholder.svg'})` }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80" />
                       {article.trending && (
@@ -135,9 +193,11 @@ const NewsSection = () => {
                       </div>
                       
                       <div className="flex items-center justify-between">
-                        <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                          Läs mer <ArrowRight size={14} className="ml-1" />
-                        </Button>
+                          <a href={article.url} target="_blank" rel="noopener noreferrer">
+                            <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+                              Läs mer <ArrowRight size={14} className="ml-1" />
+                            </Button>
+                          </a>
                         <div className="flex space-x-2">
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <Bookmark size={14} />
@@ -164,7 +224,7 @@ const NewsSection = () => {
               </div>
               
               <div className="space-y-4">
-                {cryptoNews.slice(2).map((article, index) => (
+                {trendingList.map((article, index) => (
                   <div key={article.id} className="group cursor-pointer">
                     <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-secondary/30 transition-colors">
                       <div className="text-primary font-crypto text-xs mt-1">
@@ -181,7 +241,7 @@ const NewsSection = () => {
                           <Clock size={10} />
                           <span>{article.time}</span>
                           <span>•</span>
-                          <span>{article.readTime}</span>
+                          <span>{article.readTime} min</span>
                         </div>
                       </div>
                     </div>
