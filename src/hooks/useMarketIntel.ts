@@ -506,6 +506,10 @@ export type MarketIntel = {
   sentiment: MarketSentimentData;
   topMovers: TopMover[];
   analysis: MarketAnalysis;
+  ta: {
+    btc: { d1: TAResult; h4: TAResult; h1: TAResult };
+    eth: { d1: TAResult; h4: TAResult; h1: TAResult };
+  };
   lastUpdated: string;
 }
 
@@ -582,6 +586,10 @@ async function fetchMarketIntel(newsCount24h?: number): Promise<MarketIntel> {
     },
     topMovers: movers,
     analysis,
+    ta: {
+      btc: { d1: btcTa, h4: btcTa4h, h1: btcTa1h },
+      eth: { d1: ethTa, h4: ethTa4h, h1: ethTa1h },
+    },
     lastUpdated: new Date().toISOString(),
   };
 }
