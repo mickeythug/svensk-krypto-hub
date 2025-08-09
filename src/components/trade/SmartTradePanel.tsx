@@ -12,7 +12,7 @@ import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/
 import { supabase } from '@/integrations/supabase/client';
 import { useAccount, useChainId } from 'wagmi';
 import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
-import { parseUnits } from 'viem';
+import { parseUnits, type Address } from 'viem';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet, 56: bsc, 137: polygon, 42161: arbitrum, 8453: base, 10: optimism };
 

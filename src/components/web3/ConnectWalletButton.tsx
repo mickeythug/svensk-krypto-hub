@@ -170,7 +170,15 @@ export default function ConnectWalletButton() {
         // Rensa wagmi/walletconnect persistence
         const clearKeys = (store: Storage) => {
           for (const k of Object.keys(store)) {
-            if (k.startsWith('wagmi') || k.startsWith('wc@') || k.includes('walletconnect')) {
+            if (
+              k.startsWith('wagmi') ||
+              k.startsWith('wc@') ||
+              k.includes('walletconnect') ||
+              k.includes('@solana/wallet-adapter') ||
+              k.includes('walletName') ||
+              k === '@solana/wallet-adapter-react/walletName' ||
+              k === 'walletAdapter'
+            ) {
               store.removeItem(k);
             }
           }
