@@ -19,7 +19,7 @@ async function delay(ms: number) {
 async function fetchCoinGeckoPages(pages: number, perPage = 100, vs = 'usd', delayMs = 1200) {
   const all: any[] = [];
   for (let page = 1; page <= pages; page++) {
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vs}&order=market_cap_desc&per_page=${perPage}&page=${page}&sparkline=false&price_change_percentage=24h`;
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vs}&order=market_cap_desc&per_page=${perPage}&page=${page}&sparkline=false&price_change_percentage=1h,24h,7d`;
     const res = await fetch(url, { headers: { 'accept': 'application/json', 'cache-control': 'no-cache' } });
     if (!res.ok) throw new Error(`CoinGecko error ${res.status}`);
     const json = await res.json();
@@ -34,7 +34,9 @@ async function upsertLatestPrices(coins: any[]) {
     symbol: String(c.symbol || '').toUpperCase(),
     name: c.name ?? null,
     price: c.current_price ?? null,
-    change_24h: c.price_change_percentage_24h ?? null,
+    change_1h: c.price_change_percentage_1h_in_currency ?? null,
+    change_24h: (c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h) ?? null,
+    change_7d: c.price_change_percentage_7d_in_currency ?? null,
     market_cap: c.market_cap ?? null,
     image: c.image ?? null,
     coin_gecko_id: c.id ?? null,

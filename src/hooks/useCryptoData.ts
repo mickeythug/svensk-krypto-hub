@@ -397,7 +397,9 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       symbol: String(r.symbol ?? r.symbol).toUpperCase(),
       name: r.name ?? r.name,
       price: Number(r.price ?? r.current_price ?? 0),
-      change24h: Number(r.change_24h ?? r.price_change_percentage_24h ?? 0),
+      change1h: r.change_1h != null ? Number(r.change_1h) : (r.price_change_percentage_1h_in_currency != null ? Number(r.price_change_percentage_1h_in_currency) : undefined),
+      change24h: Number((r.change_24h ?? r.price_change_percentage_24h_in_currency ?? r.price_change_percentage_24h) ?? 0),
+      change7d: r.change_7d != null ? Number(r.change_7d) : (r.price_change_percentage_7d_in_currency != null ? Number(r.price_change_percentage_7d_in_currency) : undefined),
       marketCap: r.market_cap != null ? formatters.marketCap(Number(r.market_cap)) : undefined,
       volume: r.total_volume != null ? formatters.volume(Number(r.total_volume)) : undefined,
       rank: r.market_cap_rank ?? idx + 1,
@@ -432,7 +434,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     // Fallback 2: Direct CoinGecko (batched, sequential to respect limits)
     try {
       await apiRateLimiter.acquire();
-      const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false&price_change_percentage=24h';
+      const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false&price_change_percentage=1h,24h,7d';
       const pages = [1, 2];
       const results: any[] = [];
       for (const p of pages) {
@@ -461,7 +463,9 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       symbol: coin.symbol.toUpperCase(),
       name: coin.name,
       price: coin.current_price,
-      change24h: coin.price_change_percentage_24h || 0,
+      change1h: coin.price_change_percentage_1h_in_currency ?? undefined,
+      change24h: (coin.price_change_percentage_24h_in_currency ?? coin.price_change_percentage_24h) || 0,
+      change7d: coin.price_change_percentage_7d_in_currency ?? undefined,
       marketCap: formatters.marketCap(coin.market_cap || 0),
       volume: formatters.volume(coin.total_volume || 0),
       rank: coin.market_cap_rank || index + 1,

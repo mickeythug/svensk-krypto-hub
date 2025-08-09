@@ -16,7 +16,9 @@ export type Database = {
     Tables: {
       latest_token_prices: {
         Row: {
+          change_1h: number | null
           change_24h: number | null
+          change_7d: number | null
           coin_gecko_id: string | null
           data: Json | null
           image: string | null
@@ -27,7 +29,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          change_1h?: number | null
           change_24h?: number | null
+          change_7d?: number | null
           coin_gecko_id?: string | null
           data?: Json | null
           image?: string | null
@@ -38,7 +42,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          change_1h?: number | null
           change_24h?: number | null
+          change_7d?: number | null
           coin_gecko_id?: string | null
           data?: Json | null
           image?: string | null
