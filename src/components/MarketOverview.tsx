@@ -247,7 +247,7 @@ const MarketOverview = () => {
                       </div>
                       <div className="space-y-2">
                         <p className="text-sm font-display font-semibold text-primary">
-                          OpenAI o3-Deep-Research modellen analyserar marknaden...
+                          OpenAI researchmodellen analyserar marknaden...
                         </p>
                         <div className="text-xs text-muted-foreground space-y-1">
                           <p>• Hämtar realtidsdata från 10+ källor</p>
@@ -264,7 +264,7 @@ const MarketOverview = () => {
                         {(aiIntel?.trend ?? 'Neutral')} Trend
                       </Badge>
                       <p className="text-sm font-display">
-                        {aiIntel?.summary || 'AI-marknadsanalys från OpenAI o3-deep-research med realtidsdata'}
+                        {aiIntel?.summary || 'AI-marknadsanalys från OpenAI researchmodellen med realtidsdata'}
                       </p>
                     </div>
                   )}

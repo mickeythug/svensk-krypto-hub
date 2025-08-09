@@ -9,6 +9,7 @@ const corsHeaders = {
 };
 
 const openAIApiKey = Deno.env.get("OPENAI_API") || Deno.env.get("OPENAI_API_KEY");
+const perplexityApiKey = Deno.env.get("PERPLEXITY_API_KEY");
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL') ?? '',
@@ -187,6 +188,64 @@ async function getTopMovers() {
   } catch { return []; }
 }
 
+// Optional: Live web research via Perplexity (if key provided)
+async function researchViaPerplexity(facts: any): Promise<any | null> {
+  if (!perplexityApiKey) return null;
+  try {
+    const resp = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${perplexityApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-large-128k-online',
+        temperature: 0.2,
+        top_p: 0.9,
+        max_tokens: 2000,
+        messages: [
+          { role: 'system', content: 'Du är en mycket noggrann krypto-researchanalytiker. Svara ENDAST med giltig JSON enligt schema, inga förklaringar.' },
+          { role: 'user', content: `Hämta AKTUELLA nivåer och marknadsdata från webben för BTC och ETH. Följ detta JSON-schema strikt (inga extra fält):\n${`{
+  "trend": "Bullish|Bearish|Neutral",
+  "summary": "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
+  "positives": [],
+  "negatives": [],
+  "technicalLevels": {
+    "btc": {
+      "currentPrice": 0,
+      "nextSupport": { "price": 0, "text": "" },
+      "nextResistance": { "price": 0, "text": "" },
+      "criticalLevel": { "price": 0, "text": "", "type": "breakout|breakdown|approaching" }
+    },
+    "eth": {
+      "currentPrice": 0,
+      "nextSupport": { "price": 0, "text": "" },
+      "nextResistance": { "price": 0, "text": "" },
+      "criticalLevel": { "price": 0, "text": "", "type": "breakout|breakdown|approaching" }
+    }
+  },
+  "ta": { "btc": {"d1": {}, "h4": {}, "h1": {}}, "eth": {"d1": {}, "h4": {}, "h1": {}} },
+  "sentiment": { "fearGreed": 0, "socialMediaTrend": "", "institutionalFlow": "" },
+  "generatedAt": "",
+  "sources": []
+}`}` }
+        ],
+        search_domain_filter: [],
+        search_recency_filter: 'week',
+        frequency_penalty: 1,
+        presence_penalty: 0
+      }),
+    });
+    if (!resp.ok) throw new Error(`Perplexity ${resp.status}`);
+    const data = await resp.json();
+    const content = data?.choices?.[0]?.message?.content ?? '';
+    try { return JSON.parse(content); } catch { return null; }
+  } catch (e) {
+    console.error('Perplexity research failed', e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -196,24 +255,28 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "OPENAI_API not set" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Check daily cache first
-    const today = new Date().toISOString().slice(0, 10);
-    const cacheKey = `ai:market:${today}`;
-    
-    const { data: cached } = await supabase
-      .from('news_cache')
-      .select('data')
-      .eq('key', cacheKey)
-      .gt('expires_at', new Date().toISOString())
-      .single();
-    
-    if (cached?.data) {
-      console.log('Returning cached AI analysis for', today);
-      return new Response(JSON.stringify(cached.data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    // Parse body early to read flags
+    const body = req.method === 'POST' ? await req.json().catch(() => ({})) : {} as any;
+    const { newsCount24h, refresh } = body || {};
+
+    // Check daily cache first unless forced refresh
+    if (!refresh) {
+      const today = new Date().toISOString().slice(0, 10);
+      const cacheKey = `ai:market:${today}`;
+      const { data: cached } = await supabase
+        .from('news_cache')
+        .select('data')
+        .eq('key', cacheKey)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+      if (cached?.data) {
+        console.log('Returning cached AI analysis for', today);
+        return new Response(JSON.stringify(cached.data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
     }
 
-    // optional user prefs
-    const { newsCount24h } = req.method === 'POST' ? await req.json().catch(() => ({})) : {};
+    const today = new Date().toISOString().slice(0, 10);
+    const cacheKey = `ai:market:${today}`;
 
     const [global, tvl, fng, socialPct, movers, btcDaily, ethDaily, btcHourly, ethHourly] = await Promise.all([
       getGlobalMarket(),
@@ -272,77 +335,25 @@ serve(async (req) => {
       generatedAt: new Date().toISOString(),
     };
 
-    const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång till realtidsdata via webben. 
+    const prompt = `Du är en expertanalytiker för kryptomarknaderna med tillgång till realtidsdata.\n\nKRAV: Returnera ENDAST giltig JSON enligt schema. Använd exakta siffror och nivåer. Inkludera tydliga texter för stöd/motstånd och breakout/breakdown.\n\nJSON SCHEMA (oförändrat): ${JSON.stringify({
+      trend: "Bullish|Bearish|Neutral",
+      summary: "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
+      positives: [],
+      negatives: [],
+      technicalLevels: {
+        btc: { currentPrice: 0, nextSupport: { price: 0, text: "" }, nextResistance: { price: 0, text: "" }, criticalLevel: { price: 0, text: "", type: "breakout" } },
+        eth: { currentPrice: 0, nextSupport: { price: 0, text: "" }, nextResistance: { price: 0, text: "" }, criticalLevel: { price: 0, text: "", type: "breakdown" } },
+      },
+      ta: { btc: { d1: {} as any, h4: {} as any, h1: {} as any }, eth: { d1: {} as any, h4: {} as any, h1: {} as any } },
+      sentiment: { fearGreed: 0, socialMediaTrend: "", institutionalFlow: "" },
+      generatedAt: new Date().toISOString(),
+      sources: []
+    })}\n`;
 
-UPPDRAG: Genomför en OMFATTANDE marknadsanalys på svenska med följande komponenter:
+    // Optional web research
+    const perpFindings = await researchViaPerplexity(facts);
 
-1. REALTIDS WEBBSÖKNING - Sök webben för:
-   - Senaste BTC/ETH priser och volymer från de senaste 24-48 timmarna
-   - Aktuella stöd- och motståndslinjer för BTC och ETH
-   - Senaste breakouts/breakdowns som har skett
-   - Aktuella marknadssentiment från Twitter, Reddit, news
-   - Institutionella flöden och whale movements
-
-2. TEKNISK ANALYS MED EXAKTA NIVÅER:
-   - Beräkna EXAKTA stöd- och motståndslinjer för BTC/ETH
-   - Identifiera kritiska breakout/breakdown nivåer
-   - Ange om vi "Närmar oss breakout på $XX,XXX" eller "Närmar oss breakdown $XX,XXX"
-   - RSI/MACD/Bollinger Band signaler med precisa värden
-
-3. SENTIMENTANALYS:
-   - Fear & Greed Index tolkning
-   - Social media sentiment (sök Twitter/Reddit för senaste 24h)
-   - Institutional sentiment och flöden
-   - Regulatory news påverkan
-
-4. MARKNADSKONTEXT:
-   - Globala makroekonomiska faktorer som påverkar crypto
-   - Institutionella adoptionsignaler
-   - DeFi/NFT/Layer2 utvecklingar
-
-VIKTIGA KRAV:
-- Alla priser och nivåer måste vara EXAKTA från webbsökning (inte uppskattningar)
-- Använd format: "Nästa stöd $63,420" eller "Närmar oss breakout $67,890" 
-- Om vi redan brutit genom nivåer, ange: "Brutit genom motstånd $65,500, nästa mål $68,200"
-- Inkludera tidsramar: "4H stöd $64,100" vs "Dagligt stöd $62,800"
-
-JSON SCHEMA:
-{
-  "trend": "Bullish|Bearish|Neutral",
-  "summary": "Marknadsvärde: <exact> • 24h Volym: <exact> • BTC-dominans: <exact>% • 24h Förändring: <exact>%",
-  "positives": string[],
-  "negatives": string[],
-  "technicalLevels": {
-    "btc": {
-      "currentPrice": number,
-      "nextSupport": { "price": number, "text": "string" },
-      "nextResistance": { "price": number, "text": "string" },
-      "criticalLevel": { "price": number, "text": "string", "type": "breakout|breakdown|approaching" }
-    },
-    "eth": {
-      "currentPrice": number,
-      "nextSupport": { "price": number, "text": "string" },
-      "nextResistance": { "price": number, "text": "string" },
-      "criticalLevel": { "price": number, "text": "string", "type": "breakout|breakdown|approaching" }
-    }
-  },
-  "ta": {
-    "btc": { "d1": any, "h4": any, "h1": any },
-    "eth": { "d1": any, "h4": any, "h1": any }
-  },
-  "sentiment": {
-    "fearGreed": number,
-    "socialMediaTrend": "string",
-    "institutionalFlow": "string"
-  },
-  "generatedAt": string,
-  "sources": string[]
-}
-
-REALTIDSDATA ATT ANALYSERA:
-${JSON.stringify(facts)}
-
-SÖK WEBBEN NU för de senaste priserna och tekniska nivåerna innan du svarar!`;
+    const finalUser = `Verifiera och sammanfoga följande DATA till korrekt JSON enligt schema. \nFakta (mätvärden): ${JSON.stringify(facts)}\n\nWebb-fynd (om tillgängligt): ${JSON.stringify(perpFindings)}\n\nRegler:\n- Behåll exakta nivåer för nästa stöd/motstånd\n- Sätt criticalLevel.type till 'breakout' | 'breakdown' | 'approaching' med tydlig text (t.ex. 'Närmar oss breakout $67,890')\n- Summera 5 positiva och 5 risker\n- Sätt källor om tillgängligt\n- Svara ENDAST med JSON`;
 
     const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -351,11 +362,12 @@ SÖK WEBBEN NU för de senaste priserna och tekniska nivåerna innan du svarar!`
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "o3-deep-research",
-        temperature: 0.1,
+        model: "gpt-4.1-2025-04-14",
+        temperature: 0.2,
         messages: [
-          { role: "system", content: "Du är en expert kryptoanalytiker med tillgång till realtidsdata via webben. Använd ALLTID webbsökning för att få de senaste priserna och tekniska nivåerna. Svara endast med exakt JSON enligt schema." },
+          { role: "system", content: "Du är en extremt noggrann kryptoanalytiker. Svara endast med giltig JSON utan extra text." },
           { role: "user", content: prompt },
+          { role: "user", content: finalUser },
         ],
       }),
     });

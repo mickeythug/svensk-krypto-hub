@@ -57,11 +57,7 @@ export type AIMarketAnalysis = {
   sources?: string[];
 };
 
-async function fetchAiAnalysis(): Promise<AIMarketAnalysis> {
-  const { data, error } = await supabase.functions.invoke('market-intel-ai');
-  if (error) throw new Error(`AI analysis failed: ${error.message}`);
-  return data;
-}
+// fetchAiAnalysis is defined below with refresh flag
 
 export function useAIMarketIntel() {
   return useQuery<AIMarketAnalysis>({
@@ -70,4 +66,10 @@ export function useAIMarketIntel() {
     staleTime: 2 * 60 * 1000,
     refetchInterval: 2 * 60 * 1000,
   });
+}
+
+async function fetchAiAnalysis(): Promise<AIMarketAnalysis> {
+  const { data, error } = await supabase.functions.invoke('market-intel-ai', { body: { refresh: true } });
+  if (error) throw new Error(`AI analysis failed: ${error.message}`);
+  return data;
 }

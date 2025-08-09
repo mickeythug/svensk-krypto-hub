@@ -18,6 +18,9 @@ verify_jwt = false
 [functions.tv-symbol-resolver]
 verify_jwt = false
 
+[functions.market-intel-ai]
+verify_jwt = false
+
 # Cron jobs to keep DB cache fresh
 [[cron.jobs]]
 name = "market-prefetch-hourly"
