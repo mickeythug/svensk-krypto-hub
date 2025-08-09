@@ -2,16 +2,17 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
+import { useOrderbook } from "@/hooks/useOrderbook";
 
 interface MobileOrderBookProps {
   symbol: string;
   currentPrice: number;
+  coinGeckoId?: string;
 }
 
-const MobileOrderBook = ({ symbol, currentPrice }: MobileOrderBookProps) => {
+const MobileOrderBook = ({ symbol, currentPrice, coinGeckoId }: MobileOrderBookProps) => {
   const [viewMode, setViewMode] = useState<"combined" | "asks" | "bids">("combined");
-  const { orderBook, isConnected } = useBinanceOrderbook(symbol, 20);
+  const { orderBook, isConnected } = useOrderbook(symbol, coinGeckoId, 20);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {

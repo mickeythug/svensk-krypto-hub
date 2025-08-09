@@ -19,7 +19,7 @@ import {
 import ModernTradingViewChart from "./ModernTradingViewChart";
 import OrderBook from "./OrderBook";
 import TokenSearchBar from "./TokenSearchBar";
-import { useBinanceOrderbook } from "@/hooks/useBinanceOrderbook";
+import { useOrderbook } from "@/hooks/useOrderbook";
 import { formatUsd } from "@/lib/utils";
 
 interface DesktopTradingInterfaceProps {
@@ -37,8 +37,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const [size, setSize] = useState("");
   const [leverage, setLeverage] = useState("1");
 
-  // Real Binance orderbook data
-  const { orderBook, isConnected, error } = useBinanceOrderbook(symbol, 15);
+  // Exchange-aware orderbook data
+  const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);
 
   // Debug logging
   useEffect(() => {
