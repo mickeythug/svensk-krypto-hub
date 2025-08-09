@@ -5,7 +5,6 @@ import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSiwsSolana } from '@/hooks/useSiwsSolana';
@@ -28,6 +27,7 @@ export default function ConnectWalletButton() {
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
   const chains = useChains();
+  const evmChains = useMemo(() => chains.filter((c) => c.id === 1), [chains]);
   const { switchChainAsync } = useSwitchChain();
 
   // Solana wallet
@@ -208,10 +208,10 @@ export default function ConnectWalletButton() {
           }}
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Välj kedja (ETH/BNB/SOL)" />
+            <SelectValue placeholder="Välj kedja (ETH/SOL)" />
           </SelectTrigger>
           <SelectContent>
-            {chains.map((c) => (
+            {evmChains.map((c) => (
               <SelectItem key={c.id} value={String(c.id)}>
                 {c.name}
               </SelectItem>
@@ -227,11 +227,6 @@ export default function ConnectWalletButton() {
         >
           <Wallet className="w-4 h-4 mr-2" /> {chainMode === 'SOL' ? 'Anslut & Verifiera' : 'Anslut Wallet'}
         </Button>
-        {chainMode === 'SOL' ? (
-          <div className="hidden md:block">
-            <WalletMultiButton />
-          </div>
-        ) : null}
       </div>
     );
   }
@@ -254,7 +249,7 @@ export default function ConnectWalletButton() {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {chains.map((c) => (
+          {evmChains.map((c) => (
             <SelectItem key={c.id} value={String(c.id)}>
               {c.name}
             </SelectItem>
