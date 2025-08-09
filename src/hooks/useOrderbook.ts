@@ -62,43 +62,17 @@ export const useOrderbook = (
 
     const poll = async () => {
       try {
-        let res: Response | null = null;
-if (exchange === 'BYBIT' || tvSymbol.startsWith('BYBIT:')) {
-          // Bybit Spot depth (public)
-          res = await fetch(`https://api.bybit.com/spot/quote/v1/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
-          if (!res.ok) {
-            res = await fetch(`https://api.bybit.com/spot/quote/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
-          }
-        } else if (exchange === 'MEXC' || tvSymbol.startsWith('MEXC:')) {
-          // MEXC depth API (Binance-like)
-          res = await fetch(`https://api.mexc.com/api/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
-        } else if (exchange === 'OKX' || tvSymbol.startsWith('OKX:')) {
-          // OKX uses hyphen pairs and v5 books
-          const okxPair = toHyphenPair(pair);
-          res = await fetch(`https://www.okx.com/api/v5/market/books?instId=${okxPair}&sz=${Math.min(50, limit * 2)}`);
-        } else if (exchange === 'KUCOIN' || tvSymbol.startsWith('KUCOIN:')) {
-          // KuCoin uses hyphen pairs
-          const kp = toHyphenPair(pair);
-          res = await fetch(`https://api.kucoin.com/api/v1/market/orderbook/level2_${Math.min(100, limit * 5)}?symbol=${kp}`);
-        } else if (exchange === 'GATE' || tvSymbol.startsWith('GATE:') || exchange === 'GATEIO' || tvSymbol.startsWith('GATEIO:')) {
-          // Gate.io uses underscore pairs
-          const gp = toUnderscorePair(pair);
-          res = await fetch(`https://api.gateio.ws/api/v4/spot/order_book?currency_pair=${gp}&limit=${Math.min(50, limit * 2)}`);
-        } else if (exchange === 'COINBASE' || tvSymbol.startsWith('COINBASE:') || exchange === 'COINBASEPRO' || tvSymbol.startsWith('COINBASEPRO:')) {
-          const cp = toHyphenPair(pair);
-          res = await fetch(`https://api.exchange.coinbase.com/products/${cp}/book?level=2`);
-        } else {
-          // Unknown exchange → try MEXC-style as best-effort
-          res = await fetch(`https://api.mexc.com/api/v3/depth?symbol=${pair}&limit=${Math.min(50, limit * 2)}`, { cache: 'no-store' });
-        }
-
-        if (!res || !res.ok) throw new Error(`Orderbook fetch failed (${exchange})`);
+        const projectRef = 'jcllcrvomxdrhtkqpcbr';
+        const ex = (exchange || '').toUpperCase();
+        const normEx = ex.startsWith('GATE') ? 'GATE' : ex.startsWith('COINBASE') ? 'COINBASE' : ex;
+        const url = `https://${projectRef}.supabase.co/functions/v1/orderbook-proxy?exchange=${encodeURIComponent(normEx)}&pair=${encodeURIComponent(pair)}&limit=${Math.min(100, limit * 2)}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Orderbook proxy failed (${ex})`);
         const data = await res.json();
 
-        // Normalize various shapes
-        const bids: [string, string][] = data?.bids || data?.result?.bids || [];
-        const asks: [string, string][] = data?.asks || data?.result?.asks || [];
-        const lastUpdateId: number = data?.lastUpdateId || data?.result?.lastUpdateId || Date.now();
+        const bids: [string, string][] = data?.bids || [];
+        const asks: [string, string][] = data?.asks || [];
+        const lastUpdateId: number = data?.lastUpdateId || Date.now();
 
         const { processedBids, processedAsks } = process(bids, asks);
 
@@ -113,9 +87,9 @@ if (exchange === 'BYBIT' || tvSymbol.startsWith('BYBIT:')) {
       }
     };
 
-    // Initial + interval polling (2.5s)
+    // Initial + interval polling (2s)
     poll();
-    const id = window.setInterval(poll, 2500);
+    const id = window.setInterval(poll, 2000);
     pollRef.current = id;
 
     return () => {
