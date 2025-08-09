@@ -377,14 +377,75 @@ serve(async (req) => {
       throw new Error(`OpenAI error ${aiRes.status}: ${txt}`);
     }
     const aiJson = await aiRes.json();
-    const content = aiJson?.choices?.[0]?.message?.content?.trim() || "{}";
-    let parsed: any = {};
-    try { parsed = JSON.parse(content); } catch { parsed = { error: "Failed to parse AI JSON", raw: content }; }
+    let contentRaw = aiJson?.choices?.[0]?.message?.content ?? "";
+
+    // Extract clean JSON from possible code fences or text
+    const extractJson = (txt: string): any => {
+      try {
+        const fenceMatch = txt.match(/```json\s*([\s\S]*?)```/i) || txt.match(/```\s*([\s\S]*?)```/i);
+        const candidate = fenceMatch ? fenceMatch[1] : txt;
+        // Trim and slice from first { to last }
+        const start = candidate.indexOf('{');
+        const end = candidate.lastIndexOf('}');
+        const jsonStr = start !== -1 && end !== -1 ? candidate.slice(start, end + 1) : candidate;
+        return JSON.parse(jsonStr);
+      } catch (_e) { return null; }
+    };
+
+    let parsed: any = extractJson(contentRaw);
+    if (!parsed || typeof parsed !== 'object') {
+      parsed = {};
+    }
+
+    // Build robust fallback if model omitted some fields
+    const buildLevels = (t: any) => {
+      const price = Number(t?.price) || null;
+      const sup = Number(t?.bbLower) || (price ? price * 0.97 : null);
+      const res = Number(t?.bbUpper) || (price ? price * 1.03 : null);
+      let critType: 'breakout' | 'breakdown' | 'approaching' = 'approaching';
+      let critPrice = price && res ? res : (price && sup ? sup : price || 0);
+      if (price && res && price > res) critType = 'breakout';
+      if (price && sup && price < sup) critType = 'breakdown';
+      const critText = critType === 'breakout'
+        ? `Brutit genom motstånd $${Math.round(res!).toLocaleString()}`
+        : critType === 'breakdown'
+          ? `Brutit ned genom stöd $${Math.round(sup!).toLocaleString()}`
+          : `Närmar oss ${price && res && price < res ? 'breakout' : 'breakdown'} $${Math.round(critPrice).toLocaleString()}`;
+      return {
+        currentPrice: price || 0,
+        nextSupport: { price: sup || 0, text: `Nästa stöd $${Math.round(sup || 0).toLocaleString()}` },
+        nextResistance: { price: res || 0, text: `Nästa motstånd $${Math.round(res || 0).toLocaleString()}` },
+        criticalLevel: { price: critPrice || 0, text: critText, type: critType },
+      };
+    };
+
+    const ensured = {
+      trend: parsed.trend ?? (facts?.overview?.trend24hPct && facts.overview.trend24hPct >= 0 ? 'Bullish' : 'Neutral'),
+      summary: parsed.summary ?? `Marknadsvärde: ${facts?.overview?.totalMarketCap ? `$${Math.round(facts.overview.totalMarketCap).toLocaleString()}` : '—'} • 24h Volym: ${facts?.overview?.totalVolume24h ? `$${Math.round(facts.overview.totalVolume24h).toLocaleString()}` : '—'} • BTC-dominans: ${typeof facts?.overview?.btcDominance === 'number' ? `${facts.overview.btcDominance.toFixed(1)}%` : '—'} • 24h Förändring: ${typeof facts?.overview?.trend24hPct === 'number' ? `${facts.overview.trend24hPct.toFixed(2)}%` : '—'}`,
+      positives: Array.isArray(parsed.positives) && parsed.positives.length ? parsed.positives : [
+        facts?.overview?.trend24hPct && facts.overview.trend24hPct > 0 ? `Globalt marknadsvärde ${facts.overview.trend24hPct.toFixed(2)}% senaste 24h` : undefined,
+        typeof facts?.sentiment?.fearGreedIndex === 'number' ? `Sentiment: ${facts.sentiment.fearGreedIndex >= 60 ? 'Greed' : 'Neutral'} (${facts.sentiment.fearGreedIndex})` : undefined,
+        typeof facts?.overview?.defiTVL === 'number' ? `Stark DeFi-aktivitet (TVL $${Math.round(facts.overview.defiTVL).toLocaleString()})` : undefined,
+      ].filter(Boolean) as string[],
+      negatives: Array.isArray(parsed.negatives) && parsed.negatives.length ? parsed.negatives : [
+        typeof facts?.overview?.btcDominance === 'number' && facts.overview.btcDominance > 55 ? `Hög BTC-dominans (${facts.overview.btcDominance.toFixed(1)}%) – risk-off` : undefined,
+      ].filter(Boolean) as string[],
+      technicalLevels: parsed.technicalLevels ?? {
+        btc: buildLevels(facts.ta.btc.d1),
+        eth: buildLevels(facts.ta.eth.d1),
+      },
+      ta: parsed.ta ?? facts.ta,
+      sentiment: parsed.sentiment ?? {
+        fearGreed: typeof facts?.sentiment?.fearGreedIndex === 'number' ? facts.sentiment.fearGreedIndex : null,
+        socialMediaTrend: typeof facts?.sentiment?.socialVolumePct === 'number' ? `${Math.round(facts.sentiment.socialVolumePct)}% social aktivitet` : '—',
+        institutionalFlow: '—',
+      },
+    };
 
     const out = {
-      ...parsed,
-      generatedAt: parsed.generatedAt || facts.generatedAt,
-      sources: facts.sources,
+      ...ensured,
+      generatedAt: ensured.generatedAt || facts.generatedAt,
+      sources: Array.isArray(parsed.sources) && parsed.sources.length ? parsed.sources : facts.sources,
     };
 
     // Cache the result for 24 hours
