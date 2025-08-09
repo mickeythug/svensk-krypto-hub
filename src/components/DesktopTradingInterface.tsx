@@ -20,6 +20,7 @@ import ModernTradingViewChart from "./ModernTradingViewChart";
 import OrderBook from "./OrderBook";
 import TokenSearchBar from "./TokenSearchBar";
 import { useOrderbook } from "@/hooks/useOrderbook";
+import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 import { formatUsd } from "@/lib/utils";
 
 interface DesktopTradingInterfaceProps {
@@ -39,6 +40,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
   // Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);
+  const { exchange } = useTradingViewSymbol(symbol, crypto?.coinGeckoId);
 
   // Debug logging
   useEffect(() => {
@@ -88,7 +90,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                     {formatUsd(currentPrice)}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {symbol}/USDT • BINANCE
+                    {symbol}/USDT • {exchange}
                   </div>
                 </div>
                 <div className="w-64">

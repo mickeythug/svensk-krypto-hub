@@ -491,7 +491,7 @@ const MarketOverviewPage = () => {
                     <TableBody>
                       {currentData.map((crypto, index) => (
                         <TableRow 
-                          key={crypto.symbol}
+                          key={`${crypto.symbol}-${crypto.rank}`}
                           className="hover:bg-secondary/10 cursor-pointer transition-all duration-200 border-b border-border/10 group h-16"
                           onClick={() => navigate(`/crypto/${crypto.slug}`)}
                         >
@@ -601,7 +601,7 @@ const MarketOverviewPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 py-6">
                   {currentData.map((crypto) => (
                     <Card 
-                      key={crypto.symbol}
+                      key={`${crypto.symbol}-${crypto.rank}`}
                       className="p-6 bg-[hsl(var(--turquoise-dark))] hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 backdrop-blur-sm"
                       onClick={() => navigate(`/crypto/${crypto.slug}`)}
                     >
@@ -870,7 +870,7 @@ const MarketOverviewPage = () => {
           <div className="divide-y divide-border/20">
             {currentData.map((crypto, index) => (
               <div
-                key={crypto.symbol}
+                key={`${crypto.symbol}-${crypto.rank}`}
                 className="flex items-center justify-between p-4 hover:bg-secondary/10 cursor-pointer transition-colors"
                 onClick={() => navigate(`/crypto/${crypto.slug}`)}
               >

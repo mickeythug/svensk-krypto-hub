@@ -374,7 +374,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
 
   const cacheKey = 'crypto-prices-cache-v2';
   const projectRef = 'jcllcrvomxdrhtkqpcbr';
-  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=2&refresh=true`;
+  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=5&refresh=true`;
 
   // Attempt via Edge Function (DB-backed, refreshed every 3 min via cron)
   const controller = new AbortController();
@@ -435,7 +435,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     try {
       await apiRateLimiter.acquire();
       const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false&price_change_percentage=1h,24h,7d';
-      const pages = [1, 2];
+      const pages = [1, 2, 3, 4, 5];
       const results: any[] = [];
       for (const p of pages) {
         const c = new AbortController();

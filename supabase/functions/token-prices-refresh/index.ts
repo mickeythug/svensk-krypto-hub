@@ -28,6 +28,7 @@ async function fetchCoinGeckoPages(pages: number, perPage = 100, vs = 'usd', del
 }
 
 async function upsertLatestPrices(coins: any[]) {
+  // Transform to rows
   const rows = coins.map((c) => ({
     symbol: String(c.symbol || '').toUpperCase(),
     name: c.name ?? null,
@@ -41,7 +42,23 @@ async function upsertLatestPrices(coins: any[]) {
     updated_at: new Date().toISOString(),
     data: c,
   }));
-  const { error } = await supabase.from('latest_token_prices').upsert(rows, { onConflict: 'symbol' });
+
+  // Deduplicate by symbol to avoid ON CONFLICT multiple updates in one statement
+  const dedupedMap = new Map<string, any>();
+  for (const r of rows) {
+    const existing = dedupedMap.get(r.symbol);
+    if (!existing) {
+      dedupedMap.set(r.symbol, r);
+    } else {
+      // Keep the one with higher market cap (more relevant)
+      const prevCap = Number(existing.market_cap || 0);
+      const currCap = Number(r.market_cap || 0);
+      if (currCap > prevCap) dedupedMap.set(r.symbol, r);
+    }
+  }
+  const deduped = Array.from(dedupedMap.values());
+
+  const { error } = await supabase.from('latest_token_prices').upsert(deduped, { onConflict: 'symbol' });
   if (error) throw error;
 }
 
