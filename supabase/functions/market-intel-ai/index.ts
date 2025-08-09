@@ -406,7 +406,7 @@ const prompt = `Du är en senior krypto-researchanalytiker med fokus på precisi
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o",
+        model: "o3-2025-04-16",
         temperature: 0.2,
         messages: [
           { role: "system", content: "Du är en extremt noggrann kryptoanalytiker. Svara endast med giltig JSON utan extra text." },
@@ -527,6 +527,18 @@ const prompt = `Du är en senior krypto-researchanalytiker med fokus på precisi
     return new Response(JSON.stringify(out), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err) {
     console.error("market-intel-ai error", err);
+    try {
+      const { data: cachedLatest } = await supabase
+        .from('ai_market_intel_cache')
+        .select('data')
+        .order('expires_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (cachedLatest?.data) {
+        console.log('Returning last cached AI analysis due to error');
+        return new Response(JSON.stringify(cachedLatest.data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    } catch (_e) { /* ignore */ }
     return new Response(JSON.stringify({ error: String(err) }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
