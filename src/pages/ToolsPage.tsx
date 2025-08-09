@@ -26,6 +26,7 @@ import {
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useIsMobile } from "@/hooks/use-mobile";
+import JupiterSwapWidget from "@/components/web3/JupiterSwapWidget";
 
 const ToolsPage = () => {
   const [hoveredBot, setHoveredBot] = useState<string | null>(null);
@@ -352,6 +353,15 @@ const ToolsPage = () => {
               )
             ))}
           </div>
+
+          {/* Jupiter Swap - Buy/Sell (Solana) */}
+          <Card className={`${isMobile ? 'p-2 mb-8' : 'p-6 mb-16'} bg-card/80 border-border`}>            
+            <div className="mb-4 text-center">
+              <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-3xl'} font-bold`}>Köp/Sälj på Solana (Jupiter)</h2>
+              <p className={`font-display text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>Smidig swap via Jupiter DEX-aggregatorn</p>
+            </div>
+            <JupiterSwapWidget height={isMobile ? 560 : 660} />
+          </Card>
 
           {/* Features Section - Responsive */}
           <Card className={`${isMobile ? 'p-4 mb-8' : 'p-8 mb-16'} bg-gradient-secondary border-border shadow-lg`}>

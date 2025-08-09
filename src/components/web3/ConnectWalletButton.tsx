@@ -5,8 +5,10 @@ import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
 import { useSolBalance } from '@/hooks/useSolBalance';
+import { useSiwsSolana } from '@/hooks/useSiwsSolana';
 import type { Address } from 'viem';
 
 function formatAddress(addr?: string) {
@@ -32,6 +34,7 @@ export default function ConnectWalletButton() {
   const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol } = useWallet();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
+  const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
 
   const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
   const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(null);
@@ -47,9 +50,9 @@ export default function ConnectWalletButton() {
       const ok = Boolean(sig && addrStored && address && addrStored.toLowerCase() === address.toLowerCase());
       setIsAuthed(ok);
     } else if (chainMode === 'SOL') {
-      const sig = sessionStorage.getItem('siws_signature');
+      const verified = sessionStorage.getItem('siws_verified') === 'true';
       const addrStored = sessionStorage.getItem('siws_address');
-      const ok = Boolean(sig && addrStored && solAddress && addrStored === solAddress);
+      const ok = Boolean(verified && addrStored && solAddress && addrStored === solAddress);
       setIsAuthed(ok);
     } else {
       setIsAuthed(false);
@@ -87,16 +90,28 @@ export default function ConnectWalletButton() {
       }
 
       if (chainMode === 'SOL') {
-        // Solana connect + sign
+        // Phantom detection
+        const isPhantom = typeof window !== 'undefined' && (window as any)?.phantom?.solana?.isPhantom;
+        if (!isPhantom) {
+          toast({
+            title: 'Phantom saknas',
+            description: 'Installera Phantom för att ansluta.',
+            variant: 'destructive',
+          });
+          window.open('https://phantom.app/download', '_blank');
+          return;
+        }
         await connectSol();
-        const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nKälla: Crypto Network Sweden`;
+        if (!solAddress) throw new Error('Kunde inte läsa din Solana-adress');
         if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
-        const encoded = new TextEncoder().encode(message);
-        const signature = await signMessageSol(encoded);
-        sessionStorage.setItem('siws_signature', toHex(signature));
-        if (solAddress) sessionStorage.setItem('siws_address', solAddress);
+
+        const ok = await signAndVerify(solAddress, signMessageSol);
+        if (!ok) throw new Error('Signaturen kunde inte verifieras');
+
+        sessionStorage.setItem('siws_verified', 'true');
+        sessionStorage.setItem('siws_address', solAddress);
         setIsAuthed(true);
-        toast({ title: 'Wallet ansluten', description: 'Solana ansluten och signerad.' });
+        toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
         setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
         return;
       }
@@ -148,8 +163,10 @@ export default function ConnectWalletButton() {
         // Remove SOL auth
         sessionStorage.removeItem('siws_signature');
         sessionStorage.removeItem('siws_address');
+        sessionStorage.removeItem('siws_verified');
         localStorage.removeItem('siws_signature');
         localStorage.removeItem('siws_address');
+        localStorage.removeItem('siws_verified');
         // Rensa wagmi/walletconnect persistence
         const clearKeys = (store: Storage) => {
           for (const k of Object.keys(store)) {
@@ -198,10 +215,15 @@ export default function ConnectWalletButton() {
           onClick={handleConnect}
           size="sm"
           className="font-crypto uppercase"
-          disabled={!chainMode || (chainMode === 'EVM' && !selectedEvmChainId) || isConnecting}
+          disabled={!chainMode || (chainMode === 'EVM' && !selectedEvmChainId) || isConnecting || (chainMode==='SOL' && siwsLoading)}
         >
-          <Wallet className="w-4 h-4 mr-2" /> Anslut Wallet
+          <Wallet className="w-4 h-4 mr-2" /> {chainMode === 'SOL' ? 'Anslut & Verifiera' : 'Anslut Wallet'}
         </Button>
+        {chainMode === 'SOL' ? (
+          <div className="hidden md:block">
+            <WalletMultiButton />
+          </div>
+        ) : null}
       </div>
     );
   }
