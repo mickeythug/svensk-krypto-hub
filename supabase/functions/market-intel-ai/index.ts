@@ -397,27 +397,47 @@ serve(async (req) => {
       parsed = {};
     }
 
-    // Build robust fallback if model omitted some fields
-    const buildLevels = (t: any) => {
-      const price = Number(t?.price) || null;
-      const sup = Number(t?.bbLower) || (price ? price * 0.97 : null);
-      const res = Number(t?.bbUpper) || (price ? price * 1.03 : null);
-      let critType: 'breakout' | 'breakdown' | 'approaching' = 'approaching';
-      let critPrice = price && res ? res : (price && sup ? sup : price || 0);
-      if (price && res && price > res) critType = 'breakout';
-      if (price && sup && price < sup) critType = 'breakdown';
-      const critText = critType === 'breakout'
-        ? `Brutit genom motstånd $${Math.round(res!).toLocaleString()}`
-        : critType === 'breakdown'
-          ? `Brutit ned genom stöd $${Math.round(sup!).toLocaleString()}`
-          : `Närmar oss ${price && res && price < res ? 'breakout' : 'breakdown'} $${Math.round(critPrice).toLocaleString()}`;
+    // Normalize AI levels with sanity checks against current price and TA bands
+    function ensureLevels(raw: any, ta: any) {
+      const price = Number(raw?.currentPrice) || Number(ta?.price) || 0;
+      let sup = Number(raw?.nextSupport?.price);
+      let res = Number(raw?.nextResistance?.price);
+      const bbLower = Number(ta?.bbLower) || (price ? price * 0.97 : 0);
+      const bbUpper = Number(ta?.bbUpper) || (price ? price * 1.03 : 0);
+
+      if (!Number.isFinite(sup)) sup = bbLower || price * 0.97;
+      if (!Number.isFinite(res)) res = bbUpper || price * 1.03;
+
+      // Enforce logical ordering
+      if (sup >= price) sup = Math.min(price * 0.98, bbLower || price * 0.97);
+      if (res <= price) res = Math.max(price * 1.02, bbUpper || price * 1.03);
+
+      // Determine critical state
+      let type: 'breakout' | 'breakdown' | 'approaching' = 'approaching';
+      let text = '';
+      const nearRes = (res - price) / res;
+      const nearSup = (price - sup) / price;
+      if (price >= res * 1.001) {
+        type = 'breakout';
+        text = `Brutit genom motstånd $${Math.round(res).toLocaleString()}`;
+      } else if (price <= sup * 0.999) {
+        type = 'breakdown';
+        text = `Brutit ned genom stöd $${Math.round(sup).toLocaleString()}`;
+      } else if (nearRes <= nearSup) {
+        type = 'approaching';
+        text = `Närmar oss breakout $${Math.round(res).toLocaleString()}`;
+      } else {
+        type = 'approaching';
+        text = `Närmar oss breakdown $${Math.round(sup).toLocaleString()}`;
+      }
+
       return {
-        currentPrice: price || 0,
-        nextSupport: { price: sup || 0, text: `Nästa stöd $${Math.round(sup || 0).toLocaleString()}` },
-        nextResistance: { price: res || 0, text: `Nästa motstånd $${Math.round(res || 0).toLocaleString()}` },
-        criticalLevel: { price: critPrice || 0, text: critText, type: critType },
+        currentPrice: price,
+        nextSupport: { price: sup, text: `Nästa stöd $${Math.round(sup).toLocaleString()}` },
+        nextResistance: { price: res, text: `Nästa motstånd $${Math.round(res).toLocaleString()}` },
+        criticalLevel: { price: type === 'approaching' ? (nearRes <= nearSup ? res : sup) : (type === 'breakout' ? res : sup), text, type },
       };
-    };
+    }
 
     const ensured = {
       trend: parsed.trend ?? (facts?.overview?.trend24hPct && facts.overview.trend24hPct >= 0 ? 'Bullish' : 'Neutral'),
@@ -430,9 +450,9 @@ serve(async (req) => {
       negatives: Array.isArray(parsed.negatives) && parsed.negatives.length ? parsed.negatives : [
         typeof facts?.overview?.btcDominance === 'number' && facts.overview.btcDominance > 55 ? `Hög BTC-dominans (${facts.overview.btcDominance.toFixed(1)}%) – risk-off` : undefined,
       ].filter(Boolean) as string[],
-      technicalLevels: parsed.technicalLevels ?? {
-        btc: buildLevels(facts.ta.btc.d1),
-        eth: buildLevels(facts.ta.eth.d1),
+      technicalLevels: {
+        btc: ensureLevels(parsed?.technicalLevels?.btc, facts.ta.btc.d1),
+        eth: ensureLevels(parsed?.technicalLevels?.eth, facts.ta.eth.d1),
       },
       ta: parsed.ta ?? facts.ta,
       sentiment: parsed.sentiment ?? {
