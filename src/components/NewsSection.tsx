@@ -76,6 +76,17 @@ const NewsSection = () => {
     return date.toLocaleDateString('sv-SE');
   };
 
+  const getSnippet = (text: string, maxChars = 160) => {
+    if (!text) return '';
+    const clean = text.replace(/\s+/g, ' ').trim();
+    if (clean.length <= maxChars) return clean;
+    // try to end at a sentence boundary within maxChars
+    const slice = clean.slice(0, maxChars);
+    const lastDot = Math.max(slice.lastIndexOf('. '), slice.lastIndexOf('! '), slice.lastIndexOf('? '));
+    const end = lastDot > 60 ? lastDot + 1 : maxChars; // avoid too-short snippets
+    return slice.slice(0, end).trim() + '…';
+  };
+
   useEffect(() => {
     let active = true;
     const load = async () => {
@@ -184,11 +195,11 @@ const NewsSection = () => {
                           </div>
                         </div>
                         
-                        <h3 className="font-display font-bold text-lg mb-3 group-hover:text-primary transition-colors">
+                        <h3 className="font-display font-bold text-lg mb-3 group-hover:text-primary transition-colors truncate" title={article.title}>
                           {article.title}
                         </h3>
                         <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                          {article.excerpt}
+                          {getSnippet(article.excerpt, 140)}
                         </p>
                       </div>
                       
@@ -234,7 +245,7 @@ const NewsSection = () => {
                         <Badge variant="outline" className={`${getCategoryColor(article.category)} text-xs mb-1`}>
                           {article.category}
                         </Badge>
-                        <h4 className="font-display font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors">
+                        <h4 className="font-display font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors truncate" title={article.title}>
                           {article.title}
                         </h4>
                         <div className="flex items-center text-xs text-muted-foreground space-x-1">
