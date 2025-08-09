@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_market_intel_cache: {
+        Row: {
+          created_at: string
+          data: Json
+          expires_at: string
+          key: string
+          source: string
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          expires_at: string
+          key: string
+          source?: string
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          expires_at?: string
+          key?: string
+          source?: string
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       latest_token_prices: {
         Row: {
           change_1h: number | null
