@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAccount, useChainId } from 'wagmi';
 import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
 import { parseUnits, type Address } from 'viem';
+import { useCryptoData } from '@/hooks/useCryptoData';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet, 56: bsc, 137: polygon, 42161: arbitrum, 8453: base, 10: optimism };
 
@@ -28,6 +29,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { publicKey, sendTransaction } = useWallet();
   const { connection } = useConnection();
   const solAddress = publicKey?.toBase58();
+  const isSolConnected = !!solAddress;
   const { balance: solBalance } = useSolBalance();
   const solTokenInfo = SOL_TOKENS[symbol.toUpperCase()];
   const { amount: tokenBal } = useSplTokenBalance(solTokenInfo?.mint || SOL_MINT);
@@ -36,6 +38,9 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { address: evmAddress } = useAccount();
   const chainId = useChainId();
   const evmChainId = chainId || 1;
+  const { cryptoPrices } = useCryptoData();
+  const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
+  const solUsd = solRow?.price ? Number(solRow.price) : 0;
 
   const available = useMemo(() => {
     if (chainMode === 'SOL') {
@@ -134,13 +139,34 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
         <div className="grid grid-cols-4 gap-1">
           {[0.25,0.5,0.75,1].map(p => (
-            <Button key={p} variant="outline" size="sm" className="h-6 text-xs" onClick={()=>setPercent(p)}>{Math.round(p*100)}%</Button>
+            <Button
+              key={p}
+              variant="outline"
+              size="sm"
+              className="h-6 text-xs"
+              onClick={()=>setPercent(p)}
+              disabled={available <= 0 || (chainMode==='SOL' && !isSolConnected)}
+            >
+              {Math.round(p*100)}%
+            </Button>
           ))}
         </div>
 
         <div className="text-xs text-muted-foreground">
-          <div className="flex justify-between"><span>Tillgängligt:</span><span className="font-mono">{available?.toFixed(6)}</span></div>
-          <div className="flex justify-between"><span>Ordervärde:</span><span className="font-mono">{amountInput ? `$${(parseFloat(amountInput)*(chainMode==='SOL' && side==='sell'? parseFloat(currentPrice.toString()): 1)).toFixed(2)}`: '$0.00'}</span></div>
+          <div className="flex justify-between">
+            <span>Tillgängligt:</span>
+            <span className="font-mono">
+              {chainMode==='SOL' && side==='buy'
+                ? `${available?.toFixed(6)} SOL${solUsd ? ` (≈ $${(available*solUsd).toFixed(2)})` : ''}`
+                : available?.toFixed(6)}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>Ordervärde:</span>
+            <span className="font-mono">
+              {amountInput ? `$${(parseFloat(amountInput) * (chainMode==='SOL' ? (side==='buy' ? solUsd : currentPrice) : 1)).toFixed(2)}` : '$0.00'}
+            </span>
+          </div>
         </div>
 
         <div className="flex gap-2 text-xs">
