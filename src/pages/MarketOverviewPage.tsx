@@ -602,8 +602,7 @@ const MarketOverviewPage = () => {
                   {currentData.map((crypto) => (
                     <Card 
                       key={crypto.symbol}
-                      className="p-6 hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 backdrop-blur-sm"
-                      style={{ backgroundColor: 'hsl(var(--crypto-grid-background))' }}
+                      className="p-6 bg-[hsl(var(--turquoise-dark))] hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 backdrop-blur-sm"
                       onClick={() => navigate(`/crypto/${crypto.slug}`)}
                     >
                       <div className="flex items-center justify-between mb-4">
