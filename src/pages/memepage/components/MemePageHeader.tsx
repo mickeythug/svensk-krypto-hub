@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Wallet, PlusCircle, ArrowLeft } from 'lucide-react';
+import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
+
 
 const MemePageHeader = () => {
   const navigate = useNavigate();
@@ -19,14 +21,8 @@ const MemePageHeader = () => {
             TILLBAKA
           </Button>
           <div className="flex items-center gap-6">
-          <Button 
-            size="lg" 
-            className="font-crypto text-base font-bold tracking-wider bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 px-8 py-3 h-12 text-primary-foreground border-0 uppercase"
-            onClick={() => {/* TODO: Connect wallet functionality */}}
-          >
-            <Wallet className="w-5 h-5 mr-3" />
-            ANSLUT WALLET
-          </Button>
+          {/* Connect Wallet */}
+          <ConnectWalletButton />
           <Button 
             size="lg" 
             variant="outline" 

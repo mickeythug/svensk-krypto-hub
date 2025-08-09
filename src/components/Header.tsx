@@ -12,6 +12,8 @@ import {
   Settings,
   BarChart3
 } from "lucide-react";
+import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
+
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -68,7 +70,8 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className={`flex items-center justify-between ${isMobile ? 'h-12' : 'h-14'}`}>
+        <div className={`${isMobile ? 'h-12' : 'h-14'} flex items-center justify-between`}>
+          {/* Logo */}
           {/* Logo */}
           <button 
             onClick={() => navigate('/')}
@@ -120,6 +123,12 @@ const Header = () => {
               >
                 LOGGA IN
               </Button>
+              {/* Connect Wallet */}
+              <div>
+                {/* Lazy import to avoid SSR/EME issues */}
+                {/* @ts-ignore */}
+                <ConnectWalletButton />
+              </div>
               <a 
                 href="https://t.me/cryptonetworksweden" 
                 target="_blank" 

@@ -22,6 +22,8 @@ import TokenSearchBar from "./TokenSearchBar";
 import { useOrderbook } from "@/hooks/useOrderbook";
 import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 import { formatUsd } from "@/lib/utils";
+import { useAccount } from 'wagmi';
+import { useWalletBalances } from '@/hooks/useWalletBalances';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -37,6 +39,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const [price, setPrice] = useState(currentPrice.toString());
   const [size, setSize] = useState("");
   const [leverage, setLeverage] = useState("1");
+
+  // Wallet + balances
+  const { address: evmAddress, isConnected: isWalletConnected } = useAccount();
+  const { data: balances = [], loading: balancesLoading, error: balancesError } = useWalletBalances(evmAddress as any);
 
   // Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);

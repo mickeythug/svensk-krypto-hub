@@ -24,6 +24,9 @@ verify_jwt = false
 [functions.evm-swap]
 verify_jwt = false
 
+[functions.wc-project]
+verify_jwt = false
+
 # Cron jobs to keep DB cache fresh
 [[cron.jobs]]
 name = "market-prefetch-hourly"
