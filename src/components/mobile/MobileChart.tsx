@@ -10,11 +10,6 @@ interface MobileChartProps {
   currentPrice: number;
 }
 
-declare global {
-  interface Window {
-    TradingView?: any;
-  }
-}
 
 const MobileChart = ({ symbol, currentPrice }: MobileChartProps) => {
   const [selectedTimeframe, setSelectedTimeframe] = useState("1D");
@@ -47,7 +42,7 @@ const MobileChart = ({ symbol, currentPrice }: MobileChartProps) => {
   const initMobileChart = () => {
     setIsLoading(true);
     
-    if (!window.TradingView) {
+    if (!(window as any).TradingView) {
       const script = document.createElement('script');
       script.src = 'https://s3.tradingview.com/tv.js';
       script.async = true;

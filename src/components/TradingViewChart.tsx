@@ -11,11 +11,6 @@ interface TradingViewChartProps {
   currentPrice: number;
 }
 
-declare global {
-  interface Window {
-    TradingView: any;
-  }
-}
 
 const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -238,7 +233,7 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
             <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
             <p className="text-muted-foreground">Laddar TradingView chart...</p>
             <div className="mt-2 text-xs text-muted-foreground">
-              {window.TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+              {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
             </div>
           </div>
         </div>

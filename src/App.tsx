@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
@@ -20,21 +20,7 @@ const MemePage = lazy(() => import("./pages/memepage"));
 const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-// Optimerad QueryClient konfiguration
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60000, // 1 minut
-      gcTime: 5 * 60 * 1000, // 5 minuter
-      retry: 2,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always'
-    },
-    mutations: {
-      retry: 1
-    }
-  }
-});
+import { queryClient } from "@/lib/queryClient";
 
 // Loading component för Suspense
 const LoadingFallback = memo(() => (

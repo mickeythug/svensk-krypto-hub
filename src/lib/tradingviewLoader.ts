@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    TradingView?: any;
+    TradingView: any;
     __tvScriptPromise?: Promise<void>;
   }
 }
