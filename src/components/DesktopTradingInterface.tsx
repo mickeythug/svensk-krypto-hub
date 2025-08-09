@@ -73,6 +73,16 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           <Card className="bg-background/95 backdrop-blur-sm border-border/20 p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
+                {crypto?.image && (
+                  <img
+                    src={crypto.image}
+                    alt={`${tokenName} (${symbol}) logotyp`}
+                    className="h-8 w-8 rounded-full ring-1 ring-border/40 shadow-sm"
+                    loading="lazy"
+                    decoding="async"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
                 <div>
                   <div className="text-2xl font-bold font-mono text-foreground">
                     {formatUsd(currentPrice)}

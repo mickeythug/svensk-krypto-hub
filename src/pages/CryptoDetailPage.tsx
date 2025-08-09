@@ -74,7 +74,7 @@ const CryptoDetailPage = () => {
     );
   }
 
-  if (error) {
+  if (error && !crypto) {
     return (
       <div className="min-h-screen bg-background">
         <Header />

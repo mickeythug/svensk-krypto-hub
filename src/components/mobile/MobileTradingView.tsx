@@ -70,12 +70,20 @@ const MobileTradingView = ({
         </div>
         
         <div className="flex items-end gap-3">
+          {crypto?.image && (
+            <img
+              src={crypto.image}
+              alt={`${tokenName} (${symbol}) logotyp`}
+              className="h-6 w-6 rounded-full mb-1 ring-1 ring-border/40"
+              loading="lazy"
+              decoding="async"
+              referrerPolicy="no-referrer"
+            />
+          )}
           <div className="text-3xl font-bold font-mono text-foreground">
             {formatUsd(currentPrice)}
           </div>
-          <div className={`flex items-center gap-1 pb-1 ${
-            isPositive ? 'text-success' : 'text-destructive'
-          }`}>
+          <div className={`${isPositive ? 'text-success' : 'text-destructive'} flex items-center gap-1 pb-1`}>
             {isPositive ? (
               <TrendingUp className="h-4 w-4" />
             ) : (
