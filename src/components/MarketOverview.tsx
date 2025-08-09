@@ -3,54 +3,72 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, DollarSign, BarChart3, PieChart, Activity } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import cryptoCharts from "@/assets/crypto-charts.jpg";
-
+import { useMarketIntel } from "@/hooks/useMarketIntel";
+import { useCryptoData } from "@/hooks/useCryptoData";
+import { useMemo } from "react";
 const MarketOverview = () => {
   const isMobile = useIsMobile();
+  const { data: intel } = useMarketIntel();
+  const { cryptoPrices } = useCryptoData();
+
+  const formatAbbrev = (n?: number | null) => {
+    if (typeof n !== 'number' || !isFinite(n)) return '—';
+    if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T';
+    if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'k';
+    return n.toFixed(2);
+  };
+
   const marketStats = [
     {
       title: "Total Marknadskapital",
-      value: "2.1T",
+      value: formatAbbrev(intel?.overview.totalMarketCap),
       unit: "USD",
-      change: "+2.34%",
-      positive: true,
+      change: typeof intel?.sentiment.trend24hPct === 'number' ? `${intel!.sentiment.trend24hPct >= 0 ? '+' : ''}${intel!.sentiment.trend24hPct.toFixed(2)}%` : null,
+      positive: typeof intel?.sentiment.trend24hPct === 'number' ? intel!.sentiment.trend24hPct >= 0 : null,
       icon: DollarSign
     },
     {
       title: "24h Volym",
-      value: "95.2B",
+      value: formatAbbrev(intel?.overview.totalVolume24h),
       unit: "USD", 
-      change: "-5.67%",
-      positive: false,
+      change: null,
+      positive: null,
       icon: BarChart3
     },
     {
       title: "Bitcoin Dominans",
-      value: "52.8",
+      value: typeof intel?.overview.btcDominance === 'number' ? intel!.overview.btcDominance.toFixed(1) : '—',
       unit: "%",
-      change: "+0.12%",
-      positive: true,
+      change: null,
+      positive: null,
       icon: PieChart
     },
     {
       title: "DeFi TVL",
-      value: "48.9B",
+      value: formatAbbrev(intel?.overview.defiTVL),
       unit: "USD",
-      change: "+8.91%",
-      positive: true,
+      change: null,
+      positive: null,
       icon: Activity
     }
   ];
 
-  const topCoins = [
-    { rank: 1, symbol: "BTC", name: "Bitcoin", price: 645000, change: 2.34, cap: "12.5T" },
-    { rank: 2, symbol: "ETH", name: "Ethereum", price: 35000, change: -1.45, cap: "4.2T" },
-    { rank: 3, symbol: "BNB", name: "Binance Coin", price: 3200, change: 0.87, cap: "492B" },
-    { rank: 4, symbol: "XRP", name: "Ripple", price: 8.5, change: 5.23, cap: "389B" },
-    { rank: 5, symbol: "ADA", name: "Cardano", price: 4.2, change: 3.21, cap: "147B" },
-    { rank: 6, symbol: "SOL", name: "Solana", price: 1100, change: 5.67, cap: "523B" },
-    { rank: 7, symbol: "DOT", name: "Polkadot", price: 85, change: -2.11, cap: "98B" },
-    { rank: 8, symbol: "AVAX", name: "Avalanche", price: 450, change: 1.99, cap: "178B" },
-  ];
+  const topCoins = useMemo(() => {
+    return (cryptoPrices ?? [])
+      .slice()
+      .sort((a, b) => (a.rank ?? 9999) - (b.rank ?? 9999))
+      .slice(0, 8)
+      .map((c, idx) => ({
+        rank: c.rank ?? idx + 1,
+        symbol: c.symbol,
+        name: c.name,
+        price: c.price,
+        change: c.change24h ?? 0,
+        cap: c.marketCap ?? '—'
+      }));
+  }, [cryptoPrices]);
 
   const formatPrice = (price: number) => {
     if (price >= 1000) {
@@ -84,16 +102,20 @@ const MarketOverview = () => {
               >
                 <div className="flex items-center justify-between mb-4">
                   <IconComponent className="h-6 w-6 text-primary" />
-                  <div className={`flex items-center space-x-1 ${
-                    stat.positive ? 'text-success' : 'text-destructive'
-                  }`}>
-                    {stat.positive ? (
-                      <TrendingUp size={16} />
-                    ) : (
-                      <TrendingDown size={16} />
-                    )}
-                    <span className="text-sm font-medium">{stat.change}</span>
-                  </div>
+                  {stat.change != null ? (
+                    <div className={`flex items-center space-x-1 ${
+                      stat.positive ? 'text-success' : 'text-destructive'
+                    }`}>
+                      {stat.positive ? (
+                        <TrendingUp size={16} />
+                      ) : (
+                        <TrendingDown size={16} />
+                      )}
+                      <span className="text-sm font-medium">{stat.change}</span>
+                    </div>
+                  ) : (
+                    <div className="h-4" />
+                  )}
                 </div>
                 
                 <div className="mb-2">
@@ -117,7 +139,7 @@ const MarketOverview = () => {
             <div className="space-y-4">
               {topCoins.map((coin) => (
                 <div 
-                  key={coin.symbol}
+                  key={`${coin.symbol}-${coin.rank}`}
                   className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors duration-200"
                 >
                   <div className="flex items-center space-x-3">
@@ -134,14 +156,14 @@ const MarketOverview = () => {
                         </span>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        Cap: {coin.cap} SEK
+                        Cap: {coin.cap} USD
                       </span>
                     </div>
                   </div>
                   
                   <div className="text-right">
                     <div className="font-display font-semibold">
-                      {formatPrice(coin.price)} SEK
+                      {formatPrice(coin.price)} USD
                     </div>
                     <div className={`flex items-center justify-end space-x-1 text-sm ${
                       coin.change >= 0 ? 'text-success' : 'text-destructive'
@@ -171,11 +193,13 @@ const MarketOverview = () => {
             >
               <div className="w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end p-4">
                 <div className="text-foreground">
-                  <Badge className="bg-success text-success-foreground mb-2">
-                    Bullish Trend
+                  <Badge className={`${(intel?.sentiment.trend24hPct ?? 0) >= 0 ? 'bg-success text-success-foreground' : 'bg-destructive text-destructive-foreground'} mb-2`}>
+                    {(intel?.sentiment.trend24hPct ?? 0) >= 0 ? 'Bullish Trend' : 'Bearish Trend'}
                   </Badge>
                   <p className="text-sm font-display">
-                    Marknaden visar stark återhämtning med ökad institutionell adoption
+                    {typeof intel?.sentiment.trend24hPct === 'number' 
+                      ? `Globalt marknadsvärde ${(intel.sentiment.trend24hPct >= 0 ? '+' : '')}${intel.sentiment.trend24hPct.toFixed(2)}% senaste 24h.`
+                      : 'Marknadsdata uppdateras i realtid.'}
                   </p>
                 </div>
               </div>
