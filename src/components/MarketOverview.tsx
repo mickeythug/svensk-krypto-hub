@@ -193,11 +193,11 @@ const MarketOverview = () => {
             >
               <div className="w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end p-4">
                 <div className="text-foreground">
-                  <Badge className={`${intel?.analysis.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : intel?.analysis.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
-                    {intel?.analysis.trend || 'Neutral'} Trend
+                  <Badge className={`${intel?.analysis?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : intel?.analysis?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
+                    {(intel?.analysis?.trend ?? 'Neutral')} Trend
                   </Badge>
                   <p className="text-sm font-display">
-                    {intel?.analysis.summary || 'Marknadsdata uppdateras i realtid.'}
+                    {intel?.analysis?.summary || 'Marknadsdata uppdateras i realtid.'}
                   </p>
                 </div>
               </div>
@@ -211,7 +211,7 @@ const MarketOverview = () => {
                 </div>
                 {intel?.analysis.positives?.length ? (
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {intel.analysis.positives.map((p, i) => (
+                    {intel?.analysis?.positives?.map((p, i) => (
                       <li key={`pos-${i}`}>{p}</li>
                     ))}
                   </ul>
@@ -226,7 +226,7 @@ const MarketOverview = () => {
                 </div>
                 {intel?.analysis.negatives?.length ? (
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {intel.analysis.negatives.map((n, i) => (
+                    {intel?.analysis?.negatives?.map((n, i) => (
                       <li key={`neg-${i}`}>{n}</li>
                     ))}
                   </ul>
