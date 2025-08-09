@@ -411,12 +411,10 @@ class CryptoAPIClient {
 
       return this.transformCoinGeckoResponse(combined);
       
-    } catch (error) {
+    } catch (error: any) {
       this.recordFailure();
-      
-      // Fallback to mock data if API fails
-      console.warn('API failed, using fallback data:', error);
-      return this.getFallbackData();
+      // Do NOT fabricate data. Rely on React Query cache as fallback.
+      throw (error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -516,6 +514,7 @@ export const useCryptoData = () => {
     gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
     refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
     refetchIntervalInBackground: true,
+    placeholderData: () => queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined,
     retry: (failureCount, error) => {
       // Intelligent retry logik
       if (failureCount >= 3) return false;
