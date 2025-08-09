@@ -374,7 +374,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
 
   const cacheKey = 'crypto-prices-cache-v1';
   const projectRef = 'jcllcrvomxdrhtkqpcbr';
-  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=2`;
+  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=2&refresh=true`;
 
   // Attempt via Edge Function (DB-backed, refreshed every 3 min via cron)
   const controller = new AbortController();
