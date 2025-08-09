@@ -19,19 +19,21 @@ export default function ConnectWalletButton() {
   const { signMessageAsync } = useSignMessage();
   const chains = useChains();
   const { switchChainAsync, isPending: isSwitching } = useSwitchChain();
-  const [selectedChainId, setSelectedChainId] = useState<number>(() => chains[0]?.id ?? 1);
+  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
+  const [isAuthed, setIsAuthed] = useState(false);
   const [nonce, setNonce] = useState<string>('');
   const { data: balances } = useWalletBalances(address as Address | undefined);
   const selectedChainBalance = useMemo(() => balances.find?.((b) => b.chainId === selectedChainId), [balances, selectedChainId]);
 
   useEffect(() => {
-    if (chains.length && !chains.find((c) => c.id === selectedChainId)) {
-      setSelectedChainId(chains[0]!.id);
-    }
-  }, [chains, selectedChainId]);
+    const sig = sessionStorage.getItem('siwe_signature');
+    const addrStored = sessionStorage.getItem('siwe_address');
+    const ok = Boolean(sig && addrStored && address && addrStored.toLowerCase() === address.toLowerCase());
+    setIsAuthed(ok);
+  }, [address, isConnected]);
 
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected || selectedChainId == null) return;
     (async () => {
       try {
         await switchChainAsync({ chainId: selectedChainId });
@@ -55,6 +57,10 @@ export default function ConnectWalletButton() {
 
   const handleConnect = async () => {
     try {
+      if (selectedChainId == null) {
+        toast({ title: 'Välj kedja', description: 'Du måste välja kedja innan du ansluter.', variant: 'destructive' });
+        return;
+      }
       // Prefer WalletConnect om tillgänglig, annars injected
       const wc = connectors.find((c) => c.id === 'walletConnect') || connectors[0];
       await connect({ connector: wc });
@@ -69,19 +75,22 @@ export default function ConnectWalletButton() {
       // Signera automatiskt (SIWE-lik verifiering)
       const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nKälla: Crypto Network Sweden`;
       try {
-        if (address) {
-          const signature = await signMessageAsync({ account: address, message });
-          localStorage.setItem('siwe_signature', signature);
-          localStorage.setItem('siwe_address', address || '');
-        } else {
-          const signature = await signMessageAsync({ message } as any);
-          localStorage.setItem('siwe_signature', signature);
-        }
+        const signature = await signMessageAsync({ message } as any);
+        sessionStorage.setItem('siwe_signature', signature);
+        if (address) sessionStorage.setItem('siwe_address', address);
+        setIsAuthed(true);
       } catch (e) {
-        // Användaren kan ha avbrutit signeringen – anslutningen kvarstår
+        // Kräver signering: koppla från och rensa
+        await disconnect();
+        try {
+          sessionStorage.removeItem('siwe_signature');
+          sessionStorage.removeItem('siwe_address');
+        } catch {}
+        toast({ title: 'Signering krävs', description: 'Du måste signera för att logga in.', variant: 'destructive' });
+        return;
       }
 
-      toast({ title: 'Wallet ansluten', description: 'Ansluten och (om godkänd) signerad.' });
+      toast({ title: 'Wallet ansluten', description: 'Ansluten och signerad.' });
       setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
     } catch (e: any) {
       toast({ title: 'Fel vid anslutning', description: String(e.message || e), variant: 'destructive' });
@@ -93,22 +102,30 @@ export default function ConnectWalletButton() {
       await disconnect();
     } finally {
       try {
+        sessionStorage.removeItem('siwe_signature');
+        sessionStorage.removeItem('siwe_address');
         localStorage.removeItem('siwe_signature');
         localStorage.removeItem('siwe_address');
-        Object.keys(localStorage).forEach((k) => {
-          if (k.startsWith('wagmi') || k.startsWith('wc@') || k.includes('walletconnect')) {
-            localStorage.removeItem(k);
+        // Rensa wagmi/walletconnect persistence
+        const clearKeys = (store: Storage) => {
+          for (const k of Object.keys(store)) {
+            if (k.startsWith('wagmi') || k.startsWith('wc@') || k.includes('walletconnect')) {
+              store.removeItem(k);
+            }
           }
-        });
+        };
+        clearKeys(localStorage);
+        clearKeys(sessionStorage);
       } catch {}
+      setIsAuthed(false);
       toast({ title: 'Frånkopplad', description: 'Session rensad. Du behöver ansluta och signera igen nästa gång.' });
     }
   };
 
-  if (!isConnected) {
+  if (!isConnected || !isAuthed) {
     return (
       <div className="flex items-center gap-2">
-        <Select value={String(selectedChainId)} onValueChange={(v) => setSelectedChainId(Number(v))}>
+        <Select value={selectedChainId ? String(selectedChainId) : undefined} onValueChange={(v) => setSelectedChainId(Number(v))}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Välj kedja" />
           </SelectTrigger>
@@ -120,7 +137,7 @@ export default function ConnectWalletButton() {
             ))}
           </SelectContent>
         </Select>
-        <Button onClick={handleConnect} size="sm" className="font-crypto uppercase" disabled={isConnecting || isSwitching}>
+        <Button onClick={handleConnect} size="sm" className="font-crypto uppercase" disabled={isConnecting || !selectedChainId}>
           <Wallet className="w-4 h-4 mr-2" /> Anslut Wallet
         </Button>
       </div>
@@ -129,7 +146,7 @@ export default function ConnectWalletButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <Select value={String(selectedChainId)} onValueChange={(v) => setSelectedChainId(Number(v))}>
+      <Select value={selectedChainId ? String(selectedChainId) : undefined} onValueChange={(v) => setSelectedChainId(Number(v))}>
         <SelectTrigger className="w-[140px]">
           <SelectValue />
         </SelectTrigger>
