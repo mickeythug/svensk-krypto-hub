@@ -225,7 +225,7 @@ const NewsSection = () => {
               
               <div className="space-y-4">
                 {trendingList.map((article, index) => (
-                  <div key={article.id} className="group cursor-pointer">
+                  <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer" aria-label={`Öppna artikel: ${article.title}`}>
                     <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-secondary/30 transition-colors">
                       <div className="text-primary font-crypto text-xs mt-1">
                         {index + 3}
@@ -245,7 +245,7 @@ const NewsSection = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </Card>

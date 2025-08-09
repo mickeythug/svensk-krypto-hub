@@ -10,6 +10,38 @@ import { useAIMarketIntel } from "@/hooks/useAIMarketIntel";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
+// Coin logos
+import btcLogo from "@/assets/crypto-logos/btc.png";
+import ethLogo from "@/assets/crypto-logos/eth.png";
+import bnbLogo from "@/assets/crypto-logos/bnb.png";
+import adaLogo from "@/assets/crypto-logos/ada.png";
+import avaxLogo from "@/assets/crypto-logos/avax.png";
+import dogeLogo from "@/assets/crypto-logos/doge.png";
+import dotLogo from "@/assets/crypto-logos/dot.png";
+import linkLogo from "@/assets/crypto-logos/link.png";
+import ltcLogo from "@/assets/crypto-logos/ltc.png";
+import maticLogo from "@/assets/crypto-logos/matic.png";
+import shibLogo from "@/assets/crypto-logos/shib.png";
+import solLogo from "@/assets/crypto-logos/sol.png";
+import uniLogo from "@/assets/crypto-logos/uni.png";
+import xrpLogo from "@/assets/crypto-logos/xrp.png";
+
+const COIN_LOGOS: Record<string, string> = {
+  BTC: btcLogo,
+  ETH: ethLogo,
+  BNB: bnbLogo,
+  ADA: adaLogo,
+  AVAX: avaxLogo,
+  DOGE: dogeLogo,
+  DOT: dotLogo,
+  LINK: linkLogo,
+  LTC: ltcLogo,
+  MATIC: maticLogo,
+  SHIB: shibLogo,
+  SOL: solLogo,
+  UNI: uniLogo,
+  XRP: xrpLogo,
+};
 function AIMarkets() {
   const { data, isLoading, error } = useAIMarketIntel();
   if (error) return null;
@@ -190,6 +222,12 @@ const MarketOverview = () => {
                   className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors duration-200"
                 >
                   <div className="flex items-center space-x-3">
+                    <img
+                      src={COIN_LOGOS[coin.symbol] || '/placeholder.svg'}
+                      alt={`${coin.name} logotyp`}
+                      className="h-6 w-6 rounded-full border border-border object-contain bg-muted/20"
+                      loading="lazy"
+                    />
                     <Badge variant="outline" className="font-crypto text-xs">
                       #{coin.rank}
                     </Badge>
