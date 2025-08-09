@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      latest_token_prices: {
+        Row: {
+          change_24h: number | null
+          coin_gecko_id: string | null
+          data: Json | null
+          image: string | null
+          market_cap: number | null
+          name: string | null
+          price: number | null
+          symbol: string
+          updated_at: string
+        }
+        Insert: {
+          change_24h?: number | null
+          coin_gecko_id?: string | null
+          data?: Json | null
+          image?: string | null
+          market_cap?: number | null
+          name?: string | null
+          price?: number | null
+          symbol: string
+          updated_at?: string
+        }
+        Update: {
+          change_24h?: number | null
+          coin_gecko_id?: string | null
+          data?: Json | null
+          image?: string | null
+          market_cap?: number | null
+          name?: string | null
+          price?: number | null
+          symbol?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      market_snapshots: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          page_count: number
+          snapshot_time: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          page_count?: number
+          snapshot_time?: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          page_count?: number
+          snapshot_time?: string
+          source?: string
+        }
+        Relationships: []
+      }
       news_cache: {
         Row: {
           created_at: string
