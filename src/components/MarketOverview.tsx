@@ -41,8 +41,9 @@ function AIMarkets() {
 }
 
 const MarketOverview = () => {
+  const { data: aiIntel, isLoading: aiLoading } = useAIMarketIntel();
   const isMobile = useIsMobile();
-  const { data: intel } = useMarketIntel();
+  const { data: intel } = useMarketIntel(); // Backup for market stats
   const { cryptoPrices } = useCryptoData();
 
   const formatAbbrev = (n?: number | null) => {
@@ -54,10 +55,19 @@ const MarketOverview = () => {
     return n.toFixed(2);
   };
 
+  const extractMarketCap = (summary: string): number | null => {
+    const match = summary.match(/Marknadsvärde:\s*([\d.]+)([TBM])/);
+    if (!match) return null;
+    const value = parseFloat(match[1]);
+    const unit = match[2];
+    const multiplier = unit === 'T' ? 1e12 : unit === 'B' ? 1e9 : unit === 'M' ? 1e6 : 1;
+    return value * multiplier;
+  };
+
   const marketStats = [
     {
       title: "Total Marknadskapital",
-      value: formatAbbrev(intel?.overview.totalMarketCap),
+      value: formatAbbrev(aiIntel?.summary ? extractMarketCap(aiIntel.summary) : intel?.overview.totalMarketCap),
       unit: "USD",
       change: typeof intel?.sentiment.trend24hPct === 'number' ? `${intel!.sentiment.trend24hPct >= 0 ? '+' : ''}${intel!.sentiment.trend24hPct.toFixed(2)}%` : null,
       positive: typeof intel?.sentiment.trend24hPct === 'number' ? intel!.sentiment.trend24hPct >= 0 : null,
@@ -227,54 +237,87 @@ const MarketOverview = () => {
             >
               <div className="w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end p-4">
                 <div className="text-foreground">
-                  <Badge className={`${intel?.analysis?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : intel?.analysis?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
-                    {(intel?.analysis?.trend ?? 'Neutral')} Trend
+                  <Badge className={`${aiIntel?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : aiIntel?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
+                    {(aiIntel?.trend ?? 'Neutral')} Trend
                   </Badge>
                   <p className="text-sm font-display">
-                    {intel?.analysis?.summary || 'Marknadsdata uppdateras i realtid.'}
+                    {aiLoading ? 'Laddar AI-analys...' : (aiIntel?.summary || 'AI-marknadsanalys från OpenAI o4-mini-deep-research med realtidsdata')}
                   </p>
                 </div>
               </div>
             </div>
-
-            {/* AI-Marknadsanalys (OpenAI) */}
-            <AIMarkets />
             
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="p-4 rounded-lg bg-success/10 border border-success/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-success" />
-                  <span className="font-display font-semibold text-success">Positiva Signaler</span>
+                  <span className="font-display font-semibold text-success">Positiva Signaler (AI)</span>
                 </div>
-                {intel?.analysis?.positives?.length ? (
+                {aiIntel?.positives?.length ? (
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {intel?.analysis?.positives?.map((p, i) => (
-                      <li key={`pos-${i}`}>{p}</li>
+                    {aiIntel.positives.map((p, i) => (
+                      <li key={`ai-pos-${i}`}>{p}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Inga starka positiva signaler just nu.</p>
+                  <p className="text-sm text-muted-foreground">{aiLoading ? 'Laddar positiva signaler...' : 'Inga starka positiva signaler just nu.'}</p>
                 )}
               </div>
               <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
                 <div className="flex items-center space-x-2 mb-2">
                   <Activity className="h-4 w-4 text-warning" />
-                  <span className="font-display font-semibold text-warning">Att Bevaka</span>
+                  <span className="font-display font-semibold text-warning">Att Bevaka (AI)</span>
                 </div>
-                {intel?.analysis?.negatives?.length ? (
+                {aiIntel?.negatives?.length ? (
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                    {intel?.analysis?.negatives?.map((n, i) => (
-                      <li key={`neg-${i}`}>{n}</li>
+                    {aiIntel.negatives.map((n, i) => (
+                      <li key={`ai-neg-${i}`}>{n}</li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-muted-foreground">Inga större riskfaktorer identifierade.</p>
+                  <p className="text-sm text-muted-foreground">{aiLoading ? 'Laddar varningssignaler...' : 'Inga större riskfaktorer identifierade.'}</p>
                 )}
               </div>
 
-              {intel?.ta ? (
+              {aiIntel?.ta ? (
                 <div className="md:col-span-2 mt-2">
-                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (BTC & ETH)</h4>
+                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (AI-verifierad med webbsökning)</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(['btc','eth'] as const).map((asset) => {
+                      const set = aiIntel.ta?.[asset];
+                      const label = asset.toUpperCase();
+                      const row = (tf: 'd1'|'h4'|'h1', name: string) => {
+                        const t = set?.[tf];
+                        const color = t?.trend === 'Bullish' ? 'text-success' : t?.trend === 'Bearish' ? 'text-destructive' : 'text-warning';
+                        return (
+                          <div key={`${asset}-${tf}`} className="flex items-center justify-between rounded-md px-3 py-2 bg-secondary/30">
+                            <span className="font-display text-sm">{name}</span>
+                            <div className={`font-display text-sm ${color}`}>
+                              <span className="mr-2">{t?.trend ?? '—'}</span>
+                              {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                            </div>
+                          </div>
+                        );
+                      };
+                      return (
+                        <Card key={asset} className="p-4 bg-card/70 border-border">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="font-crypto font-semibold text-primary">{label}</span>
+                            <Badge variant="outline" className="text-xs">AI-verifierad</Badge>
+                          </div>
+                          <div className="space-y-2">
+                            {row('d1','1D')}
+                            {row('h4','4H')}
+                            {row('h1','1H')}
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : intel?.ta ? (
+                <div className="md:col-span-2 mt-2">
+                  <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (Fallback)</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(['btc','eth'] as const).map((asset) => {
                       const set = intel.ta?.[asset];
