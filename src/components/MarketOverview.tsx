@@ -209,7 +209,7 @@ const MarketOverview = () => {
                   <TrendingUp className="h-4 w-4 text-success" />
                   <span className="font-display font-semibold text-success">Positiva Signaler</span>
                 </div>
-                {intel?.analysis.positives?.length ? (
+                {intel?.analysis?.positives?.length ? (
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
                     {intel?.analysis?.positives?.map((p, i) => (
                       <li key={`pos-${i}`}>{p}</li>
@@ -224,7 +224,7 @@ const MarketOverview = () => {
                   <Activity className="h-4 w-4 text-warning" />
                   <span className="font-display font-semibold text-warning">Att Bevaka</span>
                 </div>
-                {intel?.analysis.negatives?.length ? (
+                {intel?.analysis?.negatives?.length ? (
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
                     {intel?.analysis?.negatives?.map((n, i) => (
                       <li key={`neg-${i}`}>{n}</li>
