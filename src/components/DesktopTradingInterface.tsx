@@ -24,6 +24,7 @@ import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 import { formatUsd } from "@/lib/utils";
 import { useAccount } from 'wagmi';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
+import SmartTradePanel from '@/components/trade/SmartTradePanel';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -185,121 +186,9 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           />
         </div>
 
-        {/* Trading Panel - Bottom section with reduced height */}
+        {/* Trading Panel - Replaced with SmartTradePanel */}
         <div className="h-80 m-3 mt-2">
-          <Card className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
-            <div className="p-3 border-b border-border/30 bg-background/40">
-              <div className="flex gap-1">
-                <Button
-                  variant={side === "buy" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSide("buy")}
-                  className={`flex-1 transition-all ${side === "buy" ? "bg-success hover:bg-success/90 text-white shadow-md" : "hover:bg-success/20"}`}
-                >
-                  Buy
-                </Button>
-                <Button
-                  variant={side === "sell" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSide("sell")}
-                  className={`flex-1 transition-all ${side === "sell" ? "bg-destructive hover:bg-destructive/90 text-white shadow-md" : "hover:bg-destructive/20"}`}
-                >
-                  Sell
-                </Button>
-              </div>
-            </div>
-            
-            <div className="p-4 space-y-4 bg-background/20">
-              {/* Order Type */}
-              <div className="flex gap-1 text-xs">
-                <Button
-                  variant={orderType === "market" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setOrderType("market")}
-                  className="flex-1 h-8"
-                >
-                  Market
-                </Button>
-                <Button
-                  variant={orderType === "limit" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setOrderType("limit")}
-                  className="flex-1 h-8"
-                >
-                  Limit
-                </Button>
-              </div>
-
-              {/* Price Input for Limit Orders */}
-              {orderType === "limit" && (
-                <div>
-                  <label className="text-xs text-muted-foreground mb-2 block font-semibold">Price (USDT)</label>
-                  <Input
-                    type="number"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="h-10 text-sm font-mono"
-                    step="0.01"
-                    placeholder="Enter limit price"
-                  />
-                </div>
-              )}
-
-              {/* Amount Input */}
-              <div>
-                <label className="text-xs text-muted-foreground mb-2 block font-semibold">Amount ({symbol})</label>
-                <Input
-                  type="number"
-                  value={size}
-                  onChange={(e) => setSize(e.target.value)}
-                  placeholder="0.00000000"
-                  className="h-10 text-sm font-mono"
-                  step="0.00000001"
-                />
-              </div>
-
-              {/* Quick Size Buttons */}
-              <div className="grid grid-cols-4 gap-1">
-                {["25%", "50%", "75%", "100%"].map((percent) => (
-                  <Button
-                    key={percent}
-                    variant="outline"
-                    size="sm"
-                    className="h-6 text-xs"
-                  >
-                    {percent}
-                  </Button>
-                ))}
-              </div>
-
-              {/* Order Value */}
-              <div className="text-xs text-muted-foreground">
-                <div className="flex justify-between">
-                  <span>Order Value:</span>
-                  <span className="font-mono">
-                    {size && price ? `$${(parseFloat(size) * parseFloat(price)).toFixed(2)}` : '$0.00'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Available:</span>
-                  <span className="font-mono">$2,450.00</span>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                className={`w-full ${
-                  side === "buy"
-                    ? "bg-success hover:bg-success/90 text-white"
-                    : "bg-destructive hover:bg-destructive/90 text-white"
-                }`}
-                disabled={!size}
-              >
-                <Wallet className="h-4 w-4 mr-2" />
-                {side === "buy" ? "Buy" : "Sell"} {symbol}
-              </Button>
-            </div>
-          </Card>
+          <SmartTradePanel symbol={symbol} currentPrice={currentPrice} />
         </div>
       </div>
     </div>
