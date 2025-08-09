@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Newspaper, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import "@/styles/utilities.css";
 
 const NewsSection = () => {
   const isMobile = useIsMobile();
@@ -241,11 +242,11 @@ const NewsSection = () => {
                       <div className="text-primary font-crypto text-xs mt-1">
                         {index + 3}
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <Badge variant="outline" className={`${getCategoryColor(article.category)} text-xs mb-1`}>
                           {article.category}
                         </Badge>
-                        <h4 className="font-display font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors truncate" title={article.title}>
+                        <h4 className="font-display font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2" title={article.title}>
                           {article.title}
                         </h4>
                         <div className="flex items-center text-xs text-muted-foreground space-x-1">
