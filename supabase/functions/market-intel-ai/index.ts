@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.53.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,7 +8,12 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-const openAIApiKey = Deno.env.get("OPENAI_API_KEY");
+const openAIApiKey = Deno.env.get("OPENAI_API") || Deno.env.get("OPENAI_API_KEY");
+
+const supabase = createClient(
+  Deno.env.get('SUPABASE_URL') ?? '',
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+);
 
 async function fetchJSON<T = any>(url: string): Promise<T> {
   const res = await fetch(url, { cache: "no-store" });
@@ -187,7 +193,23 @@ serve(async (req) => {
   }
   try {
     if (!openAIApiKey) {
-      return new Response(JSON.stringify({ error: "OPENAI_API_KEY not set" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "OPENAI_API not set" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    // Check daily cache first
+    const today = new Date().toISOString().slice(0, 10);
+    const cacheKey = `ai:market:${today}`;
+    
+    const { data: cached } = await supabase
+      .from('news_cache')
+      .select('data')
+      .eq('key', cacheKey)
+      .gt('expires_at', new Date().toISOString())
+      .single();
+    
+    if (cached?.data) {
+      console.log('Returning cached AI analysis for', today);
+      return new Response(JSON.stringify(cached.data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // optional user prefs
@@ -250,7 +272,37 @@ serve(async (req) => {
       generatedAt: new Date().toISOString(),
     };
 
-    const prompt = `Du är en strikt och pålitlig kryptomarknadsanalytiker. Du får färska realtidsdata (JSON) från flera källor.\n\nUppgift: Leverera en omfattande, konsekvent och verifierbar marknadsanalys på svenska baserad på MINST 10 faktorer: \n(1) Globalt marknadsvärde 24h-trend, (2) Volym/Mcap, (3) BTC-dominans, (4) DeFi TVL, (5) Fear & Greed, (6) Social aktivitet, (7) Toppvinnare/Topplistan, (8) BTC TA 1D/4H/1H, (9) ETH TA 1D/4H/1H, (10) Valuta-veckotrend (t.ex. ETH/BTC senaste 7 dagar) och (11) Bollinger/RSI/MACD signaler. \n\nKrav: \n- Bygg en helhetsbedömning: Bullish, Bearish eller Neutral (Sideways). \n- Inga påhitt: ALLT måste kunna härledas från datan. \n- Om ETH veckoförändring > 15% kan analysen inte vara Sideways. \n- Samma sak för BTC. \n- Svara ENDAST med strikt JSON enligt följande schema.\n\nSchema: {\n  \"trend\": \"Bullish|Bearish|Neutral\",\n  \"summary\": \"Marknadsvärde: <...> • 24h Volym: <...> • BTC-dominans: <...>% • 24h Förändring: <...>%\",\n  \"positives\": string[],\n  \"negatives\": string[],\n  \"ta\": {\n    \"btc\": { \"d1\": any, \"h4\": any, \"h1\": any },\n    \"eth\": { \"d1\": any, \"h4\": any, \"h1\": any }\n  },\n  \"generatedAt\": string,\n  \"sources\": string[]\n}\n\nData:\n${JSON.stringify(facts)}\n`;
+    const prompt = `Du är en strikt och pålitlig kryptomarknadsanalytiker med tillgång till realtidsdata från webben. 
+
+VIKTIGT: Använd webben för att hämta de senaste priserna för BTC och ETH från de senaste 7 dagarna för att verifiera trenderna i teknisk analys data.
+
+Uppgift: Leverera en omfattande, konsekvent och verifierbar marknadsanalys på svenska baserad på MINST 10 faktorer: 
+(1) Globalt marknadsvärde 24h-trend, (2) Volym/Mcap, (3) BTC-dominans, (4) DeFi TVL, (5) Fear & Greed, (6) Social aktivitet, (7) Toppvinnare/Topplistan, (8) BTC TA 1D/4H/1H, (9) ETH TA 1D/4H/1H, (10) Valuta-veckotrend (t.ex. ETH/BTC senaste 7 dagar) och (11) Bollinger/RSI/MACD signaler. 
+
+VIKTIGT: Sök webben för de senaste BTC och ETH priserna från de senaste 7 dagarna och jämför med den tekniska analysdatan jag ger dig för att säkerställa korrekthet.
+
+Krav: 
+- Bygg en helhetsbedömning: Bullish, Bearish eller Neutral (Sideways). 
+- Inga påhitt: ALLT måste kunna härledas från datan OCH webbsökning. 
+- Om ETH veckoförändring > 15% kan analysen inte vara Sideways. 
+- Samma sak för BTC. 
+- Svara ENDAST med strikt JSON enligt följande schema.
+
+Schema: {
+  "trend": "Bullish|Bearish|Neutral",
+  "summary": "Marknadsvärde: <...> • 24h Volym: <...> • BTC-dominans: <...>% • 24h Förändring: <...>%",
+  "positives": string[],
+  "negatives": string[],
+  "ta": {
+    "btc": { "d1": any, "h4": any, "h1": any },
+    "eth": { "d1": any, "h4": any, "h1": any }
+  },
+  "generatedAt": string,
+  "sources": string[]
+}
+
+Data:
+${JSON.stringify(facts)}`;
 
     const aiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -259,12 +311,13 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "o4-mini-deep-research",
         temperature: 0.2,
         messages: [
-          { role: "system", content: "Du är en strikt, konservativ och pålitlig marknadsanalytiker. Svara endast med JSON enligt schema." },
+          { role: "system", content: "Du är en strikt, konservativ och pålitlig marknadsanalytiker. Använd webben för att hämta senaste prisdata. Svara endast med JSON enligt schema." },
           { role: "user", content: prompt },
         ],
+      }),
       }),
     });
 
@@ -283,6 +336,20 @@ serve(async (req) => {
       sources: facts.sources,
     };
 
+    // Cache the result for 24 hours
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(6, 0, 0, 0); // Expire at 6 AM next day
+    
+    await supabase
+      .from('news_cache')
+      .upsert({
+        key: cacheKey,
+        data: out,
+        expires_at: tomorrow.toISOString(),
+      });
+
+    console.log('Generated and cached new AI analysis for', today);
     return new Response(JSON.stringify(out), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (err) {
     console.error("market-intel-ai error", err);
