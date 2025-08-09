@@ -413,8 +413,8 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     if (finalData.length < 450) {
       try {
         await apiRateLimiter.acquire();
-        const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false&price_change_percentage=1h,24h,7d';
-        const pages = [1, 2, 3, 4, 5];
+        const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=1h,24h,7d';
+        const pages = [1, 2];
         const results: any[] = [];
         for (const p of pages) {
           const c = new AbortController();
@@ -458,8 +458,8 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     // Fallback 2: Direct CoinGecko (batched, sequential to respect limits)
     try {
       await apiRateLimiter.acquire();
-      const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&sparkline=false&price_change_percentage=1h,24h,7d';
-      const pages = [1, 2, 3, 4, 5];
+      const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=1h,24h,7d';
+      const pages = [1, 2];
       const results: any[] = [];
       for (const p of pages) {
         const c = new AbortController();
