@@ -104,12 +104,32 @@ function diagnoseTA(values: number[]) {
   const rsi14 = rsi(values, 14);
   const { macd, signal: macdSignal, hist: macdHist } = macdCalc(values, 12, 26, 9);
   const bb = bollinger(values, 20, 2);
-  let trend: "Bullish" | "Bearish" | "Sideways" = "Sideways";
-  if (price && sma50 && sma200 && ema20 && ema50) {
-    const bull = price > sma50 && sma50 > sma200 && ema20 > ema50;
-    const bear = price < sma50 && sma50 < sma200 && ema20 < ema50;
-    trend = bull ? "Bullish" : bear ? "Bearish" : "Sideways";
+
+  // Improved trend logic using a scoring system across indicators
+  let bull = 0, bear = 0;
+  if (price && sma20) {
+    if (price > sma20) bull++; else bear++;
   }
+  if (sma20 && sma50) {
+    if (sma20 > sma50) bull++; else bear++;
+  }
+  if (sma50 && sma200) {
+    if (sma50 > sma200) bull++; else bear++;
+  }
+  if (ema20 && ema50) {
+    if (ema20 > ema50) bull++; else bear++;
+  }
+  if (typeof rsi14 === 'number') {
+    if (rsi14 >= 60) bull += 2; else if (rsi14 <= 40) bear += 2;
+  }
+  if (typeof macdHist === 'number') {
+    if (macdHist > 0) bull++; else if (macdHist < 0) bear++;
+  }
+
+  let trend: "Bullish" | "Bearish" | "Sideways" = "Sideways";
+  if (bull - bear >= 2) trend = "Bullish";
+  else if (bear - bull >= 2) trend = "Bearish";
+
   return { price, sma20, sma50, sma200, ema20, ema50, rsi14, macd, macdSignal, macdHist, bbUpper: bb.upper, bbLower: bb.lower, trend };
 }
 
