@@ -161,7 +161,7 @@ const CryptoDetailPage = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <CryptoPriceTicker />
-        <div className="px-0 pt-2">
+        <div className="px-0 pt-1">
           <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
             <ArrowLeft className="h-4 w-4" />
             Till marknaden
@@ -182,7 +182,7 @@ const CryptoDetailPage = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <CryptoPriceTicker />
-      <div className="px-0 mt-2">
+      <div className="px-0 pt-1">
         <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
           <ArrowLeft className="h-4 w-4" />
           Till marknaden
