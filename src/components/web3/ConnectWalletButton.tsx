@@ -160,17 +160,29 @@ export default function ConnectWalletButton() {
           }
           const pubkeyStr = pk?.toBase58?.() || (wallet as any)?.adapter?.publicKey?.toBase58?.();
           if (!pubkeyStr) throw new Error('Kunde inte läsa din Solana‑adress. Godkänn anslutningen i Phantom och försök igen.');
-          if (!signMessageSol) {
+
+          const canAdapterSign = typeof signMessageSol === 'function';
+          const providerSign = (window as any)?.solana?.signMessage as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
+          const canProviderSign = typeof providerSign === 'function';
+          if (!canAdapterSign && !canProviderSign) {
             toast({
-              title: 'Din wallet saknar meddelandesignering',
-              description: 'Använd Phantom eller aktivera “Sign message” i din wallet. Du är ansluten men inte inloggad.',
+              title: 'Meddelandesignering ej tillgänglig',
+              description: 'Din valda wallet stöder inte “Sign Message”. Välj Phantom (rekommenderas).',
               variant: 'destructive',
             });
-            // Behåll anslutningen men avbryt inloggning
+            setWalletModalVisible(true);
             return;
           }
 
-          const ok = await signAndVerify(pubkeyStr, signMessageSol);
+          const signFn = async (bytes: Uint8Array) => {
+            if (canAdapterSign) return await (signMessageSol as any)(bytes);
+            const res = await (providerSign as any)(bytes, 'utf8');
+            const sig = (res?.signature && Array.isArray(res.signature)) ? new Uint8Array(res.signature) : (res?.signature as Uint8Array);
+            if (!(sig instanceof Uint8Array)) throw new Error('Signatur ogiltig från wallet');
+            return sig;
+          };
+
+          const ok = await signAndVerify(pubkeyStr, signFn);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
 
           sessionStorage.setItem('siws_verified', 'true');
@@ -311,25 +323,41 @@ export default function ConnectWalletButton() {
             <CopyCheck className="w-4 h-4 mr-2" />
             {formatAddress(solAddress)}
           </Button>
-          {signMessageSol ? (
-            <Button
-              size="sm"
-              onClick={async () => {
-                try {
-                  const ok = await signAndVerify(solAddress!, signMessageSol);
-                  if (!ok) throw new Error('Verifiering misslyckades');
-                  sessionStorage.setItem('siws_verified', 'true');
-                  sessionStorage.setItem('siws_address', solAddress!);
-                  setIsAuthed(true);
-                  toast({ title: 'Verifierad', description: 'SIWS slutförd.' });
-                } catch (e: any) {
-                  toast({ title: 'Verifiering misslyckades', description: String(e?.message || e), variant: 'destructive' });
-                }
-              }}
-            >
-              Signera
-            </Button>
-          ) : null}
+            {(
+              <Button
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const canAdapterSign = typeof signMessageSol === 'function';
+                    const providerSign = (window as any)?.solana?.signMessage as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
+                    const canProviderSign = typeof providerSign === 'function';
+                    if (!canAdapterSign && !canProviderSign) {
+                      toast({ title: 'Meddelandesignering ej tillgänglig', description: 'Välj Phantom (rekommenderas) i wallet‑väljaren.' });
+                      setWalletModalVisible(true);
+                      return;
+                    }
+                    const signFn = async (bytes: Uint8Array) => {
+                      if (canAdapterSign) return await (signMessageSol as any)(bytes);
+                      const res = await (providerSign as any)(bytes, 'utf8');
+                      const sig = (res?.signature && Array.isArray(res.signature)) ? new Uint8Array(res.signature) : (res?.signature as Uint8Array);
+                      if (!(sig instanceof Uint8Array)) throw new Error('Signatur ogiltig från wallet');
+                      return sig;
+                    };
+                    const ok = await signAndVerify(solAddress!, signFn);
+                    if (!ok) throw new Error('Verifiering misslyckades');
+                    sessionStorage.setItem('siws_verified', 'true');
+                    sessionStorage.setItem('siws_address', solAddress!);
+                    setIsAuthed(true);
+                    toast({ title: 'Verifierad', description: 'SIWS slutförd.' });
+                  } catch (e: any) {
+                    toast({ title: 'Verifiering misslyckades', description: String(e?.message || e), variant: 'destructive' });
+                  }
+                }}
+              >
+                Signera
+              </Button>
+            )}
+
           <Button variant="ghost" size="sm" onClick={handleDisconnect}>
             <LogOut className="w-4 h-4" />
           </Button>
