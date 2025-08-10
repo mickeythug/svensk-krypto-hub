@@ -51,6 +51,25 @@ function parseFunctionError(e: any): string {
   }
 }
 
+async function parseInvokeError(e: any): Promise<string> {
+  try {
+    if (!e) return 'Okänt fel';
+    const ctxResp = (e as any)?.context?.response;
+    if (ctxResp && typeof ctxResp.json === 'function') {
+      try {
+        const j = await ctxResp.json();
+        const err = j?.error || j?.message || j?.msg;
+        const details = j?.details || j?.data || j?.status || '';
+        const composed = [err, typeof details === 'string' ? details : JSON.stringify(details)].filter(Boolean).join(': ');
+        if (composed) return composed;
+      } catch {}
+    }
+    return (e as any)?.message || (e as any)?.error || 'Okänt fel';
+  } catch {
+    return 'Okänt fel';
+  }
+}
+
 export default function SmartTradePanel({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
   const [side, setSide] = useState<'buy'|'sell'>('buy');
   const [orderType, setOrderType] = useState<'market'|'limit'>('market');
@@ -324,7 +343,10 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
           computeUnitPrice: 'auto',
           wrapAndUnwrapSol: true,
         }, 1);
-        if (createRes.error) throw createRes.error;
+        if (createRes.error) {
+          const msg = await parseInvokeError(createRes.error);
+          throw new Error(msg);
+        }
         const orderId = (createRes.data as any)?.order;
         const txB64 = (createRes.data as any)?.transaction as string;
         const requestId = (createRes.data as any)?.requestId as string;
@@ -384,7 +406,14 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       body.evm_to_token = isBuy ? native : usdt;
 
       const { data, error } = await supabase.functions.invoke('limit-order-create', { body });
-      if (error || !(data as any)?.ok) throw error || new Error('Skapande misslyckades');
+      if (error) {
+        const msg = await parseInvokeError(error);
+        throw new Error(msg);
+      }
+      if (!(data as any)?.ok) {
+        const msg = (data as any)?.error || 'Skapande misslyckades';
+        throw new Error(msg);
+      }
       toast({ title: 'Limit‑order skapad', description: `${side.toUpperCase()} ${amt} @ $${lp}` });
       setLimitPrice('');
       setAmountInput('');
@@ -400,7 +429,11 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     try {
       const user_address = (chainMode === 'SOL' ? solAddress : evmAddress) as string;
       const { data, error } = await supabase.functions.invoke('limit-order-cancel', { body: { id, user_address } });
-      if (error || !(data as any)?.ok) throw error || new Error('Avbrytning misslyckades');
+      if (error) {
+        const msg = await parseInvokeError(error);
+        throw new Error(msg);
+      }
+      if (!(data as any)?.ok) throw new Error((data as any)?.error || 'Avbrytning misslyckades');
       toast({ title: 'Order avbruten' });
       refreshOrders();
     } catch (e: any) {
