@@ -43,6 +43,8 @@ export default function ConnectWalletButton() {
   const [nonce, setNonce] = useState<string>('');
   const { data: balances } = useWalletBalances(address as Address | undefined);
   const selectedChainBalance = useMemo(() => balances.find?.((b) => b.chainId === selectedEvmChainId), [balances, selectedEvmChainId]);
+  const anyConnected = isConnected || solConnected;
+  const activeMode = solConnected ? 'SOL' : (isConnected ? 'EVM' : null);
 
   useEffect(() => {
     if (chainMode === 'EVM') {
@@ -178,7 +180,8 @@ export default function ConnectWalletButton() {
 
   const handleDisconnect = async () => {
     try {
-      if (chainMode === 'SOL') {
+      const mode = chainMode || (solConnected ? 'SOL' : 'EVM');
+      if (mode === 'SOL') {
         try { await disconnectSol(); } catch {}
       } else {
         await disconnect();
@@ -222,7 +225,7 @@ export default function ConnectWalletButton() {
   };
 
   const isConnectedForMode = chainMode === 'SOL' ? solConnected : isConnected;
-  if (!isConnectedForMode || !isAuthed) {
+  if (!anyConnected) {
     return (
       <div className="flex items-center gap-2">
         <Select
@@ -255,7 +258,7 @@ export default function ConnectWalletButton() {
           className="font-crypto uppercase"
           disabled={!chainMode || (chainMode === 'EVM' && !selectedEvmChainId) || isConnecting || (chainMode==='SOL' && siwsLoading)}
         >
-          <Wallet className="w-4 h-4 mr-2" /> {isConnectedForMode && isAuthed ? 'Connected' : 'Connect Wallet'}
+          <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
         </Button>
       </div>
     );
@@ -290,10 +293,10 @@ export default function ConnectWalletButton() {
       <Button
         variant="outline"
         size="sm"
-        onClick={() => navigator.clipboard.writeText(chainMode === 'SOL' ? (solAddress || '') : (address || ''))}
+        onClick={() => navigator.clipboard.writeText(activeMode === 'SOL' ? (solAddress || '') : (address || ''))}
       >
         <CopyCheck className="w-4 h-4 mr-2" />
-        {chainMode === 'SOL'
+        {activeMode === 'SOL'
           ? `${formatAddress(solAddress)}`
           : `${formatAddress(address)}`}
 

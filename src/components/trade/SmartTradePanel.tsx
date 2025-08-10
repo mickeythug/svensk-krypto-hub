@@ -61,17 +61,17 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [chainMode, setChainMode] = useState<'SOL'|'EVM'>(defaultChainMode as any);
 
   // Solana
-  const { publicKey, sendTransaction } = useWallet();
+  const { publicKey, connected: solConnected, sendTransaction } = useWallet();
   const { connection } = useConnection();
   const solAddress = publicKey?.toBase58();
-  const isSolConnected = !!solAddress;
+  const isSolConnected = !!solConnected;
   const { balance: solBalance } = useSolBalance();
   const solTokenInfo = SOL_TOKENS[symbol.toUpperCase()];
   const { amount: tokenBal } = useSplTokenBalance(solTokenInfo?.mint || SOL_MINT);
 
   // EVM
-  const { address: evmAddress } = useAccount();
-  const evmConnected = !!evmAddress;
+  const { address: evmAddress, isConnected: isEvmConnected } = useAccount();
+  const evmConnected = isEvmConnected;
   const evmChainId = 1;
   const { cryptoPrices } = useCryptoData();
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
@@ -284,14 +284,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   };
 
   if (!isSolConnected && !evmConnected) {
-    return (
-      <div className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
-        <div className="p-4 space-y-3 bg-background/20">
-          <div className="text-sm">Anslut en wallet för att börja handla.</div>
-          <ConnectWalletButton />
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (

@@ -47,7 +47,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   // Wallet + balances
   const { address: evmAddress, isConnected: isWalletConnected } = useAccount();
   const { data: balances = [], loading: balancesLoading, error: balancesError } = useWalletBalances(evmAddress as any);
-  const { publicKey } = useWallet();
+  const { publicKey, connected: isSolConnected } = useWallet();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { history } = useTradeHistory([solAddress || '', evmAddress || '']);

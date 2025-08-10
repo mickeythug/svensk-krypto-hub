@@ -37,8 +37,7 @@ const MobileTradingView = ({
   const [activeTab, setActiveTab] = useState("chart");
   
   const isPositive = priceChange24h >= 0;
-  const { publicKey } = useWallet();
-  const solConnected = !!publicKey;
+  const { connected: solConnected } = useWallet();
   const symbolUpper = symbol.toUpperCase();
   const isSolToken = Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL';
 
