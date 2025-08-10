@@ -48,51 +48,57 @@ export default function PositionsPanel() {
 
   const historyPositions = usePositionsFromHistory(Array.isArray(rows) ? rows : [], priceMap).filter(p => p.amount > 0.0000001);
 
-  const [tokenList, setTokenList] = useState<Record<string, { mint: string; decimals: number }>>({});
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const res = await fetch('https://token.jup.ag/strict', { headers: { Accept: 'application/json' } });
-        const arr = await res.json();
-        const map: Record<string, { mint: string; decimals: number }> = {};
-        (arr || []).forEach((t: any) => {
-          const sym = String(t?.symbol || '').toUpperCase();
-          if (sym && t?.address) map[sym] = { mint: t.address, decimals: Number(t?.decimals || 0) };
-        });
-        if (mounted) setTokenList(map);
-      } catch {}
-    })();
-    return () => { mounted = false; };
-  }, []);
-
+  const solMintMap = useMemo(() => {
+    const map: Record<string, Set<string>> = {};
+    (rows || []).forEach((r) => {
+      const chain = String(r.chain || '').toUpperCase();
+      const sym = String(r.symbol || '').toUpperCase();
+      const mint = typeof r.base_mint === 'string' ? r.base_mint : undefined;
+      if (chain === 'SOL' && sym && mint) {
+        if (!map[sym]) map[sym] = new Set<string>();
+        map[sym].add(mint);
+      }
+    });
+    return map;
+  }, [rows]);
   const [onChain, setOnChain] = useState<Record<string, number>>({});
   useEffect(() => {
     if (!sol || !historyPositions.length) { setOnChain({}); return; }
-    (async () => {
+    let cancelled = false;
+    async function run() {
       try {
-        const owner = new (await import('@solana/web3.js')).PublicKey(sol);
+        const { PublicKey } = await import('@solana/web3.js');
+        const owner = new PublicKey(sol);
         const next: Record<string, number> = {};
         for (const p of historyPositions) {
-          const info = tokenList[p.symbol];
-          if (!info) continue;
-          try {
-            const mint = new (await import('@solana/web3.js')).PublicKey(info.mint);
-            const accs = await connection.getParsedTokenAccountsByOwner(owner, { mint });
-            let sum = 0;
-            for (const a of accs.value) {
-              const ui = (a.account.data as any)?.parsed?.info?.tokenAmount?.uiAmount;
-              if (Number.isFinite(ui)) sum += Number(ui);
-            }
-            next[p.symbol] = sum;
-          } catch {}
+          const mints = solMintMap[p.symbol];
+          if (!mints || mints.size === 0) continue;
+          let sum = 0;
+          for (const mintStr of Array.from(mints)) {
+            try {
+              const mint = new PublicKey(mintStr);
+              const accs = await connection.getParsedTokenAccountsByOwner(owner, { mint });
+              for (const a of accs.value) {
+                const ui = (a.account.data as any)?.parsed?.info?.tokenAmount?.uiAmount;
+                if (Number.isFinite(ui)) sum += Number(ui);
+              }
+            } catch {}
+          }
+          next[p.symbol] = sum;
         }
-        setOnChain(next);
+        if (!cancelled) setOnChain(next);
       } catch {}
-    })();
-  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), tokenList]);
+    }
+    run();
+    const id = setInterval(run, 20000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|')]);
 
-  const positions = useMemo(() => historyPositions.filter(p => !(onChain[p.symbol] !== undefined && onChain[p.symbol] <= 1e-8)), [historyPositions, onChain]);
+  const positions = useMemo(() => historyPositions.filter(p => {
+    const hasMint = !!solMintMap[p.symbol];
+    const bal = onChain[p.symbol];
+    return hasMint ? bal > 1e-8 : true;
+  }), [historyPositions, onChain, solMintMap]);
 
   const summary = useMemo(() => {
     let val = 0;
