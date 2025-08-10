@@ -193,13 +193,10 @@ const CryptoDetailPage = () => {
         </div>
       </div>
       {solConnected && !isSolToken && (
-        <div className="container mx-auto px-4 mt-3">
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              {/* This space can be used for other content */}
-            </div>
-            <div className="bg-card border border-amber-500/30 px-3 py-2 rounded-lg max-w-md">
-              <div className="text-sm">
+        <div className="container mx-auto px-4 mt-3 mb-2">
+          <div className="flex justify-center">
+            <div className="bg-card border border-amber-500/30 px-4 py-2 rounded-lg">
+              <div className="text-sm whitespace-nowrap">
                 Denna token stöds inte av Solana‑kedjan. Du är ansluten med Solana‑wallet. Växla till EVM för att handla denna token.
               </div>
             </div>
