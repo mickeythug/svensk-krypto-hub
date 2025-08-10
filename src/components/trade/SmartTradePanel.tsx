@@ -10,7 +10,7 @@ import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSplTokenBalance } from '@/hooks/useSplTokenBalance';
 import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/tokenMaps';
 import { supabase } from '@/integrations/supabase/client';
-import { useAccount, useChainId, useWalletClient } from 'wagmi';
+import { useAccount, useChainId, useSendTransaction } from 'wagmi';
 import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
 import { parseUnits, type Address } from 'viem';
 import { useCryptoData } from '@/hooks/useCryptoData';
@@ -42,14 +42,15 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { cryptoPrices } = useCryptoData();
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
+  const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
 
   const available = useMemo(() => {
     if (chainMode === 'SOL') {
       return side === 'buy' ? (solBalance || 0) : (tokenBal || 0);
     }
-    // For EVM, assume USDT balance for buy and token balance for sell (not implemented token-specific here)
-    return 0; // Placeholder; expanded in next iteration
-  }, [chainMode, side, solBalance, tokenBal]);
+    // EVM: USDT for buys (sell flow TBD)
+    return side === 'buy' ? (usdtBal || 0) : 0;
+  }, [chainMode, side, solBalance, tokenBal, usdtBal]);
 
   const setPercent = (pct: number) => {
     const amt = available * pct;
@@ -89,22 +90,30 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       if (!evmAddress) throw new Error('EVM wallet saknas');
       const usdt = USDT_BY_CHAIN[evmChainId];
       if (!usdt) throw new Error('USDT saknas för vald kedja');
-      // Buy ETH with USDT as baseline
       const toToken = NATIVE_TOKEN_PSEUDO[evmChainId];
       const fromToken = usdt;
-      const amountWei = parseUnits(amountInput || '0', 6); // USDT 6 decimals
+      const amountWei = parseUnits(amountInput || '0', 6);
       if (amountWei <= 0n) throw new Error('Ogiltigt belopp');
 
-      const { data, error } = await supabase.functions.invoke('evm-swap', {
+      const response = await supabase.functions.invoke('evm-swap', {
         body: { chainId: evmChainId, fromToken, toToken, amount: amountWei.toString(), fromAddress: evmAddress, slippage: slippage / 100 },
       });
-      if (error) throw error;
+      if (response.error) throw response.error;
+      const data: any = response.data;
+      if (!data || !data.tx) throw new Error('Ogiltig 1inch-respons');
 
-      // Return tx data for user wallet to send
-      // In a full implementation we would use wagmi to sendTransaction with data.tx.to / data.tx.data / value
-      toast({ title: '1inch order skapad', description: 'Tx-data mottagen. Sänds via wallet i nästa steg.' });
+      // Skicka transaktionen via wagmi hook
+      const { sendTransactionAsync } = useSendTransaction();
+      const hash = await sendTransactionAsync({
+        to: data.tx.to as Address,
+        data: data.tx.data as `0x${string}`,
+        value: BigInt(data.tx.value || 0),
+      } as any);
+      toast({ title: 'Order skickad', description: `Tx: ${hash}` });
+      setAmountInput('');
     } catch (e: any) {
-      toast({ title: 'EVM fel', description: String(e.message || e), variant: 'destructive' });
+      const msg = String(e.message || e);
+      toast({ title: 'EVM fel', description: msg, variant: 'destructive' });
     }
   }
 
@@ -135,7 +144,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
         <div>
           <label className="text-xs text-muted-foreground mb-2 block font-semibold">Belopp ({chainMode==='SOL' ? (side==='buy'?'SOL':symbol) : 'USDT'})</label>
-          <Input type="number" value={amountInput} onChange={(e)=>setAmountInput(e.target.value)} placeholder="0.0" className="h-10 text-sm font-mono" />
+          <Input type="number" value={amountInput} onChange={(e)=>setAmountInput(e.target.value)} placeholder="0.0" className="h-10 text-sm font-mono" min="0" step="any" />
         </div>
 
         <div className="grid grid-cols-4 gap-1">
@@ -175,7 +184,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
           <Button variant={chainMode==='EVM'?'default':'outline'} size="sm" onClick={()=>setChainMode('EVM')} className="flex-1">EVM</Button>
         </div>
 
-        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`}>
+        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={(chainMode==='SOL' && !isSolConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
           <Wallet className="h-4 w-4 mr-2" /> {side==='buy'?'Buy':'Sell'} {symbol}
         </Button>
       </div>

@@ -18,7 +18,7 @@ export function useSolBalance() {
       setLoading(true);
       setError(null);
       try {
-        const lamports = await connection.getBalance(publicKey);
+        const lamports = await connection.getBalance(publicKey, { commitment: 'processed' } as any);
         if (!cancelled) setBalance(lamports / 1_000_000_000);
       } catch (e: any) {
         if (!cancelled) setError(String(e.message || e));

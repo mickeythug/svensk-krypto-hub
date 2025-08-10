@@ -59,6 +59,19 @@ export default function ConnectWalletButton() {
     }
   }, [chainMode, address, solAddress, isConnected, solConnected]);
 
+  // Always disable any auto-connect persistence for both wagmi and solana
+  useEffect(() => {
+    try {
+      const keys = Object.keys(localStorage);
+      for (const k of keys) {
+        if (k.includes('@solana/wallet-adapter') || k.includes('walletName')) {
+          localStorage.removeItem(k);
+        }
+      }
+    } catch {}
+  }, []);
+
+
   useEffect(() => {
     if (chainMode !== 'EVM' || !isConnected || selectedEvmChainId == null) return;
     (async () => {
@@ -225,7 +238,7 @@ export default function ConnectWalletButton() {
           className="font-crypto uppercase"
           disabled={!chainMode || (chainMode === 'EVM' && !selectedEvmChainId) || isConnecting || (chainMode==='SOL' && siwsLoading)}
         >
-          <Wallet className="w-4 h-4 mr-2" /> {chainMode === 'SOL' ? 'Anslut & Verifiera' : 'Anslut Wallet'}
+          <Wallet className="w-4 h-4 mr-2" /> {isConnectedForMode && isAuthed ? 'Connected' : 'Connect Wallet'}
         </Button>
       </div>
     );
