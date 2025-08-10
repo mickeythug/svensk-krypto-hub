@@ -8,6 +8,7 @@ import { usePositionsFromHistory } from '@/hooks/usePositionsFromHistory';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { SOL_MINT } from '@/lib/tokenMaps';
 
 export default function PositionsPanel() {
   const { address: evm } = useAccount();
@@ -71,7 +72,7 @@ export default function PositionsPanel() {
         const owner = new PublicKey(sol);
         const next: Record<string, number> = {};
         for (const p of historyPositions) {
-          const mints = solMintMap[p.symbol];
+          const mints = mintCandidates[p.symbol];
           if (!mints || mints.size === 0) continue;
           let sum = 0;
           for (const mintStr of Array.from(mints)) {
@@ -92,13 +93,13 @@ export default function PositionsPanel() {
     run();
     const id = setInterval(run, 20000);
     return () => { cancelled = true; clearInterval(id); };
-  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|')]);
+  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|'), Object.keys(tokenMintSets).length]);
 
   const positions = useMemo(() => historyPositions.filter(p => {
-    const hasMint = !!solMintMap[p.symbol];
-    const bal = onChain[p.symbol];
-    return hasMint ? bal > 1e-8 : true;
-  }), [historyPositions, onChain, solMintMap]);
+    const isSol = solSymbols.has(p.symbol);
+    const bal = onChain[p.symbol] ?? 0;
+    return isSol ? bal > 1e-8 : true;
+  }), [historyPositions, onChain, solSymbols]);
 
   const summary = useMemo(() => {
     let val = 0;
