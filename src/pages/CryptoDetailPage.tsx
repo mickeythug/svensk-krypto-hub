@@ -148,15 +148,13 @@ const CryptoDetailPage = () => {
 
   if (shouldShowMobileView) {
     return (
-      <div className="container mx-auto px-4 pt-4">
-        <MobileTradingView 
-          symbol={symbol!.toUpperCase()} 
-          currentPrice={crypto.price}
-          priceChange24h={crypto.change24h}
-          tokenName={crypto.name}
-          crypto={crypto}
-        />
-      </div>
+      <MobileTradingView 
+        symbol={symbol!.toUpperCase()} 
+        currentPrice={crypto.price}
+        priceChange24h={crypto.change24h}
+        tokenName={crypto.name}
+        crypto={crypto}
+      />
     );
   }
 

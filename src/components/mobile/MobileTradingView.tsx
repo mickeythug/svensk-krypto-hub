@@ -15,7 +15,7 @@ import {
   ArrowUp,
   ArrowDown
 } from "lucide-react";
-import SimpleMobileChart from "./SimpleMobileChart";
+import TradingViewMobileChart from "./TradingViewMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
 import SmartTradePanel from "@/components/trade/SmartTradePanel";
 import TokenSearchBar from "../TokenSearchBar";
@@ -223,8 +223,8 @@ const MobileTradingView = ({
         </div>
 
         {/* Tab Content */}
-        <TabsContent value="chart" className="flex-1 mt-0">
-          <SimpleMobileChart symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
+        <TabsContent value="chart" className="flex-1 mt-0 p-3">
+          <TradingViewMobileChart symbol={symbol} coinGeckoId={crypto?.coinGeckoId} />
         </TabsContent>
 
         <TabsContent value="orderbook" className="flex-1 mt-0 p-3">
