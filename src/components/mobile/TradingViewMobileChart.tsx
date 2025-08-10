@@ -142,7 +142,7 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
-        const el = containerRef.current?.closest(".chart-fullscreen-container");
+        const el = containerRef.current?.closest(".chart-container") || containerRef.current;
         if (el) {
           await (el as any).requestFullscreen();
           setIsFullscreen(true);
@@ -163,38 +163,49 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col chart-fullscreen-container bg-[#0f0f23] rounded-2xl overflow-hidden">
-      {/* PRODUCTION CONTROLS - SOLID AND NEVER OVERLAPPING */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-background/90 backdrop-blur-sm">
-        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
-          {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
-            <Badge
+    <div className="h-full w-full flex flex-col chart-container bg-[#0f0f23] overflow-hidden">
+      {/* MODERN TIMEFRAME & CONTROLS BAR */}
+      <div className="flex items-center justify-between px-3 py-2 bg-gradient-to-r from-background/95 to-background/90 backdrop-blur-xl border-b border-border/20">
+        <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+          {["5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
+            <Button
               key={tf}
-              variant={timeframe === tf ? "default" : "outline"}
-              className={`cursor-pointer text-xs font-bold px-3 py-1.5 transition-all duration-200 flex-shrink-0 ${
-                timeframe === tf ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-primary/20 border-border/50"
-              }`}
+              variant={timeframe === tf ? "default" : "ghost"}
+              size="sm"
               onClick={() => handleTimeframeChange(tf)}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 flex-shrink-0 ${
+                timeframe === tf 
+                  ? "bg-primary text-primary-foreground shadow-lg scale-105" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-primary/10"
+              }`}
             >
               {tf}
-            </Badge>
+            </Button>
           ))}
         </div>
-        <div className="flex gap-1.5 ml-3">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/20 transition-all duration-200" onClick={toggleFullscreen}>
+        <div className="flex gap-1 ml-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 rounded-lg hover:bg-primary/20 transition-all duration-200" 
+            onClick={toggleFullscreen}
+            title="Fullscreen"
+          >
             <Maximize2 className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/20 transition-all duration-200">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 rounded-lg hover:bg-primary/20 transition-all duration-200"
+            title="Inställningar"
+          >
             <Settings className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/20 transition-all duration-200">
-            <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      {/* PRODUCTION CHART CONTAINER - PERFECT Z-INDEX AND SPACING */}
-      <div className="flex-1 relative min-h-0 bg-[#0f0f23] rounded-b-2xl overflow-hidden">
+      {/* CHART CONTAINER */}
+      <div className="flex-1 relative min-h-0 bg-[#0f0f23] overflow-hidden">
         <div 
           ref={containerRef} 
           id={containerIdRef.current} 
@@ -205,6 +216,13 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
             zIndex: 1
           }}
         />
+        
+        {/* Fullscreen indicator */}
+        {isFullscreen && (
+          <div className="absolute top-4 right-4 z-10 bg-black/60 text-white px-3 py-1 rounded-full text-xs backdrop-blur-sm">
+            Fullscreen aktivt
+          </div>
+        )}
       </div>
     </div>
   );

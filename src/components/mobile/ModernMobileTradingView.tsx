@@ -22,6 +22,7 @@ import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import ModernMobileTokenInfo from "./ModernMobileTokenInfo";
 import ModernMobileTradingPanel from "./ModernMobileTradingPanel";
 import ModernMobileOrdersPanel from "./ModernMobileOrdersPanel";
+import TokenSearchBar from "@/components/TokenSearchBar";
 
 interface ModernMobileTradingViewProps {
   symbol: string;
@@ -129,37 +130,63 @@ const ModernMobileTradingView = ({
       {/* MAIN CONTENT AREA */}
       <div className={`flex-1 ${activeTab !== "chart" ? "pt-32" : "pt-0"}`}>
         {activeTab === "chart" && (
-          <div className="h-[calc(100vh-80px)]">
-            {/* FULLSCREEN CHART WITHOUT ANY OVERLAYS */}
-            <div className="relative h-full">
-              {/* Minimal overlay header - only back button */}
-              <div className="absolute top-4 left-4 z-20">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={goBack} 
-                  className="p-2 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full text-white border border-white/20"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
+          <div className="h-[calc(100vh-80px)] flex flex-col">
+            {/* TOKEN SEARCH BAR - Modern mobile design */}
+            <div className="px-4 py-3 bg-gradient-to-b from-background/95 to-background/80 backdrop-blur-xl border-b border-border/30">
+              <TokenSearchBar 
+                currentSymbol={symbol}
+                placeholder={`Sök token (nuvarande: ${symbol})`}
+                className="w-full"
+              />
+            </div>
+            
+            {/* PRICE HEADER */}
+            <div className="px-4 py-3 bg-gradient-to-b from-background/80 to-transparent border-b border-border/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={goBack} 
+                    className="p-2 rounded-full hover:bg-primary/10"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                  {crypto?.image && (
+                    <img
+                      src={crypto.image}
+                      alt={`${tokenName} logo`}
+                      className="h-8 w-8 rounded-full border border-border/50"
+                    />
+                  )}
+                  <div>
+                    <h2 className="font-bold text-lg">{symbol}/USDT</h2>
+                    <p className="text-sm text-muted-foreground">{formatUsd(currentPrice)}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold ${
+                    isPositive ? 'text-emerald-500 bg-emerald-500/10' : 'text-red-500 bg-red-500/10'
+                  }`}>
+                    {isPositive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                    {isPositive ? '+' : ''}{priceChange24h.toFixed(2)}%
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={toggleWatchlist}
+                    className={`p-2 rounded-full ${watchlist ? 'text-yellow-400 bg-yellow-400/10' : 'hover:bg-primary/10'}`}
+                  >
+                    <Star className={`h-5 w-5 ${watchlist ? 'fill-current' : ''}`} />
+                  </Button>
+                </div>
               </div>
-              
-              {/* Star button top right */}
-              <div className="absolute top-4 right-4 z-20">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={toggleWatchlist}
-                  className={`p-2 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/20 ${watchlist ? 'text-yellow-400' : 'text-white'}`}
-                >
-                  <Star className={`h-5 w-5 ${watchlist ? 'fill-current' : ''}`} />
-                </Button>
-              </div>
-              
-              {/* PURE FULLSCREEN CHART */}
-              <div className="h-full w-full bg-[#0f0f23]">
-                <TradingViewMobileChart symbol={symbol} coinGeckoId={coinGeckoId} />
-              </div>
+            </div>
+            
+            {/* FULLSCREEN CHART */}
+            <div className="flex-1 bg-[#0f0f23]">
+              <TradingViewMobileChart symbol={symbol} coinGeckoId={coinGeckoId} />
             </div>
           </div>
         )}
