@@ -17,7 +17,7 @@ export default function OpenOrdersPanel({ symbol }: { symbol: string }) {
   // Return wallet connection prompt if no wallet connected
   if (!solAddress && !evmAddress) {
     return (
-    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+    <Card className="p-0 bg-card border border-border flex flex-col">
       <div className="p-3 border-b border-border/30 flex-shrink-0">
         <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />

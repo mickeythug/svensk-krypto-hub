@@ -65,7 +65,7 @@ const MobileTradingView = ({
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden">
       {/* Enhanced Header */}
-      <div className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-border shadow-sm">
+      <div className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
         <div className="p-4">
           {/* Top Row - Title and Actions */}
           <div className="flex items-center justify-between mb-4">
@@ -156,7 +156,7 @@ const MobileTradingView = ({
             <div className="text-center">
               <div className="text-muted-foreground">Volume</div>
               <div className="font-mono font-semibold">
-                {crypto?.volume ? `$${(Number(crypto.volume) / 1000000).toFixed(1)}M` : 'N/A'}
+                {typeof crypto?.volume === 'string' ? `$${crypto.volume}` : (typeof crypto?.volume === 'number' ? `$${(crypto.volume >= 1e12 ? (crypto.volume/1e12).toFixed(1)+'T' : crypto.volume >= 1e9 ? (crypto.volume/1e9).toFixed(1)+'B' : crypto.volume >= 1e6 ? (crypto.volume/1e6).toFixed(1)+'M' : crypto.volume.toLocaleString())}` : 'N/A')}
               </div>
             </div>
           </div>
@@ -173,8 +173,8 @@ const MobileTradingView = ({
 
       {/* Enhanced Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <div className="px-4 py-2 bg-card/50 border-b border-border">
-          <TabsList className="grid w-full grid-cols-4 h-10 bg-muted/30 rounded-lg p-1">
+        <div className="px-4 py-2 bg-card border-b border-border">
+          <TabsList className="grid w-full grid-cols-4 h-10 bg-muted rounded-lg p-1">
             <TabsTrigger value="chart" className="text-xs font-semibold data-[state=active]:bg-card data-[state=active]:shadow-sm">
               <BarChart3 className="h-3 w-3 mr-1" />
               Graf
@@ -217,13 +217,13 @@ const MobileTradingView = ({
                 <div>
                   <div className="text-muted-foreground mb-1">Marknadskapital</div>
                   <div className="font-mono font-semibold">
-                    ${crypto?.marketCap ? Number(crypto.marketCap).toLocaleString() : 'N/A'}
+                    {typeof crypto?.marketCap === 'string' ? `$${crypto.marketCap}` : (typeof crypto?.marketCap === 'number' ? `$${crypto.marketCap.toLocaleString()}` : 'N/A')}
                   </div>
                 </div>
                 <div>
                   <div className="text-muted-foreground mb-1">24h Volym</div>
                   <div className="font-mono font-semibold">
-                    ${crypto?.volume24h ? Number(crypto.volume24h).toLocaleString() : 'N/A'}
+                    {typeof crypto?.volume === 'string' ? `$${crypto.volume}` : (typeof crypto?.volume === 'number' ? `$${crypto.volume.toLocaleString()}` : 'N/A')}
                   </div>
                 </div>
                 <div>

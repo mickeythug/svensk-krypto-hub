@@ -107,7 +107,7 @@ export default function PositionsPanel() {
   }, [positions, priceMap]);
 
   return (
-    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+    <Card className="p-0 bg-card border border-border flex flex-col">
       <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -123,7 +123,7 @@ export default function PositionsPanel() {
       </div>
       <div className={`overflow-y-auto scrollbar-modern ${positions.length > 0 ? 'max-h-[50vh]' : ''}`}>
         <Table>
-          <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
+          <TableHeader className="sticky top-0 bg-card">
             <TableRow className="border-border/30 hover:bg-muted/30">
               <TableHead className="font-medium text-foreground text-xs py-2">Token</TableHead>
               <TableHead className="font-medium text-foreground text-xs py-2">QTY</TableHead>

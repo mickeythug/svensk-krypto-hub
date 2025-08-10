@@ -148,10 +148,13 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   };
 
   const calculateSpread = () => {
-    if (!orderBook?.asks?.length || !orderBook?.bids?.length) return "0.000";
-    const bestAsk = Math.min(...orderBook.asks.map(ask => ask.price));
-    const bestBid = Math.max(...orderBook.bids.map(bid => bid.price));
-    return ((bestAsk - bestBid) / bestBid * 100).toFixed(3);
+    const hasAsks = Array.isArray(orderBook?.asks) && orderBook!.asks.length > 0;
+    const hasBids = Array.isArray(orderBook?.bids) && orderBook!.bids.length > 0;
+    if (!hasAsks || !hasBids) return '—';
+    const bestAsk = Math.min(...orderBook!.asks.map((a) => a.price));
+    const bestBid = Math.max(...orderBook!.bids.map((b) => b.price));
+    if (!Number.isFinite(bestAsk) || !Number.isFinite(bestBid) || bestBid <= 0) return '—';
+    return (((bestAsk - bestBid) / bestBid) * 100).toFixed(3);
   };
 
   const toggleWatchlist = () => {

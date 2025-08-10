@@ -16,7 +16,7 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
   // Return wallet connection prompt if no wallet connected
   if (!sol && !evm) {
     return (
-    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+    <Card className="p-0 bg-card border border-border flex flex-col">
       <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
         <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
         <h3 className="text-base font-semibold text-foreground">Orderhistorik</h3>
@@ -37,7 +37,7 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
   const items = useMemo(() => rows.slice(0, 6), [rows]);
 
   return (
-    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+    <Card className="p-0 bg-card border border-border flex flex-col">
       <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
         <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
         <h3 className="text-base font-semibold text-foreground">Orderhistorik</h3>
@@ -45,7 +45,7 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
       </div>
       <div className={`overflow-y-auto scrollbar-modern ${items.length > 0 ? 'max-h-[40vh]' : ''}`}>
         <Table>
-          <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
+          <TableHeader className="sticky top-0 bg-card">
             <TableRow className="border-border/30 hover:bg-muted/30">
               <TableHead className="font-medium text-foreground text-xs py-2">Tid</TableHead>
               <TableHead className="font-medium text-foreground text-xs py-2">Typ</TableHead>
