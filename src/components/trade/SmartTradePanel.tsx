@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Wallet } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { Transaction } from '@solana/web3.js';
+import { VersionedTransaction } from '@solana/web3.js';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSplTokenBalance } from '@/hooks/useSplTokenBalance';
 import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/tokenMaps';
@@ -77,8 +77,8 @@ const evmChainId = 1;
       if (!swapTxB64) throw new Error('Saknar swapTransaction');
 
       const txBytes = Uint8Array.from(atob(swapTxB64), (c) => c.charCodeAt(0));
-      const tx = Transaction.from(txBytes);
-      const sig = await sendTransaction(tx, connection);
+      const vtx = VersionedTransaction.deserialize(txBytes);
+      const sig = await sendTransaction(vtx, connection);
       toast({ title: 'Order skickad', description: `Tx: ${sig}` });
       setAmountInput('');
     } catch (e: any) {
