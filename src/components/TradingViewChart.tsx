@@ -15,6 +15,7 @@ interface TradingViewChartProps {
 
 const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const containerIdRef = useRef<string>(`tv_${Math.random().toString(36).slice(2)}`);
   const widgetRef = useRef<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [timeframe, setTimeframe] = useState("1D");
@@ -63,7 +64,7 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
       widgetRef.current = null;
     }
 
-    const tradingPair = `BINANCE:${symbol}USDT`;
+    const tradingPair = `BINANCE:${symbol.toUpperCase()}USDT`;
     console.log('Creating TradingView widget for:', tradingPair);
 
     // Clear the container first
@@ -77,7 +78,7 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
         autosize: true,
         symbol: tradingPair,
         interval: getInterval(timeframe),
-        container: containerRef.current,
+        container_id: containerIdRef.current,
         theme: "dark",
         style: "1",
         locale: "en",
@@ -252,6 +253,7 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
       {/* Chart Container */}
       <div 
         ref={containerRef} 
+        id={containerIdRef.current}
         className="w-full h-full min-h-[500px] bg-transparent"
         style={{ 
           background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
