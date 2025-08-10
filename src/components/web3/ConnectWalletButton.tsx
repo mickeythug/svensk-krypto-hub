@@ -31,7 +31,7 @@ export default function ConnectWalletButton() {
   const { switchChainAsync } = useSwitchChain();
 
   // Solana wallet
-  const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol, select } = useWallet();
+  const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol, select, wallets, wallet } = useWallet();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
@@ -103,8 +103,10 @@ export default function ConnectWalletButton() {
       }
 
       if (chainMode === 'SOL') {
-        // Phantom detection
-        const isPhantom = typeof window !== 'undefined' && (window as any)?.phantom?.solana?.isPhantom;
+        // Phantom detection (supports window.solana and window.phantom)
+        const isPhantom = typeof window !== 'undefined' && (
+          (window as any)?.solana?.isPhantom || (window as any)?.phantom?.solana?.isPhantom
+        );
         if (!isPhantom) {
           toast({
             title: 'Phantom saknas',
@@ -114,20 +116,39 @@ export default function ConnectWalletButton() {
           window.open('https://phantom.app/download', '_blank');
           return;
         }
-        select?.('Phantom' as any);
-        await connectSol();
-        if (!solAddress) throw new Error('Kunde inte läsa din Solana-adress');
-        if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
 
-        const ok = await signAndVerify(solAddress, signMessageSol);
-        if (!ok) throw new Error('Signaturen kunde inte verifieras');
+        try {
+          // Ensure Phantom is selected in the adapter before connecting
+          const phantomWallet = wallets?.find?.((w: any) => w?.adapter?.name === 'Phantom');
+          if (phantomWallet && wallet?.adapter?.name !== phantomWallet.adapter.name) {
+            select?.(phantomWallet.adapter.name as any);
+            await new Promise((r) => setTimeout(r, 0));
+          }
 
-        sessionStorage.setItem('siws_verified', 'true');
-        sessionStorage.setItem('siws_address', solAddress);
-        setIsAuthed(true);
-        toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
-        setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
-        return;
+          await connectSol();
+
+          if (!publicKey) throw new Error('Kunde inte läsa din Solana-adress');
+          if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
+
+          const ok = await signAndVerify(publicKey.toBase58(), signMessageSol);
+          if (!ok) throw new Error('Signaturen kunde inte verifieras');
+
+          sessionStorage.setItem('siws_verified', 'true');
+          sessionStorage.setItem('siws_address', publicKey.toBase58());
+          setIsAuthed(true);
+          toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
+          setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
+          return;
+        } catch (err: any) {
+          if (err?.name === 'WalletNotSelectedError') {
+            try {
+              select?.('Phantom' as any);
+              await new Promise((r) => setTimeout(r, 0));
+              await connectSol();
+            } catch {}
+          }
+          throw err;
+        }
       }
 
 // EVM connect + optional chain switch + sign
