@@ -86,6 +86,12 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
   const { sendTransactionAsync } = useSendTransaction();
 
+  // Auto-detect chain from connected wallet to ensure balances show correctly
+  useEffect(() => {
+    if (isSolConnected) setChainMode('SOL');
+    else if (evmConnected) setChainMode('EVM');
+  }, [isSolConnected, evmConnected]);
+
   // Mina limit orders
   const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);

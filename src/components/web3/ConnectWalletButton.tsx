@@ -312,57 +312,41 @@ export default function ConnectWalletButton() {
   const isConnectedForMode = chainMode === 'SOL' ? solConnected : isConnected;
   if (!fullyAuthed) {
     if (solConnected && solAddress) {
-      // Visar ansluten Solana‑wallet även om SIWS ej är verifierad ännu
+      // En enda knapp för att slutföra inloggning
       return (
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary">Solana</Badge>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigator.clipboard.writeText(solAddress || '')}
-          >
-            <CopyCheck className="w-4 h-4 mr-2" />
-            {formatAddress(solAddress)}
-          </Button>
-            {(
-              <Button
-                size="sm"
-                onClick={async () => {
-                  try {
-                    const canAdapterSign = typeof signMessageSol === 'function';
-                    const providerSign = (window as any)?.solana?.signMessage as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
-                    const canProviderSign = typeof providerSign === 'function';
-                    if (!canAdapterSign && !canProviderSign) {
-                      toast({ title: 'Meddelandesignering ej tillgänglig', description: 'Välj Phantom (rekommenderas) i wallet‑väljaren.' });
-                      setWalletModalVisible(true);
-                      return;
-                    }
-                    const signFn = async (bytes: Uint8Array) => {
-                      if (canAdapterSign) return await (signMessageSol as any)(bytes);
-                      const res = await (providerSign as any)(bytes, 'utf8');
-                      const sig = (res?.signature && Array.isArray(res.signature)) ? new Uint8Array(res.signature) : (res?.signature as Uint8Array);
-                      if (!(sig instanceof Uint8Array)) throw new Error('Signatur ogiltig från wallet');
-                      return sig;
-                    };
-                    const ok = await signAndVerify(solAddress!, signFn);
-                    if (!ok) throw new Error('Verifiering misslyckades');
-                    sessionStorage.setItem('siws_verified', 'true');
-                    sessionStorage.setItem('siws_address', solAddress!);
-                    setIsAuthed(true);
-                    toast({ title: 'Verifierad', description: 'SIWS slutförd.' });
-                  } catch (e: any) {
-                    toast({ title: 'Verifiering misslyckades', description: String(e?.message || e), variant: 'destructive' });
-                  }
-                }}
-              >
-                Signera
-              </Button>
-            )}
-
-          <Button variant="ghost" size="sm" onClick={handleDisconnect}>
-            <LogOut className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button
+          onClick={async () => {
+            try {
+              const canAdapterSign = typeof signMessageSol === 'function';
+              const providerSign = (window as any)?.solana?.signMessage as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
+              const canProviderSign = typeof providerSign === 'function';
+              if (!canAdapterSign && !canProviderSign) {
+                toast({ title: 'Välj Phantom', description: 'Vi öppnar wallet‑väljaren så du kan välja Phantom.' });
+                setWalletModalVisible(true);
+                return;
+              }
+              const signFn = async (bytes: Uint8Array) => {
+                if (canAdapterSign) return await (signMessageSol as any)(bytes);
+                const res = await (providerSign as any)(bytes, 'utf8');
+                const sig = (res?.signature && Array.isArray(res.signature)) ? new Uint8Array(res.signature) : (res?.signature as Uint8Array);
+                if (!(sig instanceof Uint8Array)) throw new Error('Signatur ogiltig från wallet');
+                return sig;
+              };
+              const ok = await signAndVerify(solAddress!, signFn);
+              if (!ok) throw new Error('Verifiering misslyckades');
+              sessionStorage.setItem('siws_verified', 'true');
+              sessionStorage.setItem('siws_address', solAddress!);
+              setIsAuthed(true);
+              toast({ title: 'Verifierad', description: 'SIWS slutförd.' });
+            } catch (e: any) {
+              toast({ title: 'Verifiering misslyckades', description: String(e?.message || e), variant: 'destructive' });
+            }
+          }}
+          size="sm"
+          className="font-crypto uppercase"
+        >
+          <Wallet className="w-4 h-4 mr-2" /> Slutför inloggning
+        </Button>
       );
     }
 
