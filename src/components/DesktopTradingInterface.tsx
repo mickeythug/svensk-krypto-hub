@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,10 @@ import {
   Wifi,
   WifiOff
 } from "lucide-react";
-import ModernTradingViewChart from "./ModernTradingViewChart";
+import TradingViewChart from "./TradingViewChart";
+import { useCryptoData } from '@/hooks/useCryptoData';
+import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
+import { SOL_MINT } from '@/lib/tokenMaps';
 import OrderBook from "./OrderBook";
 import TokenSearchBar from "./TokenSearchBar";
 import { useOrderbook } from "@/hooks/useOrderbook";
@@ -46,6 +49,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const [size, setSize] = useState("");
   const [leverage, setLeverage] = useState("1");
   const [limitLines, setLimitLines] = useState<{ price: number; side: 'buy'|'sell' }[]>([]);
+  const [openJupOrders, setOpenJupOrders] = useState<any[]>([]);
 
   // Wallet + balances
   const { address: evmAddress, isConnected: isWalletConnected } = useAccount();

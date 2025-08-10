@@ -68,7 +68,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { fullyAuthed } = useWalletAuthStatus();
 
   // Solana
-  const { publicKey, connected: solConnected, sendTransaction } = useWallet();
+  const { publicKey, connected: solConnected, sendTransaction, signTransaction } = useWallet() as any;
   const { connection } = useConnection();
   const solAddress = publicKey?.toBase58();
   const isSolConnected = !!solConnected;
@@ -290,12 +290,83 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       toast({ title: 'Ogiltigt belopp', description: 'Ange ett giltigt belopp.', variant: 'destructive' });
       return;
     }
+
+    // SOL: Använd Jupiter Trigger API (riktig limit-order)
     if (chainMode === 'SOL') {
-      if (!isSolConnected) { toast({ title: 'Wallet krävs', description: 'Anslut Solana‑wallet.', variant: 'destructive' }); return; }
+      if (!isSolConnected || !solAddress) { toast({ title: 'Wallet krävs', description: 'Anslut Solana‑wallet.', variant: 'destructive' }); return; }
       if (!isSolToken) { toast({ title: 'Token ej på Solana', description: 'Välj en Solana‑token.', variant: 'destructive' }); return; }
-    } else {
-      if (!evmConnected) { toast({ title: 'Wallet krävs', description: 'Anslut EVM‑wallet.', variant: 'destructive' }); return; }
+      try {
+        setSubmitting(true);
+        const tokenMint = solTokenInfo?.mint || SOL_MINT;
+        const tokenDecimals = solTokenInfo?.decimals || 9;
+        const isBuy = side === 'buy';
+        const inputMint = isBuy ? SOL_MINT : tokenMint;
+        const outputMint = isBuy ? tokenMint : SOL_MINT;
+
+        // makingAmount = input (i basenheter)
+        const makingAmount = Math.floor(amt * Math.pow(10, isBuy ? 9 : tokenDecimals));
+        if (!Number.isFinite(makingAmount) || makingAmount <= 0) throw new Error('Ogiltigt belopp');
+        // takingAmount = output i basenheter baserat på limitpris i USD
+        // Buy: token_out = (SOL_in * SOL_USD) / token_USD
+        // Sell: SOL_out  = (token_in * token_USD) / SOL_USD
+        const takingAmount = isBuy
+          ? Math.floor(((amt * solUsd) / lp) * Math.pow(10, tokenDecimals))
+          : Math.floor(((amt * lp) / Math.max(1e-9, solUsd)) * Math.pow(10, 9));
+        if (!Number.isFinite(takingAmount) || takingAmount <= 0) throw new Error('Beloppet blir för litet vid detta pris');
+
+        // Bygg order via Jupiter (unsigned tx)
+        const createRes = await invokeWithRetry<any>('jup-lo-create', {
+          inputMint,
+          outputMint,
+          maker: solAddress,
+          payer: solAddress,
+          params: { makingAmount: String(makingAmount), takingAmount: String(takingAmount) },
+          computeUnitPrice: 'auto',
+          wrapAndUnwrapSol: true,
+        }, 1);
+        if (createRes.error) throw createRes.error;
+        const orderId = (createRes.data as any)?.order;
+        const txB64 = (createRes.data as any)?.transaction as string;
+        const requestId = (createRes.data as any)?.requestId as string;
+        if (!txB64) throw new Error('Saknar Jupiter‑transaktion');
+
+        const txBytes = Uint8Array.from(atob(txB64), (c) => c.charCodeAt(0));
+        const vtx = VersionedTransaction.deserialize(txBytes);
+
+        let signature: string | null = null;
+        try {
+          if (typeof signTransaction === 'function') {
+            const signed = await signTransaction(vtx);
+            const signedB64 = btoa(String.fromCharCode(...signed.serialize()));
+            const execRes = await invokeWithRetry<any>('jup-lo-execute', { signedTransaction: signedB64, requestId }, 1);
+            if (!execRes.error) {
+              signature = (execRes.data as any)?.data?.signature || null;
+            }
+          }
+        } catch (e) {
+          // Fallback: skicka själv om execute-flödet misslyckas
+        }
+        if (!signature) {
+          signature = await sendTransaction(vtx, connection);
+        }
+
+        const explorer = signature ? `https://solscan.io/tx/${signature}` : undefined;
+        toast({ title: 'Limit‑order skapad', description: explorer ? (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Solscan</a>) : `Order: ${orderId}` });
+
+        // Nollställ inputs
+        setLimitPrice('');
+        setAmountInput('');
+        return;
+      } catch (e: any) {
+        const msg = parseFunctionError(e);
+        toast({ title: 'Fel vid Jupiter‑order', description: msg, variant: 'destructive' });
+      } finally {
+        setSubmitting(false);
+      }
+      return;
     }
+
+    // EVM: (oförändrat) – vi använder lokalt orderregister som tidigare
     try {
       setSubmitting(true);
       const body: any = {
@@ -304,20 +375,17 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         side,
         limit_price: lp,
         amount: amt,
-        user_address: chainMode === 'SOL' ? solAddress : evmAddress,
+        user_address: evmAddress,
       };
-      if (chainMode === 'SOL') {
-        body.sol_mint = solTokenInfo?.mint || null;
-      } else {
-        const usdt = USDT_BY_CHAIN[evmChainId];
-        const native = NATIVE_TOKEN_PSEUDO[evmChainId];
-        const isBuy = side === 'buy';
-        body.evm_from_token = isBuy ? usdt : native;
-        body.evm_to_token = isBuy ? native : usdt;
-      }
+      const usdt = USDT_BY_CHAIN[evmChainId];
+      const native = NATIVE_TOKEN_PSEUDO[evmChainId];
+      const isBuy = side === 'buy';
+      body.evm_from_token = isBuy ? usdt : native;
+      body.evm_to_token = isBuy ? native : usdt;
+
       const { data, error } = await supabase.functions.invoke('limit-order-create', { body });
       if (error || !(data as any)?.ok) throw error || new Error('Skapande misslyckades');
-      toast({ title: 'Limit-order skapad', description: `${side.toUpperCase()} ${amt} @ $${lp}` });
+      toast({ title: 'Limit‑order skapad', description: `${side.toUpperCase()} ${amt} @ $${lp}` });
       setLimitPrice('');
       setAmountInput('');
       refreshOrders();
