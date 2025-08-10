@@ -64,8 +64,8 @@ const MobileTradingView = ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* SOLID FIXED HEADER - Never moves, always stays put */}
-      <div className="fixed top-28 left-0 right-0 z-40 bg-card/98 backdrop-blur-xl border-b border-border/30 shadow-lg">
+      {/* SOLID FIXED HEADER - Z-index 50 to stay above everything */}
+      <div className="fixed top-28 left-0 right-0 z-50 bg-card/98 backdrop-blur-xl border-b border-border/30 shadow-lg">
         <div className="p-4 space-y-4">
           {/* Token Info Row */}
           <div className="flex items-center justify-between">
@@ -221,11 +221,11 @@ const MobileTradingView = ({
       </div>
 
       {/* SCROLLABLE CONTENT AREA - Fixed spacing, smooth scroll */}
-      <div className="pt-[450px] pb-safe">
+      <div className="pt-[420px] pb-safe">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          {/* SOLID CHART TAB - Fixed container, no overlap */}
+          {/* SOLID CHART TAB - Fixed container, no overlap, proper z-index */}
           <TabsContent value="chart" className="mt-0 p-4">
-            <div className="relative z-10 bg-background">
+            <div className="relative z-10 bg-background min-h-[60vh]">
               <TradingViewMobileChart symbol={symbol} coinGeckoId={crypto?.coinGeckoId} />
             </div>
           </TabsContent>

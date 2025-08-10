@@ -163,7 +163,7 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   }, []);
 
   return (
-    <Card className={`h-[60vh] bg-card border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container`}>
+    <Card className={`h-[60vh] bg-card border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container z-20`}>
       {/* Controls */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border/20 bg-background/80 backdrop-blur-sm">
         <div className="flex gap-1">
