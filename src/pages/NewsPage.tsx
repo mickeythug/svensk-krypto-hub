@@ -36,6 +36,8 @@ import {
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import MobileHeader from "@/components/mobile/MobileHeader";
+import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useNavigate } from "react-router-dom";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -343,43 +345,44 @@ const NewsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <CryptoPriceTicker />
+      {isMobile ? <MobileHeader title="NYHETER" /> : <Header />}
+      {!isMobile && <CryptoPriceTicker />}
       
-      <main className="pt-8 pb-16">
-        <div className="container mx-auto px-4 max-w-7xl">
-          {/* Enhanced Header Section */}
-          <div className="mb-12">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate('/')}
-              className="mb-8 text-muted-foreground hover:text-primary text-lg group"
-            >
-              <ArrowLeft className="mr-3 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              Tillbaka till startsidan
-            </Button>
+      <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16'}`}>
+        <div className={`container mx-auto ${isMobile ? 'px-3' : 'px-4'} max-w-7xl`}>
+          {/* Enhanced Mobile-First Header Section */}
+          <div className={`${isMobile ? 'mb-8' : 'mb-12'}`}>
+            {!isMobile && (
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')}
+                className="mb-8 text-muted-foreground hover:text-primary text-lg group"
+              >
+                <ArrowLeft className="mr-3 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                Tillbaka till startsidan
+              </Button>
+            )}
             
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+            <div className={`${isMobile ? 'text-center' : 'flex flex-col lg:flex-row lg:items-start lg:justify-between'} gap-8`}>
               <div className="flex-1">
-                <h1 className="font-crypto text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight animate-fade-in">
-                  <span style={{ color: '#12E19F' }}>CRY</span>
-                  <span className="text-white">PTO</span>
-                  <span className="text-white"> </span>
-                  <span className="text-white">NET</span>
-                  <span style={{ color: '#12E19F' }}>WORK</span>
-                  <span className="text-white"> NYHETER</span>
+                <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} leading-tight animate-fade-in`}>
+                  <span className="text-brand-turquoise">CRY</span>
+                  <span className="text-brand-white">PTO</span>
+                  <span className="text-brand-white"> NET</span>
+                  <span className="text-brand-turquoise">WORK</span>
+                  <span className="text-brand-white"> NYHETER</span>
                 </h1>
-                <p className="text-muted-foreground font-display text-lg md:text-xl leading-relaxed max-w-3xl animate-fade-in">
+                <p className={`text-muted-foreground font-display ${isMobile ? 'text-sm px-2' : 'text-lg md:text-xl'} leading-relaxed ${isMobile ? 'max-w-sm mx-auto' : 'max-w-3xl'} animate-fade-in`}>
                   Sveriges mest omfattande och aktuella källa för krypto-nyheter, marknadsanalys och branschinsikter. 
-                  Håll dig uppdaterad med realtidsrapportering från våra experter.
+                  {!isMobile && "Håll dig uppdaterad med realtidsrapportering från våra experter."}
                 </p>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6 text-sm text-muted-foreground">
+                <div className={`flex ${isMobile ? 'flex-col items-center gap-2 mt-4' : 'flex-col sm:flex-row items-start sm:items-center gap-4 mt-6'} ${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
                   <div className="flex items-center">
-                    <Activity className="h-4 w-4 mr-2 text-success animate-pulse" />
+                    <Activity className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-success animate-pulse`} />
                     <span>Live uppdateringar var 3:e minut</span>
                   </div>
                   <div className="flex items-center">
-                    <Star className="h-4 w-4 mr-2 text-warning" />
+                    <Star className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-warning`} />
                     <span>Expertanalys från branschledare</span>
                   </div>
                 </div>
@@ -387,57 +390,57 @@ const NewsPage = () => {
             </div>
           </div>
 
-          {/* Search and Filters */}
-          <div className="mb-8 space-y-4">
-            <div className="flex flex-col lg:flex-row gap-4">
+          {/* Enhanced Search and Filters */}
+          <div className={`${isMobile ? 'mb-6 space-y-3' : 'mb-8 space-y-4'}`}>
+            <div className={`flex ${isMobile ? 'flex-col gap-3' : 'flex-col lg:flex-row gap-4'}`}>
               <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
                 <Input
                   placeholder="Sök nyheter, författare eller taggar..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-12 text-lg bg-secondary/50 border-border focus:border-primary transition-all duration-300"
+                  className={`${isMobile ? 'pl-10 h-10 text-base' : 'pl-12 h-12 text-lg'} bg-secondary/50 border-border focus:border-primary transition-all duration-300 hover:bg-secondary/70 focus:bg-background`}
                 />
               </div>
-              <div className="flex gap-3">
+              <div className={`flex ${isMobile ? 'gap-2' : 'gap-3'}`}>
                 <Button
                   variant="outline"
                   onClick={() => setSortBy(sortBy === "date" ? "impact" : "date")}
-                  className="h-12 px-6"
+                  className={`${isMobile ? 'h-10 px-4 text-sm' : 'h-12 px-6'} hover:bg-primary/10 hover:border-primary/30 transition-all duration-300`}
                 >
-                  <Clock className="mr-2 h-4 w-4" />
+                  <Clock className={`mr-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
                   {sortBy === "date" ? "Datum" : "Påverkan"}
                 </Button>
-                <div className="flex border border-border rounded-lg overflow-hidden bg-secondary/50">
+                <div className="flex border border-border rounded-lg overflow-hidden bg-secondary/50 hover:bg-secondary/70 transition-colors">
                   <Button
                     variant={viewMode === "grid" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("grid")}
-                    className="h-12 px-4 rounded-none hover:bg-primary/10"
+                    className={`${isMobile ? 'h-10 px-3' : 'h-12 px-4'} rounded-none hover:bg-primary/10 transition-all duration-300`}
                   >
-                    <Grid3X3 className="h-4 w-4" />
+                    <Grid3X3 className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
                   </Button>
                   <Button
                     variant={viewMode === "list" ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setViewMode("list")}
-                    className="h-12 px-4 rounded-none hover:bg-primary/10"
+                    className={`${isMobile ? 'h-10 px-3' : 'h-12 px-4'} rounded-none hover:bg-primary/10 transition-all duration-300`}
                   >
-                    <List className="h-4 w-4" />
+                    <List className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
                   </Button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Category Tabs */}
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="mb-10">
-            <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full bg-secondary/50 h-12 p-1">
+          {/* Enhanced Category Tabs */}
+          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className={`${isMobile ? 'mb-6' : 'mb-10'}`}>
+            <TabsList className={`${isMobile ? 'grid grid-cols-3 w-full h-10 p-0.5' : 'grid grid-cols-3 lg:grid-cols-6 w-full h-12 p-1'} bg-secondary/50 rounded-xl hover:bg-secondary/70 transition-colors`}>
               {categories.map((category) => (
                 <TabsTrigger
                   key={category.id}
                   value={category.id}
-                  className="font-orbitron font-black text-white text-sm tracking-widest data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2 transition-all duration-300 hover:text-primary"
+                  className={`font-orbitron font-black text-foreground ${isMobile ? 'text-xs tracking-wide' : 'text-sm tracking-widest'} data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg px-3 py-2 transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg`}
                 >
                   {category.label}
                 </TabsTrigger>
@@ -881,6 +884,8 @@ const NewsPage = () => {
           </div>
         </div>
       </main>
+      
+      {isMobile && <MobileBottomNavigation />}
     </div>
   );
 };

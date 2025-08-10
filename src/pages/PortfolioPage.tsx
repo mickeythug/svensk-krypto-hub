@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
+import MobileHeader from "@/components/mobile/MobileHeader";
+import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -124,17 +126,19 @@ const PortfolioPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <CryptoPriceTicker />
+      {isMobile ? <MobileHeader title="PORTFÖLJ" /> : <Header />}
+      {!isMobile && <CryptoPriceTicker />}
       
-      <main className={`container mx-auto px-4 ${isMobile ? 'pt-4 pb-4' : 'pt-8 pb-20'}`}>
+      <main className={`container mx-auto px-4 ${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-20'}`}>
         {/* Header Section */}
         <div className={`${isMobile ? 'flex flex-col space-y-4 mb-6' : 'flex items-center justify-between mb-8'}`}>
           <div>
-            <h1 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent`}>
-              MIN PORTFÖLJ
+            <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3`}>
+              <span className="text-brand-turquoise">MIN</span>
+              <span className="text-brand-white"> PORT</span>
+              <span className="text-brand-turquoise">FÖLJ</span>
             </h1>
-            <p className={`font-display ${isMobile ? 'text-base' : 'text-lg'} text-muted-foreground`}>
+            <p className={`font-display ${isMobile ? 'text-sm' : 'text-lg'} text-muted-foreground`}>
               Spåra dina krypto-investeringar
             </p>
           </div>
@@ -227,37 +231,49 @@ const PortfolioPage = () => {
                 const pnlPercentage = ((holding.currentPrice - holding.avgBuyPrice) / holding.avgBuyPrice) * 100;
                 
                 return (
-                  <Card key={holding.id} className="p-6 hover:shadow-lg transition-all border-border/30">
-                    <div className="flex items-center justify-between">
+                  <Card 
+                    key={holding.id} 
+                    className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    <div className={`relative ${isMobile ? 'p-4' : 'p-6'} flex items-center justify-between`}>
                       <div className="flex items-center gap-4">
-                        <img 
-                          src={holding.image} 
-                          alt={holding.name}
-                          className="h-12 w-12 rounded-full"
-                          onError={(e) => {
-                            e.currentTarget.src = '/placeholder.svg';
-                          }}
-                        />
+                        <div className="relative">
+                          <img 
+                            src={holding.image} 
+                            alt={holding.name}
+                            className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full group-hover:scale-110 transition-transform shadow-lg`}
+                            onError={(e) => {
+                              e.currentTarget.src = '/placeholder.svg';
+                            }}
+                          />
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
                         <div>
-                          <h3 className="font-semibold text-lg">{holding.name}</h3>
-                          <p className="text-muted-foreground">{holding.symbol}</p>
+                          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} group-hover:text-primary transition-colors`}>
+                            {holding.name}
+                          </h3>
+                          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>
+                            {holding.symbol}
+                          </p>
                         </div>
                       </div>
                       
                       <div className="text-right">
-                        <div className="font-semibold text-lg">
+                        <div className={`font-semibold ${isMobile ? 'text-sm' : 'text-lg'} group-hover:text-primary transition-colors`}>
                           {showValues ? `${holding.amount} ${holding.symbol}` : "••••••"}
                         </div>
-                        <div className="text-muted-foreground">
+                        <div className={`text-muted-foreground ${isMobile ? 'text-xs' : ''}`}>
                           {formatCurrency(holding.amount * holding.currentPrice)}
                         </div>
                       </div>
                       
                       <div className="text-right">
-                        <div className={`font-semibold ${pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                        <div className={`font-semibold ${isMobile ? 'text-sm' : ''} ${pnl >= 0 ? 'text-success' : 'text-destructive'} group-hover:scale-105 transition-transform`}>
                           {showValues ? `${pnl >= 0 ? '+' : ''}${formatCurrency(Math.abs(pnl))}` : "••••••"}
                         </div>
-                        <div className={`text-sm ${pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
+                        <div className={`${isMobile ? 'text-xs' : 'text-sm'} ${pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
                           {showValues ? `${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toFixed(2)}%` : "••••"}
                         </div>
                       </div>
@@ -293,6 +309,8 @@ const PortfolioPage = () => {
           </TabsContent>
         </Tabs>
       </main>
+      
+      {isMobile && <MobileBottomNavigation />}
     </div>
   );
 };

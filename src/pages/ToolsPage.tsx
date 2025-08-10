@@ -273,7 +273,8 @@ const ToolsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {isMobile ? <MobileHeader title="Verktyg" /> : <Header />}
+      {isMobile ? <MobileHeader title="VERKTYG" /> : <Header />}
+      {!isMobile && <CryptoPriceTicker />}
       
       <div className={`${isMobile ? 'pt-4 pb-20' : 'pt-20 pb-12'}`}>
         <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
@@ -287,8 +288,9 @@ const ToolsPage = () => {
                 </Badge>
               </div>
               
-              <h1 className="font-crypto text-2xl sm:text-3xl font-bold mb-3 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                TELEGRAM BOTS
+              <h1 className="font-crypto text-2xl sm:text-3xl font-bold mb-3">
+                <span className="text-brand-turquoise">TELEGRAM</span>
+                <span className="text-brand-white"> BOTS</span>
               </h1>
               
               <p className="font-display text-sm text-muted-foreground mb-6 leading-relaxed px-2">
@@ -316,8 +318,9 @@ const ToolsPage = () => {
                 </Badge>
               </div>
               
-              <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                TELEGRAM BOTS
+              <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6">
+                <span className="text-brand-turquoise">TELEGRAM</span>
+                <span className="text-brand-white"> BOTS</span>
               </h1>
               
               <p className="font-display text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
