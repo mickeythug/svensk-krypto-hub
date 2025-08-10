@@ -34,7 +34,7 @@ import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useWallet } from '@solana/wallet-adapter-react';
-import { SOL_TOKENS } from '@/lib/tokenMaps';
+import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 
 const CryptoDetailPage = () => {
   const { symbol } = useParams<{ symbol: string }>();
@@ -44,7 +44,8 @@ const CryptoDetailPage = () => {
   const crypto = cryptoPrices?.find(c => c.symbol.toLowerCase() === symbol?.toLowerCase());
   const { connected: solConnected } = useWallet();
   const symUpper = (crypto?.symbol || symbol || '').toUpperCase();
-  const isSolToken = Boolean(SOL_TOKENS[symUpper]) && symUpper !== 'SOL';
+  const coinGeckoId = (crypto?.coinGeckoId || (crypto as any)?.coin_gecko_id || (crypto as any)?.data?.id) as string | undefined;
+  const { isSolToken } = useSolanaTokenInfo(symUpper, coinGeckoId);
 
   // Add SEO meta tags dynamically
   useEffect(() => {

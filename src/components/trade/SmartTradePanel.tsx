@@ -9,6 +9,7 @@ import { VersionedTransaction } from '@solana/web3.js';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSplTokenBalance } from '@/hooks/useSplTokenBalance';
 import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/tokenMaps';
+import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 import { ERC20_ABI } from '@/lib/erc20';
 import { supabase } from '@/integrations/supabase/client';
 import { useAccount, useSendTransaction } from 'wagmi';
@@ -57,7 +58,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [slippage, setSlippage] = useState(50); // bps
   const [submitting, setSubmitting] = useState(false);
   const symbolUpper = symbol.toUpperCase();
-  const isSolToken = useMemo(() => Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL', [symbolUpper]);
+  const { info: dynamicSolTokenInfo, isSolToken } = useSolanaTokenInfo(symbolUpper);
   const defaultChainMode = isSolToken ? 'SOL' : 'EVM';
   const [chainMode, setChainMode] = useState<'SOL'|'EVM'>(defaultChainMode as any);
   const { fullyAuthed } = useWalletAuthStatus();
@@ -68,8 +69,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const solAddress = publicKey?.toBase58();
   const isSolConnected = !!solConnected;
   const { balance: solBalance } = useSolBalance();
-  const solTokenInfo = SOL_TOKENS[symbol.toUpperCase()];
-  const { amount: tokenBal } = useSplTokenBalance(solTokenInfo?.mint || SOL_MINT);
+  const solTokenInfo = dynamicSolTokenInfo || SOL_TOKENS[symbol.toUpperCase()];
+  const { amount: tokenBal } = useSplTokenBalance((solTokenInfo?.mint || SOL_MINT));
 
   // EVM
   const { address: evmAddress, isConnected: isEvmConnected } = useAccount();

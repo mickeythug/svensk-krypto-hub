@@ -16,6 +16,7 @@ import MobileOrderBook from "./MobileOrderBook";
 import SmartTradePanel from "@/components/trade/SmartTradePanel";
 import TokenSearchBar from "../TokenSearchBar";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 import { SOL_TOKENS } from '@/lib/tokenMaps';
 import { formatUsd } from "@/lib/utils";
 
@@ -39,7 +40,8 @@ const MobileTradingView = ({
   const isPositive = priceChange24h >= 0;
   const { connected: solConnected } = useWallet();
   const symbolUpper = symbol.toUpperCase();
-  const isSolToken = Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL';
+  const coinGeckoId = (crypto?.coinGeckoId || crypto?.coin_gecko_id || crypto?.data?.id) as string | undefined;
+  const { isSolToken } = useSolanaTokenInfo(symbolUpper, coinGeckoId);
 
   return (
     <div className="flex flex-col h-full bg-background">
