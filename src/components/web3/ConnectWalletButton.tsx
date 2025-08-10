@@ -108,6 +108,7 @@ export default function ConnectWalletButton() {
 
   useEffect(() => {
     if (connectError) {
+      authLog('EVM: connect error', connectError?.message || String(connectError), 'error');
       toast({
         title: 'Wallet-anslutning misslyckades',
         description: connectError.message,
@@ -228,11 +229,18 @@ export default function ConnectWalletButton() {
         toast({ title: 'Välj EVM-kedja', description: 'Välj Ethereum.', variant: 'destructive' });
         return;
       }
-      const wc = connectors.find((c) => c.id === 'walletConnect') || connectors[0];
-      await connect({ connector: wc });
+      const injectedConnector = connectors.find((c) => c.id === 'injected');
+      const wcConnector = connectors.find((c) => c.id === 'walletConnect');
+      const chosen = injectedConnector || wcConnector || connectors[0];
+      authLog('EVM: choosing connector', { chosen: chosen?.id, haveInjected: Boolean(injectedConnector), haveWalletConnect: Boolean(wcConnector) });
+      await connect({ connector: chosen });
       try {
+        authLog('EVM: switchChain attempt', { chainId: selectedEvmChainId });
         await switchChainAsync({ chainId: selectedEvmChainId });
-      } catch {}
+        authLog('EVM: switchChain success', { chainId: selectedEvmChainId });
+      } catch (e) {
+        authLog('EVM: switchChain failed', String(e), 'warn');
+      }
       const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nDomän: ${window.location.host}`;
       try {
         const signature = await signMessageAsync({ message } as any);
@@ -241,13 +249,16 @@ export default function ConnectWalletButton() {
           body: { address, message, signature },
         });
         if (error || !(data as any)?.ok) {
+          authLog('EVM: server verify failed', { error, data }, 'error');
           throw new Error((error as any)?.message || 'Serververifiering misslyckades');
         }
+        authLog('EVM: SIWE verified', { address });
         sessionStorage.setItem('siwe_signature', signature);
         if (address) sessionStorage.setItem('siwe_address', address);
         sessionStorage.setItem('siwe_verified', 'true');
         setIsAuthed(true);
       } catch (e) {
+        authLog('EVM: sign/verify failed', String(e), 'error');
         await disconnect();
         sessionStorage.removeItem('siwe_signature');
         sessionStorage.removeItem('siwe_address');
@@ -256,8 +267,10 @@ export default function ConnectWalletButton() {
         return;
       }
       toast({ title: 'Wallet ansluten', description: 'EVM ansluten och verifierad.' });
+      authLog('EVM: connect+verify success', { address });
       setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
     } catch (e: any) {
+      authLog('Connect: fatal error', String(e?.message || e), 'error');
       toast({ title: 'Fel vid anslutning', description: String(e.message || e), variant: 'destructive' });
       setIsAuthed(false);
     }
