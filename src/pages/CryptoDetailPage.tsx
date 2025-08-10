@@ -28,7 +28,7 @@ import DesktopTradingInterface from "@/components/DesktopTradingInterface";
 import MobileTradingPanel from "@/components/MobileTradingPanel";
 import MobileChart from "@/components/MobileChart";
 import MobileHeader from "@/components/mobile/MobileHeader";
-import MobileTradingView from "@/components/mobile/MobileTradingView";
+import ModernMobileTradingView from "@/components/mobile/ModernMobileTradingView";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -148,7 +148,7 @@ const CryptoDetailPage = () => {
 
   if (shouldShowMobileView) {
     return (
-      <MobileTradingView 
+      <ModernMobileTradingView 
         symbol={symbol!.toUpperCase()} 
         currentPrice={crypto.price}
         priceChange24h={crypto.change24h}

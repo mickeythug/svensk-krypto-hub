@@ -163,7 +163,7 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   }, []);
 
   return (
-    <Card className={`h-[70vh] bg-card/98 border-border/40 relative overflow-hidden flex flex-col chart-fullscreen-container shadow-2xl backdrop-blur-sm rounded-2xl`}>
+    <div className="h-full w-full flex flex-col chart-fullscreen-container bg-[#0f0f23] rounded-2xl overflow-hidden">
       {/* PRODUCTION CONTROLS - SOLID AND NEVER OVERLAPPING */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-background/90 backdrop-blur-sm">
         <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
@@ -206,7 +206,7 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
           }}
         />
       </div>
-    </Card>
+    </div>
   );
 };
 
