@@ -616,89 +616,119 @@ const NewsPage = () => {
                      </div>
                    )}
 
-                   {/* List View */}
-                   {viewMode === "list" && (
-                     <div className="space-y-6 animate-fade-in">
-                       {currentArticles.map((article, index) => (
-                          <Card 
-                            key={article.id} 
-                            className="p-4 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer"
-                            style={{ animationDelay: `${index * 50}ms` }}
-                            onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
-                          >
-                           <div className="flex gap-4">
-                             {/* Article Image - List View */}
-                             <div className="flex-shrink-0 w-32 h-24 relative overflow-hidden rounded-lg">
-                               {article.imageUrl ? (
-                                 <img 
-                                   src={article.imageUrl} 
-                                   alt={article.title}
-                                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                   onError={(e) => {
-                                     (e.target as HTMLImageElement).style.display = 'none';
-                                     (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                                   }}
-                                 />
-                               ) : null}
-                               <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 to-secondary/30 ${article.imageUrl ? 'hidden' : ''}`}>
-                                 <Bitcoin className="w-6 h-6 text-primary" />
-                               </div>
-                             </div>
-                             
-                             <div className="flex-1 space-y-3">
-                               <div className="flex items-center gap-2 flex-wrap">
-                                 <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1`}>
-                                   {article.sentiment === 'positive' ? '📈' : 
-                                    article.sentiment === 'negative' ? '📉' : '➡️'}
-                                 </Badge>
-                                 <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1`}>
-                                   {article.impact === 'high' ? '🔥' : 
-                                    article.impact === 'medium' ? '⚡' : '💭'}
-                                 </Badge>
-                                 <Badge variant="outline" className="text-xs">
-                                   {article.category}
-                                 </Badge>
-                                 {article.trending && (
-                                   <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs animate-pulse">
-                                     🔥 HOT
-                                   </Badge>
-                                 )}
-                               </div>
-                               
-                               <h3 className="font-display font-bold text-xl leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                                 {article.title}
-                               </h3>
-                               
-                               <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-                                 {article.summary}
-                               </p>
+                    {/* List View - Mobile Optimized */}
+                    {viewMode === "list" && (
+                      <div className={`space-y-4 animate-fade-in ${isMobile ? 'px-1' : ''}`}>
+                        {currentArticles.map((article, index) => (
+                           <Card 
+                             key={article.id} 
+                             className={`${isMobile ? 'p-3' : 'p-4'} border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer overflow-hidden`}
+                             style={{ animationDelay: `${index * 50}ms` }}
+                             onClick={() => article.url ? window.open(article.url, '_blank') : undefined}
+                           >
+                            <div className={`flex ${isMobile ? 'flex-col gap-3' : 'gap-4'}`}>
+                              {/* Article Image - Mobile Responsive */}
+                              {!isMobile && (
+                                <div className="flex-shrink-0 w-32 h-24 relative overflow-hidden rounded-lg">
+                                  {article.imageUrl ? (
+                                    <img 
+                                      src={article.imageUrl} 
+                                      alt={article.title}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).style.display = 'none';
+                                        (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 to-secondary/30 ${article.imageUrl ? 'hidden' : ''}`}>
+                                    <Bitcoin className="w-6 h-6 text-primary" />
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Mobile Image */}
+                              {isMobile && article.imageUrl && (
+                                <div className="w-full h-32 relative overflow-hidden rounded-lg">
+                                  <img 
+                                    src={article.imageUrl} 
+                                    alt={article.title}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              )}
+                              
+                              <div className="flex-1 space-y-2 min-w-0">
+                                {/* Badges - Mobile Optimized */}
+                                <div className={`flex items-center gap-1 flex-wrap ${isMobile ? 'justify-start' : ''}`}>
+                                  <Badge className={`${getSentimentBadge(article.sentiment)} ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs px-2 py-1'}`}>
+                                    {article.sentiment === 'positive' ? '📈' : 
+                                     article.sentiment === 'negative' ? '📉' : '➡️'}
+                                  </Badge>
+                                  <Badge className={`${getImpactBadge(article.impact)} ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs px-2 py-1'}`}>
+                                    {article.impact === 'high' ? '🔥' : 
+                                     article.impact === 'medium' ? '⚡' : '💭'}
+                                  </Badge>
+                                  <Badge variant="outline" className={`${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} truncate max-w-20`}>
+                                    {article.category}
+                                  </Badge>
+                                  {article.trending && (
+                                    <Badge className={`bg-gradient-to-r from-orange-500 to-red-500 text-white ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} animate-pulse`}>
+                                      🔥 HOT
+                                    </Badge>
+                                  )}
+                                </div>
+                                
+                                {/* Title - Mobile Optimized */}
+                                <h3 className={`font-display font-bold ${isMobile ? 'text-base leading-tight' : 'text-xl leading-tight'} group-hover:text-primary transition-colors line-clamp-2 break-words`}>
+                                  {article.title}
+                                </h3>
+                                
+                                {/* Summary - Mobile Optimized */}
+                                <p className={`text-muted-foreground ${isMobile ? 'text-xs leading-normal' : 'text-sm leading-relaxed'} line-clamp-2 break-words`}>
+                                  {article.summary}
+                                </p>
 
-                               <div className="flex items-center justify-between">
-                                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                   <div className="flex items-center">
-                                     <User className="h-3 w-3 mr-1" />
-                                     <span className="truncate max-w-[80px]">{article.author}</span>
-                                   </div>
-                                   <div className="flex items-center">
-                                     <Clock className="h-3 w-3 mr-1" />
-                                     <span>{formatTimeAgo(article.publishedAt)}</span>
-                                   </div>
-                                   <div className="flex items-center">
-                                     <BookOpen className="h-3 w-3 mr-1" />
-                                     <span>{article.readTime} min</span>
-                                   </div>
-                                 </div>
-                                 <Button variant="outline" size="sm" className="hover:bg-primary hover:text-primary-foreground shrink-0" onClick={(e) => { e.stopPropagation(); if (article.url) window.open(article.url, '_blank'); }}>
-                                   <ExternalLink className="h-3 w-3 mr-1" />
-                                   Läs mer
-                                 </Button>
-                               </div>
-                             </div>
-                           </div>
-                         </Card>
-                      ))}
-                    </div>
-                  )}
+                                {/* Meta Info - Mobile Layout */}
+                                <div className={`${isMobile ? 'flex flex-col gap-2' : 'flex items-center justify-between'}`}>
+                                  <div className={`flex items-center gap-3 ${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground flex-wrap`}>
+                                    <div className="flex items-center">
+                                      <User className="h-3 w-3 mr-1 flex-shrink-0" />
+                                      <span className={`truncate ${isMobile ? 'max-w-[100px]' : 'max-w-[80px]'}`}>{article.author}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
+                                      <span className="whitespace-nowrap">{formatTimeAgo(article.publishedAt)}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <BookOpen className="h-3 w-3 mr-1 flex-shrink-0" />
+                                      <span className="whitespace-nowrap">{article.readTime} min</span>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Read More Button */}
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className={`hover:bg-primary hover:text-primary-foreground shrink-0 ${isMobile ? 'w-full mt-2' : ''}`} 
+                                    onClick={(e) => { 
+                                      e.stopPropagation(); 
+                                      if (article.url) window.open(article.url, '_blank'); 
+                                    }}
+                                  >
+                                    <ExternalLink className="h-3 w-3 mr-1" />
+                                    {isMobile ? 'Läs hela artikeln' : 'Läs mer'}
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </Card>
+                       ))}
+                     </div>
+                   )}
 
                   {/* Pagination Controls */}
                   {filteredNews.length > articlesPerPage && (
