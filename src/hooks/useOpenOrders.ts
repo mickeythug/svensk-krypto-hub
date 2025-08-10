@@ -154,7 +154,7 @@ export function useOpenOrders(params: {
         toast({ title: 'Wallet krävs', description: 'Anslut din Solana‑wallet för att avbryta ordern.', variant: 'destructive' });
         return { data: null, error: new Error('Ingen wallet') };
       }
-      const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order, computeUnitPrice: 'auto' } });
+      const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order, computeUnitPrice: 'auto', symbol: symbolUpper } });
       if (error || !(data as any)?.ok) {
         const msg = (error as any)?.message || (data as any)?.error || (data as any)?.details || 'Okänt fel';
         toast({ title: 'Kunde inte initiera avbrytning', description: msg, variant: 'destructive' });

@@ -82,6 +82,7 @@ export default function PositionsPanel() {
               const totalPnl = p.realizedPnl + unrealized;
               const pct = p.avgEntry > 0 ? ((market - p.avgEntry) / p.avgEntry) * 100 : 0;
               const value = p.amount * market;
+              const pctDigits = Math.abs(pct) < 0.01 ? 4 : Math.abs(pct) < 0.0001 ? 6 : 2;
               return (
                 <TableRow key={p.symbol} className="border-border/20 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => navigate(`/crypto/${p.symbol.toLowerCase()}`)}>
                   <TableCell className="py-2">
@@ -97,11 +98,11 @@ export default function PositionsPanel() {
                     <div className="text-sm font-medium text-foreground">{market ? formatUsd(market) : '-'}</div>
                   </TableCell>
                   <TableCell className="py-2">
-                    <div className="text-sm font-medium text-foreground">{formatUsd(value)}</div>
+                    <div className="text-sm font-medium text-foreground">{value < 0.01 && value > 0 ? '<$0.01' : formatUsd(value)}</div>
                   </TableCell>
                   <TableCell className="py-2">
                     <div className={`text-sm font-semibold ${totalPnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}> 
-                      {formatUsd(totalPnl)} ({pct >= 0 ? '+' : ''}{pct.toFixed(2)}%)
+                      {totalPnl < 0.01 && totalPnl > 0 ? '<$0.01' : formatUsd(totalPnl)} ({pct >= 0 ? '+' : ''}{pct.toFixed(pctDigits)}%)
                     </div>
                   </TableCell>
                 </TableRow>

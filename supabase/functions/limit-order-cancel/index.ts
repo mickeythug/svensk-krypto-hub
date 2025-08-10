@@ -33,6 +33,24 @@ Deno.serve(async (req) => {
     if (error) return res(500, { ok: false, error: error.message });
     if (!data) return res(404, { ok: false, error: 'Order not found or not open' });
 
+    // Best-effort: log to order_history
+    try {
+      await supabase.from('order_history').insert({
+        user_address: data.user_address,
+        chain: data.chain || 'SOL',
+        symbol: data.symbol || null,
+        side: data.side || null,
+        event_type: 'limit_cancel',
+        source: 'DB',
+        price_quote: data.limit_price || null,
+        base_amount: data.amount || null,
+        tx_hash: data.tx_hash || null,
+        meta: { reason: 'user_cancel', limit_order_id: data.id },
+      });
+    } catch (e) {
+      console.warn('order_history log failed (db cancel)', e);
+    }
+
     return res(200, { ok: true, order: data });
   } catch (e) {
     console.error('limit-order-cancel error', e);
