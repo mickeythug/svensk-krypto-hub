@@ -31,7 +31,7 @@ export default function ConnectWalletButton() {
   const { switchChainAsync } = useSwitchChain();
 
   // Solana wallet
-  const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol } = useWallet();
+  const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol, select } = useWallet();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
@@ -114,6 +114,7 @@ export default function ConnectWalletButton() {
           window.open('https://phantom.app/download', '_blank');
           return;
         }
+        select?.('Phantom' as any);
         await connectSol();
         if (!solAddress) throw new Error('Kunde inte läsa din Solana-adress');
         if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
