@@ -161,8 +161,8 @@ const CryptoDetailPage = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <CryptoPriceTicker />
-        <div className="px-2 pt-2">
-          <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2">
+        <div className="px-0 pt-2">
+          <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
             <ArrowLeft className="h-4 w-4" />
             Till marknaden
           </Button>
@@ -182,8 +182,8 @@ const CryptoDetailPage = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <CryptoPriceTicker />
-      <div className="container mx-auto px-2 mt-2">
-        <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2">
+      <div className="px-0 mt-2">
+        <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
           <ArrowLeft className="h-4 w-4" />
           Till marknaden
         </Button>

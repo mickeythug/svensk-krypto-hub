@@ -69,13 +69,13 @@ const Header = () => {
           : "bg-background/90 backdrop-blur-md"
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="px-0">
         <div className="h-16 flex items-center justify-between">
           {/* Logo */}
           {/* Logo */}
           <button 
             onClick={() => navigate('/')}
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer ml-2"
           >
             <img 
               src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
@@ -118,14 +118,14 @@ const Header = () => {
 
           {/* CTA Buttons */}
           {!isMobile && (
-            <div className="hidden md:flex items-center gap-4 shrink-0">
+            <div className="hidden md:flex items-center gap-4 shrink-0 mr-2">
               <ConnectWalletButton />
             </div>
           )}
 
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className={`${isMobile ? 'block' : 'lg:hidden'}`}>
+            <SheetTrigger asChild className={`${isMobile ? 'block mr-2' : 'lg:hidden mr-2'}`}>
               <Button variant="ghost" size="sm">
                 <Menu size={isMobile ? 18 : 20} />
               </Button>
