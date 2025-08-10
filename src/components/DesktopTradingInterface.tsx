@@ -46,6 +46,7 @@ import PositionsPanel from '@/components/trade/PositionsPanel';
 import OrderHistoryPanel from '@/components/trade/OrderHistoryPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
+import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -94,6 +95,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   // Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);
   const { exchange } = useTradingViewSymbol(symbol, crypto?.coinGeckoId);
+  const { data: ticker } = useExchangeTicker(symbol, crypto?.coinGeckoId);
 
   // Debug logging
   useEffect(() => {
@@ -258,25 +260,27 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h High</span>
               <span className="font-mono font-semibold text-success">
-                {formatUsd(currentPrice * 1.08)}
+                {Number.isFinite(ticker?.high24h as any) ? formatUsd(ticker!.high24h!) : '—'}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h Low</span>
               <span className="font-mono font-semibold text-destructive">
-                {formatUsd(currentPrice * 0.92)}
+                {Number.isFinite(ticker?.low24h as any) ? formatUsd(ticker!.low24h!) : '—'}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h Volume</span>
               <span className="font-mono font-semibold">
-                {crypto?.volume ? `$${crypto.volume}` : 'N/A'}
+                {Number.isFinite(ticker?.volumeQuote as any)
+                  ? `$${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(ticker!.volumeQuote!)}`
+                  : (crypto?.volume ? `$${crypto.volume}` : '—')}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">Market Cap</span>
               <span className="font-mono font-semibold">
-                {crypto?.marketCap ? `$${crypto.marketCap}` : 'N/A'}
+                {crypto?.marketCap ? `$${crypto.marketCap}` : '—'}
               </span>
             </div>
             <div className="flex flex-col">
@@ -375,7 +379,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           </div>
         ) : (
           <div className="p-4 pt-0">
-            <Card className="p-6 text-center bg-muted/50">
+            <Card className="p-6 text-center bg-card border">
               <AlertTriangle className="h-12 w-12 text-warning mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Connect Wallet to Trade</h3>
               <p className="text-sm text-muted-foreground mb-4">

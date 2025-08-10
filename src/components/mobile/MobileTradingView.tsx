@@ -23,6 +23,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 import { SOL_TOKENS } from '@/lib/tokenMaps';
 import { formatUsd } from "@/lib/utils";
+import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 
 interface MobileTradingViewProps {
   symbol: string;
@@ -47,6 +48,7 @@ const MobileTradingView = ({
   const symbolUpper = symbol.toUpperCase();
   const coinGeckoId = (crypto?.coinGeckoId || crypto?.coin_gecko_id || crypto?.data?.id) as string | undefined;
   const { isSolToken } = useSolanaTokenInfo(symbolUpper, coinGeckoId);
+  const { data: ticker } = useExchangeTicker(symbol, coinGeckoId);
 
   const shareToken = () => {
     if (navigator.share) {
@@ -144,19 +146,21 @@ const MobileTradingView = ({
             <div className="text-center">
               <div className="text-muted-foreground">24h High</div>
               <div className="font-mono font-semibold text-success">
-                {formatUsd(currentPrice * 1.08)}
+                {Number.isFinite(ticker?.high24h as any) ? formatUsd(ticker!.high24h!) : '—'}
               </div>
             </div>
             <div className="text-center">
               <div className="text-muted-foreground">24h Low</div>
               <div className="font-mono font-semibold text-destructive">
-                {formatUsd(currentPrice * 0.92)}
+                {Number.isFinite(ticker?.low24h as any) ? formatUsd(ticker!.low24h!) : '—'}
               </div>
             </div>
             <div className="text-center">
               <div className="text-muted-foreground">Volume</div>
               <div className="font-mono font-semibold">
-                {typeof crypto?.volume === 'string' ? `$${crypto.volume}` : (typeof crypto?.volume === 'number' ? `$${(crypto.volume >= 1e12 ? (crypto.volume/1e12).toFixed(1)+'T' : crypto.volume >= 1e9 ? (crypto.volume/1e9).toFixed(1)+'B' : crypto.volume >= 1e6 ? (crypto.volume/1e6).toFixed(1)+'M' : crypto.volume.toLocaleString())}` : 'N/A')}
+                {Number.isFinite(ticker?.volumeQuote as any)
+                  ? `$${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(ticker!.volumeQuote!)}`
+                  : (typeof crypto?.volume === 'string' ? `$${crypto.volume}` : (typeof crypto?.volume === 'number' ? `$${crypto.volume.toLocaleString()}` : '—'))}
               </div>
             </div>
           </div>
