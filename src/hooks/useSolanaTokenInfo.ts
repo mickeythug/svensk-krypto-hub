@@ -3,26 +3,22 @@ import { SOL_TOKENS } from '@/lib/tokenMaps';
 
 export type SolanaTokenInfo = { mint: string; decimals: number } | null;
 
-function cacheKey(symbol: string) {
-  return `solana_token_info_${symbol.toUpperCase()}`;
+function cacheKey(symbol: string, cgid?: string) {
+  const id = (cgid || 'none').toLowerCase();
+  return `solana_token_info_${symbol.toUpperCase()}_${id}`;
 }
 
 async function fetchFromJupiter(symbol: string, coinGeckoId?: string): Promise<SolanaTokenInfo> {
   try {
+    // För att undvika falska positiver kräver vi CoinGecko‑ID‑match
+    if (!coinGeckoId) return null;
     const res = await fetch('https://token.jup.ag/all', { cache: 'force-cache' });
     if (!res.ok) return null;
     const list = (await res.json()) as any[];
-    const sym = symbol.toUpperCase();
-    const matches = list.filter((t) => (t?.symbol || '').toUpperCase() === sym);
-    if (!matches.length) return null;
-    // Prefer exact CoinGecko match if available
-    let picked = matches[0];
-    if (coinGeckoId) {
-      const byCg = matches.find((t) => (t?.extensions?.coingeckoId || '').toLowerCase() === coinGeckoId.toLowerCase());
-      if (byCg) picked = byCg;
-    }
-    const mint = picked?.address || picked?.mint || picked?.id;
-    const decimals = Number(picked?.decimals ?? 9);
+    const match = list.find((t) => (t?.extensions?.coingeckoId || '').toLowerCase() === coinGeckoId.toLowerCase());
+    if (!match) return null;
+    const mint = match?.address || match?.mint || match?.id;
+    const decimals = Number(match?.decimals ?? 9);
     if (!mint) return null;
     return { mint, decimals: Number.isFinite(decimals) ? decimals : 9 };
   } catch {
@@ -40,11 +36,11 @@ export function useSolanaTokenInfo(symbol?: string, coinGeckoId?: string) {
     const builtIn = SOL_TOKENS[symUpper];
     if (builtIn) return builtIn;
     try {
-      const cached = sessionStorage.getItem(cacheKey(symUpper));
+      const cached = sessionStorage.getItem(cacheKey(symUpper, coinGeckoId));
       if (cached) return JSON.parse(cached) as SolanaTokenInfo;
     } catch {}
     return null;
-  }, [symUpper]);
+  }, [symUpper, coinGeckoId]);
 
   useEffect(() => {
     let active = true;
@@ -56,7 +52,7 @@ export function useSolanaTokenInfo(symbol?: string, coinGeckoId?: string) {
       if (!active) return;
       if (fetched) {
         setInfo(fetched);
-        try { sessionStorage.setItem(cacheKey(symUpper), JSON.stringify(fetched)); } catch {}
+        try { sessionStorage.setItem(cacheKey(symUpper, coinGeckoId), JSON.stringify(fetched)); } catch {}
       } else {
         setInfo(null);
       }
