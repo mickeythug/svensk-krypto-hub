@@ -21,6 +21,18 @@ import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet };
 
+async function invokeWithRetry<T = any>(name: string, body: any, retries = 1): Promise<{ data: T | null; error: any | null }> {
+  let lastErr: any = null;
+  for (let i = 0; i <= retries; i++) {
+    const { data, error } = await supabase.functions.invoke(name, { body });
+    if (!error) return { data: data as any, error: null };
+    lastErr = error;
+    await new Promise((r) => setTimeout(r, 300 * (i + 1)));
+  }
+  return { data: null, error: lastErr };
+}
+
+
 export default function SmartTradePanel({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
   const [side, setSide] = useState<'buy'|'sell'>('buy');
   const [orderType, setOrderType] = useState<'market'|'limit'>('market');
@@ -87,12 +99,12 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       const decimals = side === 'buy' ? 9 : (solTokenInfo?.decimals || 9);
       const amountBase = Math.floor(parseFloat(amountInput) * Math.pow(10, decimals));
       if (!Number.isFinite(amountBase) || amountBase <= 0) throw new Error('Ogiltigt belopp');
+      if (amountBase < 1000) throw new Error('Beloppet är för litet för Jupiter');
 
-      const { data, error } = await supabase.functions.invoke('jupiter-swap', {
-        body: { userPublicKey: solAddress, inputMint, outputMint, amount: String(amountBase), slippageBps: slippage },
-      });
+      const { data, error } = await invokeWithRetry<any>('jupiter-swap', {
+        userPublicKey: solAddress, inputMint, outputMint, amount: String(amountBase), slippageBps: slippage,
+      }, 1);
       if (error) {
-        // Försök extrahera detaljer från Edge Function-svaret
         let detailsText = '';
         try {
           const ctxResp = (error as any)?.context?.response;
@@ -123,7 +135,6 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       setAmountInput('');
     } catch (e: any) {
       toast({ title: 'Solana fel', description: String(e.message || e), variant: 'destructive' });
-    } finally {
       setSubmitting(false);
     }
   }
@@ -144,12 +155,11 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       const decimals = isBuy ? 6 : 18;
       const amountWei = parseUnits(amountInput || '0', decimals);
       if (amountWei <= 0n) throw new Error('Ogiltigt belopp');
+      if (isBuy && parseFloat(amountInput) < 0.1) throw new Error('Minsta belopp 0.1 USDT');
 
       // Approve if buying with USDT (ERC20)
       if (isBuy) {
-        const spenderRes = await supabase.functions.invoke('evm-approve', {
-          body: { chainId: evmChainId, tokenAddress: fromToken, action: 'spender' },
-        });
+        const spenderRes = await invokeWithRetry<any>('evm-approve', { chainId: evmChainId, tokenAddress: fromToken, action: 'spender' }, 1);
         if (spenderRes.error) throw spenderRes.error;
         const spender = (spenderRes.data as any)?.address || (spenderRes.data as any)?.spender;
         if (!spender) throw new Error('Kunde inte hämta spender');
@@ -162,9 +172,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         })) as unknown as bigint;
 
         if (allowance < amountWei) {
-          const approveTxRes = await supabase.functions.invoke('evm-approve', {
-            body: { chainId: evmChainId, tokenAddress: fromToken, amount: amountWei.toString(), action: 'tx' },
-          });
+          const approveTxRes = await invokeWithRetry<any>('evm-approve', { chainId: evmChainId, tokenAddress: fromToken, amount: amountWei.toString(), action: 'tx' }, 1);
           if (approveTxRes.error) throw approveTxRes.error;
           const approveTx: any = approveTxRes.data?.tx;
           if (!approveTx?.to || !approveTx?.data) throw new Error('Ogiltig approve-tx');
@@ -178,9 +186,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       }
 
       // Build swap
-      const swapRes = await supabase.functions.invoke('evm-swap', {
-        body: { chainId: evmChainId, fromToken, toToken, amount: amountWei.toString(), fromAddress: evmAddress, slippage: slippage / 100 },
-      });
+      const swapRes = await invokeWithRetry<any>('evm-swap', { chainId: evmChainId, fromToken, toToken, amount: amountWei.toString(), fromAddress: evmAddress, slippage: slippage / 100 }, 1);
       if (swapRes.error) throw swapRes.error;
       const swapData: any = swapRes.data;
       if (!swapData || !swapData.tx) throw new Error('Ogiltig 1inch-respons');
