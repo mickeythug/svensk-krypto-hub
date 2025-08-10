@@ -6,6 +6,7 @@ import MemeTokenGrid from './components/MemeTokenGrid';
 import MemeStatsBanner from './components/MemeStatsBanner';
 import MemePageHeader from './components/MemePageHeader';
 import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
+import MobileHeader from '@/components/mobile/MobileHeader';
 import { useIsMobile } from '@/hooks/use-mobile';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -51,8 +52,11 @@ const MemePage: React.FC = () => {
   }, []);
   return (
     <div className="meme-page">
-      {/* Minimal Header with Action Buttons */}
-      <MemePageHeader />
+      {/* Desktop Header */}
+      {!isMobile && <MemePageHeader />}
+      
+      {/* Mobile Header */}
+      {isMobile && <MobileHeader title="MEME ZONE" />}
       
       <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
         {/* Live Ticker - Full Width at Top */}

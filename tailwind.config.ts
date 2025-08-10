@@ -73,6 +73,10 @@ export default {
 				warning: {
 					DEFAULT: 'hsl(var(--warning))',
 					foreground: 'hsl(var(--warning-foreground))'
+				},
+				brand: {
+					turquoise: 'hsl(var(--brand-turquoise))',
+					white: 'hsl(var(--brand-white))'
 				}
 			},
 			backgroundImage: {

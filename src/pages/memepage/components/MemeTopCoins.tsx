@@ -6,6 +6,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { TrendingUp, TrendingDown, Users, DollarSign, Eye, Crown, Zap, Star } from 'lucide-react';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import doge from '@/assets/meme-tokens/doge.png';
 import shib from '@/assets/crypto-logos/shib.png';
@@ -43,6 +44,7 @@ const formatMarketCap = (cap: number): string => {
 
 const MemeTopCoins = () => {
   const { tokens, loading, error } = useMemeTokens('trending', 6);
+  const isMobile = useIsMobile();
 
   const processedTokens = useMemo(() => {
     return tokens.map((token, index) => ({
@@ -71,7 +73,7 @@ const MemeTopCoins = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'}`}>
       {processedTokens.map((token, index) => {
         const positive = token.change24h > 0;
         const isTop3 = index < 3;
@@ -118,7 +120,7 @@ const MemeTopCoins = () => {
             </div>
 
             {/* Token Details */}
-            <div className="p-6 space-y-4">
+            <div className={`${isMobile ? 'p-4 space-y-3' : 'p-6 space-y-4'}`}>
               {/* Token symbol and name */}
               <div className="flex items-center gap-3 mb-4">
                 <h3 className="text-2xl font-crypto font-black">{token.symbol}</h3>

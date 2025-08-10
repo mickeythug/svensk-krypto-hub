@@ -731,7 +731,33 @@ const MarketOverviewPage = () => {
 
       {/* Mobile Version - Exact Reference Match */}
       <div className="block md:hidden min-h-screen bg-background">
-        <Header />
+        <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-40 md:hidden">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <img 
+                  src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
+                  alt="Crypto Network Sweden"
+                  className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
+                />
+                <div className="text-left">
+                  <h1 className="font-crypto text-sm font-bold leading-none">
+                    <span className="text-brand-turquoise">CRY</span>
+                    <span className="text-brand-white">PTO</span>
+                    <span className="text-brand-white">NET</span>
+                    <span className="text-brand-turquoise">WORK</span>
+                  </h1>
+                  <p className="font-crypto text-xs text-muted-foreground leading-none mt-0.5">
+                    SWEDEN
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
         <CryptoPriceTicker />
         
         <div className="bg-background">
@@ -866,8 +892,8 @@ const MarketOverviewPage = () => {
             </div>
           </div>
 
-          {/* Mobile List */}
-          <div className="divide-y divide-border/20 pb-20">
+          {/* Mobile List - NO SEPARATE SCROLL */}
+          <div className="divide-y divide-border/20 pb-24 overflow-visible">
             {currentData.map((crypto, index) => (
               <div
                 key={`${crypto.symbol}-${crypto.rank}`}
@@ -924,8 +950,8 @@ const MarketOverviewPage = () => {
             ))}
           </div>
 
-          {/* Mobile Pagination */}
-          <div className="fixed bottom-16 left-0 right-0 bg-background/98 backdrop-blur-xl border-t border-border/50 py-3 px-4 z-40">
+          {/* Mobile Pagination - Fixed at bottom only when scrolled to bottom */}
+          <div className="sticky bottom-16 left-0 right-0 bg-background/98 backdrop-blur-xl border-t border-border/50 py-3 px-4 z-30 mt-auto">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}

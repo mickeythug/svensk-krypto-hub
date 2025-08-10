@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
 import c2 from '@/assets/meme-covers/meme-cover-2.jpg';
@@ -37,6 +38,7 @@ interface MemeTokenGridProps {
 
 const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   const { tokens, loading, error } = useMemeTokens(category, limit);
+  const isMobile = useIsMobile();
   
   // Add cover images to tokens
   const tokensWithCovers = tokens.map((token, index) => ({
@@ -96,7 +98,7 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+    <div className={`grid ${isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6'}`}>
       {tokensWithCovers.map((token, index) => (
         <motion.div
           key={token.id}
@@ -114,7 +116,7 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
             </AspectRatio>
             
             {/* Token info below image */}
-            <div className="p-3 md:p-4">
+            <div className={`${isMobile ? 'p-2' : 'p-3 md:p-4'}`}>
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="min-w-0">
                   <h3 className="truncate font-crypto font-extrabold text-xl md:text-2xl tracking-wide">{token.emoji} {token.symbol}</h3>

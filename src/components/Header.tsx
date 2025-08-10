@@ -84,8 +84,12 @@ const Header = () => {
             />
             {!isMobile && (
               <div>
-                <h1 className="font-crypto text-lg font-bold text-foreground">
-                  CRYPTO NETWORK
+                <h1 className="font-crypto text-lg font-bold">
+                  <span className="text-brand-turquoise">CRY</span>
+                  <span className="text-brand-white">PTO</span>
+                  <span> </span>
+                  <span className="text-brand-white">NET</span>
+                  <span className="text-brand-turquoise">WORK</span>
                 </h1>
                 <p className="font-crypto text-xs text-muted-foreground">
                   SWEDEN
@@ -140,14 +144,18 @@ const Header = () => {
                     alt="Crypto Network Sweden"
                     className="h-8 w-auto"
                   />
-                  <div>
-                    <h1 className="font-crypto text-sm font-bold text-foreground">
-                      CRYPTO NETWORK
-                    </h1>
-                    <p className="font-crypto text-xs text-muted-foreground">
-                      SWEDEN
-                    </p>
-                  </div>
+                    <div>
+                      <h1 className="font-crypto text-sm font-bold">
+                        <span className="text-brand-turquoise">CRY</span>
+                        <span className="text-brand-white">PTO</span>
+                        <span> </span>
+                        <span className="text-brand-white">NET</span>
+                        <span className="text-brand-turquoise">WORK</span>
+                      </h1>
+                      <p className="font-crypto text-xs text-muted-foreground">
+                        SWEDEN
+                      </p>
+                    </div>
                 </button>
                 <Button 
                   variant="ghost" 
