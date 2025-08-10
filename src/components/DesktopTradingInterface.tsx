@@ -33,6 +33,7 @@ import { useTradeHistory } from '@/hooks/useTradeHistory';
 import SmartTradePanel from '@/components/trade/SmartTradePanel';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 import { supabase } from '@/integrations/supabase/client';
+import OpenOrders from '@/components/trade/OpenOrdersPanel';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -174,11 +175,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsContent>
             
             <TabsContent value="orders" className="h-full">
-              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
-                <div className="text-center text-muted-foreground text-sm">
-                  No open orders
-                </div>
-              </Card>
+              <OpenOrders symbol={symbol} />
             </TabsContent>
             
             <TabsContent value="history" className="h-full">
