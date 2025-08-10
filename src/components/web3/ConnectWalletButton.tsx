@@ -4,7 +4,7 @@ import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, 
 import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSiwsSolana } from '@/hooks/useSiwsSolana';
@@ -29,6 +29,7 @@ export default function ConnectWalletButton() {
   const chains = useChains();
   const evmChains = useMemo(() => chains.filter((c) => c.id === 1), [chains]);
   const { switchChainAsync } = useSwitchChain();
+  const { connection: solConnection } = useConnection();
 
   // Solana wallet
   const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol, select, wallets, wallet } = useWallet();
@@ -137,6 +138,11 @@ export default function ConnectWalletButton() {
           sessionStorage.setItem('siws_address', publicKey.toBase58());
           setIsAuthed(true);
           toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
+          try {
+            const lamports = await solConnection.getBalance(publicKey, { commitment: 'processed' } as any);
+            const sol = lamports / 1_000_000_000;
+            console.info('Efter anslutning: SOL-saldo', sol);
+          } catch {}
           setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
           return;
         } catch (err: any) {

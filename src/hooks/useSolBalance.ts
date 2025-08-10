@@ -18,8 +18,11 @@ export function useSolBalance() {
       setLoading(true);
       setError(null);
       try {
+        console.info('useSolBalance: fetching balance for', publicKey?.toBase58());
         const lamports = await connection.getBalance(publicKey, { commitment: 'processed' } as any);
-        if (!cancelled) setBalance(lamports / 1_000_000_000);
+        const sol = lamports / 1_000_000_000;
+        console.info('useSolBalance: balance lamports', lamports, 'SOL', sol);
+        if (!cancelled) setBalance(sol);
       } catch (e: any) {
         if (!cancelled) setError(String(e.message || e));
       } finally {

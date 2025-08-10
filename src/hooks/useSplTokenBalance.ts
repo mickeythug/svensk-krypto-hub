@@ -20,9 +20,12 @@ export function useSplTokenBalance(mint: string) {
       setError(null);
       try {
         const mintPk = new PublicKey(mint);
+        console.info('useSplTokenBalance: fetching mint', mint, 'owner', publicKey?.toBase58());
         const resp = await connection.getParsedTokenAccountsByOwner(publicKey, { mint: mintPk });
+        console.info('useSplTokenBalance: accounts found', resp.value.length);
         const tokenAcc = resp.value.find((a) => a.account.data.parsed.info.tokenAmount);
         const tokenAmount = tokenAcc?.account.data.parsed.info.tokenAmount;
+        console.info('useSplTokenBalance: amount', tokenAmount?.uiAmount);
         if (!cancelled) setAmount(tokenAmount ? Number(tokenAmount.uiAmount) : 0);
       } catch (e: any) {
         if (!cancelled) setError(String(e.message || e));
