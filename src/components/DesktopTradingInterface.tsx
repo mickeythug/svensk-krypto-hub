@@ -152,7 +152,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
         {/* Chart Container - Perfect spacing */}
         <div className="flex-1 mx-3 mb-2 rounded-lg overflow-hidden shadow-lg">
-          <ModernTradingViewChart symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
+          <TradingViewChart symbol={symbol} currentPrice={currentPrice} limitLines={limitLines} />
         </div>
 
         {/* Bottom Panels - Clean separation */}
