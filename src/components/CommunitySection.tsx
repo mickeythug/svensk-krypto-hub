@@ -82,38 +82,38 @@ const CommunitySection = () => {
   ];
 
   return (
-    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
-      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
-        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+    <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             VÅR COMMUNITY
           </h2>
-          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
+          <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Vår Telegram-community är öppen för alla! Ställ frågor, lär dig, trade tillsammans i voice chat och hitta möjligheter. 
             Vi hjälps åt att scanna meme tokens och bygga vänskaper - allt helt gratis.
           </p>
         </div>
 
         {/* Community Features */}
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 mb-8' : 'md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16'}`}>
+        <div className={`grid grid-cols-2 ${isMobile ? 'gap-3 mb-6' : 'md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16'}`}>
           {communityFeatures.map((feature) => {
             const IconComponent = feature.icon;
             
             return (
               <Card 
                 key={feature.title}
-                className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 group`}
+                className={`${isMobile ? 'p-3' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105 group`}
               >
-                <div className="inline-flex p-4 rounded-full bg-primary/10 mb-4 group-hover:bg-primary/20 transition-colors">
-                  <IconComponent className="h-8 w-8 text-primary" />
+                <div className={`inline-flex ${isMobile ? 'p-2' : 'p-4'} rounded-full bg-primary/10 ${isMobile ? 'mb-2' : 'mb-4'} group-hover:bg-primary/20 transition-colors`}>
+                  <IconComponent className={`${isMobile ? 'h-5 w-5' : 'h-8 w-8'} text-primary`} />
                 </div>
                 
-                <h3 className="font-display font-bold text-lg mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm mb-3 leading-relaxed">
+                <h3 className={`font-display font-bold ${isMobile ? 'text-sm mb-1' : 'text-lg mb-2'}`}>{feature.title}</h3>
+                <p className={`text-muted-foreground ${isMobile ? 'text-xs mb-2' : 'text-sm mb-3'} leading-relaxed`}>
                   {feature.description}
                 </p>
                 
-                <Badge className="bg-primary text-primary-foreground">
+                <Badge className={`bg-primary text-primary-foreground ${isMobile ? 'text-xs px-2 py-1' : ''}`}>
                   {feature.count}
                 </Badge>
               </Card>

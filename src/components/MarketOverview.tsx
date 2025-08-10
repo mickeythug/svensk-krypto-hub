@@ -169,30 +169,30 @@ const MarketOverview = () => {
   };
 
   return (
-    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
-      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
-        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+    <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             MARKNADSÖVERSIKT
           </h2>
-          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
+          <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Få en komplett bild av kryptomarknaden med realtidsdata, 
             analyser och insikter från de största digitala tillgångarna.
           </p>
         </div>
 
         {/* Market Stats */}
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 mb-8' : 'md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12'}`}>
+        <div className={`grid grid-cols-2 ${isMobile ? 'gap-3 mb-6' : 'md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12'}`}>
           {marketStats.map((stat) => {
             const IconComponent = stat.icon;
             
             return (
               <Card 
                 key={stat.title}
-                className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}
+                className={`${isMobile ? 'p-3' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <IconComponent className="h-6 w-6 text-primary" />
+                <div className={`flex items-center justify-between ${isMobile ? 'mb-2' : 'mb-4'}`}>
+                  <IconComponent className={`${isMobile ? 'h-4 w-4' : 'h-6 w-6'} text-primary`} />
                   {stat.change != null ? (
                     <div className={`flex items-center space-x-1 ${
                       stat.positive ? 'text-success' : 'text-destructive'
@@ -209,69 +209,75 @@ const MarketOverview = () => {
                   )}
                 </div>
                 
-                <div className="mb-2">
-                  <span className="font-crypto text-2xl font-bold">{stat.value}</span>
-                  <span className="text-muted-foreground ml-1">{stat.unit}</span>
+                <div className={`${isMobile ? 'mb-1' : 'mb-2'}`}>
+                  <span className={`font-crypto ${isMobile ? 'text-lg' : 'text-2xl'} font-bold`}>{stat.value}</span>
+                  <span className={`text-muted-foreground ${isMobile ? 'text-xs ml-1' : 'ml-1'}`}>{stat.unit}</span>
                 </div>
                 
-                <p className="text-muted-foreground text-sm">{stat.title}</p>
+                <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>{stat.title}</p>
               </Card>
             );
           })}
         </div>
 
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6' : 'lg:grid-cols-2 gap-8'}`}>
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'lg:grid-cols-2 gap-8'}`}>
           {/* Top Cryptocurrencies */}
-          <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
-            <h3 className="font-crypto text-xl font-bold mb-6 text-primary">
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
+            <h3 className={`font-crypto ${isMobile ? 'text-lg' : 'text-xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-primary`}>
               TOP 8 KRYPTOVALUTOR
             </h3>
             
-            <div className="space-y-4">
+            <div className={`${isMobile ? 'space-y-2' : 'space-y-4'}`}>
               {topCoins.map((coin) => (
                 <div 
                   key={`${coin.symbol}-${coin.rank}`}
-                  className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors duration-200"
+                  className={`flex items-center justify-between ${isMobile ? 'p-2' : 'p-3'} rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors duration-200`}
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 rounded-xl border border-border bg-muted ring-1 ring-border/50 shadow-sm flex items-center justify-center overflow-hidden">
+                  <div className="flex items-center space-x-3">
+                    <div className={`${isMobile ? 'h-8 w-8' : 'h-12 w-12'} rounded-xl border border-border bg-muted ring-1 ring-border/50 shadow-sm flex items-center justify-center overflow-hidden`}>
                       <OptimizedImage
                         src={COIN_LOGOS[coin.symbol] || '/placeholder.svg'}
                         alt={`${coin.name} logotyp`}
-                        className="h-10 w-10 object-contain"
+                        className={`${isMobile ? 'h-6 w-6' : 'h-10 w-10'} object-contain`}
                         fallbackSrc="/placeholder.svg"
                         loading="lazy"
                       />
                     </div>
-                    <Badge variant="outline" className="font-crypto text-xs">
-                      #{coin.rank}
-                    </Badge>
+                    {!isMobile && (
+                      <Badge variant="outline" className="font-crypto text-xs">
+                        #{coin.rank}
+                      </Badge>
+                    )}
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="font-crypto font-bold text-primary">
+                        <span className={`font-crypto font-bold text-primary ${isMobile ? 'text-sm' : ''}`}>
                           {coin.symbol}
                         </span>
-                        <span className="text-muted-foreground text-sm">
-                          {coin.name}
-                        </span>
+                        {!isMobile && (
+                          <span className="text-muted-foreground text-sm">
+                            {coin.name}
+                          </span>
+                        )}
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        Cap: {coin.cap} USD
-                      </span>
+                      {!isMobile && (
+                        <span className="text-xs text-muted-foreground">
+                          Cap: {coin.cap} USD
+                        </span>
+                      )}
                     </div>
                   </div>
                   
                   <div className="text-right">
-                    <div className="font-display font-semibold">
+                    <div className={`font-display font-semibold ${isMobile ? 'text-sm' : ''}`}>
                       {formatPrice(coin.price)} USD
                     </div>
-                    <div className={`flex items-center justify-end space-x-1 text-sm ${
+                    <div className={`flex items-center justify-end space-x-1 ${isMobile ? 'text-xs' : 'text-sm'} ${
                       coin.change >= 0 ? 'text-success' : 'text-destructive'
                     }`}>
                       {coin.change >= 0 ? (
-                        <TrendingUp size={12} />
+                        <TrendingUp size={isMobile ? 10 : 12} />
                       ) : (
-                        <TrendingDown size={12} />
+                        <TrendingDown size={isMobile ? 10 : 12} />
                       )}
                       <span>{coin.change >= 0 ? '+' : ''}{coin.change.toFixed(2)}%</span>
                     </div>
@@ -282,16 +288,16 @@ const MarketOverview = () => {
           </Card>
 
           {/* Market Analysis */}
-          <Card className="p-6 bg-card/80 backdrop-blur-sm border-border">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-crypto text-xl font-bold text-primary">MARKNADSANALYS</h3>
-              <Button variant="outline" size="sm" onClick={() => setOpenDetails(true)}>Detaljerad info</Button>
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
+            <div className={`flex items-center justify-between ${isMobile ? 'mb-4' : 'mb-6'}`}>
+              <h3 className={`font-crypto ${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary`}>MARKNADSANALYS</h3>
+              {!isMobile && <Button variant="outline" size="sm" onClick={() => setOpenDetails(true)}>Detaljerad info</Button>}
             </div>
             <div 
-              className="rounded-lg overflow-hidden mb-4 h-48 bg-cover bg-center"
+              className={`rounded-lg overflow-hidden ${isMobile ? 'mb-3 h-32' : 'mb-4 h-48'} bg-cover bg-center`}
               style={{ backgroundImage: `url(${cryptoCharts})` }}
             >
-              <div className="w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end p-4">
+              <div className={`w-full h-full bg-gradient-to-t from-card/90 to-transparent flex items-end ${isMobile ? 'p-2' : 'p-4'}`}>
                 <div className="text-foreground w-full">
                   {aiLoading ? (
                     <div className="space-y-3">

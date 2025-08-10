@@ -151,27 +151,27 @@ const NewsSection = () => {
   };
 
   return (
-    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
-      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
-        <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+    <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
+        <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
+          <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
             KRYPTO NYHETER
           </h2>
-          <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
+          <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Håll dig uppdaterad med de senaste nyheterna från kryptovärlden. 
             Vi kurerar och översätter de viktigaste händelserna för svenska läsare.
           </p>
         </div>
 
-        <div className={`grid grid-cols-1 ${isMobile ? 'gap-6' : 'lg:grid-cols-3 gap-8'}`}>
+        <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'lg:grid-cols-3 gap-8'}`}>
           {/* Featured News */}
-          <div className="lg:col-span-2">
-            <div className="grid gap-6">
+          <div className={`${isMobile ? '' : 'lg:col-span-2'}`}>
+            <div className={`grid ${isMobile ? 'gap-4' : 'gap-6'}`}>
               {featured.map((article) => (
                 <Card key={article.id} className="overflow-hidden border-border bg-card/80 backdrop-blur-sm hover:shadow-glow-secondary transition-all duration-300 group">
-                  <div className="grid grid-cols-1 md:grid-cols-2">
+                  <div className={`grid grid-cols-1 ${isMobile ? '' : 'md:grid-cols-2'}`}>
                     <div 
-                      className="h-48 md:h-auto bg-cover bg-center relative"
+                      className={`${isMobile ? 'h-32' : 'h-48 md:h-auto'} bg-cover bg-center relative`}
                       style={{ backgroundImage: `url(${article.imageUrl || '/placeholder.svg'})` }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80" />
@@ -182,7 +182,7 @@ const NewsSection = () => {
                       )}
                     </div>
                     
-                    <div className="p-6 flex flex-col justify-between">
+                    <div className={`${isMobile ? 'p-4' : 'p-6'} flex flex-col justify-between`}>
                       <div>
                         <div className="flex items-center space-x-2 mb-3">
                           <Badge variant="outline" className={getCategoryColor(article.category)}>
@@ -196,11 +196,11 @@ const NewsSection = () => {
                           </div>
                         </div>
                         
-                        <h3 className="font-display font-bold text-lg mb-3 group-hover:text-primary transition-colors truncate" title={article.title}>
+                        <h3 className={`font-display font-bold ${isMobile ? 'text-base mb-2' : 'text-lg mb-3'} group-hover:text-primary transition-colors line-clamp-2`} title={article.title}>
                           {article.title}
                         </h3>
-                        <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                          {getSnippet(article.excerpt, 140)}
+                        <p className={`text-muted-foreground ${isMobile ? 'text-xs mb-3' : 'text-sm leading-relaxed mb-4'} line-clamp-2`}>
+                          {getSnippet(article.excerpt, isMobile ? 80 : 140)}
                         </p>
                       </div>
                       
