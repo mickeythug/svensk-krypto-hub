@@ -193,11 +193,19 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         {/* Bottom Panels - Clean separation */}
         <div className="h-48 mx-3 mb-3">
           <Tabs defaultValue="positions" className="h-full">
-            <TabsList className="mb-2 bg-card/60">
-              <TabsTrigger value="positions" className="text-xs">Positions</TabsTrigger>
-              <TabsTrigger value="orders" className="text-xs">Open Orders</TabsTrigger>
-              <TabsTrigger value="history" className="text-xs">Order History</TabsTrigger>
-              <TabsTrigger value="balances" className="text-xs">Balances</TabsTrigger>
+            <TabsList className="mb-2 bg-gradient-to-r from-card/80 to-muted/40 border border-border/40 rounded-lg p-1 shadow-sm">
+              <TabsTrigger value="positions" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+                Positions
+              </TabsTrigger>
+              <TabsTrigger value="orders" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+                Open Orders
+              </TabsTrigger>
+              <TabsTrigger value="history" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+                Order History
+              </TabsTrigger>
+              <TabsTrigger value="balances" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+                Balances
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="positions" className="h-full">
