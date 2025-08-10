@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 import { SOL_MINT } from '@/lib/tokenMaps';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { VersionedTransaction } from '@solana/web3.js';
 
 export type DbLimitOrder = {
   id: string;
@@ -41,6 +43,8 @@ export function useOpenOrders(params: {
   const [dbOrders, setDbOrders] = useState<DbLimitOrder[]>([]);
   const [jupOrders, setJupOrders] = useState<JupOrder[]>([]);
   const [loading, setLoading] = useState({ db: false, jup: false });
+  const { publicKey, signTransaction, sendTransaction } = useWallet() as any;
+  const { connection } = useConnection();
 
   const addresses = useMemo(() => [params.solAddress, params.evmAddress].filter(Boolean) as string[], [params.solAddress, params.evmAddress]);
 
@@ -81,12 +85,12 @@ export function useOpenOrders(params: {
                 else if (inMint === params.solMint && outMint === SOL_MINT) side = 'sell';
               }
               return {
-                order: o.order || o.id || o.orderId || '',
+                order: o.order || o.id || o.orderId || o.orderKey || '',
                 status,
                 inputMint: inMint,
                 outputMint: outMint,
-                makingAmount: o.makingAmount || o.inAmount || undefined,
-                takingAmount: o.takingAmount || o.outAmount || undefined,
+                makingAmount: o.makingAmount || o.inAmount || o.rawMakingAmount || undefined,
+                takingAmount: o.takingAmount || o.outAmount || o.rawTakingAmount || undefined,
                 createdAt: o.createdAt || o.time || undefined,
                 side,
               } as JupOrder;
