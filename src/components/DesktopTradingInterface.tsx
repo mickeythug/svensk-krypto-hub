@@ -16,7 +16,7 @@ import {
   Wifi,
   WifiOff
 } from "lucide-react";
-import ModernTradingViewChart from "./ModernTradingViewChart";
+import TradingViewChart from "./TradingViewChart";
 import OrderBook from "./OrderBook";
 import TokenSearchBar from "./TokenSearchBar";
 import { useOrderbook } from "@/hooks/useOrderbook";
@@ -29,6 +29,7 @@ import { useSolBalance } from '@/hooks/useSolBalance';
 import { useTradeHistory } from '@/hooks/useTradeHistory';
 import SmartTradePanel from '@/components/trade/SmartTradePanel';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -44,6 +45,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const [price, setPrice] = useState(currentPrice.toString());
   const [size, setSize] = useState("");
   const [leverage, setLeverage] = useState("1");
+  const [limitLines, setLimitLines] = useState<{ price: number; side: 'buy'|'sell' }[]>([]);
 
   // Wallet + balances
   const { address: evmAddress, isConnected: isWalletConnected } = useAccount();
@@ -63,6 +65,24 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     console.log('DesktopTradingInterface loaded for symbol:', symbol);
     console.log('OrderBook state:', { orderBook, isConnected, error });
   }, [symbol, orderBook, isConnected, error]);
+
+  // Load open limit orders for this symbol to render lines
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('limit_orders')
+          .select('limit_price, side, status')
+          .eq('status', 'open')
+          .eq('symbol', symbol.toUpperCase());
+        if (!error && Array.isArray(data)) {
+          setLimitLines(data.map((r: any) => ({ price: Number(r.limit_price), side: (r.side as 'buy'|'sell') })));
+        }
+      } catch (e) {
+        console.warn('Failed to load limit orders', e);
+      }
+    })();
+  }, [symbol]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -128,7 +148,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
         {/* Chart Container - Perfect spacing */}
         <div className="flex-1 mx-3 mb-2 rounded-lg overflow-hidden shadow-lg">
-          <ModernTradingViewChart symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
+          <TradingViewChart symbol={symbol} currentPrice={currentPrice} limitLines={limitLines} />
         </div>
 
         {/* Bottom Panels - Clean separation */}

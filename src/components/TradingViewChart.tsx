@@ -9,10 +9,11 @@ import { formatUsd } from "@/lib/utils";
 interface TradingViewChartProps {
   symbol: string;
   currentPrice: number;
+  limitLines?: { price: number; side: 'buy' | 'sell' }[];
 }
 
 
-const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
+const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -36,7 +37,7 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
         widgetRef.current.remove();
       }
     };
-  }, [symbol]);
+  }, [symbol, JSON.stringify(limitLines)]);
 
   const initChart = () => {
     if (!containerRef.current) {
@@ -116,7 +117,37 @@ const TradingViewChart = ({ symbol, currentPrice }: TradingViewChartProps) => {
       });
       
       console.log('TradingView widget created successfully');
-      
+
+      // Add limit lines when chart is ready (best-effort)
+      try {
+        widgetRef.current.onChartReady?.(() => {
+          try {
+            const chart = widgetRef.current?.chart?.();
+            if (!chart || !Array.isArray(limitLines)) return;
+            limitLines.forEach((l) => {
+              try {
+                chart.createShape({ price: l.price }, {
+                  shape: 'horizontal_line',
+                  text: `${l.side.toUpperCase()} ${l.price}`,
+                  disableSelection: true,
+                  lock: true,
+                  overrides: {
+                    linecolor: l.side === 'buy' ? '#16a34a' : '#ef4444',
+                    linewidth: 2,
+                  },
+                });
+              } catch (e) {
+                console.warn('createShape not supported', e);
+              }
+            });
+          } catch (e) {
+            console.warn('onChartReady error', e);
+          }
+        });
+      } catch (e) {
+        console.warn('Chart ready hook missing', e);
+      }
+
       // Remove fallback content after widget creation
       const fallbackElements = containerRef.current?.querySelectorAll('.fallback-content');
       fallbackElements?.forEach(el => el.remove());

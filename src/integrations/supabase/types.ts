@@ -86,6 +86,63 @@ export type Database = {
         }
         Relationships: []
       }
+      limit_orders: {
+        Row: {
+          amount: number
+          chain: string
+          created_at: string
+          evm_from_token: string | null
+          evm_to_token: string | null
+          executed_at: string | null
+          id: string
+          limit_price: number
+          side: string
+          sol_mint: string | null
+          status: string
+          symbol: string
+          triggered_at: string | null
+          tx_hash: string | null
+          updated_at: string
+          user_address: string
+        }
+        Insert: {
+          amount: number
+          chain: string
+          created_at?: string
+          evm_from_token?: string | null
+          evm_to_token?: string | null
+          executed_at?: string | null
+          id?: string
+          limit_price: number
+          side: string
+          sol_mint?: string | null
+          status?: string
+          symbol: string
+          triggered_at?: string | null
+          tx_hash?: string | null
+          updated_at?: string
+          user_address: string
+        }
+        Update: {
+          amount?: number
+          chain?: string
+          created_at?: string
+          evm_from_token?: string | null
+          evm_to_token?: string | null
+          executed_at?: string | null
+          id?: string
+          limit_price?: number
+          side?: string
+          sol_mint?: string | null
+          status?: string
+          symbol?: string
+          triggered_at?: string | null
+          tx_hash?: string | null
+          updated_at?: string
+          user_address?: string
+        }
+        Relationships: []
+      }
       market_snapshots: {
         Row: {
           created_at: string

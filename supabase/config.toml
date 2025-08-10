@@ -42,6 +42,15 @@ verify_jwt = false
 [functions.siwe-verify]
 verify_jwt = false
 
+[functions.limit-order-create]
+verify_jwt = false
+
+[functions.limit-order-cancel]
+verify_jwt = false
+
+[functions.limit-order-executor]
+verify_jwt = false
+
 # Cron jobs to keep DB cache fresh
 [[cron.jobs]]
 name = "market-prefetch-hourly"
@@ -52,3 +61,8 @@ endpoint = "/functions/v1/market-prefetch?refresh=true&pages=2"
 name = "token-prices-refresh-3min"
 schedule = "*/3 * * * *"
 endpoint = "/functions/v1/token-prices-refresh?refresh=true&pages=2"
+
+[[cron.jobs]]
+name = "limit-order-executor-1min"
+schedule = "*/1 * * * *"
+endpoint = "/functions/v1/limit-order-executor"
