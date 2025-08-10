@@ -54,21 +54,26 @@ export default function PositionsPanel() {
       </div>
       <div className="flex-1 min-h-0">
         <Table>
-          <TableHeader>
-            <TableRow className="border-border/20">
-              <TableHead className="text-xs">Token</TableHead>
-              <TableHead className="text-xs">QTY</TableHead>
-              <TableHead className="text-xs">Entry Price</TableHead>
-              <TableHead className="text-xs">Market Price</TableHead>
-              <TableHead className="text-xs">Value</TableHead>
-              <TableHead className="text-xs">PnL</TableHead>
+          <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
+            <TableRow className="border-border/30 hover:bg-muted/30">
+              <TableHead className="font-medium text-foreground text-xs py-2">Token</TableHead>
+              <TableHead className="font-medium text-foreground text-xs py-2">QTY</TableHead>
+              <TableHead className="font-medium text-foreground text-xs py-2">Entry Price</TableHead>
+              <TableHead className="font-medium text-foreground text-xs py-2">Market Price</TableHead>
+              <TableHead className="font-medium text-foreground text-xs py-2">Value</TableHead>
+              <TableHead className="font-medium text-foreground text-xs py-2">PnL</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {positions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-xs text-muted-foreground py-6">
-                  Inga positioner
+                <TableCell colSpan={6} className="text-center py-8">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-muted-foreground/30 rounded border-dashed" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground">Inga positioner</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : positions.map((p) => {
@@ -78,14 +83,26 @@ export default function PositionsPanel() {
               const pct = p.avgEntry > 0 ? ((market - p.avgEntry) / p.avgEntry) * 100 : 0;
               const value = p.amount * market;
               return (
-                <TableRow key={p.symbol} className="border-border/10 hover:bg-muted/20 cursor-pointer" onClick={() => navigate(`/crypto/${p.symbol.toLowerCase()}`)}>
-                  <TableCell className="text-xs font-medium">{p.symbol}</TableCell>
-                  <TableCell className="text-xs">{p.amount.toLocaleString(undefined, { maximumFractionDigits: 6 })} {p.symbol}</TableCell>
-                  <TableCell className="text-xs">{p.avgEntry ? formatUsd(p.avgEntry) : '-'}</TableCell>
-                  <TableCell className="text-xs">{market ? formatUsd(market) : '-'}</TableCell>
-                  <TableCell className="text-xs">{formatUsd(value)}</TableCell>
-                  <TableCell className={`text-xs font-semibold ${totalPnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}> 
-                    {formatUsd(totalPnl)} ({pct >= 0 ? '+' : ''}{pct.toFixed(2)}%)
+                <TableRow key={p.symbol} className="border-border/20 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => navigate(`/crypto/${p.symbol.toLowerCase()}`)}>
+                  <TableCell className="py-2">
+                    <div className="text-sm font-medium text-foreground">{p.symbol}</div>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <div className="text-sm font-medium text-foreground">{p.amount.toLocaleString(undefined, { maximumFractionDigits: 6 })} {p.symbol}</div>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <div className="text-sm font-medium text-foreground">{p.avgEntry ? formatUsd(p.avgEntry) : '-'}</div>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <div className="text-sm font-medium text-foreground">{market ? formatUsd(market) : '-'}</div>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <div className="text-sm font-medium text-foreground">{formatUsd(value)}</div>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <div className={`text-sm font-semibold ${totalPnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}> 
+                      {formatUsd(totalPnl)} ({pct >= 0 ? '+' : ''}{pct.toFixed(2)}%)
+                    </div>
                   </TableCell>
                 </TableRow>
               );
