@@ -15,6 +15,8 @@ import SimpleMobileChart from "./SimpleMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
 import SmartTradePanel from "@/components/trade/SmartTradePanel";
 import TokenSearchBar from "../TokenSearchBar";
+import { useWallet } from '@solana/wallet-adapter-react';
+import { SOL_TOKENS } from '@/lib/tokenMaps';
 import { formatUsd } from "@/lib/utils";
 
 interface MobileTradingViewProps {
@@ -35,6 +37,9 @@ const MobileTradingView = ({
   const [activeTab, setActiveTab] = useState("chart");
   
   const isPositive = priceChange24h >= 0;
+  const { connected: solConnected } = useWallet();
+  const symbolUpper = symbol.toUpperCase();
+  const isSolToken = Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL';
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -99,6 +104,12 @@ const MobileTradingView = ({
             ≈ {formatUsd(currentPrice)} USDT
           </div>
       </div>
+
+      {solConnected && !isSolToken && (
+        <Card className="mx-4 my-3 border-amber-500/30 bg-amber-500/5 p-3">
+          <p className="text-xs">Denna token stöds inte av Solana‑kedjan. Du är ansluten med Solana‑wallet. Växla till EVM för att handla denna token.</p>
+        </Card>
+      )}
 
       {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">

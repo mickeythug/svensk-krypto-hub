@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,6 +46,13 @@ const evmChainId = 1;
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
   const { sendTransactionAsync } = useSendTransaction();
+
+  // Auto-switch to Solana mode when a Solana wallet is connected
+  useEffect(() => {
+    if (isSolConnected && chainMode !== 'SOL') {
+      setChainMode('SOL');
+    }
+  }, [isSolConnected, chainMode]);
 
   const available = useMemo(() => {
     if (chainMode === 'SOL') {
@@ -242,7 +249,7 @@ const evmChainId = 1;
           >
             Solana
           </Button>
-          <Button variant={chainMode==='EVM'?'default':'outline'} size="sm" onClick={()=>setChainMode('EVM')} className="flex-1">EVM</Button>
+          <Button variant={chainMode==='EVM'?'default':'outline'} size="sm" onClick={()=>setChainMode('EVM')} className="flex-1" disabled={isSolConnected && isSolToken}>EVM</Button>
         </div>
         {chainMode==='SOL' && !isSolToken && (
           <div className="text-[11px] text-destructive mt-1">

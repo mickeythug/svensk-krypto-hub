@@ -33,6 +33,8 @@ import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCryptoData } from "@/hooks/useCryptoData";
+import { useWallet } from '@solana/wallet-adapter-react';
+import { SOL_TOKENS } from '@/lib/tokenMaps';
 
 const CryptoDetailPage = () => {
   const { symbol } = useParams<{ symbol: string }>();
@@ -40,6 +42,9 @@ const CryptoDetailPage = () => {
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
   const crypto = cryptoPrices?.find(c => c.symbol.toLowerCase() === symbol?.toLowerCase());
+  const { connected: solConnected } = useWallet();
+  const symUpper = (crypto?.symbol || symbol || '').toUpperCase();
+  const isSolToken = Boolean(SOL_TOKENS[symUpper]) && symUpper !== 'SOL';
 
   // Add SEO meta tags dynamically
   useEffect(() => {
@@ -184,6 +189,15 @@ const CryptoDetailPage = () => {
           Tillbaka till Marknad
         </Button>
       </div>
+      {solConnected && !isSolToken && (
+        <div className="container mx-auto px-4 mt-3">
+          <Card className="border-amber-500/30 bg-amber-500/5 p-4">
+            <div className="text-sm">
+              Denna token stöds inte av Solana‑kedjan. Du är ansluten med Solana‑wallet. Växla till EVM för att handla denna token.
+            </div>
+          </Card>
+        </div>
+      )}
       <DesktopTradingInterface
         symbol={crypto.symbol.toUpperCase()}
         currentPrice={crypto.price}
