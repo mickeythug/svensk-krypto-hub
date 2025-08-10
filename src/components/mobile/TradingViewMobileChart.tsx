@@ -163,37 +163,48 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   }, []);
 
   return (
-    <Card className={`h-[60vh] bg-card border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container z-20`}>
-      {/* Controls */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border/20 bg-background/80 backdrop-blur-sm">
-        <div className="flex gap-1">
+    <Card className={`h-[65vh] bg-card/95 border-border/30 relative overflow-hidden flex flex-col chart-fullscreen-container shadow-xl backdrop-blur-sm rounded-2xl`}>
+      {/* PRODUCTION CONTROLS - SOLID AND NEVER OVERLAPPING */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-background/90 backdrop-blur-sm">
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
           {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
             <Badge
               key={tf}
               variant={timeframe === tf ? "default" : "outline"}
-              className={`cursor-pointer text-xs ${timeframe === tf ? "bg-primary text-primary-foreground" : "hover:bg-primary/20"}`}
+              className={`cursor-pointer text-xs font-bold px-3 py-1.5 transition-all duration-200 flex-shrink-0 ${
+                timeframe === tf ? "bg-primary text-primary-foreground shadow-md" : "hover:bg-primary/20 border-border/50"
+              }`}
               onClick={() => handleTimeframeChange(tf)}
             >
               {tf}
             </Badge>
           ))}
         </div>
-        <div className="flex gap-1">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={toggleFullscreen}>
+        <div className="flex gap-1.5 ml-3">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/20 transition-all duration-200" onClick={toggleFullscreen}>
             <Maximize2 className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/20 transition-all duration-200">
             <Settings className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-primary/20 transition-all duration-200">
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      {/* Chart container */}
-      <div className="flex-1 relative min-h-0">
-        <div ref={containerRef} id={containerIdRef.current} className="w-full h-full absolute inset-0 bg-transparent" />
+      {/* PRODUCTION CHART CONTAINER - PERFECT Z-INDEX AND SPACING */}
+      <div className="flex-1 relative min-h-0 bg-[#0f0f23] rounded-b-2xl overflow-hidden">
+        <div 
+          ref={containerRef} 
+          id={containerIdRef.current} 
+          className="w-full h-full absolute inset-0"
+          style={{
+            background: '#0f0f23',
+            minHeight: '100%',
+            zIndex: 1
+          }}
+        />
       </div>
     </Card>
   );
