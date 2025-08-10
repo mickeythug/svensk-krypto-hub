@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { Search, TrendingUp, TrendingDown } from "lucide-react";
+import { Search, TrendingUp, TrendingDown, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 interface TokenSearchBarProps {
@@ -135,7 +136,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
 
     return createPortal(
       <div 
-        className="fixed bg-background border border-border rounded-lg shadow-2xl max-h-80 overflow-y-auto"
+        className="fixed bg-gradient-to-b from-card to-card/95 backdrop-blur-xl border border-primary/20 rounded-2xl shadow-[0_20px_40px_-12px_rgba(0,0,0,0.25),0_0_60px_-15px_hsl(var(--primary)/0.3)] ring-1 ring-primary/10"
         style={{ 
           top: dropdownPosition.top,
           left: dropdownPosition.left,
@@ -143,56 +144,94 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           zIndex: 999999
         }}
       >
-        {filteredTokens.map((token) => {
-          const isPositive = token.change24h >= 0;
-          return (
-            <div
-              key={token.symbol}
-              data-dropdown-item
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleTokenSelect(token.symbol);
-              }}
-              className="flex items-center justify-between p-3 hover:bg-secondary/60 cursor-pointer border-b border-border/30 last:border-b-0 bg-background transition-colors"
-            >
-              <div className="flex items-center space-x-3">
-                {token.image && (
-                  <img 
-                    src={token.image} 
-                    alt={token.name}
-                    className="w-6 h-6 rounded-full"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                )}
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-semibold text-sm">{token.symbol.toUpperCase()}</span>
-                    <span className="text-xs text-muted-foreground">/USDT</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">{token.name}</span>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <span className="font-medium text-sm">{formatPrice(token.price)}</span>
-                <div className={cn(
-                  "flex items-center space-x-1 text-xs",
-                  isPositive ? "text-success" : "text-destructive"
-                )}>
-                  {isPositive ? (
-                    <TrendingUp className="h-3 w-3" />
-                  ) : (
-                    <TrendingDown className="h-3 w-3" />
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
+          <Zap className="h-4 w-4 text-primary animate-pulse" />
+          <span className="text-sm font-display font-semibold text-primary">Sökresultat</span>
+          <div className="ml-auto text-xs text-muted-foreground bg-primary/10 px-2 py-1 rounded-full">
+            {filteredTokens.length} resultat
+          </div>
+        </div>
+        
+        <ScrollArea className="max-h-[320px] custom-scrollbar">
+          <div className="p-1">
+            {filteredTokens.map((token, index) => {
+              const isPositive = token.change24h >= 0;
+              return (
+                <div
+                  key={token.symbol}
+                  data-dropdown-item
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleTokenSelect(token.symbol);
+                  }}
+                  className={cn(
+                    "group flex items-center justify-between p-4 mx-1 my-1 cursor-pointer rounded-xl transition-all duration-200 hover:scale-[1.02] hover:shadow-lg border",
+                    "bg-gradient-to-r from-background/80 to-background/60 hover:from-primary/5 hover:to-primary/10",
+                    "border-transparent hover:border-primary/20 hover:bg-primary/5",
+                    "backdrop-blur-sm"
                   )}
-                  <span>{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</span>
+                >
+                  <div className="flex items-center gap-4">
+                    {token.image ? (
+                      <div className="relative">
+                        <img 
+                          src={token.image} 
+                          alt={token.name}
+                          className="w-10 h-10 rounded-xl shadow-md group-hover:shadow-lg transition-shadow duration-200 ring-1 ring-border/50"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+                          <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center">
+                        <span className="text-sm font-display font-bold text-primary">
+                          {token.symbol.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-3">
+                        <span className="font-display font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+                          {token.symbol.toUpperCase()}
+                        </span>
+                        <span className="text-sm text-muted-foreground bg-muted/50 px-2 py-0.5 rounded-full">
+                          /USDT
+                        </span>
+                      </div>
+                      <span className="text-sm text-muted-foreground font-medium">
+                        {token.name}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end gap-2">
+                    <span className="font-display font-bold text-lg text-foreground">
+                      {formatPrice(token.price)}
+                    </span>
+                    <div className={cn(
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors",
+                      isPositive 
+                        ? "text-success bg-success/10 border border-success/20" 
+                        : "text-destructive bg-destructive/10 border border-destructive/20"
+                    )}>
+                      {isPositive ? (
+                        <TrendingUp className="h-4 w-4" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4" />
+                      )}
+                      <span>{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        </ScrollArea>
       </div>,
       document.body
     );
@@ -200,8 +239,13 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
 
   return (
     <div ref={searchRef} className={cn("relative", className)}>
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
+      <div className="relative group">
+        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 transition-colors duration-200">
+          <Search className={cn(
+            "h-5 w-5 transition-colors duration-200",
+            isOpen || query ? "text-primary" : "text-muted-foreground group-hover:text-primary/70"
+          )} />
+        </div>
         <Input
           ref={inputRef}
           type="text"
@@ -210,8 +254,20 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleInputFocus}
-          className="pl-10 bg-background/95 backdrop-blur-sm border-border/50 hover:bg-background/100 focus:bg-background transition-colors relative z-10"
+          className={cn(
+            "pl-12 pr-4 py-3 text-base font-medium rounded-2xl transition-all duration-300",
+            "bg-gradient-to-r from-background/90 to-background/70 backdrop-blur-xl",
+            "border-2 border-border/30 hover:border-primary/30 focus:border-primary/50",
+            "shadow-lg hover:shadow-xl focus:shadow-2xl",
+            "ring-0 focus:ring-4 focus:ring-primary/10",
+            "placeholder:text-muted-foreground placeholder:font-medium",
+            isOpen && "border-primary/50 shadow-2xl ring-4 ring-primary/10"
+          )}
         />
+        <div className={cn(
+          "absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 to-transparent opacity-0 transition-opacity duration-300",
+          (isOpen || query) && "opacity-100"
+        )} />
       </div>
       <DropdownPortal />
     </div>
