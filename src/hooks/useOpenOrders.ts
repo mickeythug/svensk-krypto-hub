@@ -89,7 +89,7 @@ export function useOpenOrders(params: {
 
   useEffect(() => {
     loadDb();
-    // Realtime updates for DB orders on this symbol
+    // Realtime updates for DB orders on this symbol (+ safe polling fallback)
     const channel = supabase
       .channel(`orders-${symbolUpper}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'limit_orders', filter: `symbol=eq.${symbolUpper}` }, () => {
@@ -97,7 +97,13 @@ export function useOpenOrders(params: {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    // Fallback polling to ensure immediate UI updates even if realtime drops
+    const pollId = setInterval(loadDb, 5000);
+
+    return () => {
+      clearInterval(pollId);
+      supabase.removeChannel(channel);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbolUpper, addresses.join('|')]);
 
@@ -110,14 +116,23 @@ export function useOpenOrders(params: {
 
   // Cancel helpers
   const cancelDbOrder = async (id: string, user_address: string) => {
+    // Optimistic UI update
+    setDbOrders((list) => list.map((o) => (o.id === id ? { ...o, status: 'canceled', updated_at: new Date().toISOString() } : o)));
     const { data, error } = await supabase.functions.invoke('limit-order-cancel', { body: { id, user_address } });
-    if (!error && (data as any)?.ok) await loadDb();
+    if (error || !(data as any)?.ok) {
+      // Re-sync from server on failure
+      await loadDb();
+    }
     return { data, error };
   };
 
   const cancelJupOrder = async (order: string, maker: string) => {
+    // Optimistic UI update
+    setJupOrders((list) => list.map((o) => (o.order === order ? { ...o, status: 'canceled' } : o)));
     const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order } });
-    if (!error && (data as any)?.ok) await loadJup();
+    if (error || !(data as any)?.ok) {
+      await loadJup();
+    }
     return { data, error };
   };
 
