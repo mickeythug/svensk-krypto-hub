@@ -28,6 +28,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useTradeHistory } from '@/hooks/useTradeHistory';
 import SmartTradePanel from '@/components/trade/SmartTradePanel';
+import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -51,6 +52,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { history } = useTradeHistory([solAddress || '', evmAddress || '']);
+  const { fullyAuthed } = useWalletAuthStatus();
 
   // Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);
@@ -194,7 +196,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         </div>
 
         {/* Trading Panel - Replaced with SmartTradePanel */}
-        {(isWalletConnected || isSolConnected) ? (
+        {fullyAuthed ? (
           <div className="h-80 m-3 mt-2">
             <SmartTradePanel symbol={symbol} currentPrice={currentPrice} />
           </div>

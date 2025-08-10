@@ -18,6 +18,7 @@ import { useCryptoData } from '@/hooks/useCryptoData';
 import { useErc20Balance } from '@/hooks/useErc20Balance';
 import { recordTrade } from '@/lib/tradeHistory';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
+import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet };
 
@@ -59,6 +60,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const isSolToken = useMemo(() => Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL', [symbolUpper]);
   const defaultChainMode = isSolToken ? 'SOL' : 'EVM';
   const [chainMode, setChainMode] = useState<'SOL'|'EVM'>(defaultChainMode as any);
+  const { fullyAuthed } = useWalletAuthStatus();
 
   // Solana
   const { publicKey, connected: solConnected, sendTransaction } = useWallet();
@@ -283,7 +285,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     return executeEvmMarket();
   };
 
-  if (!isSolConnected && !evmConnected) {
+  if (!fullyAuthed) {
     return null;
   }
 
