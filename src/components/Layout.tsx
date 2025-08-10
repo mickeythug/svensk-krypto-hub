@@ -51,7 +51,7 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
       
       {/* Ticker - Always positioned directly under header */}
       {showTicker && (
-        <div className={`${isMobile ? 'fixed top-16 left-0 right-0 z-40' : 'fixed top-20 left-0 right-0 z-40'}`}>
+        <div className={`${isMobile ? 'fixed top-16 left-0 right-0 z-[45]' : 'fixed top-20 left-0 right-0 z-40'}`}>
           {isMemeZone ? (
             <MemeLiveTicker />
           ) : (

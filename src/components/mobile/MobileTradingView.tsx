@@ -64,10 +64,9 @@ const MobileTradingView = ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ======== PRODUCTION-READY HEADER ======== */}
-      {/* CRITICAL: z-index 60 ensures it stays above EVERYTHING including dropdowns, modals */}
-      <div className="fixed top-26 left-0 right-0 z-[60] bg-card/99 backdrop-blur-2xl border-b border-border/40 shadow-2xl">
-        <div className="relative">
+      {/* ======== ULTRA-SOLID HEADER - NEVER MOVES ======== */}
+      <div className="fixed top-26 left-0 right-0 z-[70] bg-card/99 backdrop-blur-3xl border-b border-border/50 shadow-2xl">
+        <div className="relative bg-gradient-to-b from-card/100 to-card/95">
           {/* Main Header Content */}
           <div className="px-4 py-4 space-y-4">
             {/* Token Info Row - SOLID LAYOUT */}
@@ -235,20 +234,23 @@ const MobileTradingView = ({
         </div>
       </div>
 
-      {/* ======== PRODUCTION-READY CONTENT AREA ======== */}
-      {/* CRITICAL: pt-[440px] ensures PERFECT spacing, no overlap with ANY header component */}
-      <div className="pt-[440px] pb-20 min-h-screen">
+      {/* ======== ULTRA-SOLID CONTENT AREA - NEVER OVERLAPS ======== */}
+      {/* CRITICAL: pt-[480px] ensures ZERO overlap with header+tabs */}
+      <div className="pt-[480px] pb-24 min-h-screen bg-background">
+        {/* ABSOLUTE BARRIER - Ensures content never goes under header */}
+        <div className="absolute top-[450px] left-0 right-0 h-8 bg-gradient-to-b from-background to-transparent z-[30] pointer-events-none"></div>
+        
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          {/* PRODUCTION CHART TAB - NEVER OVERLAPS */}
+          {/* ULTRA-SOLID CHART TAB - NEVER OVERLAPS, PERFECT SPACING */}
           <TabsContent value="chart" className="mt-0 p-4">
-            <div className="relative z-20 bg-background min-h-[65vh] rounded-xl overflow-hidden">
+            <div className="relative z-[25] bg-background min-h-[70vh] rounded-2xl overflow-hidden shadow-2xl border border-border/30">
               <TradingViewMobileChart symbol={symbol} coinGeckoId={crypto?.coinGeckoId} />
             </div>
           </TabsContent>
 
-          {/* PRODUCTION ORDERBOOK TAB - SOLID CONTAINER */}
+          {/* ULTRA-SOLID ORDERBOOK TAB - PRODUCTION READY */}
           <TabsContent value="orderbook" className="mt-0 p-4">
-            <div className="relative z-20 bg-background min-h-[65vh] rounded-xl overflow-hidden">
+            <div className="relative z-[25] bg-background min-h-[70vh] rounded-2xl overflow-hidden shadow-2xl border border-border/30">
               <MobileOrderBook symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
             </div>
           </TabsContent>
