@@ -119,20 +119,29 @@ export default function ConnectWalletButton() {
 
           await connectSol();
 
-          if (!publicKey) throw new Error('Kunde inte läsa din Solana-adress');
+          // Vänta kort på att publicKey uppdateras från adaptern
+          let pk = publicKey as typeof publicKey | undefined;
+          for (let i = 0; i < 20 && !pk; i++) {
+            await new Promise((r) => setTimeout(r, 50));
+            pk = publicKey as typeof publicKey | undefined;
+          }
+          const pubkeyStr = pk?.toBase58?.() || (wallet as any)?.adapter?.publicKey?.toBase58?.();
+          if (!pubkeyStr) throw new Error('Kunde inte läsa din Solana‑adress. Godkänn anslutningen i Phantom och försök igen.');
           if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
 
-          const ok = await signAndVerify(publicKey.toBase58(), signMessageSol);
+          const ok = await signAndVerify(pubkeyStr, signMessageSol);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
 
           sessionStorage.setItem('siws_verified', 'true');
-          sessionStorage.setItem('siws_address', publicKey.toBase58());
+          sessionStorage.setItem('siws_address', pubkeyStr);
           setIsAuthed(true);
           toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
           try {
-            const lamports = await solConnection.getBalance(publicKey, { commitment: 'processed' } as any);
-            const sol = lamports / 1_000_000_000;
-            console.info('Efter anslutning: SOL-saldo', sol);
+            if (pk) {
+              const lamports = await solConnection.getBalance(pk, { commitment: 'processed' } as any);
+              const sol = lamports / 1_000_000_000;
+              console.info('Efter anslutning: SOL-saldo', sol);
+            }
           } catch {}
           setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
           return;

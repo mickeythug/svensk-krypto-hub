@@ -194,9 +194,11 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         </div>
 
         {/* Trading Panel - Replaced with SmartTradePanel */}
-        <div className="h-80 m-3 mt-2">
-          <SmartTradePanel symbol={symbol} currentPrice={currentPrice} />
-        </div>
+        {(isWalletConnected || isSolConnected) ? (
+          <div className="h-80 m-3 mt-2">
+            <SmartTradePanel symbol={symbol} currentPrice={currentPrice} />
+          </div>
+        ) : null}
       </div>
     </div>
   );
