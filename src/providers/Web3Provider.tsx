@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { WagmiProvider, createConfig, http } from 'wagmi';
+import { WagmiProvider, createConfig, http, createStorage } from 'wagmi';
 import { mainnet } from 'viem/chains';
 import { walletConnect } from 'wagmi/connectors';
 import { injected } from 'wagmi/connectors';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
+
 
 // Chains we support initially
 const chains = [mainnet] as const;
@@ -64,6 +65,7 @@ export default function Web3Provider({ children }: { children: React.ReactNode }
       connectors,
       multiInjectedProviderDiscovery: true,
       ssr: false,
+      storage: createStorage({ storage: typeof window !== 'undefined' ? window.localStorage : undefined }) as any,
     });
   }, [projectId]);
 

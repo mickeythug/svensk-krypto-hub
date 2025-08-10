@@ -60,17 +60,6 @@ export default function ConnectWalletButton() {
     }
   }, [chainMode, address, solAddress, isConnected, solConnected]);
 
-  // Always disable any auto-connect persistence for both wagmi and solana
-  useEffect(() => {
-    try {
-      const keys = Object.keys(localStorage);
-      for (const k of keys) {
-        if (k.includes('@solana/wallet-adapter') || k.includes('walletName')) {
-          localStorage.removeItem(k);
-        }
-      }
-    } catch {}
-  }, []);
 
 
   useEffect(() => {
@@ -305,8 +294,9 @@ export default function ConnectWalletButton() {
       >
         <CopyCheck className="w-4 h-4 mr-2" />
         {chainMode === 'SOL'
-          ? `${formatAddress(solAddress)}${solBalance != null ? ` · SOL ${solBalance.toFixed(4)}` : ''}`
-          : `${formatAddress(address)}${selectedChainBalance ? ` · ${selectedChainBalance.symbol} ${Number(selectedChainBalance.balance).toFixed(4)}` : ''}`}
+          ? `${formatAddress(solAddress)}`
+          : `${formatAddress(address)}`}
+
       </Button>
       <Button variant="ghost" size="sm" onClick={handleDisconnect}>
         <LogOut className="w-4 h-4" />

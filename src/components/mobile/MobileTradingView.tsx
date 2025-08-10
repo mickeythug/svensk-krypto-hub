@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import SimpleMobileChart from "./SimpleMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
-import MobileTradingPanel from "./MobileTradingPanel";
+import SmartTradePanel from "@/components/trade/SmartTradePanel";
 import TokenSearchBar from "../TokenSearchBar";
 import { formatUsd } from "@/lib/utils";
 
@@ -118,10 +118,9 @@ const MobileTradingView = ({
         </TabsContent>
 
         <TabsContent value="trades" className="flex-1 mt-0 px-4">
-          <MobileTradingPanel 
+          <SmartTradePanel 
             symbol={symbol} 
-            currentPrice={currentPrice} 
-            tokenName={tokenName}
+            currentPrice={currentPrice}
           />
         </TabsContent>
 
