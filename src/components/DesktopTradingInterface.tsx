@@ -14,7 +14,14 @@ import {
   BarChart3,
   DollarSign,
   Wifi,
-  WifiOff
+  WifiOff,
+  Search,
+  Bell,
+  Bookmark,
+  Share,
+  AlertTriangle,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import TradingViewChart from "./TradingViewChart";
 import { useCryptoData } from '@/hooks/useCryptoData';
@@ -37,6 +44,7 @@ import OpenOrders from '@/components/trade/OpenOrdersPanel';
 import { useOpenOrders } from '@/hooks/useOpenOrders';
 import PositionsPanel from '@/components/trade/PositionsPanel';
 import OrderHistoryPanel from '@/components/trade/OrderHistoryPanel';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -47,6 +55,7 @@ interface DesktopTradingInterfaceProps {
 }
 
 const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }: DesktopTradingInterfaceProps) => {
+  const isMobile = useIsMobile();
   const [orderType, setOrderType] = useState("market");
   const [side, setSide] = useState("buy");
   const [price, setPrice] = useState(currentPrice.toString());
@@ -54,6 +63,9 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const [leverage, setLeverage] = useState("1");
   const [limitLines, setLimitLines] = useState<{ price: number; side: 'buy'|'sell' }[]>([]);
   const [openJupOrders, setOpenJupOrders] = useState<any[]>([]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [watchlist, setWatchlist] = useState(false);
+  const [alertPrice, setAlertPrice] = useState("");
 
   // Wallet + balances
   const { address: evmAddress, isConnected: isWalletConnected } = useAccount();
@@ -141,69 +153,165 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     return ((bestAsk - bestBid) / bestBid * 100).toFixed(3);
   };
 
+  const toggleWatchlist = () => {
+    setWatchlist(!watchlist);
+    // toast would go here in real implementation
+  };
+
+  const shareToken = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `${tokenName} (${symbol})`,
+        text: `Kolla in ${tokenName} på Crypto Network Sweden`,
+        url: window.location.href
+      });
+    }
+  };
+
+  if (isMobile) {
+    return null; // Use mobile-specific component
+  }
+
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Main Chart Area */}
       <div className="flex-1 flex flex-col min-h-0">
-        {/* Price Display - Separate container above chart */}
-        <div className="mx-3 mt-3 mb-2">
-          <Card className="bg-background/95 backdrop-blur-sm border-border/20 p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+        {/* Enhanced Price Header */}
+        <div className="p-4 bg-card border-b border-border shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
                 {crypto?.image && (
                   <img
                     src={crypto.image}
                     alt={`${tokenName} (${symbol}) logotyp`}
-                    className="h-8 w-8 rounded-full ring-1 ring-border/40 shadow-sm"
+                    className="h-10 w-10 rounded-full ring-2 ring-primary/20 shadow-sm"
                     loading="lazy"
                     decoding="async"
                     referrerPolicy="no-referrer"
                   />
                 )}
                 <div>
-                  <div className="text-2xl font-bold font-mono text-foreground">
-                    {formatUsd(currentPrice)}
+                  <div className="flex items-center gap-2 mb-1">
+                    <h1 className="text-2xl font-bold font-mono text-foreground">
+                      {formatUsd(currentPrice)}
+                    </h1>
+                    <Badge 
+                      variant={priceChange24h >= 0 ? "default" : "destructive"}
+                      className="px-2 py-1"
+                    >
+                      {priceChange24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                      {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
+                    </Badge>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    {symbol}/USDT • {exchange}
+                  <div className="text-sm text-muted-foreground flex items-center gap-2">
+                    <span>{symbol}/USDT</span>
+                    <span>•</span>
+                    <span>{exchange}</span>
+                    <span>•</span>
+                    <div className="flex items-center gap-1">
+                      {isConnected ? (
+                        <Wifi className="h-3 w-3 text-success" />
+                      ) : (
+                        <WifiOff className="h-3 w-3 text-destructive" />
+                      )}
+                      <span>{isConnected ? 'Live' : 'Offline'}</span>
+                    </div>
                   </div>
-                </div>
-                <div className="w-64">
-                  <TokenSearchBar 
-                    currentSymbol={symbol}
-                    placeholder="Sök token"
-                  />
                 </div>
               </div>
-              <div className={`flex items-center gap-2 ${
-                priceChange24h >= 0 ? 'text-success' : 'text-destructive'
-              }`}>
-                {priceChange24h >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
-                <span className="text-xl font-bold">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
+
+              <div className="w-80">
+                <TokenSearchBar 
+                  currentSymbol={symbol}
+                  placeholder="Sök annat token"
+                />
               </div>
             </div>
-          </Card>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleWatchlist}
+                className={`h-9 px-3 ${watchlist ? 'bg-warning/10 border-warning/30 text-warning' : ''}`}
+              >
+                <Star className={`h-4 w-4 ${watchlist ? 'fill-current' : ''}`} />
+              </Button>
+              <Button variant="outline" size="sm" onClick={shareToken} className="h-9 px-3">
+                <Share className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="h-9 px-3">
+                <Bell className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" className="h-9 px-3">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Market Stats */}
+          <div className="flex items-center gap-8 mt-4 text-sm">
+            <div className="flex flex-col">
+              <span className="text-muted-foreground">24h High</span>
+              <span className="font-mono font-semibold text-success">
+                {formatUsd(currentPrice * 1.08)}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground">24h Low</span>
+              <span className="font-mono font-semibold text-destructive">
+                {formatUsd(currentPrice * 0.92)}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground">24h Volume</span>
+              <span className="font-mono font-semibold">
+                {crypto?.volume ? `$${Number(crypto.volume).toLocaleString()}` : 'N/A'}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground">Market Cap</span>
+              <span className="font-mono font-semibold">
+                {crypto?.marketCap ? `$${Number(crypto.marketCap).toLocaleString()}` : 'N/A'}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-muted-foreground">Spread</span>
+              <span className="font-mono font-semibold">
+                {calculateSpread()}%
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Chart Container - Perfect spacing */}
-        <div className="flex-1 mx-3 mb-2 rounded-lg overflow-hidden shadow-lg">
-          <TradingViewChart symbol={symbol} currentPrice={currentPrice} limitLines={limitLines} coinGeckoId={crypto?.coinGeckoId} />
+        {/* Chart Container */}
+        <div className="flex-1 p-4 min-h-0">
+          <div className="h-full rounded-lg overflow-hidden border border-border shadow-sm">
+            <TradingViewChart 
+              symbol={symbol} 
+              currentPrice={currentPrice} 
+              limitLines={limitLines} 
+              coinGeckoId={crypto?.coinGeckoId} 
+            />
+          </div>
         </div>
 
-        {/* Bottom Panels - Clean separation */}
-        <div className="h-[70vh] mx-3 mb-3">
+        {/* Bottom Panels */}
+        <div className="h-80 p-4 pt-0">
           <Tabs defaultValue="positions" className="h-full">
-            <TabsList className="mb-2 bg-gradient-to-r from-card/80 to-muted/40 border border-border/40 rounded-lg p-1 shadow-sm">
-              <TabsTrigger value="positions" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+            <TabsList className="mb-3 bg-card border border-border rounded-lg p-1 shadow-sm">
+              <TabsTrigger value="positions" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
                 Positions
               </TabsTrigger>
-              <TabsTrigger value="orders" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+              <TabsTrigger value="orders" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
                 Open Orders
               </TabsTrigger>
-              <TabsTrigger value="history" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+              <TabsTrigger value="history" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
                 Order History
               </TabsTrigger>
-              <TabsTrigger value="balances" className="px-4 py-2 text-sm md:text-base font-semibold data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow data-[state=active]:border data-[state=active]:border-border/40 rounded-md">
+              <TabsTrigger value="balances" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
                 Balances
               </TabsTrigger>
             </TabsList>
@@ -221,15 +329,23 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsContent>
             
             <TabsContent value="balances" className="h-full">
-              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>USDC</span>
-                    <span className="font-mono">2,450.00</span>
+              <Card className="h-full p-6 bg-card border-border">
+                <h3 className="font-semibold mb-4 flex items-center gap-2">
+                  <Wallet className="h-4 w-4" />
+                  Wallet Balances
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="font-medium">USDC</span>
+                    <span className="font-mono text-success">2,450.00</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span>{symbol}</span>
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="font-medium">{symbol}</span>
                     <span className="font-mono">0.000000</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-border/50">
+                    <span className="font-medium">SOL</span>
+                    <span className="font-mono">{(solBalance || 0).toFixed(4)}</span>
                   </div>
                 </div>
               </Card>
@@ -238,10 +354,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         </div>
       </div>
 
-      {/* Right Sidebar - Perfect spacing and alignment */}
-      <div className="w-80 flex flex-col bg-card/20 border-l border-border/30">
-        {/* Orderbook - New Bybit-style component */}
-        <div className="flex-1 m-3 mb-2">
+      {/* Enhanced Right Sidebar */}
+      <div className="w-96 flex flex-col bg-card border-l border-border">
+        {/* Orderbook */}
+        <div className="flex-1 p-4 min-h-0">
           <OrderBook 
             orderBook={orderBook}
             currentPrice={currentPrice}
@@ -250,12 +366,26 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           />
         </div>
 
-        {/* Trading Panel - Replaced with SmartTradePanel */}
+        {/* Trading Panel */}
         {fullyAuthed ? (
-          <div className="h-80 m-3 mt-2">
+          <div className="h-[500px] p-4 pt-0">
             <SmartTradePanel symbol={symbol} currentPrice={currentPrice} />
           </div>
-        ) : null}
+        ) : (
+          <div className="p-4 pt-0">
+            <Card className="p-6 text-center bg-muted/50">
+              <AlertTriangle className="h-12 w-12 text-warning mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">Connect Wallet to Trade</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Connect your wallet to start trading {symbol}
+              </p>
+              <Button className="w-full">
+                <Wallet className="h-4 w-4 mr-2" />
+                Connect Wallet
+              </Button>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
