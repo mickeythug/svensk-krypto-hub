@@ -80,19 +80,7 @@ const ModernMobileTradingView = ({
       {activeTab !== "chart" && (
         <div className="fixed top-16 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
           <div className="flex items-center justify-between px-4 py-4">
-            <div className="flex items-center gap-3">
-              {crypto?.image && (
-                <img
-                  src={crypto.image}
-                  alt={`${tokenName} logo`}
-                  className="h-8 w-8 rounded-full"
-                />
-              )}
-              <div>
-                <h1 className="font-bold text-lg capitalize">{activeTab}</h1>
-                <p className="text-sm text-muted-foreground">{symbol}/USDT</p>
-              </div>
-            </div>
+            <h1 className="font-bold text-lg capitalize">{activeTab}</h1>
             
             {/* Hamburger Menu */}
             <Button 
