@@ -3,9 +3,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MemeTokenCreator from './components/MemeTokenCreator';
+import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const CreateTokenPage: React.FC = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const title = 'Skapa Din Meme Token – Token Creator | Crypto Network Sweden';
@@ -52,7 +55,7 @@ const CreateTokenPage: React.FC = () => {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
+    <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
       {/* Animated background elements */}
       <div className="fixed inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
@@ -62,25 +65,25 @@ const CreateTokenPage: React.FC = () => {
       </div>
 
       {/* Header */}
-      <section className="py-8 px-4">
+      <section className={`${isMobile ? 'py-4 px-3' : 'py-8 px-4'}`}>
         <div className="container mx-auto">
-          <div className="flex items-center gap-4 mb-8">
+          <div className={`flex items-center gap-4 ${isMobile ? 'mb-4' : 'mb-8'}`}>
             <Button 
               variant="outline" 
-              size="lg"
+              size={isMobile ? "default" : "lg"}
               onClick={() => navigate('/meme')}
               className="font-crypto font-bold border-2 border-primary/50 hover:bg-primary/10 text-primary hover:text-primary-foreground hover:border-primary"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
-              TILLBAKA TILL MEME TOKENS
+              {isMobile ? "TILLBAKA" : "TILLBAKA TILL MEME TOKENS"}
             </Button>
           </div>
           
-          <div className="text-center mb-12">
-            <h1 className="font-crypto text-4xl md:text-6xl font-black mb-6 bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow tracking-wider">
+          <div className={`text-center ${isMobile ? 'mb-6' : 'mb-12'}`}>
+            <h1 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-6xl'} font-black ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow tracking-wider`}>
               SKAPA DIN MEME TOKEN
             </h1>
-            <p className="font-crypto text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto font-semibold">
+            <p className={`font-crypto ${isMobile ? 'text-sm' : 'text-xl md:text-2xl'} text-muted-foreground max-w-3xl mx-auto font-semibold ${isMobile ? 'px-2' : ''}`}>
               DESIGNA OCH LANSERA DIN EGEN MEME TOKEN MED VÅR AVANCERADE CREATOR
             </p>
           </div>
@@ -88,11 +91,13 @@ const CreateTokenPage: React.FC = () => {
       </section>
 
       {/* Creator Section */}
-      <section className="py-16 px-4">
+      <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'}`}>
         <div className="container mx-auto">
           <MemeTokenCreator />
         </div>
       </section>
+      
+      {isMobile && <MobileBottomNavigation />}
     </main>
   );
 };

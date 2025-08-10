@@ -5,7 +5,11 @@ import MemeTopCoins from './components/MemeTopCoins';
 import MemeTokenGrid from './components/MemeTokenGrid';
 import MemeStatsBanner from './components/MemeStatsBanner';
 import MemePageHeader from './components/MemePageHeader';
+import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
+import { useIsMobile } from '@/hooks/use-mobile';
 const MemePage: React.FC = () => {
+  const isMobile = useIsMobile();
+
   useEffect(() => {
     const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
     const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
@@ -50,7 +54,7 @@ const MemePage: React.FC = () => {
       {/* Minimal Header with Action Buttons */}
       <MemePageHeader />
       
-      <main className="min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden">
+      <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
         {/* Live Ticker - Full Width at Top */}
         <MemeLiveTicker />
 
@@ -66,9 +70,8 @@ const MemePage: React.FC = () => {
       <MemeHeroNew />
 
       {/* Top Meme Coins with Large Images */}
-      <section className="py-16 px-4">
+      <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'}`}>
         <div className="container mx-auto">
-          
           <MemeTopCoins />
         </div>
       </section>
@@ -77,9 +80,9 @@ const MemePage: React.FC = () => {
       <MemeStatsBanner />
 
       {/* All Meme Tokens Grid */}
-      <section className="py-16 px-4 bg-meme-grid-bg/50">
+      <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'} bg-meme-grid-bg/50`}>
         <div className="container mx-auto">
-          <h2 className="font-crypto text-3xl md:text-5xl font-bold text-center mb-12 bg-gradient-neon bg-clip-text text-transparent">
+          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-5xl'} font-bold text-center ${isMobile ? 'mb-6' : 'mb-12'} bg-gradient-neon bg-clip-text text-transparent`}>
             ALLA MEME TOKENS
           </h2>
           <MemeTokenGrid category="all" />
@@ -87,6 +90,8 @@ const MemePage: React.FC = () => {
       </section>
 
       </main>
+      
+      {isMobile && <MobileBottomNavigation />}
     </div>
   );
 };

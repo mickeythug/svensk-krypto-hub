@@ -9,7 +9,7 @@ const HeroSection = () => {
   const isMobile = useIsMobile();
   
   return (
-    <section className={`relative ${isMobile ? 'min-h-screen pt-20' : 'min-h-screen'} flex items-center justify-center overflow-hidden`}>
+    <section className={`relative ${isMobile ? 'min-h-[80vh] pt-8' : 'min-h-screen'} flex items-center justify-center overflow-hidden`}>
       {/* Background with hex pattern */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"

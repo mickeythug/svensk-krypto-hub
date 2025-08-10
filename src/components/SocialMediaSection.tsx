@@ -33,8 +33,8 @@ const SocialMediaSection = () => {
   ];
 
   return (
-    <section className={`${isMobile ? 'py-12' : 'py-20'} bg-background`}>
-      <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
+    <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
+      <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-foreground`}>
             FÖLJ OSS ÖVERALLT

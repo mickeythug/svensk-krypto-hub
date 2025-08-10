@@ -4,10 +4,13 @@ import { ArrowLeft, Clock, User, Eye, BookOpen, Calendar, Tag, Share2, Bookmark,
 import Header from '@/components/Header';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
+import MobileHeader from '@/components/mobile/MobileHeader';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Article {
   id: string;
@@ -29,6 +32,7 @@ interface Article {
 const ArticleDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Mock article data - in real app this would come from API
   const article: Article = {
@@ -154,30 +158,35 @@ const ArticleDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      <CryptoPriceTicker />
+      {isMobile ? <MobileHeader title="Artikel" /> : <Header />}
+      {!isMobile && <CryptoPriceTicker />}
       
-      <main className="pt-8 pb-16">
-        <div className="container mx-auto px-4 max-w-4xl">
+      <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16'}`}>
+        <div className={`container mx-auto ${isMobile ? 'px-3 max-w-full' : 'px-4 max-w-4xl'}`}>
           {/* Navigation */}
-          <div className="mb-8 flex items-center gap-2 text-sm text-muted-foreground">
+          <div className={`${isMobile ? 'mb-4' : 'mb-8'} flex items-center gap-2 text-sm text-muted-foreground`}>
             <Button 
               variant="ghost" 
+              size={isMobile ? "sm" : "default"}
               onClick={() => navigate('/nyheter')}
               className="text-muted-foreground hover:text-primary"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Tillbaka till nyheter
+              {isMobile ? "Tillbaka" : "Tillbaka till nyheter"}
             </Button>
-            <ChevronRight className="h-4 w-4" />
-            <span>{article.category}</span>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-foreground">{article.title.substring(0, 50)}...</span>
+            {!isMobile && (
+              <>
+                <ChevronRight className="h-4 w-4" />
+                <span>{article.category}</span>
+                <ChevronRight className="h-4 w-4" />
+                <span className="text-foreground">{article.title.substring(0, 50)}...</span>
+              </>
+            )}
           </div>
 
           {/* Article Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-2 flex-wrap mb-4">
+          <div className={`${isMobile ? 'mb-4' : 'mb-8'}`}>
+            <div className={`flex items-center gap-2 flex-wrap ${isMobile ? 'mb-3' : 'mb-4'}`}>
               <Badge className={`${getSentimentBadge(article.sentiment)} text-sm px-3 py-1`}>
                 {article.sentiment === 'positive' ? '📈 Positiv' : 
                  article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
@@ -196,16 +205,16 @@ const ArticleDetailPage = () => {
               </Badge>
             </div>
 
-            <h1 className="font-crypto text-4xl font-bold text-primary mb-6 leading-tight">
+            <h1 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl'} font-bold text-primary ${isMobile ? 'mb-3' : 'mb-6'} leading-tight`}>
               {article.title}
             </h1>
 
-            <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
+            <p className={`${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground ${isMobile ? 'mb-4' : 'mb-6'} leading-relaxed`}>
               {article.summary}
             </p>
 
             {/* Article Meta */}
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-6">
+            <div className={`flex flex-wrap items-center ${isMobile ? 'gap-3' : 'gap-6'} text-sm text-muted-foreground ${isMobile ? 'mb-4' : 'mb-6'}`}>
               <div className="flex items-center">
                 <User className="h-4 w-4 mr-2" />
                 <span className="font-medium">{article.author}</span>
@@ -225,12 +234,12 @@ const ArticleDetailPage = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-3 mb-8">
-              <Button variant="outline" size="sm">
+            <div className={`flex items-center gap-3 ${isMobile ? 'mb-4' : 'mb-8'}`}>
+              <Button variant="outline" size="sm" className={isMobile ? 'flex-1' : ''}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Dela
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className={isMobile ? 'flex-1' : ''}>
                 <Bookmark className="h-4 w-4 mr-2" />
                 Spara
               </Button>
@@ -240,16 +249,16 @@ const ArticleDetailPage = () => {
           </div>
 
           {/* Article Content */}
-          <Card className="p-8 mb-8">
+          <Card className={`${isMobile ? 'p-4 mb-6' : 'p-8 mb-8'}`}>
             <div 
-              className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-primary prose-a:text-primary prose-strong:text-foreground prose-blockquote:border-primary prose-blockquote:text-muted-foreground"
+              className={`prose ${isMobile ? 'prose-sm' : 'prose-lg'} max-w-none dark:prose-invert prose-headings:text-primary prose-a:text-primary prose-strong:text-foreground prose-blockquote:border-primary prose-blockquote:text-muted-foreground`}
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           </Card>
 
           {/* Tags */}
-          <div className="mb-8">
-            <h3 className="font-semibold text-lg mb-4">Taggar</h3>
+          <div className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
+            <h3 className={`font-semibold ${isMobile ? 'text-base mb-3' : 'text-lg mb-4'}`}>Taggar</h3>
             <div className="flex flex-wrap gap-2">
               {article.tags.map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-sm hover:bg-primary/20 transition-colors cursor-pointer">
@@ -266,6 +275,8 @@ const ArticleDetailPage = () => {
           </div>
         </div>
       </main>
+      
+      {isMobile && <MobileBottomNavigation />}
     </div>
   );
 };

@@ -113,13 +113,8 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
 
   return (
     <div className="flex flex-col h-full">
-      {/* Debug info */}
-      <div className="px-4 py-2 text-xs text-muted-foreground">
-        Debug: Loading=${isLoading.toString()}, Loaded=${chartLoaded.toString()}, Symbol=${symbol}, tv=${tvSymbol}
-      </div>
-
       {/* Timeframe Selector */}
-      <div className="flex items-center gap-1 px-4 mb-3 overflow-x-auto">
+      <div className="flex items-center gap-1 px-3 mb-2 overflow-x-auto scrollbar-hide">
         {timeframes.map((timeframe) => (
           <Button
             key={timeframe.value}
@@ -134,15 +129,14 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
       </div>
 
       {/* Chart Container */}
-      <div className="flex-1 px-4">
-        <Card className="h-full p-4 bg-[#1a1b23] border-border/30 relative">
+      <div className="flex-1 px-3">
+        <Card className="h-full p-2 bg-[#1a1b23] border-border/30 relative">
           {/* Loading State */}
           {isLoading && (
-            <div className="absolute inset-4 flex items-center justify-center bg-[#1a1b23] z-20 rounded">
+            <div className="absolute inset-2 flex items-center justify-center bg-[#1a1b23] z-20 rounded">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-3"></div>
-                <p className="text-muted-foreground text-sm">Laddar {symbol} chart...</p>
-                <p className="text-muted-foreground text-xs mt-1">Timeframe: {selectedTimeframe}</p>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
+                <p className="text-muted-foreground text-xs">Laddar {symbol}</p>
               </div>
             </div>
           )}
@@ -150,10 +144,10 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
           {/* Chart Container */}
           <div 
             ref={containerRef} 
-            className="w-full h-full min-h-[300px]"
+            className="w-full h-full min-h-[250px]"
             style={{ 
               background: 'transparent',
-              borderRadius: '8px'
+              borderRadius: '6px'
             }}
           >
             {/* Initial placeholder */}
@@ -178,25 +172,14 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
       </div>
 
       {/* Chart Info */}
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs bg-background/50">
-            {symbol}/USDT
+      <div className="flex items-center justify-between px-3 py-2">
+        <div className="flex items-center gap-1">
+          <Badge variant="outline" className="text-xs bg-background/50 px-2 py-1">
+            {symbol}
           </Badge>
-          <Badge variant="outline" className="text-xs bg-background/50">
+          <Badge variant="outline" className="text-xs bg-background/50 px-2 py-1">
             {formatUsd(currentPrice)}
           </Badge>
-        </div>
-        
-        <div className="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 px-2 text-xs"
-            onClick={createFallbackChart}
-          >
-            Fallback Chart
-          </Button>
         </div>
       </div>
     </div>

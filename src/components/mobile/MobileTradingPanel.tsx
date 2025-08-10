@@ -19,7 +19,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
   const [amount, setAmount] = useState("");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Trading Tabs */}
       <Tabs value={side} onValueChange={setSide}>
         <TabsList className="grid w-full grid-cols-2">
@@ -39,7 +39,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="buy" className="mt-4">
+        <TabsContent value="buy" className="mt-3">
           <TradingForm
             side="buy"
             symbol={symbol}
@@ -53,7 +53,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
           />
         </TabsContent>
 
-        <TabsContent value="sell" className="mt-4">
+        <TabsContent value="sell" className="mt-3">
           <TradingForm
             side="sell"
             symbol={symbol}
@@ -69,8 +69,8 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
       </Tabs>
 
       {/* Account Balance */}
-      <Card className="p-4">
-        <h3 className="font-semibold text-sm mb-3">Saldo</h3>
+      <Card className="p-3">
+        <h3 className="font-semibold text-xs mb-2">Saldo</h3>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">USDT</span>
@@ -84,9 +84,9 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
       </Card>
 
       {/* Open Orders */}
-      <Card className="p-4">
-        <h3 className="font-semibold text-sm mb-3">Öppna ordrar</h3>
-        <div className="text-center text-muted-foreground text-sm py-4">
+      <Card className="p-3">
+        <h3 className="font-semibold text-xs mb-2">Öppna ordrar</h3>
+        <div className="text-center text-muted-foreground text-xs py-3">
           Inga öppna ordrar
         </div>
       </Card>
@@ -120,7 +120,7 @@ const TradingForm = ({
   const isBuy = side === "buy";
 
   return (
-    <Card className="p-4 space-y-4">
+    <Card className="p-3 space-y-3">
       {/* Order Type */}
       <div className="flex gap-2">
         <Button

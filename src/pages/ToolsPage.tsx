@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
+import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
+import MobileHeader from "@/components/mobile/MobileHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 import JupiterSwapWidget from "@/components/web3/JupiterSwapWidget";
 
@@ -271,9 +273,9 @@ const ToolsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {isMobile ? <MobileHeader title="Verktyg" /> : <Header />}
       
-      <div className={`${isMobile ? 'pt-16' : 'pt-20'} pb-12`}>
+      <div className={`${isMobile ? 'pt-4 pb-20' : 'pt-20 pb-12'}`}>
         <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
           {/* Mobile Hero Section */}
           {isMobile ? (
@@ -445,6 +447,8 @@ const ToolsPage = () => {
           </Card>
         </div>
       </div>
+      
+      {isMobile && <MobileBottomNavigation />}
     </div>
   );
 };
