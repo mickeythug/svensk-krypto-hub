@@ -34,27 +34,54 @@ export default function OpenOrdersPanel({ symbol }: { symbol: string }) {
       return (jupOrders || []).map((o: any) => {
         const inMint = o.inputMint;
         const outMint = o.outputMint;
-        const side: 'buy'|'sell'|undefined = (inMint === SOL_MINT && outMint === solInfo?.mint)
+
+        // Best-effort side detection relative to current token
+        const side: 'buy' | 'sell' | undefined =
+          outMint === solInfo?.mint ? 'buy'
+          : inMint === solInfo?.mint ? 'sell'
+          : (inMint === SOL_MINT && outMint === solInfo?.mint)
           ? 'buy'
           : (inMint === solInfo?.mint && outMint === SOL_MINT)
           ? 'sell'
           : o.side;
 
-        const inDec = inMint === SOL_MINT ? 9 : (inMint === solInfo?.mint ? (solInfo?.decimals ?? 0) : 0);
-        const outDec = outMint === SOL_MINT ? 9 : (outMint === solInfo?.mint ? (solInfo?.decimals ?? 0) : 0);
+        // Prefer raw amounts if available; otherwise use human amounts directly
+        const hasRaw = o.rawMakingAmount != null && o.rawTakingAmount != null;
 
-        const mkAtoms = Number(o.makingAmount ?? o.rawMakingAmount ?? 0);
-        const tkAtoms = Number(o.takingAmount ?? o.rawTakingAmount ?? 0);
-        const mk = inDec > 0 ? mkAtoms / Math.pow(10, inDec) : mkAtoms;    // input amount (e.g., SOL for buy)
-        const tk = outDec > 0 ? tkAtoms / Math.pow(10, outDec) : tkAtoms;   // output amount (e.g., token for buy)
+        const inDec = inMint === SOL_MINT
+          ? 9
+          : inMint === solInfo?.mint
+          ? (solInfo?.decimals ?? 0)
+          : 6; // default to 6 for common SPLs like USDC/USDT
 
+        const outDec = outMint === SOL_MINT
+          ? 9
+          : outMint === solInfo?.mint
+          ? (solInfo?.decimals ?? 0)
+          : 6;
+
+        const mk = hasRaw
+          ? Number(o.rawMakingAmount ?? 0) / Math.pow(10, inDec)
+          : Number(o.makingAmount ?? 0);
+
+        const tk = hasRaw
+          ? Number(o.rawTakingAmount ?? 0) / Math.pow(10, outDec)
+          : Number(o.takingAmount ?? 0);
+
+        // Compute USD price per token
         let priceUsd: number | undefined;
-        if (solUsd > 0 && mk > 0 && tk > 0) {
-          if (side === 'buy') priceUsd = (mk * solUsd) / tk; // USD per token
-          if (side === 'sell') priceUsd = (tk * solUsd) / mk; // USD per token
+        if (mk > 0 && tk > 0) {
+          if (inMint === SOL_MINT && solUsd > 0) {
+            priceUsd = (mk * solUsd) / tk; // SOL -> USD
+          } else {
+            // Treat input as USD stable if not SOL (best effort)
+            priceUsd = mk / tk; // USD per token when input is USDC/USDT
+          }
         }
 
-        const amountDisplay = Number.isFinite(mk) ? mk : undefined; // Show input amount (e.g., 0.05 SOL)
+        // Display token amount to match DB rows (amount in base token)
+        const amountDisplay = side === 'buy' ? tk : mk;
+
         return { ...o, side, priceUsd, amountDisplay };
       });
     } catch {
