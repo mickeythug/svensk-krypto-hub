@@ -273,7 +273,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           )}
         />
         <div className={cn(
-          "absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 to-transparent opacity-0 transition-opacity duration-300",
+          "absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/5 to-transparent opacity-0 transition-opacity duration-300 pointer-events-none",
           (isOpen || query) && "opacity-100"
         )} />
       </div>
