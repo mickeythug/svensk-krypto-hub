@@ -44,8 +44,12 @@ export default function Web3Provider({ children }: { children: React.ReactNode }
   const config = useMemo(() => {
     const transports: Record<number, ReturnType<typeof http>> = {};
     for (const c of chains) {
-      const url = c.rpcUrls.default.http[0];
-      transports[c.id] = http(url);
+      if (c.id === mainnet.id) {
+        transports[c.id] = http('https://virulent-lingering-bird.quiknode.pro/a906d4dfb530b9c74d895b2f9b3a67850d0f92f4/');
+      } else {
+        const url = c.rpcUrls.default.http[0];
+        transports[c.id] = http(url);
+      }
     }
     const connectors = [
       injected({ shimDisconnect: true }),
