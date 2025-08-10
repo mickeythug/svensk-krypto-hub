@@ -124,6 +124,7 @@ export default function ConnectWalletButton() {
         return;
       }
       const mode: 'SOL' | 'EVM' = chainMode;
+      authLog('Connect: start', { mode, selectedEvmChainId });
 
       if (mode === 'SOL') {
         // Phantom detection (supports window.solana and window.phantom)
