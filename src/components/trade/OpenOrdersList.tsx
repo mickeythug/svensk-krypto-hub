@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { DbLimitOrder, JupOrder } from '@/hooks/useOpenOrders';
 import { useMemo } from 'react';
 import { formatUsd } from '@/lib/utils';
+import { SOL_MINT } from '@/lib/tokenMaps';
 
 export function OpenOrdersList({
   symbol,
@@ -53,6 +54,8 @@ export function OpenOrdersList({
     return [...db, ...jup];
   }, [dbOrders, jupOrders]);
 
+  const baseSymbol = useMemo(() => (symbol || '').toUpperCase(), [symbol]);
+
   return (
     <Card className="h-full p-0 bg-card/60 backdrop-blur-sm border-border/30 overflow-auto">
       <Table>
@@ -86,7 +89,14 @@ export function OpenOrdersList({
                   ) : '-'}
                 </TableCell>
                 <TableCell>{typeof r.price === 'number' ? formatUsd(r.price) : '-'}</TableCell>
-                <TableCell>{typeof r.amount === 'number' ? r.amount.toLocaleString(undefined, { maximumFractionDigits: 6 }) : '-'}</TableCell>
+                <TableCell>
+                  {typeof r.amount === 'number' ? `${r.amount.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${baseSymbol}` : '-'}
+                  {r.source === 'JUP' && (r.data as any)?.makingAmount ? (
+                    <div className="text-[10px] text-muted-foreground">
+                      Betalar {(r.data as any).makingAmount} {((r.data as any).inputMint === SOL_MINT ? 'SOL' : '')}
+                    </div>
+                  ) : null}
+                </TableCell>
                 <TableCell>
                   <Badge variant={r.status === 'open' || r.status === 'active' ? 'secondary' : 'outline'}>
                     {r.status}
