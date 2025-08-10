@@ -298,6 +298,45 @@ export default function ConnectWalletButton() {
 
   const isConnectedForMode = chainMode === 'SOL' ? solConnected : isConnected;
   if (!fullyAuthed) {
+    if (solConnected && solAddress) {
+      // Visar ansluten Solana‑wallet även om SIWS ej är verifierad ännu
+      return (
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary">Solana</Badge>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigator.clipboard.writeText(solAddress || '')}
+          >
+            <CopyCheck className="w-4 h-4 mr-2" />
+            {formatAddress(solAddress)}
+          </Button>
+          {signMessageSol ? (
+            <Button
+              size="sm"
+              onClick={async () => {
+                try {
+                  const ok = await signAndVerify(solAddress!, signMessageSol);
+                  if (!ok) throw new Error('Verifiering misslyckades');
+                  sessionStorage.setItem('siws_verified', 'true');
+                  sessionStorage.setItem('siws_address', solAddress!);
+                  setIsAuthed(true);
+                  toast({ title: 'Verifierad', description: 'SIWS slutförd.' });
+                } catch (e: any) {
+                  toast({ title: 'Verifiering misslyckades', description: String(e?.message || e), variant: 'destructive' });
+                }
+              }}
+            >
+              Signera
+            </Button>
+          ) : null}
+          <Button variant="ghost" size="sm" onClick={handleDisconnect}>
+            <LogOut className="w-4 h-4" />
+          </Button>
+        </div>
+      );
+    }
+
     return (
       <div className="flex items-center gap-2">
         <Select
