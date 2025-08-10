@@ -5,17 +5,36 @@ import { useAccount } from 'wagmi';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { usePositionsFromHistory } from '@/hooks/usePositionsFromHistory';
-import { useCryptoData } from '@/hooks/useCryptoData';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function PositionsPanel() {
   const { address: evm } = useAccount();
   const { publicKey } = useWallet();
   const sol = publicKey?.toBase58();
   const { rows } = useOrderHistory({ addresses: [sol, evm] });
-  const { cryptoPrices } = useCryptoData();
+  const [cryptoPrices, setCryptoPrices] = useState<any[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        const { data } = await supabase.from('latest_token_prices').select('symbol, price').limit(1000);
+        if (mounted) setCryptoPrices(data || []);
+      } catch {}
+    };
+    load();
+    const handler = () => load();
+    window.addEventListener('wallet:refresh', handler as any);
+    window.addEventListener('orders:changed', handler as any);
+    return () => {
+      mounted = false;
+      window.removeEventListener('wallet:refresh', handler as any);
+      window.removeEventListener('orders:changed', handler as any);
+    };
+  }, []);
 
   const priceMap = useMemo(() => {
     const m: Record<string, number> = {};
