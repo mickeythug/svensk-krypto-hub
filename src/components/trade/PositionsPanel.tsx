@@ -1,9 +1,11 @@
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { formatUsd } from '@/lib/utils';
 import { useAccount } from 'wagmi';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
+import { toast } from '@/hooks/use-toast';
 import { usePositionsFromHistory } from '@/hooks/usePositionsFromHistory';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +14,7 @@ import { SOL_MINT } from '@/lib/tokenMaps';
 
 export default function PositionsPanel() {
   const { address: evm } = useAccount();
-  const { publicKey } = useWallet();
+  const { publicKey, sendTransaction } = useWallet() as any;
   const sol = publicKey?.toBase58();
   const { connection } = useConnection();
   const { rows } = useOrderHistory({ addresses: [sol, evm] });
@@ -116,6 +118,57 @@ export default function PositionsPanel() {
     return { val, pnl };
   }, [positions, priceMap]);
 
+  const [closing, setClosing] = useState<Record<string, boolean>>({});
+
+  async function handleClosePosition(symbol: string, amountHint: number) {
+    try {
+      if (!sol) {
+        toast({ variant: 'destructive', title: 'Solana‑wallet saknas', description: 'Anslut din Solana‑wallet för att stänga positioner.' });
+        return;
+      }
+      if (!solSymbols.has(symbol)) {
+        toast({ variant: 'destructive', title: 'Ej Solana‑position', description: 'Stängning stöds just nu bara för Solana‑tokens.' });
+        return;
+      }
+      setClosing((s) => ({ ...s, [symbol]: true }));
+      const mintSet = solMintMap[symbol];
+      const mintStr = mintSet ? Array.from(mintSet)[0] : undefined;
+      if (!mintStr) throw new Error('Saknar mint‑adress för token');
+
+      const { VersionedTransaction, PublicKey } = await import('@solana/web3.js');
+      const mintPk = new PublicKey(mintStr);
+      const mintInfo = await connection.getParsedAccountInfo(mintPk, 'confirmed');
+      const decimals = Number((mintInfo.value as any)?.data?.parsed?.info?.decimals ?? 9);
+
+      const onChainAmt = onChain[symbol] ?? 0;
+      const closeAmt = Math.max(0, Math.min(amountHint || 0, onChainAmt > 0 ? onChainAmt : amountHint || 0));
+      const amountBase = Math.floor(closeAmt * Math.pow(10, Number.isFinite(decimals) ? decimals : 9));
+      if (!Number.isFinite(amountBase) || amountBase <= 0) throw new Error('Ogiltigt belopp');
+      if (amountBase < 1000) throw new Error('Beloppet är för litet för Jupiter');
+
+      const { data, error } = await supabase.functions.invoke('jupiter-swap', {
+        body: { userPublicKey: sol, inputMint: mintStr, outputMint: SOL_MINT, amount: String(amountBase), slippageBps: 75 },
+      });
+      if (error) throw error as any;
+      const swapTxB64 = (data as any)?.swapTransaction as string;
+      if (!swapTxB64) throw new Error('Saknar swapTransaction');
+      const txBytes = Uint8Array.from(atob(swapTxB64), (c) => c.charCodeAt(0));
+      const vtx = VersionedTransaction.deserialize(txBytes);
+      const sig = await (sendTransaction as any)(vtx, connection);
+
+      toast({ title: 'Position stängd', description: `Transaktion skickad: ${sig.slice(0, 8)}...` });
+      try {
+        window.dispatchEvent(new Event('wallet:refresh'));
+        window.dispatchEvent(new Event('orders:changed'));
+      } catch {}
+    } catch (e: any) {
+      const msg = e?.message || (e?.error) || 'Okänt fel';
+      toast({ variant: 'destructive', title: 'Kunde inte stänga position', description: String(msg) });
+    } finally {
+      setClosing((s) => ({ ...s, [symbol]: false }));
+    }
+  }
+
   return (
     <Card className="p-0 bg-card border border-border flex flex-col">
       <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between flex-shrink-0">
@@ -141,12 +194,13 @@ export default function PositionsPanel() {
               <TableHead className="font-medium text-foreground text-xs py-2">Market Price</TableHead>
               <TableHead className="font-medium text-foreground text-xs py-2">Value</TableHead>
               <TableHead className="font-medium text-foreground text-xs py-2">PnL</TableHead>
+              <TableHead className="font-medium text-foreground text-xs py-2">Åtgärd</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {noWallet ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-6">
+                <TableCell colSpan={7} className="text-center py-6">
                   <div className="flex flex-col items-center gap-1">
                     <div className="w-6 h-6 rounded-full bg-muted/50 flex items-center justify-center">
                       <div className="w-3 h-3 border-2 border-muted-foreground/30 rounded border-dashed" />
@@ -157,7 +211,7 @@ export default function PositionsPanel() {
               </TableRow>
             ) : positions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
+                <TableCell colSpan={7} className="text-center py-4">
                   <div className="flex flex-col items-center gap-1">
                     <div className="w-6 h-6 rounded-full bg-muted/50 flex items-center justify-center">
                       <div className="w-3 h-3 border-2 border-muted-foreground/30 rounded border-dashed" />
@@ -195,6 +249,17 @@ export default function PositionsPanel() {
                     <div className={`text-sm font-semibold ${totalPnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}> 
                       {totalPnl < 0.01 && totalPnl > 0 ? '<$0.01' : formatUsd(totalPnl)} ({pctDisplay})
                     </div>
+                  </TableCell>
+                  <TableCell className="py-2">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={(e) => { e.stopPropagation(); handleClosePosition(p.symbol, p.amount); }}
+                      disabled={!!closing[p.symbol] || !sol || !solSymbols.has(p.symbol)}
+                      aria-label={`Stäng position ${p.symbol}`}
+                    >
+                      Stäng position
+                    </Button>
                   </TableCell>
                 </TableRow>
               );
