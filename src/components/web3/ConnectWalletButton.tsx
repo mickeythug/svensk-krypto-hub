@@ -43,8 +43,18 @@ export default function ConnectWalletButton() {
   const [nonce, setNonce] = useState<string>('');
   const { data: balances } = useWalletBalances(address as Address | undefined);
   const selectedChainBalance = useMemo(() => balances.find?.((b) => b.chainId === selectedEvmChainId), [balances, selectedEvmChainId]);
-  const anyConnected = isConnected || solConnected;
-  const activeMode = solConnected ? 'SOL' : (isConnected ? 'EVM' : null);
+  const authedSol = useMemo(() => {
+    const verified = sessionStorage.getItem('siws_verified') === 'true';
+    const stored = sessionStorage.getItem('siws_address');
+    return Boolean(solConnected && solAddress && verified && stored === solAddress);
+  }, [solConnected, solAddress]);
+  const authedEvm = useMemo(() => {
+    const sig = sessionStorage.getItem('siwe_signature');
+    const stored = sessionStorage.getItem('siwe_address');
+    return Boolean(isConnected && address && sig && stored && stored.toLowerCase() === (address || '').toLowerCase());
+  }, [isConnected, address]);
+  const fullyAuthed = authedSol || authedEvm;
+  const activeMode = authedSol ? 'SOL' : (authedEvm ? 'EVM' : null);
 
   useEffect(() => {
     if (chainMode === 'EVM') {
@@ -153,6 +163,16 @@ export default function ConnectWalletButton() {
               await connectSol();
             } catch {}
           }
+          try { await disconnectSol(); } catch {}
+          try {
+            sessionStorage.removeItem('siws_signature');
+            sessionStorage.removeItem('siws_address');
+            sessionStorage.removeItem('siws_verified');
+            localStorage.removeItem('siws_signature');
+            localStorage.removeItem('siws_address');
+            localStorage.removeItem('siws_verified');
+          } catch {}
+          setIsAuthed(false);
           throw err;
         }
       }
@@ -234,7 +254,7 @@ export default function ConnectWalletButton() {
   };
 
   const isConnectedForMode = chainMode === 'SOL' ? solConnected : isConnected;
-  if (!anyConnected) {
+  if (!fullyAuthed) {
     return (
       <div className="flex items-center gap-2">
         <Select
