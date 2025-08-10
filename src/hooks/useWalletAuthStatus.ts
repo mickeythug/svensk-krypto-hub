@@ -18,6 +18,7 @@ export function useWalletAuthStatus() {
     address &&
     sessionStorage.getItem('siwe_signature') &&
     sessionStorage.getItem('siwe_address') &&
+    sessionStorage.getItem('siwe_verified') === 'true' &&
     sessionStorage.getItem('siwe_address')!.toLowerCase() === (address || '').toLowerCase()
   );
 

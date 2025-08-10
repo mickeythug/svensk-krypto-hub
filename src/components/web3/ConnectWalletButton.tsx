@@ -79,8 +79,12 @@ export default function ConnectWalletButton() {
     }
   }, [chainMode, address, solAddress, isConnected, solConnected]);
 
+  // Global signal till appen när wallet-status ändras
+  useEffect(() => {
+    try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
+  }, [address, isConnected, solAddress, solConnected]);
 
-
+  
   // Lås kedja till den verifierade kedjan och synka UI
   useEffect(() => {
     if (authedSol) {
@@ -202,6 +206,7 @@ export default function ConnectWalletButton() {
             }
           } catch {}
           setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
+          try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
         } catch (err: any) {
           if (err?.name === 'WalletNotSelectedError') {
@@ -268,6 +273,7 @@ export default function ConnectWalletButton() {
       toast({ title: 'Wallet ansluten', description: 'EVM ansluten och verifierad.' });
       authLog('EVM: connect+verify success', { address });
       setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
+      try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
     } catch (e: any) {
       authLog('Connect: fatal error', String(e?.message || e), 'error');
       toast({ title: 'Fel vid anslutning', description: String(e.message || e), variant: 'destructive' });
@@ -318,6 +324,7 @@ export default function ConnectWalletButton() {
       } catch {}
       setIsAuthed(false);
       toast({ title: 'Frånkopplad', description: 'Session rensad. Du behöver ansluta och signera igen nästa gång.' });
+      try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
     }
   };
 

@@ -49,6 +49,7 @@ export function useOrderHistory(params: { addresses?: (string | undefined)[]; sy
   useEffect(() => { load(); }, [symbol, addresses.join('|')]);
 
   useEffect(() => {
+    if (!addresses.length) return;
     const channel = supabase
       .channel('order_history_realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'order_history' }, (payload) => {
