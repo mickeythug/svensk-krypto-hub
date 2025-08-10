@@ -149,18 +149,63 @@ export function useOpenOrders(params: {
   };
 
   const cancelJupOrder = async (order: string, maker: string) => {
-    const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order } });
-    if (error || !(data as any)?.ok) {
-      const msg = (error as any)?.message || (data as any)?.error || (data as any)?.details || 'Okänt fel';
-      toast({ title: 'Kunde inte avbryta Jupiter‑order', description: msg, variant: 'destructive' });
-    } else {
-      toast({ title: 'Jupiter‑order avbruten', description: `Order ${order} avbröts` });
-      // Force immediate wallet refresh so användaren ser pengarna tillbaka
-      window.dispatchEvent(new CustomEvent('wallet:refresh'));
+    try {
+      if (!publicKey) {
+        toast({ title: 'Wallet krävs', description: 'Anslut din Solana‑wallet för att avbryta ordern.', variant: 'destructive' });
+        return { data: null, error: new Error('Ingen wallet') };
+      }
+      const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order, computeUnitPrice: 'auto' } });
+      if (error || !(data as any)?.ok) {
+        const msg = (error as any)?.message || (data as any)?.error || (data as any)?.details || 'Okänt fel';
+        toast({ title: 'Kunde inte initiera avbrytning', description: msg, variant: 'destructive' });
+        await loadJup();
+        return { data, error };
+      }
+      const txB64 = (data as any)?.transaction || (data as any)?.tx || (data as any)?.data?.transaction || null;
+      if (txB64) {
+        try {
+          toast({ title: 'Signera i din wallet', description: 'En transaktion för att avbryta ordern kräver signering.' });
+          const bytes = Uint8Array.from(atob(String(txB64)), (c) => c.charCodeAt(0));
+          const vtx = VersionedTransaction.deserialize(bytes);
+          let sig: string | null = null;
+          try {
+            sig = await (sendTransaction?.(vtx, connection));
+          } catch (e) {
+            if (typeof signTransaction === 'function') {
+              const signed = await signTransaction(vtx);
+              const raw = signed.serialize();
+              sig = await connection.sendRawTransaction(raw, { skipPreflight: false });
+            } else {
+              throw e;
+            }
+          }
+          if (sig) {
+            const explorer = `https://solscan.io/tx/${sig}`;
+            toast({ title: 'Avbryt transaktion skickad', description: `Visa på Solscan: ${explorer}` });
+            window.dispatchEvent(new CustomEvent('wallet:refresh'));
+            await loadJup();
+            return { data, error: null };
+          }
+        } catch (e: any) {
+          toast({ title: 'Signering misslyckades', description: String(e?.message || e), variant: 'destructive' });
+          await loadJup();
+          return { data, error: e };
+        }
+      }
+      await loadJup();
+      const stillThere = jupOrders.some((o) => o.order === order && ['active', 'open', 'Open'].includes(String(o.status)));
+      if (stillThere) {
+        toast({ title: 'Avbrytning inte bekräftad', description: 'Ordern visas fortfarande som aktiv. Försök igen eller vänta en stund.', variant: 'destructive' });
+      } else {
+        toast({ title: 'Jupiter‑order avbruten' });
+        window.dispatchEvent(new CustomEvent('wallet:refresh'));
+      }
+      return { data, error: null };
+    } catch (err) {
+      toast({ title: 'Fel vid avbrytning', description: String((err as any)?.message || err), variant: 'destructive' });
+      await loadJup();
+      return { data: null, error: err };
     }
-    // Alltid hämta om från kedjan så att UI speglar verkligheten
-    await loadJup();
-    return { data, error };
   };
   return { dbOrders, jupOrders, loading, cancelDbOrder, cancelJupOrder };
 }
