@@ -14,28 +14,7 @@ export default function OpenOrdersPanel({ symbol }: { symbol: string }) {
   const { address: evmAddress } = useAccount();
   const { info: solInfo } = useSolanaTokenInfo(symbol);
 
-  // Return wallet connection prompt if no wallet connected
-  if (!solAddress && !evmAddress) {
-    return (
-    <Card className="p-0 bg-card border border-border flex flex-col">
-      <div className="p-3 border-b border-border/30 flex-shrink-0">
-        <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          Öppna Ordrar
-        </h3>
-      </div>
-      <div className="flex items-center justify-center p-6">
-        <div className="text-center space-y-2">
-          <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
-            <div className="w-4 h-4 border-2 border-muted-foreground/30 rounded border-dashed" />
-          </div>
-          <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se öppna ordrar</p>
-        </div>
-      </div>
-    </Card>
-    );
-  }
-
+  // Hooks must be called unconditionally; render prompt later if no wallet
   const { dbOrders, jupOrders, loading, cancelDbOrder, cancelJupOrder } = useOpenOrders({
     symbol,
     solAddress,
@@ -111,6 +90,27 @@ export default function OpenOrdersPanel({ symbol }: { symbol: string }) {
       return jupOrders;
     }
   }, [jupOrders, solInfo?.mint, solInfo?.decimals, solUsd]);
+
+  if (!solAddress && !evmAddress) {
+    return (
+    <Card className="p-0 bg-card border border-border flex flex-col">
+      <div className="p-3 border-b border-border/30 flex-shrink-0">
+        <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          Öppna Ordrar
+        </h3>
+      </div>
+      <div className="flex items-center justify-center p-6">
+        <div className="text-center space-y-2">
+          <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
+            <div className="w-4 h-4 border-2 border-muted-foreground/30 rounded border-dashed" />
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se öppna ordrar</p>
+        </div>
+      </div>
+    </Card>
+    );
+  }
 
   return (
     <OpenOrdersList
