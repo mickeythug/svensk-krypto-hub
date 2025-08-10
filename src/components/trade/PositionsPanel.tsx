@@ -66,8 +66,18 @@ export default function PositionsPanel() {
     return map;
   }, [rows]);
 
-  const solSymbols = useMemo(() => new Set(Object.keys(solMintMap)), [solMintMap]);
+  const [extraMints, setExtraMints] = useState<Record<string, Set<string>>>({});
+  const combinedMintMap = useMemo(() => {
+    const combined: Record<string, Set<string>> = {};
+    for (const [sym, set] of Object.entries(solMintMap)) combined[sym] = new Set(set);
+    for (const [sym, set] of Object.entries(extraMints)) {
+      if (!combined[sym]) combined[sym] = new Set();
+      set.forEach((m) => combined[sym].add(m));
+    }
+    return combined;
+  }, [solMintMap, extraMints]);
 
+  const solSymbols = useMemo(() => new Set(Object.keys(combinedMintMap)), [combinedMintMap]);
   const [onChain, setOnChain] = useState<Record<string, number>>({});
   useEffect(() => {
     if (!sol || !historyPositions.length) { setOnChain({}); return; }
@@ -78,7 +88,7 @@ export default function PositionsPanel() {
         const owner = new PublicKey(sol);
         const next: Record<string, number> = {};
         for (const p of historyPositions) {
-          const mints = solMintMap[p.symbol];
+          const mints = combinedMintMap[p.symbol];
           if (!mints || mints.size === 0) continue;
           let sum = 0;
           for (const mintStr of Array.from(mints)) {
@@ -99,7 +109,7 @@ export default function PositionsPanel() {
     run();
     const id = setInterval(run, 20000);
     return () => { cancelled = true; clearInterval(id); };
-  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|'), Object.keys(solMintMap).length]);
+  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|'), Object.keys(combinedMintMap).length]);
 
   const positions = useMemo(() => historyPositions.filter(p => {
     const isSol = solSymbols.has(p.symbol);
@@ -165,7 +175,14 @@ export default function PositionsPanel() {
 
       if (!mintStr) throw new Error('Kunde inte hitta mint‑adress för token');
 
-      const { VersionedTransaction } = await import('@solana/web3.js');
+      const { VersionedTransaction, PublicKey } = await import('@solana/web3.js');
+
+      // Ensure we track this mint for on-chain balance filtering
+      setExtraMints((prev) => {
+        const s = new Set(prev[symbolUpper] ?? []);
+        s.add(mintStr!);
+        return { ...prev, [symbolUpper]: s };
+      });
 
       const onChainAmt = onChain[symbol] ?? 0;
       const closeAmt = Math.max(0, Math.min(amountHint || 0, onChainAmt > 0 ? onChainAmt : amountHint || 0));
@@ -182,6 +199,28 @@ export default function PositionsPanel() {
       const txBytes = Uint8Array.from(atob(swapTxB64), (c) => c.charCodeAt(0));
       const vtx = VersionedTransaction.deserialize(txBytes);
       const sig = await (sendTransaction as any)(vtx, connection);
+
+      // Wait for confirmation and refresh balances immediately
+      try {
+        const latest = await connection.getLatestBlockhash();
+        await connection.confirmTransaction({ signature: sig, ...latest }, 'confirmed');
+      } catch {}
+      try {
+        const owner = new PublicKey(sol);
+        let sum = 0;
+        const mints = combinedMintMap[symbolUpper] || new Set([mintStr!]);
+        for (const m of Array.from(mints)) {
+          try {
+            const mintPk = new PublicKey(m);
+            const accs = await connection.getParsedTokenAccountsByOwner(owner, { mint: mintPk });
+            for (const a of accs.value) {
+              const ui = (a.account.data as any)?.parsed?.info?.tokenAmount?.uiAmount;
+              if (Number.isFinite(ui)) sum += Number(ui);
+            }
+          } catch {}
+        }
+        setOnChain((s) => ({ ...s, [symbolUpper]: sum }));
+      } catch {}
 
       toast({ title: 'Position stängd', description: `Transaktion skickad: ${sig.slice(0, 8)}...` });
       try {
