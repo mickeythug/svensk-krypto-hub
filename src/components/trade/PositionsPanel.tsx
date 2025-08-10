@@ -17,25 +17,7 @@ export default function PositionsPanel() {
   const { rows } = useOrderHistory({ addresses: [sol, evm] });
   const navigate = useNavigate();
 
-  // Return wallet connection prompt if no wallet connected
-  if (!sol && !evm) {
-    return (
-    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
-      <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
-        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-        <h3 className="text-base font-semibold text-foreground">Positioner</h3>
-      </div>
-      <div className="flex items-center justify-center p-6">
-        <div className="text-center space-y-2">
-          <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
-            <div className="w-4 h-4 border-2 border-muted-foreground/30 rounded border-dashed" />
-          </div>
-          <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se positioner</p>
-        </div>
-      </div>
-    </Card>
-    );
-  }
+  const noWallet = !sol && !evm;
 
   const [cryptoPrices, setCryptoPrices] = useState<any[]>([]);
 
@@ -152,7 +134,18 @@ export default function PositionsPanel() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {positions.length === 0 ? (
+            {noWallet ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-6">
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-6 h-6 rounded-full bg-muted/50 flex items-center justify-center">
+                      <div className="w-3 h-3 border-2 border-muted-foreground/30 rounded border-dashed" />
+                    </div>
+                    <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se positioner</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : positions.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-4">
                   <div className="flex flex-col items-center gap-1">
