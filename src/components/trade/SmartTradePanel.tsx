@@ -551,14 +551,14 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
 
   return (
-    <div className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
-      <div className="p-3 border-b border-border/30 bg-background/40">
+    <div className="h-full bg-card border border-border shadow-sm rounded-lg">
+      <div className="p-3 border-b border-border bg-card">
         <div className="flex gap-1">
           <Button variant={side === 'buy' ? 'default' : 'outline'} size="sm" onClick={() => setSide('buy')} className={`flex-1 ${side==='buy'?'bg-success text-white':''}`}>Buy</Button>
           <Button variant={side === 'sell' ? 'default' : 'outline'} size="sm" onClick={() => setSide('sell')} className={`flex-1 ${side==='sell'?'bg-destructive text-white':''}`}>Sell</Button>
         </div>
       </div>
-      <div className="p-4 space-y-4 bg-background/20">
+      <div className="p-4 space-y-4 bg-card">
         <Tabs value={orderType} onValueChange={(v)=>setOrderType(v as any)} className="w-full">
           <TabsList className="grid grid-cols-2 w-full">
             <TabsTrigger value="market">Market</TabsTrigger>

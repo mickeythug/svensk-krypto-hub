@@ -161,10 +161,10 @@ const CryptoDetailPage = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <CryptoPriceTicker />
-        <div className="px-4 pt-2">
-          <Button variant="outline" size="sm" onClick={() => navigate('/marknad')} className="flex items-center gap-2">
+        <div className="px-2 pt-2">
+          <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Tillbaka till Marknad
+            Till marknaden
           </Button>
         </div>
         <MobileTradingView
@@ -182,15 +182,15 @@ const CryptoDetailPage = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <CryptoPriceTicker />
-      <div className="container mx-auto px-4 mt-4">
-        <Button variant="outline" size="sm" onClick={() => navigate('/marknad')} className="flex items-center gap-2">
+      <div className="container mx-auto px-2 mt-2">
+        <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2">
           <ArrowLeft className="h-4 w-4" />
-          Tillbaka till Marknad
+          Till marknaden
         </Button>
       </div>
       {solConnected && !isSolToken && (
         <div className="container mx-auto px-4 mt-3">
-          <Card className="border-amber-500/30 bg-amber-500/5 p-4">
+          <Card className="bg-card border border-amber-500/30 p-4 rounded-lg">
             <div className="text-sm">
               Denna token stöds inte av Solana‑kedjan. Du är ansluten med Solana‑wallet. Växla till EVM för att handla denna token.
             </div>
