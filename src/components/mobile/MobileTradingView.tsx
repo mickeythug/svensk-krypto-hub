@@ -12,8 +12,7 @@ import {
   Bell,
   Eye,
   ArrowUp,
-  ArrowDown,
-  Volume2
+  ArrowDown
 } from "lucide-react";
 import TradingViewMobileChart from "./TradingViewMobileChart";
 import MobileOrderBook from "./MobileOrderBook";
@@ -65,8 +64,8 @@ const MobileTradingView = ({
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Fixed Header */}
-      <div className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-border/30">
+      {/* SOLID FIXED HEADER - Never moves, always stays put */}
+      <div className="fixed top-28 left-0 right-0 z-40 bg-card/98 backdrop-blur-xl border-b border-border/30 shadow-lg">
         <div className="p-4 space-y-4">
           {/* Token Info Row */}
           <div className="flex items-center justify-between">
@@ -117,7 +116,7 @@ const MobileTradingView = ({
             className="w-full"
           />
           
-          {/* Price Display */}
+          {/* SOLID PRICE DISPLAY - Never moves */}
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <div className="text-3xl font-bold font-mono text-foreground mb-1">
@@ -143,7 +142,7 @@ const MobileTradingView = ({
             </div>
           </div>
 
-          {/* Market Stats - Fixed Grid */}
+          {/* SOLID MARKET STATS - Fixed Grid, never overlaps */}
           <div className="grid grid-cols-3 gap-3">
             <Card className="p-3 bg-success/10 border-success/20">
               <div className="text-xs text-muted-foreground mb-1">24h High</div>
@@ -168,7 +167,7 @@ const MobileTradingView = ({
           </div>
         </div>
 
-        {/* Solana Warning */}
+        {/* Solana Warning - Fixed position */}
         {solConnected && !isSolToken && (
           <div className="mx-4 mb-4">
             <Card className="border-amber-500/30 bg-amber-500/5 p-3">
@@ -179,7 +178,7 @@ const MobileTradingView = ({
           </div>
         )}
 
-        {/* Tab Navigation */}
+        {/* SOLID TAB NAVIGATION - Never moves */}
         <div className="px-4 pb-4">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 rounded-2xl p-1">
@@ -221,22 +220,26 @@ const MobileTradingView = ({
         </div>
       </div>
 
-      {/* Content Area - Fixed Layout */}
-      <div className="pb-safe">
+      {/* SCROLLABLE CONTENT AREA - Fixed spacing, smooth scroll */}
+      <div className="pt-[450px] pb-safe">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          {/* Chart Tab */}
+          {/* SOLID CHART TAB - Fixed container, no overlap */}
           <TabsContent value="chart" className="mt-0 p-4">
-            <TradingViewMobileChart symbol={symbol} coinGeckoId={crypto?.coinGeckoId} />
+            <div className="relative z-10 bg-background">
+              <TradingViewMobileChart symbol={symbol} coinGeckoId={crypto?.coinGeckoId} />
+            </div>
           </TabsContent>
 
-          {/* Orderbook Tab */}
+          {/* SOLID ORDERBOOK TAB - Fixed container */}
           <TabsContent value="orderbook" className="mt-0 p-4">
-            <MobileOrderBook symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
+            <div className="relative z-10 bg-background">
+              <MobileOrderBook symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
+            </div>
           </TabsContent>
 
-          {/* Trading Tab */}
+          {/* SOLID TRADING TAB - Fixed container */}
           <TabsContent value="trades" className="mt-0 p-4">
-            <div className="max-w-md mx-auto">
+            <div className="relative z-10 bg-background max-w-md mx-auto">
               <SmartTradePanel 
                 symbol={symbol} 
                 currentPrice={currentPrice}
@@ -244,9 +247,9 @@ const MobileTradingView = ({
             </div>
           </TabsContent>
 
-          {/* Info Tab */}
+          {/* SOLID INFO TAB - Fixed container */}
           <TabsContent value="info" className="mt-0 p-4">
-            <div className="max-w-md mx-auto space-y-4">
+            <div className="relative z-10 bg-background max-w-md mx-auto space-y-4">
               <Card className="p-6 bg-gradient-to-br from-card to-card/80 border-border/50">
                 <h3 className="font-semibold text-lg mb-6 flex items-center gap-2 text-foreground">
                   <Eye className="h-5 w-5 text-primary" />
