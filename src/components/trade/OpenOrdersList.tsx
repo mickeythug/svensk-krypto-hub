@@ -127,8 +127,8 @@ export function OpenOrdersList({
                         {typeof r.amount === 'number' ? `${r.amount.toLocaleString(undefined, { maximumFractionDigits: 3 })} ${baseSymbol}` : '-'}
                       </div>
                       {r.source === 'JUP' && (r.data as any)?.makingAmount ? (
-                        <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-orange-100 dark:bg-orange-900/30 rounded-md border border-orange-200 dark:border-orange-800">
-                          <span className="text-xs font-semibold text-orange-700 dark:text-orange-300">
+                        <div className="">
+                          <span className="text-sm font-semibold text-foreground">
                             Betalar {(r.data as any).makingAmount} {((r.data as any).inputMint === SOL_MINT ? 'SOL' : 'USDC')}
                           </span>
                         </div>
