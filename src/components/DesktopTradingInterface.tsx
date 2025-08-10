@@ -366,7 +366,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
       {/* Enhanced Right Sidebar */}
       <div className="w-96 flex flex-col bg-card border-l border-border">
         {/* Orderbook */}
-        <div className="flex-1 p-4 min-h-0">
+        <div className="flex-1 p-4 min-h-0 max-h-[calc(100vh-520px)]">
           <OrderBook 
             orderBook={orderBook}
             currentPrice={currentPrice}
@@ -377,11 +377,11 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
         {/* Trading Panel */}
         {fullyAuthed ? (
-          <div className="h-[500px] p-4 pt-0">
+          <div className="h-[480px] p-4 pt-2 mt-2">
             <SmartTradePanel symbol={symbol} currentPrice={currentPrice} />
           </div>
         ) : (
-          <div className="p-4 pt-0">
+          <div className="p-4 pt-2 mt-2">
             <Card className="p-6 text-center bg-card border">
               <AlertTriangle className="h-12 w-12 text-warning mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Connect Wallet to Trade</h3>
