@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Settings, MoreHorizontal, Maximize2, BarChart3 } from "lucide-react";
 import { loadTradingView } from "@/lib/tradingviewLoader";
 import { formatUsd } from "@/lib/utils";
+import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
+import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 
 interface TradingViewChartProps {
   symbol: string;
@@ -19,6 +21,8 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
   const widgetRef = useRef<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [timeframe, setTimeframe] = useState("1D");
+  const [fallback, setFallback] = useState(false);
+  const { tvSymbol } = useTradingViewSymbol(symbol, undefined);
 
   useEffect(() => {
     console.log('TradingViewChart loading for symbol:', symbol);
@@ -30,6 +34,7 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
       })
       .catch((error) => {
         console.error('Failed to load TradingView script:', error);
+        setFallback(true);
       });
 
     return () => {
@@ -119,6 +124,16 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
       
       console.log('TradingView widget created successfully');
 
+      // Safety fallback if no iframe/content appears
+      setTimeout(() => {
+        const hasIframe = !!containerRef.current?.querySelector('iframe');
+        if (!hasIframe) {
+          console.warn('TradingView widget did not render, enabling fallback');
+          setFallback(true);
+        }
+      }, 3000);
+
+
       // Add limit lines when chart is ready (best-effort)
       try {
         widgetRef.current.onChartReady?.(() => {
@@ -158,8 +173,8 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
     }
   };
 
-  const getInterval = (timeframe: string) => {
-    const intervals: Record<string, string> = {
+  const getInterval = (timeframe: string): "1" | "5" | "15" | "60" | "240" | "D" | "W" => {
+    const intervals: Record<string, "1" | "5" | "15" | "60" | "240" | "D" | "W"> = {
       "1m": "1",
       "5m": "5", 
       "15m": "15",
@@ -251,26 +266,43 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
       </div>
 
       {/* Chart Container */}
-      <div 
-        ref={containerRef} 
-        id={containerIdRef.current}
-        className="w-full h-full min-h-[500px] bg-transparent"
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
-          position: 'relative'
-        }}
-      >
-        {/* Fallback content while chart loads */}
-        <div className="fallback-content absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
-            <p className="text-muted-foreground">Laddar TradingView chart...</p>
-            <div className="mt-2 text-xs text-muted-foreground">
-              {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+      {fallback ? (
+        <div className="w-full h-full min-h-[500px]">
+          <AdvancedRealTimeChart
+            key={`${tvSymbol}-${timeframe}`}
+            theme="dark"
+            autosize
+            symbol={tvSymbol}
+            interval={getInterval(timeframe)}
+            timezone="Etc/UTC"
+            style="1"
+            locale="en"
+            enable_publishing={false}
+          />
+        </div>
+      ) : (
+        <div 
+          ref={containerRef} 
+          id={containerIdRef.current}
+          className="w-full h-full min-h-[500px] bg-transparent"
+          style={{ 
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
+            position: 'relative'
+          }}
+        >
+          {/* Fallback content while chart loads */}
+          <div className="fallback-content absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
+              <p className="text-muted-foreground">Laddar TradingView chart...</p>
+              <div className="mt-2 text-xs text-muted-foreground">
+                {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
     </Card>
   );
 };
