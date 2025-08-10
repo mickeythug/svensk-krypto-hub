@@ -24,7 +24,9 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [orderType, setOrderType] = useState<'market'|'limit'>('market');
   const [amountInput, setAmountInput] = useState('');
   const [slippage, setSlippage] = useState(50); // bps
-  const defaultChainMode = symbol.toUpperCase() === 'BONK' ? 'SOL' : 'EVM';
+  const symbolUpper = symbol.toUpperCase();
+  const isSolToken = useMemo(() => Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL', [symbolUpper]);
+  const defaultChainMode = isSolToken ? 'SOL' : 'EVM';
   const [chainMode, setChainMode] = useState<'SOL'|'EVM'>(defaultChainMode as any);
 
   // Solana
@@ -61,6 +63,7 @@ const evmChainId = 1;
   async function executeSolanaMarket() {
     try {
       if (!solAddress) throw new Error('Solana wallet saknas');
+      if (!isSolToken) throw new Error('Denna token är inte tillgänglig på Solana. Välj EVM eller en Solana-token (t.ex. BONK/USDC).');
       const inputMint = side === 'buy' ? SOL_MINT : (solTokenInfo?.mint || SOL_MINT);
       const outputMint = side === 'buy' ? (solTokenInfo?.mint || SOL_MINT) : SOL_MINT;
       if (!inputMint || !outputMint) throw new Error('Okänd token');
@@ -204,7 +207,7 @@ const evmChainId = 1;
               size="sm"
               className="h-6 text-xs"
               onClick={()=>setPercent(p)}
-              disabled={available <= 0 || (chainMode==='SOL' && !isSolConnected)}
+              disabled={available <= 0 || (chainMode==='SOL' && (!isSolConnected || !isSolToken))}
             >
               {Math.round(p*100)}%
             </Button>
@@ -229,11 +232,25 @@ const evmChainId = 1;
         </div>
 
         <div className="flex gap-2 text-xs">
-          <Button variant={chainMode==='SOL'?'default':'outline'} size="sm" onClick={()=>setChainMode('SOL')} className="flex-1">Solana</Button>
+          <Button
+            variant={chainMode==='SOL'?'default':'outline'}
+            size="sm"
+            onClick={()=>setChainMode('SOL')}
+            className="flex-1"
+            disabled={!isSolToken}
+            title={!isSolToken ? 'Inte tillgängligt för denna token på Solana' : undefined}
+          >
+            Solana
+          </Button>
           <Button variant={chainMode==='EVM'?'default':'outline'} size="sm" onClick={()=>setChainMode('EVM')} className="flex-1">EVM</Button>
         </div>
+        {chainMode==='SOL' && !isSolToken && (
+          <div className="text-[11px] text-destructive mt-1">
+            Denna token stöds inte på Solana. Välj EVM eller en Solana‑token (t.ex. BONK/USDC).
+          </div>
+        )}
 
-        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={(chainMode==='SOL' && !isSolConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
+        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={(chainMode==='SOL' && (!isSolConnected || !isSolToken)) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
           <Wallet className="h-4 w-4 mr-2" /> {side==='buy'?'Buy':'Sell'} {symbol}
         </Button>
       </div>
