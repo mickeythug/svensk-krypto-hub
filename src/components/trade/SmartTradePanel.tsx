@@ -58,7 +58,10 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [slippage, setSlippage] = useState(50); // bps
   const [submitting, setSubmitting] = useState(false);
   const symbolUpper = symbol.toUpperCase();
-  const { info: dynamicSolTokenInfo, isSolToken } = useSolanaTokenInfo(symbolUpper);
+  const { cryptoPrices } = useCryptoData();
+  const tokenRow = useMemo(() => cryptoPrices?.find?.((c: any) => (c.symbol || '').toUpperCase() === symbolUpper), [cryptoPrices, symbolUpper]);
+  const coinGeckoId = ((tokenRow as any)?.coin_gecko_id || (tokenRow as any)?.coinGeckoId || (tokenRow as any)?.data?.id) as string | undefined;
+  const { info: dynamicSolTokenInfo, isSolToken } = useSolanaTokenInfo(symbolUpper, coinGeckoId);
   const defaultChainMode = isSolToken ? 'SOL' : 'EVM';
   const [chainMode, setChainMode] = useState<'SOL'|'EVM'>(defaultChainMode as any);
   const { fullyAuthed } = useWalletAuthStatus();
@@ -76,7 +79,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { address: evmAddress, isConnected: isEvmConnected } = useAccount();
   const evmConnected = isEvmConnected;
   const evmChainId = 1;
-  const { cryptoPrices } = useCryptoData();
+  // cryptoPrices defined above
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
@@ -132,6 +135,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       const amountBase = Math.floor(parseFloat(amountInput) * Math.pow(10, decimals));
       if (!Number.isFinite(amountBase) || amountBase <= 0) throw new Error('Ogiltigt belopp');
       if (amountBase < 1000) throw new Error('Beloppet är för litet för Jupiter');
+
+      console.info('Jupiter swap params', { inputMint, outputMint, decimals, amountBase, side, symbol: symbolUpper });
 
       const { data, error } = await invokeWithRetry<any>('jupiter-swap', {
         userPublicKey: solAddress, inputMint, outputMint, amount: String(amountBase), slippageBps: slippage,
