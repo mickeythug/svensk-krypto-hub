@@ -25,6 +25,7 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Use POST' }), { headers: { 'Content-Type': 'application/json', ...corsHeaders }, status: 405 });
     }
     const body = (await req.json()) as SwapReq;
+    console.log('jupiter-swap request', body);
     const { userPublicKey, inputMint, outputMint, amount } = body;
     const slippageBps = body.slippageBps ?? 50;
 

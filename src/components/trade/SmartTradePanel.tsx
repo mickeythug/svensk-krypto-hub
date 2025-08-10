@@ -72,7 +72,18 @@ const evmChainId = 1;
       const { data, error } = await supabase.functions.invoke('jupiter-swap', {
         body: { userPublicKey: solAddress, inputMint, outputMint, amount: String(amountBase), slippageBps: slippage },
       });
-      if (error) throw error;
+      if (error) {
+        // Försök extrahera detaljer från Edge Function-svaret
+        let detailsText = '';
+        try {
+          const ctxResp = (error as any)?.context?.response;
+          if (ctxResp && typeof ctxResp.json === 'function') {
+            const j = await ctxResp.json();
+            detailsText = j?.error ? `${j.error}${j?.details ? `: ${typeof j.details === 'string' ? j.details : JSON.stringify(j.details)}` : ''}` : '';
+          }
+        } catch {}
+        throw new Error(detailsText || (error as any)?.message || 'Okänt fel från jupiter-swap');
+      }
       const swapTxB64 = (data as any)?.swapTransaction as string;
       if (!swapTxB64) throw new Error('Saknar swapTransaction');
 
