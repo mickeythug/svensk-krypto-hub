@@ -96,9 +96,18 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
       const jup = (jupOrders || [])
         .filter((o: any) => ['active','open','Open'].includes(String(o.status)))
         .map((o: any) => {
-          const side = o.side || ((o.inputMint === 'So11111111111111111111111111111111111111112' && o.outputMint === solInfo?.mint) ? 'buy' : (o.inputMint === solInfo?.mint ? 'sell' : undefined));
-          const mk = parseFloat(o.makingAmount || '0');
-          const tk = parseFloat(o.takingAmount || '0');
+          const inMint = o.inputMint;
+          const outMint = o.outputMint;
+          const side = o.side || ((inMint === SOL_MINT && outMint === solInfo?.mint) ? 'buy' : (inMint === solInfo?.mint && outMint === SOL_MINT) ? 'sell' : undefined);
+
+          const inDec = inMint === SOL_MINT ? 9 : (inMint === solInfo?.mint ? (solInfo?.decimals ?? 0) : 0);
+          const outDec = outMint === SOL_MINT ? 9 : (outMint === solInfo?.mint ? (solInfo?.decimals ?? 0) : 0);
+
+          const mkAtoms = Number(o.makingAmount ?? o.rawMakingAmount ?? 0);
+          const tkAtoms = Number(o.takingAmount ?? o.rawTakingAmount ?? 0);
+          const mk = inDec > 0 ? mkAtoms / Math.pow(10, inDec) : mkAtoms;
+          const tk = outDec > 0 ? tkAtoms / Math.pow(10, outDec) : tkAtoms;
+
           let price = NaN;
           if (side === 'buy' && mk > 0 && tk > 0 && solUsd > 0) price = (mk * solUsd) / tk;
           if (side === 'sell' && mk > 0 && tk > 0 && solUsd > 0) price = (tk * solUsd) / mk;
@@ -110,7 +119,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     } catch (e) {
       console.warn('Kunde inte bygga limit‑linjer', e);
     }
-  }, [dbOrders, jupOrders, solInfo?.mint]);
+  }, [dbOrders, jupOrders, solInfo?.mint, solInfo?.decimals, solUsd]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {

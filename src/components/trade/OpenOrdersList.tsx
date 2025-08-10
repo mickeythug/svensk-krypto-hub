@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { DbLimitOrder, JupOrder } from '@/hooks/useOpenOrders';
 import { useMemo } from 'react';
+import { formatUsd } from '@/lib/utils';
 
 export function OpenOrdersList({
   symbol,
@@ -84,8 +85,8 @@ export function OpenOrdersList({
                     </Badge>
                   ) : '-'}
                 </TableCell>
-                <TableCell>{typeof r.price === 'number' ? `$${r.price}` : '-'}</TableCell>
-                <TableCell>{typeof r.amount === 'number' ? r.amount : '-'}</TableCell>
+                <TableCell>{typeof r.price === 'number' ? formatUsd(r.price) : '-'}</TableCell>
+                <TableCell>{typeof r.amount === 'number' ? r.amount.toLocaleString(undefined, { maximumFractionDigits: 6 }) : '-'}</TableCell>
                 <TableCell>
                   <Badge variant={r.status === 'open' || r.status === 'active' ? 'secondary' : 'outline'}>
                     {r.status}
