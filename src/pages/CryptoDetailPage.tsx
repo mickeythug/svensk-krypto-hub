@@ -160,12 +160,14 @@ const CryptoDetailPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <CryptoPriceTicker />
-        <div className="px-0 pt-1">
-          <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
-            <ArrowLeft className="h-4 w-4" />
-            Till marknaden
-          </Button>
+        <div className="pt-16"> {/* Add top padding to clear the fixed header */}
+          <CryptoPriceTicker />
+          <div className="px-0 pt-1">
+            <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
+              <ArrowLeft className="h-4 w-4" />
+              Till marknaden
+            </Button>
+          </div>
         </div>
         <MobileTradingView
           symbol={crypto.symbol.toUpperCase()}
@@ -181,12 +183,14 @@ const CryptoDetailPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <CryptoPriceTicker />
-      <div className="px-0 pt-1">
-        <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
-          <ArrowLeft className="h-4 w-4" />
-          Till marknaden
-        </Button>
+      <div className="pt-16"> {/* Add top padding to clear the fixed header */}
+        <CryptoPriceTicker />
+        <div className="px-0 pt-1">
+          <Button variant="secondary" size="sm" onClick={() => navigate('/marknad')} className="rounded-full shadow-sm font-semibold gap-2 ml-2">
+            <ArrowLeft className="h-4 w-4" />
+            Till marknaden
+          </Button>
+        </div>
       </div>
       {solConnected && !isSolToken && (
         <div className="container mx-auto px-4 mt-3">
