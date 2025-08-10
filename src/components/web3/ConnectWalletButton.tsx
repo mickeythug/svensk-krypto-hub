@@ -117,14 +117,13 @@ export default function ConnectWalletButton() {
     }
   }, [connectError]);
 
-  const handleConnect = async () => {
+  const handleConnect = async (forcedMode?: 'SOL' | 'EVM') => {
     try {
-      // Kräv att användaren väljer kedja (ingen auto-detektering)
-      if (!chainMode) {
+      const mode = (forcedMode ?? chainMode) as 'SOL' | 'EVM' | null;
+      if (!mode) {
         toast({ title: 'Välj kedja', description: 'Välj Solana (Phantom) eller Ethereum (MetaMask/Trust).', variant: 'destructive' });
         return;
       }
-      const mode: 'SOL' | 'EVM' = chainMode;
       authLog('Connect: start', { mode, selectedEvmChainId });
 
       if (mode === 'SOL') {
@@ -374,11 +373,11 @@ export default function ConnectWalletButton() {
             <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-[220px]">
-          <DropdownMenuItem onClick={() => { setChainMode('SOL'); void handleConnect(); }}>
+        <DropdownMenuContent align="end" className="min-w-[220px] z-50 bg-background/95 backdrop-blur border">
+          <DropdownMenuItem onClick={() => { setChainMode('SOL'); void handleConnect('SOL'); }}>
             Solana (Phantom)
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { setChainMode('EVM'); setSelectedEvmChainId(1); void handleConnect(); }}>
+          <DropdownMenuItem onClick={() => { setChainMode('EVM'); setSelectedEvmChainId(1); void handleConnect('EVM'); }}>
             Ethereum (MetaMask / Trust)
           </DropdownMenuItem>
         </DropdownMenuContent>
