@@ -27,10 +27,8 @@ export function useOrderHistory(params: { addresses?: (string | undefined)[]; sy
   const [rows, setRows] = useState<OrderHistoryRow[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Return empty if no addresses (no wallet connected)
-  if (!addresses.length) {
-    return { rows: [], loading: false, refresh: () => {} } as const;
-  }
+  // If no addresses, keep hooks active but we'll simply keep rows empty until connected
+
 
   async function load() {
     if (!addresses.length) return;
