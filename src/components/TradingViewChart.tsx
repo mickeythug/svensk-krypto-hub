@@ -133,7 +133,7 @@ const TradingViewChart = ({
                   price: l.price
                 }, {
                   shape: 'horizontal_line',
-                  text: `${l.side.toUpperCase()} ${l.price}`,
+                  text: `${l.side === 'buy' ? 'BUY' : 'SELL'} @ $${(Number(l.price) || 0).toFixed(6)}`,
                   disableSelection: true,
                   lock: true,
                   overrides: {

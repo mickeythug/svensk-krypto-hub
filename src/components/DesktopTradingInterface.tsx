@@ -34,6 +34,7 @@ import SmartTradePanel from '@/components/trade/SmartTradePanel';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 import { supabase } from '@/integrations/supabase/client';
 import OpenOrders from '@/components/trade/OpenOrdersPanel';
+import { useOpenOrders } from '@/hooks/useOpenOrders';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -60,6 +61,20 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const { balance: solBalance } = useSolBalance();
   const { history } = useTradeHistory([solAddress || '', evmAddress || '']);
   const { fullyAuthed } = useWalletAuthStatus();
+  const { info: solInfo } = useSolanaTokenInfo(symbol);
+
+  // Öppna orders (DB + Jupiter)
+  const { dbOrders, jupOrders } = useOpenOrders({
+    symbol,
+    solAddress,
+    evmAddress: evmAddress as any,
+    solMint: solInfo?.mint,
+  });
+
+  // SOL‑pris i USD
+  const { cryptoPrices } = useCryptoData();
+  const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => (c.symbol || '').toUpperCase() === 'SOL'), [cryptoPrices]);
+  const solUsd = solRow?.price ? Number(solRow.price) : 0;
 
   // Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);
@@ -71,23 +86,31 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     console.log('OrderBook state:', { orderBook, isConnected, error });
   }, [symbol, orderBook, isConnected, error]);
 
-  // Load open limit orders for this symbol to render lines
+  // Limit‑linjer: sammanställ från DB + Jupiter (realtid)
   useEffect(() => {
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from('limit_orders')
-          .select('limit_price, side, status')
-          .eq('status', 'open')
-          .eq('symbol', symbol.toUpperCase());
-        if (!error && Array.isArray(data)) {
-          setLimitLines(data.map((r: any) => ({ price: Number(r.limit_price), side: (r.side as 'buy'|'sell') })));
-        }
-      } catch (e) {
-        console.warn('Failed to load limit orders', e);
-      }
-    })();
-  }, [symbol]);
+    try {
+      const db = (dbOrders || [])
+        .filter((o: any) => String(o.status).toLowerCase() === 'open')
+        .map((o: any) => ({ price: Number(o.limit_price), side: o.side as 'buy'|'sell' }))
+        .filter((l: any) => Number.isFinite(l.price));
+      const jup = (jupOrders || [])
+        .filter((o: any) => ['active','open','Open'].includes(String(o.status)))
+        .map((o: any) => {
+          const side = o.side || ((o.inputMint === 'So11111111111111111111111111111111111111112' && o.outputMint === solInfo?.mint) ? 'buy' : (o.inputMint === solInfo?.mint ? 'sell' : undefined));
+          const mk = parseFloat(o.makingAmount || '0');
+          const tk = parseFloat(o.takingAmount || '0');
+          let price = NaN;
+          if (side === 'buy' && mk > 0 && tk > 0 && solUsd > 0) price = (mk * solUsd) / tk;
+          if (side === 'sell' && mk > 0 && tk > 0 && solUsd > 0) price = (tk * solUsd) / mk;
+          return { price, side } as { price: number; side: 'buy'|'sell'|undefined };
+        })
+        .filter((l: any) => l.side && Number.isFinite(l.price)) as { price: number; side: 'buy'|'sell' }[];
+
+      setLimitLines([...db, ...jup]);
+    } catch (e) {
+      console.warn('Kunde inte bygga limit‑linjer', e);
+    }
+  }, [dbOrders, jupOrders, solInfo?.mint]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
