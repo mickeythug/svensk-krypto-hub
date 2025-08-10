@@ -116,9 +116,10 @@ export default function ConnectWalletButton() {
 
   const handleConnect = async () => {
     try {
+      // Auto-detect chain if not chosen
       if (!chainMode) {
-        toast({ title: 'Välj kedja', description: 'Du måste välja kedja innan du ansluter.', variant: 'destructive' });
-        return;
+        const hasSol = typeof window !== 'undefined' && ((window as any)?.solana || (window as any)?.phantom?.solana);
+        setChainMode(hasSol ? 'SOL' : 'EVM');
       }
 
       if (chainMode === 'SOL') {
@@ -367,35 +368,11 @@ export default function ConnectWalletButton() {
 
     return (
       <div className="flex items-center gap-2">
-        <Select
-          value={chainMode === 'SOL' ? 'sol' : selectedEvmChainId ? String(selectedEvmChainId) : undefined}
-          onValueChange={(v) => {
-            if (v === 'sol') {
-              setChainMode('SOL');
-              setSelectedEvmChainId(null);
-            } else {
-              setChainMode('EVM');
-              setSelectedEvmChainId(Number(v));
-            }
-          }}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Välj kedja (ETH/SOL)" />
-          </SelectTrigger>
-          <SelectContent>
-            {evmChains.map((c) => (
-              <SelectItem key={c.id} value={String(c.id)}>
-                {c.name}
-              </SelectItem>
-            ))}
-            <SelectItem value="sol">Solana</SelectItem>
-          </SelectContent>
-        </Select>
         <Button
           onClick={handleConnect}
           size="sm"
           className="font-crypto uppercase"
-          disabled={!chainMode || (chainMode === 'EVM' && !selectedEvmChainId) || isConnecting || (chainMode==='SOL' && siwsLoading)}
+          disabled={isConnecting || siwsLoading}
         >
           <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
         </Button>

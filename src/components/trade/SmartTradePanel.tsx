@@ -390,9 +390,6 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     return executeEvmMarket();
   };
 
-  if (!fullyAuthed) {
-    return null;
-  }
 
   return (
     <div className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
