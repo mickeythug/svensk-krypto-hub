@@ -89,6 +89,8 @@ const TradingViewChart = ({
         hide_legend: false,
         save_image: false,
         hide_volume: false,
+        width: "100%",
+        height: "100%",
         studies: ["Volume@tv-basicstudies"],
         overrides: {
           "paneProperties.background": "rgba(0, 0, 0, 0)",
@@ -194,7 +196,7 @@ const TradingViewChart = ({
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
-  return <Card className="h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden">
+  return <Card className="h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden flex flex-col">
       {/* Controls Header Above Chart */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/20 bg-background/90">
         <div className="flex gap-2">
@@ -215,13 +217,11 @@ const TradingViewChart = ({
         </div>
       </div>
 
-      {/* Price Display */}
-      
-
-      {/* Chart Container */}
-      {fallback ? <div className="w-full h-full min-h-[500px]">
+      {/* Chart Container - takes remaining space */}
+      <div className="flex-1 relative min-h-0">
+      {fallback ? <div className="w-full h-full absolute inset-0">
           <AdvancedRealTimeChart key={`${tvSymbol}-${timeframe}`} theme="dark" autosize symbol={tvSymbol} interval={getInterval(timeframe)} timezone="Etc/UTC" style="1" locale="en" enable_publishing={false} />
-        </div> : <div ref={containerRef} id={containerIdRef.current} className="w-full h-full min-h-[500px] bg-transparent" style={{
+        </div> : <div ref={containerRef} id={containerIdRef.current} className="w-full h-full absolute inset-0 bg-transparent" style={{
       background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
       position: 'relative'
     }}>
@@ -236,6 +236,7 @@ const TradingViewChart = ({
             </div>
           </div>
         </div>}
+      </div>
 
     </Card>;
 };
