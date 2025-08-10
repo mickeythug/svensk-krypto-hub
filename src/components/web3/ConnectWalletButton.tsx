@@ -5,7 +5,7 @@ import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, 
 import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
@@ -349,20 +349,25 @@ export default function ConnectWalletButton() {
     }
 
     return (
-      <div className="flex items-center gap-3">
-        <ToggleGroup type="single" value={chainMode || undefined} onValueChange={(v) => { const val = (v as 'SOL'|'EVM') || null; setChainMode(val); if (val === 'EVM') setSelectedEvmChainId(1); }}>
-          <ToggleGroupItem value="SOL" aria-label="Välj Solana">Solana</ToggleGroupItem>
-          <ToggleGroupItem value="EVM" aria-label="Välj Ethereum">Ethereum</ToggleGroupItem>
-        </ToggleGroup>
-        <Button
-          onClick={handleConnect}
-          size="sm"
-          className="font-crypto uppercase"
-          disabled={isConnecting || siwsLoading || !chainMode}
-        >
-          <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
-        </Button>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            size="sm"
+            className="font-crypto uppercase"
+            disabled={isConnecting || siwsLoading}
+          >
+            <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-[220px]">
+          <DropdownMenuItem onClick={() => { setChainMode('SOL'); void handleConnect(); }}>
+            Solana (Phantom)
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setChainMode('EVM'); setSelectedEvmChainId(1); void handleConnect(); }}>
+            Ethereum (MetaMask / Trust)
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 
