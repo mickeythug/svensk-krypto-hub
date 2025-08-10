@@ -51,7 +51,8 @@ export default function ConnectWalletButton() {
   const authedEvm = useMemo(() => {
     const sig = sessionStorage.getItem('siwe_signature');
     const stored = sessionStorage.getItem('siwe_address');
-    return Boolean(isConnected && address && sig && stored && stored.toLowerCase() === (address || '').toLowerCase());
+    const verified = sessionStorage.getItem('siwe_verified') === 'true';
+    return Boolean(isConnected && address && sig && verified && stored && stored.toLowerCase() === (address || '').toLowerCase());
   }, [isConnected, address]);
   const fullyAuthed = authedSol || authedEvm;
   const activeMode = authedSol ? 'SOL' : (authedEvm ? 'EVM' : null);
@@ -60,7 +61,8 @@ export default function ConnectWalletButton() {
     if (chainMode === 'EVM') {
       const sig = sessionStorage.getItem('siwe_signature');
       const addrStored = sessionStorage.getItem('siwe_address');
-      const ok = Boolean(sig && addrStored && address && addrStored.toLowerCase() === address.toLowerCase());
+      const verified = sessionStorage.getItem('siwe_verified') === 'true';
+      const ok = Boolean(verified && sig && addrStored && address && addrStored.toLowerCase() === address.toLowerCase());
       setIsAuthed(ok);
     } else if (chainMode === 'SOL') {
       const verified = sessionStorage.getItem('siws_verified') === 'true';
@@ -187,23 +189,33 @@ export default function ConnectWalletButton() {
       try {
         await switchChainAsync({ chainId: selectedEvmChainId });
       } catch {}
-      const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nKälla: Crypto Network Sweden`;
+      const message = `Signera för att bekräfta ägarskap\n\nNonce: ${nonce}\nDomän: ${window.location.host}`;
       try {
         const signature = await signMessageAsync({ message } as any);
+        // Server-verify SIWE
+        const { data, error } = await (await import('@/integrations/supabase/client')).supabase.functions.invoke('siwe-verify', {
+          body: { address, message, signature },
+        });
+        if (error || !(data as any)?.ok) {
+          throw new Error((error as any)?.message || 'Serververifiering misslyckades');
+        }
         sessionStorage.setItem('siwe_signature', signature);
         if (address) sessionStorage.setItem('siwe_address', address);
+        sessionStorage.setItem('siwe_verified', 'true');
         setIsAuthed(true);
       } catch (e) {
         await disconnect();
         sessionStorage.removeItem('siwe_signature');
         sessionStorage.removeItem('siwe_address');
-        toast({ title: 'Signering krävs', description: 'Du måste signera för att logga in.', variant: 'destructive' });
+        sessionStorage.removeItem('siwe_verified');
+        toast({ title: 'Signering krävs', description: 'Du måste signera och verifiera för att logga in.', variant: 'destructive' });
         return;
       }
-      toast({ title: 'Wallet ansluten', description: 'EVM ansluten och signerad.' });
+      toast({ title: 'Wallet ansluten', description: 'EVM ansluten och verifierad.' });
       setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
     } catch (e: any) {
       toast({ title: 'Fel vid anslutning', description: String(e.message || e), variant: 'destructive' });
+      setIsAuthed(false);
     }
   };
 
