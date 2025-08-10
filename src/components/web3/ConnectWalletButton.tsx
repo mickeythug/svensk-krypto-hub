@@ -6,6 +6,7 @@ import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSiwsSolana } from '@/hooks/useSiwsSolana';
@@ -34,6 +35,7 @@ export default function ConnectWalletButton() {
 
   // Solana wallet
   const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol, select, wallets, wallet } = useWallet();
+  const { setVisible: setWalletModalVisible } = useWalletModal();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
@@ -142,6 +144,12 @@ export default function ConnectWalletButton() {
             await new Promise((r) => setTimeout(r, 0));
           }
 
+          if (!wallet) {
+            toast({ title: 'Välj Solana‑wallet', description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.' });
+            setWalletModalVisible(true);
+            return;
+          }
+
           await connectSol();
 
           // Vänta kort på att publicKey uppdateras från adaptern
@@ -180,11 +188,13 @@ export default function ConnectWalletButton() {
           return;
         } catch (err: any) {
           if (err?.name === 'WalletNotSelectedError') {
-            try {
-              select?.('Phantom' as any);
-              await new Promise((r) => setTimeout(r, 0));
-              await connectSol();
-            } catch {}
+            toast({
+              title: 'Välj Solana‑wallet',
+              description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.',
+              variant: 'destructive',
+            });
+            setWalletModalVisible(true);
+            return; // Avbryt utan att kasta fel – användaren väljer wallet i modalen
           }
           try { await disconnectSol(); } catch {}
           try {
