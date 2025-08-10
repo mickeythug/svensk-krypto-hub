@@ -76,14 +76,11 @@ const ModernMobileTradingView = ({
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* MINIMAL HEADER - Only when not in chart mode */}
+      {/* SIMPLE HEADER FOR NON-CHART TABS */}
       {activeTab !== "chart" && (
         <div className="fixed top-16 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center justify-between px-4 py-4">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={goBack} className="p-2">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
               {crypto?.image && (
                 <img
                   src={crypto.image}
@@ -92,37 +89,27 @@ const ModernMobileTradingView = ({
                 />
               )}
               <div>
-                <h1 className="font-bold text-lg">{symbol}/USDT</h1>
-                <p className="text-sm text-muted-foreground">{formatUsd(currentPrice)}</p>
+                <h1 className="font-bold text-lg capitalize">{activeTab}</h1>
+                <p className="text-sm text-muted-foreground">{symbol}/USDT</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={toggleWatchlist}
-                className={`p-2 ${watchlist ? 'text-warning' : ''}`}
-              >
-                <Star className={`h-4 w-4 ${watchlist ? 'fill-current' : ''}`} />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={shareToken} className="p-2">
-                <Share className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="p-2">
-                <Bell className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-          
-          {/* Price Change Indicator */}
-          <div className="px-4 pb-3">
-            <div className={`flex items-center gap-2 ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-              {isPositive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
-              <span className="font-semibold">
-                {isPositive ? '+' : ''}{priceChange24h.toFixed(2)}% (24h)
-              </span>
-            </div>
+            {/* Hamburger Menu */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => {
+                // Toggle main menu - you can implement this with a sheet/drawer
+                console.log('Open main menu');
+              }}
+              className="p-2 hover:bg-primary/10"
+            >
+              <div className="flex flex-col gap-1">
+                <div className="w-5 h-0.5 bg-current rounded-full"></div>
+                <div className="w-5 h-0.5 bg-current rounded-full"></div>
+                <div className="w-5 h-0.5 bg-current rounded-full"></div>
+              </div>
+            </Button>
           </div>
         </div>
       )}
