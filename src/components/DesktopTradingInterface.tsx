@@ -35,6 +35,8 @@ import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 import { supabase } from '@/integrations/supabase/client';
 import OpenOrders from '@/components/trade/OpenOrdersPanel';
 import { useOpenOrders } from '@/hooks/useOpenOrders';
+import PositionsPanel from '@/components/trade/PositionsPanel';
+import OrderHistoryPanel from '@/components/trade/OrderHistoryPanel';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -199,11 +201,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsList>
             
             <TabsContent value="positions" className="h-full">
-              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
-                <div className="text-center text-muted-foreground text-sm">
-                  No open positions
-                </div>
-              </Card>
+              <PositionsPanel />
             </TabsContent>
             
             <TabsContent value="orders" className="h-full">
@@ -211,11 +209,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             </TabsContent>
             
             <TabsContent value="history" className="h-full">
-              <Card className="h-full p-4 bg-card/60 backdrop-blur-sm border-border/30">
-                <div className="text-center text-muted-foreground text-sm">
-                  No order history
-                </div>
-              </Card>
+              <OrderHistoryPanel symbol={symbol} />
             </TabsContent>
             
             <TabsContent value="balances" className="h-full">

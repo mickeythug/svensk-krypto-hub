@@ -63,6 +63,9 @@ verify_jwt = false
 [functions.jup-lo-execute]
 verify_jwt = false
 
+[functions.order-history-log]
+verify_jwt = false
+
 # Cron jobs to keep DB cache fresh
 [[cron.jobs]]
 name = "market-prefetch-hourly"
