@@ -62,6 +62,9 @@ export default function PositionsPanel() {
     });
     return map;
   }, [rows]);
+
+  const solSymbols = useMemo(() => new Set(Object.keys(solMintMap)), [solMintMap]);
+
   const [onChain, setOnChain] = useState<Record<string, number>>({});
   useEffect(() => {
     if (!sol || !historyPositions.length) { setOnChain({}); return; }
@@ -72,7 +75,7 @@ export default function PositionsPanel() {
         const owner = new PublicKey(sol);
         const next: Record<string, number> = {};
         for (const p of historyPositions) {
-          const mints = mintCandidates[p.symbol];
+          const mints = solMintMap[p.symbol];
           if (!mints || mints.size === 0) continue;
           let sum = 0;
           for (const mintStr of Array.from(mints)) {
@@ -93,7 +96,7 @@ export default function PositionsPanel() {
     run();
     const id = setInterval(run, 20000);
     return () => { cancelled = true; clearInterval(id); };
-  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|'), Object.keys(tokenMintSets).length]);
+  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), (rows || []).map(r => `${r.symbol}:${r.base_mint}`).join('|'), Object.keys(solMintMap).length]);
 
   const positions = useMemo(() => historyPositions.filter(p => {
     const isSol = solSymbols.has(p.symbol);
