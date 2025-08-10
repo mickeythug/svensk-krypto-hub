@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+import { BarChart3, RefreshCw, Maximize2, Settings, MoreHorizontal } from "lucide-react";
 import { formatUsd } from "@/lib/utils";
+import { loadTradingView } from "@/lib/tradingviewLoader";
 import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
+import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
 
 interface SimpleMobileChartProps {
   symbol: string;
@@ -15,100 +17,93 @@ interface SimpleMobileChartProps {
 const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileChartProps) => {
   const [selectedTimeframe, setSelectedTimeframe] = useState("1D");
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [chartLoaded, setChartLoaded] = useState(false);
+  const containerIdRef = useRef<string>(`tv_mobile_${Math.random().toString(36).slice(2)}`);
   const widgetRef = useRef<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fallback, setFallback] = useState(true);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   const timeframes = [
-    { label: "15m", value: "15" },
-    { label: "1H", value: "60" },
-    { label: "4H", value: "240" },
+    { label: "15m", value: "15m" },
+    { label: "1H", value: "1H" },
+    { label: "4H", value: "4H" },
     { label: "1D", value: "1D" },
-    { label: "1W", value: "1W" },
-    { label: "1M", value: "1M" }
+    { label: "1W", value: "1W" }
   ];
 
   const { tvSymbol } = useTradingViewSymbol(symbol, coinGeckoId);
 
   useEffect(() => {
-    console.log('SimpleMobileChart: Component mounted for symbol:', symbol, 'tvSymbol:', tvSymbol);
-    initTradingViewChart();
+    console.log('SimpleMobileChart loading for symbol:', symbol);
+    loadTradingView().then(() => {
+      console.log('TradingView script ready for mobile');
+      initChart();
+    }).catch(error => {
+      console.error('Failed to load TradingView script:', error);
+      setFallback(true);
+      setIsLoading(false);
+    });
+
     return () => {
       if (widgetRef.current) {
         try {
           widgetRef.current.remove();
         } catch (e) {
-          console.log('Error removing widget:', e);
+          console.log('Error removing mobile widget:', e);
         }
       }
     };
-  }, [symbol, tvSymbol, selectedTimeframe]);
+  }, [symbol, selectedTimeframe]);
 
-  const initTradingViewChart = async () => {
-    console.log('SimpleMobileChart: Starting TradingView chart initialization');
-    setIsLoading(true);
-    setChartLoaded(false);
-
+  const initChart = () => {
     if (!containerRef.current) {
-      console.error('SimpleMobileChart: Container ref not available');
+      console.log('Mobile container not ready');
       return;
     }
 
-    // Clear any existing content
-    containerRef.current.innerHTML = '';
-    
-    // Remove previous widget
+    if (!window.TradingView) {
+      console.log('TradingView not loaded yet for mobile');
+      return;
+    }
+
+    console.log('Initializing mobile TradingView chart...');
+    setIsLoading(true);
+
+    // Clear previous widget
     if (widgetRef.current) {
       try {
         widgetRef.current.remove();
       } catch (e) {
-        console.log('Error removing previous widget:', e);
+        console.log('Error removing previous mobile widget:', e);
       }
+      widgetRef.current = null;
     }
 
-    try {
-      // Load TradingView script if not already loaded
-      if (!(window as any).TradingView) {
-        const script = document.createElement('script');
-        script.src = 'https://s3.tradingview.com/tv.js';
-        script.async = true;
-        script.onload = () => {
-          createTradingViewWidget();
-        };
-        script.onerror = () => {
-          console.error('Failed to load TradingView script');
-          createFallbackChart();
-        };
-        document.head.appendChild(script);
-      } else {
-        createTradingViewWidget();
-      }
-    } catch (error) {
-      console.error('Error initializing TradingView chart:', error);
-      createFallbackChart();
+    // Clear the container
+    if (containerRef.current) {
+      containerRef.current.innerHTML = '';
     }
-  };
 
-  const createTradingViewWidget = () => {
-    if (!containerRef.current) return;
+    const tradingPair = tvSymbol || `BINANCE:${symbol.toUpperCase()}USDT`;
+    console.log('Creating mobile TradingView widget for:', tradingPair);
 
     try {
-      widgetRef.current = new (window as any).TradingView.widget({
+      widgetRef.current = new window.TradingView.widget({
         autosize: true,
-        symbol: tvSymbol || `BINANCE:${symbol}USDT`,
+        symbol: tradingPair,
         interval: getInterval(selectedTimeframe),
-        container: containerRef.current,
+        container_id: containerIdRef.current,
         theme: "dark",
         style: "1",
         locale: "en",
         toolbar_bg: "rgba(0, 0, 0, 0)",
         enable_publishing: false,
-        hide_top_toolbar: false,
-        hide_legend: false,
+        hide_top_toolbar: true,
+        hide_legend: true,
         save_image: false,
         hide_volume: false,
-        allow_symbol_change: true,
-        studies: [],
+        width: "100%",
+        height: "100%",
         overrides: {
           "paneProperties.background": "#0f0f23",
           "paneProperties.backgroundType": "solid",
@@ -129,85 +124,90 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
           "header_compare",
           "header_undo_redo", 
           "header_screenshot",
-          "header_chart_type"
-        ],
-        enabled_features: [
-          "header_widget"
+          "header_chart_type",
+          "header_saveload",
+          "header_settings"
         ]
       });
-      
+
+      console.log('Mobile TradingView widget created successfully');
       setIsLoading(false);
-      setChartLoaded(true);
-      
+
+      // Safety fallback check
+      setTimeout(() => {
+        const hasIframe = !!containerRef.current?.querySelector('iframe');
+        if (!hasIframe) {
+          console.warn('Mobile TradingView widget did not render, enabling fallback');
+          setFallback(true);
+        } else {
+          setFallback(false);
+        }
+      }, 3000);
+
     } catch (error) {
-      console.error('Error creating TradingView widget:', error);
-      createFallbackChart();
+      console.error('Error creating mobile TradingView widget:', error);
+      setFallback(true);
+      setIsLoading(false);
     }
   };
 
-  const createFallbackChart = () => {
-    console.log('SimpleMobileChart: Creating fallback chart');
-    
-    if (!containerRef.current) return;
-
-    // Create a fallback chart
-    const fallbackHTML = `
-      <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #0f0f23 0%, #1a1b2e 100%); border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; min-height: 300px;">
-        <div style="text-align: center; padding: 20px;">
-          <svg width="60" height="40" viewBox="0 0 60 40" style="margin-bottom: 16px;">
-            <path d="M5 30 L15 25 L25 20 L35 15 L45 10 L55 5" stroke="#10b981" stroke-width="2" fill="none"/>
-            <path d="M5 35 L15 30 L25 25 L35 20 L45 15 L55 10" stroke="#10b981" stroke-width="1" fill="none" opacity="0.5"/>
-          </svg>
-          <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">${symbol}/USDT</div>
-          <div style="font-size: 24px; font-weight: bold; color: #10b981;">${formatUsd(currentPrice)}</div>
-          <div style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Chart unavailable - ${selectedTimeframe}</div>
-          <button onclick="window.location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;">
-            Refresh
-          </button>
-        </div>
-      </div>
-    `;
-
-    containerRef.current.innerHTML = fallbackHTML;
-    setIsLoading(false);
-    setChartLoaded(true);
-  };
-
-  const getInterval = (timeframe: string) => {
-    const intervals: Record<string, string> = {
-      "15": "15",
-      "60": "60", 
-      "240": "240",
+  const getInterval = (timeframe: string): "1" | "5" | "15" | "60" | "240" | "D" | "W" => {
+    const intervals: Record<string, "1" | "5" | "15" | "60" | "240" | "D" | "W"> = {
+      "1m": "1",
+      "5m": "5", 
+      "15m": "15",
+      "1H": "60",
+      "4H": "240",
       "1D": "D",
-      "1W": "W",
-      "1M": "M"
+      "1W": "W"
     };
     return intervals[timeframe] || "D";
   };
 
-  const handleTimeframeChange = (timeframe: string) => {
-    console.log('SimpleMobileChart: Changing timeframe to:', timeframe);
-    setSelectedTimeframe(timeframe);
-    
-    // Try to change resolution on existing widget first
+  const handleTimeframeChange = (newTimeframe: string) => {
+    setSelectedTimeframe(newTimeframe);
     if (widgetRef.current && widgetRef.current.chart) {
       try {
-        widgetRef.current.chart().setResolution(getInterval(timeframe));
-        return;
+        widgetRef.current.chart().setResolution(getInterval(newTimeframe));
       } catch (e) {
-        console.log('Could not change resolution, reinitializing chart');
+        console.log('Could not change resolution, reinitializing mobile chart');
+        initChart();
       }
+    } else {
+      initChart();
     }
-    
-    // Fallback: reinitialize chart
-    initTradingViewChart();
   };
 
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        const chartCard = containerRef.current?.closest('.mobile-chart-fullscreen') || containerRef.current?.parentElement?.parentElement;
+        if (chartCard) {
+          await chartCard.requestFullscreen();
+          setIsFullscreen(true);
+        }
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Mobile fullscreen error:', error);
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-background mobile-chart-fullscreen">
       {/* Modern Timeframe Selector */}
-      <div className="px-3 py-3 bg-card/50 border-b border-border/20">
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+      <div className="px-3 py-3 bg-card/50 border-b border-border/20 flex items-center justify-between">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1">
           {timeframes.map((timeframe) => (
             <Button
               key={timeframe.value}
@@ -219,11 +219,22 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
               {timeframe.label}
             </Button>
           ))}
+        </div>
+        
+        <div className="flex items-center gap-1 ml-2">
           <Button
             variant="ghost"
             size="sm"
-            onClick={initTradingViewChart}
-            className="h-8 px-2 flex-shrink-0 ml-2"
+            onClick={toggleFullscreen}
+            className="h-8 px-2 flex-shrink-0"
+          >
+            <Maximize2 className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={initChart}
+            className="h-8 px-2 flex-shrink-0"
             disabled={isLoading}
           >
             <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
@@ -231,7 +242,7 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
         </div>
       </div>
 
-      {/* TradingView Chart Container */}
+      {/* Chart Container */}
       <div className="flex-1 p-3">
         <Card className="h-full bg-[#0f0f23] border-border/30 relative overflow-hidden">
           {/* Loading State */}
@@ -245,29 +256,43 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
             </div>
           )}
 
-          {/* TradingView Chart Container */}
-          <div 
-            ref={containerRef} 
-            className="w-full h-full min-h-[320px]"
-            style={{ 
-              background: '#0f0f23',
-              borderRadius: '8px'
-            }}
-          >
-            {/* Initial placeholder */}
-            {!chartLoaded && !isLoading && (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
-                  <p className="text-muted-foreground mb-3">TradingView chart kunde inte laddas</p>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={initTradingViewChart}
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Försök igen
-                  </Button>
+          {/* TradingView Container */}
+          <div className="w-full h-full min-h-[300px] relative">
+            {fallback ? (
+              <div className="w-full h-full">
+                <AdvancedRealTimeChart 
+                  key={`${tvSymbol}-${selectedTimeframe}-mobile`}
+                  theme="dark" 
+                  autosize 
+                  symbol={tvSymbol || `BINANCE:${symbol}USDT`}
+                  interval={getInterval(selectedTimeframe)} 
+                  timezone="Etc/UTC" 
+                  style="1" 
+                  locale="en" 
+                  enable_publishing={false}
+                  hide_top_toolbar={true}
+                  hide_legend={true}
+                />
+              </div>
+            ) : (
+              <div 
+                ref={containerRef} 
+                id={containerIdRef.current} 
+                className="w-full h-full"
+                style={{ 
+                  background: '#0f0f23',
+                  borderRadius: '8px'
+                }}
+              >
+                {/* Fallback content while chart loads */}
+                <div className="fallback-content absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
+                    <p className="text-muted-foreground text-sm">Laddar TradingView chart...</p>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -286,9 +311,9 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
           </Badge>
         </div>
         <div className="flex items-center gap-1">
-          <div className={`w-2 h-2 rounded-full ${chartLoaded ? 'bg-success' : 'bg-destructive'}`}></div>
+          <div className={`w-2 h-2 rounded-full ${!fallback && !isLoading ? 'bg-success' : fallback ? 'bg-warning' : 'bg-destructive'}`}></div>
           <span className="text-xs text-muted-foreground">
-            {chartLoaded ? 'Live' : 'Offline'}
+            {!fallback && !isLoading ? 'TradingView' : fallback ? 'Fallback' : 'Loading'}
           </span>
         </div>
       </div>
