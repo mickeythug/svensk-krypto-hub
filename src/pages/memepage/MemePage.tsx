@@ -5,8 +5,6 @@ import MemeTopCoins from './components/MemeTopCoins';
 import MemeTokenGrid from './components/MemeTokenGrid';
 import MemeStatsBanner from './components/MemeStatsBanner';
 import MemePageHeader from './components/MemePageHeader';
-import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
-import MobileHeader from '@/components/mobile/MobileHeader';
 import { useIsMobile } from '@/hooks/use-mobile';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -52,50 +50,38 @@ const MemePage: React.FC = () => {
   }, []);
   return (
     <div className="meme-page">
-      {/* Desktop Header */}
-      {!isMobile && <MemePageHeader />}
-      
-      {/* Mobile Header */}
-      {isMobile && <MobileHeader title="MEME ZONE" />}
-      
       <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
-        {/* Live Ticker - Full Width at Top */}
-        <MemeLiveTicker />
-
-      {/* Animated background elements */}
-      <div className="fixed inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-accent rounded-full animate-bounce"></div>
-        <div className="absolute bottom-32 left-32 w-28 h-28 bg-secondary rounded-full animate-pulse-glow"></div>
-        <div className="absolute bottom-20 right-10 w-20 h-20 bg-primary-glow rounded-full animate-spin"></div>
-      </div>
-
-      {/* Hero Section */}
-      <MemeHeroNew />
-
-      {/* Top Meme Coins with Large Images */}
-      <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'}`}>
-        <div className="container mx-auto">
-          <MemeTopCoins />
+        {/* Animated background elements */}
+        <div className="fixed inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-accent rounded-full animate-bounce"></div>
+          <div className="absolute bottom-32 left-32 w-28 h-28 bg-secondary rounded-full animate-pulse-glow"></div>
+          <div className="absolute bottom-20 right-10 w-20 h-20 bg-primary-glow rounded-full animate-spin"></div>
         </div>
-      </section>
 
-      {/* Stats Banner */}
-      <MemeStatsBanner />
+        {/* Hero Section */}
+        <MemeHeroNew />
 
-      {/* All Meme Tokens Grid */}
-      <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'} bg-meme-grid-bg/50`}>
-        <div className="container mx-auto">
-          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-5xl'} font-bold text-center ${isMobile ? 'mb-6' : 'mb-12'} bg-gradient-neon bg-clip-text text-transparent`}>
-            ALLA MEME TOKENS
-          </h2>
-          <MemeTokenGrid category="all" />
-        </div>
-      </section>
+        {/* Top Meme Coins with Large Images */}
+        <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'}`}>
+          <div className="container mx-auto">
+            <MemeTopCoins />
+          </div>
+        </section>
 
+        {/* Stats Banner */}
+        <MemeStatsBanner />
+
+        {/* All Meme Tokens Grid */}
+        <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'} bg-meme-grid-bg/50`}>
+          <div className="container mx-auto">
+            <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-5xl'} font-bold text-center ${isMobile ? 'mb-6' : 'mb-12'} bg-gradient-neon bg-clip-text text-transparent`}>
+              ALLA MEME TOKENS
+            </h2>
+            <MemeTokenGrid category="all" />
+          </div>
+        </section>
       </main>
-      
-      {isMobile && <MobileBottomNavigation />}
     </div>
   );
 };

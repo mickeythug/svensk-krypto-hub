@@ -33,9 +33,6 @@ import {
   BookOpen,
   Eye
 } from "lucide-react";
-import Header from "@/components/Header";
-import CryptoPriceTicker from "@/components/CryptoPriceTicker";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useNavigate } from "react-router-dom";

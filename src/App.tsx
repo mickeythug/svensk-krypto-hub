@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import Layout from "@/components/Layout";
 import { Suspense, lazy, memo } from "react";
 
 // Lazy load pages för optimal bundling
@@ -44,27 +45,25 @@ const App = memo(() => {
         <Toaster />
         <Sonner />
         <AuthDebugOverlay />
-        <ErrorBoundary>
           <BrowserRouter>
-            <div className={`min-h-screen bg-background ${isMobile ? 'pt-16 pb-20' : ''}`}>
+            <div className={`min-h-screen bg-background ${isMobile ? 'pb-20' : ''}`}>
               <Suspense fallback={<LoadingFallback />}>
                 <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/nyheter" element={<NewsPage />} />
-                  <Route path="/artikel/:id" element={<ArticleDetailPage />} />
-                  <Route path="/marknad" element={<MarketOverviewPage />} />
-                  <Route path="/verktyg" element={<ToolsPage />} />
-                  <Route path="/portfolio" element={<PortfolioPage />} />
-                  <Route path="/crypto/:symbol" element={<CryptoDetailPage />} />
-                  <Route path="/meme" element={<MemePage />} />
-                  <Route path="/meme/create" element={<CreateTokenPage />} />
-                  <Route path="*" element={<NotFound />} />
+                  <Route path="/" element={<Layout><Index /></Layout>} />
+                  <Route path="/nyheter" element={<Layout><NewsPage /></Layout>} />
+                  <Route path="/artikel/:id" element={<Layout><ArticleDetailPage /></Layout>} />
+                  <Route path="/marknad" element={<Layout><MarketOverviewPage /></Layout>} />
+                  <Route path="/verktyg" element={<Layout><ToolsPage /></Layout>} />
+                  <Route path="/portfolio" element={<Layout><PortfolioPage /></Layout>} />
+                  <Route path="/crypto/:symbol" element={<Layout><CryptoDetailPage /></Layout>} />
+                  <Route path="/meme" element={<Layout><MemePage /></Layout>} />
+                  <Route path="/meme/create" element={<Layout><CreateTokenPage /></Layout>} />
+                  <Route path="*" element={<Layout showTicker={false}><NotFound /></Layout>} />
                 </Routes>
               </Suspense>
               {isMobile && <MobileBottomNavigation />}
             </div>
           </BrowserRouter>
-        </ErrorBoundary>
       </TooltipProvider>
     </QueryClientProvider>
   );

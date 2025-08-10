@@ -49,8 +49,6 @@ import {
   Grid3X3,
   List
 } from "lucide-react";
-import Header from "@/components/Header";
-import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useQueryClient } from "@tanstack/react-query";
@@ -758,7 +756,6 @@ const MarketOverviewPage = () => {
             </div>
           </div>
         </div>
-        <CryptoPriceTicker />
         
         <div className="bg-background">
           

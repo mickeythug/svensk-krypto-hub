@@ -1,6 +1,4 @@
-import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
-import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import SocialMediaSection from "@/components/SocialMediaSection";
 import MarketOverview from "@/components/MarketOverview";
 import MemeTokenSection from "@/pages/memepage/components/MemeTokenSection";
@@ -8,14 +6,9 @@ import NewsSection from "@/components/NewsSection";
 import CommunitySection from "@/components/CommunitySection";
 import FooterSection from "@/components/FooterSection";
 import LazySection from "@/components/LazySection";
-import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
-import MobileHeader from "@/components/mobile/MobileHeader";
 import { useEffect } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
-  const isMobile = useIsMobile();
-
   // SEO optimization
   useEffect(() => {
     document.title = "Crypto Network Sweden - Din Krypto Community | Bitcoin, Ethereum & DeFi";
@@ -34,22 +27,8 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
-      {isMobile ? (
-        <>
-          <MobileHeader title="Hem" />
-          <div className="pt-2">
-            <CryptoPriceTicker />
-            <HeroSection />
-          </div>
-        </>
-      ) : (
-        <>
-          <Header />
-          <CryptoPriceTicker />
-          <HeroSection />
-        </>
-      )}
+    <>
+      <HeroSection />
       
       <LazySection>
         <SocialMediaSection />
@@ -80,9 +59,7 @@ const Index = () => {
       <LazySection>
         <FooterSection />
       </LazySection>
-      
-      {isMobile && <MobileBottomNavigation />}
-    </div>
+    </>
   );
 };
 
