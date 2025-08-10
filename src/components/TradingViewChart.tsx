@@ -180,13 +180,21 @@ const TradingViewChart = ({
       widgetRef.current.chart().setResolution(getInterval(newTimeframe));
     }
   };
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
-      setIsFullscreen(true);
-    } else {
-      document.exitFullscreen();
-      setIsFullscreen(false);
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Find the chart card element to make fullscreen
+        const chartCard = containerRef.current?.closest('.chart-fullscreen-container') || containerRef.current?.parentElement?.parentElement;
+        if (chartCard) {
+          await chartCard.requestFullscreen();
+          setIsFullscreen(true);
+        }
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Fullscreen error:', error);
     }
   };
   useEffect(() => {
@@ -196,7 +204,7 @@ const TradingViewChart = ({
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
-  return <Card className="h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden flex flex-col">
+  return <Card className={`h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container ${isFullscreen ? 'fullscreen-chart' : ''}`}>
       {/* Controls Header Above Chart */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/20 bg-background/90">
         <div className="flex gap-2">

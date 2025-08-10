@@ -296,8 +296,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         </div>
 
         {/* Expanded Chart Container - Full Width to Left Edge */}
-        <div className="flex-1 p-0 pl-4 pr-4 pb-4 min-h-0">
-          <div className="h-full rounded-xl overflow-hidden border border-border shadow-lg bg-[#0f0f23]">
+        <div className="flex-1 p-0 pl-0 pr-4 pb-4 min-h-0">
+          <div className="h-full ml-0 rounded-r-xl overflow-hidden border-r border-t border-b border-border shadow-lg bg-[#0f0f23]">
             <TradingViewChart 
               symbol={symbol} 
               currentPrice={currentPrice} 
