@@ -63,5 +63,16 @@ export function useOrderHistory(params: { addresses?: (string | undefined)[]; sy
     return () => { supabase.removeChannel(channel); };
   }, [symbol, addresses.join('|')]);
 
+  // Force refresh when wallet or orders change
+  useEffect(() => {
+    const handler = () => load();
+    window.addEventListener('wallet:refresh', handler as any);
+    window.addEventListener('orders:changed', handler as any);
+    return () => {
+      window.removeEventListener('wallet:refresh', handler as any);
+      window.removeEventListener('orders:changed', handler as any);
+    };
+  }, []);
+
   return { rows, loading, refresh: load } as const;
 }

@@ -239,7 +239,10 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     } catch (e: any) {
       const msg = parseFunctionError(e);
       toast({ title: 'Solana fel', description: msg, variant: 'destructive' });
+    } finally {
       setSubmitting(false);
+      try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
+      try { window.dispatchEvent(new CustomEvent('orders:changed', { detail: { symbol: symbolUpper } })); } catch {}
     }
   }
 
