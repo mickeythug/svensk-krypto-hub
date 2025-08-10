@@ -16,7 +16,7 @@ import {
   Wifi,
   WifiOff
 } from "lucide-react";
-import TradingViewChart from "./TradingViewChart";
+import ModernTradingViewChart from "./ModernTradingViewChart";
 import OrderBook from "./OrderBook";
 import TokenSearchBar from "./TokenSearchBar";
 import { useOrderbook } from "@/hooks/useOrderbook";
@@ -148,7 +148,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
         {/* Chart Container - Perfect spacing */}
         <div className="flex-1 mx-3 mb-2 rounded-lg overflow-hidden shadow-lg">
-          <TradingViewChart symbol={symbol} currentPrice={currentPrice} limitLines={limitLines} />
+          <ModernTradingViewChart symbol={symbol} currentPrice={currentPrice} coinGeckoId={crypto?.coinGeckoId} />
         </div>
 
         {/* Bottom Panels - Clean separation */}
