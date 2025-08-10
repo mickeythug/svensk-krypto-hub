@@ -140,6 +140,8 @@ export function useOpenOrders(params: {
       await loadJup();
     } else {
       toast({ title: 'Jupiter‑order avbruten', description: `Order ${order} avbröts` });
+      // Force refresh of wallet balances immediately so användaren ser pengarna tillbaka
+      window.dispatchEvent(new CustomEvent('wallet:refresh'));
     }
     return { data, error };
   };

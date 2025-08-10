@@ -31,9 +31,12 @@ export function useSolBalance() {
     }
     fetchBalance();
     const id = setInterval(fetchBalance, 30_000);
+    const onRefresh = () => fetchBalance();
+    window.addEventListener('wallet:refresh', onRefresh);
     return () => {
       cancelled = true;
       clearInterval(id);
+      window.removeEventListener('wallet:refresh', onRefresh);
     };
   }, [connection, publicKey]);
 

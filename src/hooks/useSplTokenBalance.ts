@@ -35,7 +35,9 @@ export function useSplTokenBalance(mint: string) {
     }
     run();
     const id = setInterval(run, 30000);
-    return () => { cancelled = true; clearInterval(id); };
+    const onRefresh = () => run();
+    window.addEventListener('wallet:refresh', onRefresh);
+    return () => { cancelled = true; clearInterval(id); window.removeEventListener('wallet:refresh', onRefresh); };
   }, [connection, publicKey, mint]);
 
   return { amount, loading, error };
