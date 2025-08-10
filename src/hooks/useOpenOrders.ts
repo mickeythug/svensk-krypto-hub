@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
-import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
+import { SOL_MINT } from '@/lib/tokenMaps';
 
 export type DbLimitOrder = {
   id: string;
@@ -28,6 +28,7 @@ export type JupOrder = {
   makingAmount?: string; // base units
   takingAmount?: string; // base units
   createdAt?: string;
+  side?: 'buy' | 'sell';
 };
 
 export function useOpenOrders(params: {
@@ -69,15 +70,27 @@ export function useOpenOrders(params: {
         if (error) break;
         const raw = (data as any)?.data?.data || (data as any)?.data?.orders || (data as any)?.data || [];
         const pageItems: JupOrder[] = Array.isArray(raw)
-          ? raw.map((o: any) => ({
-              order: o.order || o.id || o.orderId || '',
-              status: o.status || 'active',
-              inputMint: o.inputMint || o.inMint || o.input || undefined,
-              outputMint: o.outputMint || o.outMint || o.output || undefined,
-              makingAmount: o.makingAmount || o.inAmount || undefined,
-              takingAmount: o.takingAmount || o.outAmount || undefined,
-              createdAt: o.createdAt || o.time || undefined,
-            }))
+          ? raw.map((o: any) => {
+              const inMint = o.inputMint || o.inMint || o.input;
+              const outMint = o.outputMint || o.outMint || o.output;
+              const statusRaw = String(o.status || 'active').toLowerCase();
+              const status = statusRaw === 'open' ? 'active' : statusRaw;
+              let side: 'buy' | 'sell' | undefined;
+              if (params.solMint && inMint && outMint) {
+                if (inMint === SOL_MINT && outMint === params.solMint) side = 'buy';
+                else if (inMint === params.solMint && outMint === SOL_MINT) side = 'sell';
+              }
+              return {
+                order: o.order || o.id || o.orderId || '',
+                status,
+                inputMint: inMint,
+                outputMint: outMint,
+                makingAmount: o.makingAmount || o.inAmount || undefined,
+                takingAmount: o.takingAmount || o.outAmount || undefined,
+                createdAt: o.createdAt || o.time || undefined,
+                side,
+              } as JupOrder;
+            })
           : [];
         if (pageItems.length === 0) break;
         aggregated.push(...pageItems);

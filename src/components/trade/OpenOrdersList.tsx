@@ -35,12 +35,12 @@ export function OpenOrdersList({
     const jup = (jupOrders || []).map((o) => ({
       key: `jup:${o.order}`,
       source: 'JUP',
-      side: undefined as any, // Unknown without deep parsing; show '-'
+      side: (o as any).side as any,
       price: undefined as any,
       amount: undefined as any,
       status: o.status,
       time: o.createdAt || '',
-      cancelable: o.status === 'active',
+      cancelable: ['active', 'open'].includes(String(o.status || '').toLowerCase()),
       data: o,
     }));
     return [...db, ...jup];
@@ -72,7 +72,7 @@ export function OpenOrdersList({
               <TableRow key={r.key}>
                 <TableCell><Badge variant="outline">{r.source}</Badge></TableCell>
                 <TableCell>
-                  {r.source === 'DB' && r.side ? (
+                  {r.side ? (
                     <Badge className={r.side === 'buy' ? 'bg-success text-white' : 'bg-destructive text-white'}>
                       {r.side.toUpperCase()}
                     </Badge>
