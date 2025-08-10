@@ -322,6 +322,12 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         const inputMint = isBuy ? SOL_MINT : tokenMint;
         const outputMint = isBuy ? tokenMint : SOL_MINT;
 
+        // Säkerställ minsta orderstorlek ($5) enligt Jupiter Trigger API
+        const usdValue = isBuy ? (amt * solUsd) : (amt * lp);
+        if (!Number.isFinite(usdValue) || usdValue < 5) {
+          throw new Error(`Minsta orderstorlek är $5. Nu ≈ $${(usdValue || 0).toFixed(2)}.`);
+        }
+
         // makingAmount = input (i basenheter)
         const makingAmount = Math.floor(amt * Math.pow(10, isBuy ? 9 : tokenDecimals));
         if (!Number.isFinite(makingAmount) || makingAmount <= 0) throw new Error('Ogiltigt belopp');
