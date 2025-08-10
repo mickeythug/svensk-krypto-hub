@@ -55,6 +55,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [side, setSide] = useState<'buy'|'sell'>('buy');
   const [orderType, setOrderType] = useState<'market'|'limit'>('market');
   const [amountInput, setAmountInput] = useState('');
+  const [limitPrice, setLimitPrice] = useState('');
   const [slippage, setSlippage] = useState(50); // bps
   const [submitting, setSubmitting] = useState(false);
   const symbolUpper = symbol.toUpperCase();
@@ -85,16 +86,34 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
   const { sendTransactionAsync } = useSendTransaction();
 
-  // Auto-detect chain mode from connected wallets
-  useEffect(() => {
-    if (isSolConnected) {
-      setChainMode('SOL');
-    } else if (evmConnected) {
-      setChainMode('EVM');
-    } else {
-      setChainMode(isSolToken ? 'SOL' : 'EVM');
+  // Mina limit orders
+  const [orders, setOrders] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const userAddresses = useMemo(() => [solAddress, evmAddress].filter(Boolean) as string[], [solAddress, evmAddress]);
+
+  const refreshOrders = useMemo(() => async () => {
+    try {
+      setOrdersLoading(true);
+      const { data, error } = await supabase
+        .from('limit_orders')
+        .select('*')
+        .in('user_address', userAddresses.length ? userAddresses : ['-'])
+        .eq('symbol', symbolUpper)
+        .order('created_at', { ascending: false });
+      if (!error && Array.isArray(data)) setOrders(data);
+    } catch (e) {
+      console.warn('load orders failed', e);
+    } finally {
+      setOrdersLoading(false);
     }
-  }, [isSolConnected, evmConnected, isSolToken]);
+  }, [userAddresses, symbolUpper]);
+
+  useEffect(() => {
+    refreshOrders();
+    const id = setInterval(refreshOrders, 10000);
+    return () => clearInterval(id);
+  }, [refreshOrders]);
 
   const available = useMemo(() => {
     if (chainMode === 'SOL') {
@@ -254,6 +273,87 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     }
   }
 
+  async function createLimitOrder() {
+    const lp = parseFloat(limitPrice || '0');
+    const amt = parseFloat(amountInput || '0');
+    if (!Number.isFinite(lp) || lp <= 0) {
+      toast({ title: 'Ogiltigt limitpris', description: 'Ange ett giltigt limitpris.', variant: 'destructive' });
+      return;
+    }
+    if (!Number.isFinite(amt) || amt <= 0) {
+      toast({ title: 'Ogiltigt belopp', description: 'Ange ett giltigt belopp.', variant: 'destructive' });
+      return;
+    }
+    if (chainMode === 'SOL') {
+      if (!isSolConnected) { toast({ title: 'Wallet krävs', description: 'Anslut Solana‑wallet.', variant: 'destructive' }); return; }
+      if (!isSolToken) { toast({ title: 'Token ej på Solana', description: 'Välj en Solana‑token.', variant: 'destructive' }); return; }
+    } else {
+      if (!evmConnected) { toast({ title: 'Wallet krävs', description: 'Anslut EVM‑wallet.', variant: 'destructive' }); return; }
+    }
+    try {
+      setSubmitting(true);
+      const body: any = {
+        chain: chainMode,
+        symbol: symbolUpper,
+        side,
+        limit_price: lp,
+        amount: amt,
+        user_address: chainMode === 'SOL' ? solAddress : evmAddress,
+      };
+      if (chainMode === 'SOL') {
+        body.sol_mint = solTokenInfo?.mint || null;
+      } else {
+        const usdt = USDT_BY_CHAIN[evmChainId];
+        const native = NATIVE_TOKEN_PSEUDO[evmChainId];
+        const isBuy = side === 'buy';
+        body.evm_from_token = isBuy ? usdt : native;
+        body.evm_to_token = isBuy ? native : usdt;
+      }
+      const { data, error } = await supabase.functions.invoke('limit-order-create', { body });
+      if (error || !(data as any)?.ok) throw error || new Error('Skapande misslyckades');
+      toast({ title: 'Limit-order skapad', description: `${side.toUpperCase()} ${amt} @ $${lp}` });
+      setLimitPrice('');
+      setAmountInput('');
+      refreshOrders();
+    } catch (e: any) {
+      toast({ title: 'Fel vid skapande', description: String(e?.message || e), variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function cancelLimitOrder(id: string) {
+    try {
+      const user_address = (chainMode === 'SOL' ? solAddress : evmAddress) as string;
+      const { data, error } = await supabase.functions.invoke('limit-order-cancel', { body: { id, user_address } });
+      if (error || !(data as any)?.ok) throw error || new Error('Avbrytning misslyckades');
+      toast({ title: 'Order avbruten' });
+      refreshOrders();
+    } catch (e: any) {
+      toast({ title: 'Fel vid avbrytning', description: String(e?.message || e), variant: 'destructive' });
+    }
+  }
+
+  async function executeTriggeredOrder(o: any) {
+    try {
+      if (o.chain === 'SOL') {
+        if (!isSolConnected) { toast({ title: 'Wallet krävs', description: 'Anslut Solana‑wallet.', variant: 'destructive' }); return; }
+        setSide(o.side);
+        setAmountInput(String(o.amount));
+        await executeSolanaMarket();
+      } else {
+        if (!evmConnected) { toast({ title: 'Wallet krävs', description: 'Anslut EVM‑wallet.', variant: 'destructive' }); return; }
+        setSide(o.side);
+        setAmountInput(String(o.amount));
+        await executeEvmMarket();
+      }
+      await supabase.from('limit_orders').update({ status: 'filled', executed_at: new Date().toISOString() }).eq('id', o.id);
+      refreshOrders();
+    } catch (e) {
+      // error already toasted by underlying
+    }
+  }
+
   const onSubmit = async () => {
     if (submitting) return;
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
@@ -269,9 +369,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       toast({ title: 'Belopp för stort', description: 'Beloppet överstiger tillgängligt saldo.', variant: 'destructive' });
       return;
     }
-    if (orderType !== 'market') {
-      toast({ title: 'Limit-order', description: 'Limit-orders aktiveras i nästa steg.', variant: 'destructive' });
-      return;
+    if (orderType === 'limit') {
+      return createLimitOrder();
     }
     if (chainMode === 'SOL') {
       if (!isSolToken) {
@@ -330,6 +429,22 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
             </Button>
           ))}
         </div>
+
+        {orderType==='limit' && (
+          <div>
+            <label className="text-xs text-muted-foreground mb-2 block font-semibold">Limitpris (USDT)</label>
+            <Input
+              type="number"
+              value={limitPrice}
+              onChange={(e)=>setLimitPrice(e.target.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'))}
+              placeholder="0.00"
+              className="h-10 text-sm font-mono"
+              min="0"
+              step={0.000001}
+              inputMode="decimal"
+            />
+          </div>
+        )}
 
         <div className="space-y-2">
           <label className="text-xs text-muted-foreground mb-1 block font-semibold">Slippage (%)</label>
