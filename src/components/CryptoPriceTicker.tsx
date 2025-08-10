@@ -131,7 +131,7 @@ const CryptoPriceTicker = memo(() => {
   // Early return för loading/error states
   if (isLoading || !cryptoPrices || cryptoPrices.length === 0) {
     return (
-      <section className={`bg-background border-b border-border ${isMobile ? 'py-2 mt-14' : 'py-3 mt-16'} relative z-40 w-full`}>
+      <section className={`bg-background border-b border-border ${isMobile ? 'py-2' : 'py-3'} relative z-40 w-full`}>
         <div className="bg-muted/50 border-b border-border py-1">
           <div className="container mx-auto px-4">
             <p className="text-muted-foreground text-xs text-center animate-pulse">
@@ -144,7 +144,7 @@ const CryptoPriceTicker = memo(() => {
   }
 
   return (
-    <section className={`bg-background border-b border-border ${isMobile ? 'py-2 mt-14' : 'py-3 mt-16'} relative z-40 w-full`}>
+    <section className={`bg-background border-b border-border ${isMobile ? 'py-2' : 'py-3'} relative z-40 w-full`}>
       {/* Error indicator */}
       {error && (
         <div className="bg-destructive/10 border-b border-destructive/30 py-1">

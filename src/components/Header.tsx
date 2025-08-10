@@ -70,7 +70,7 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className={`${isMobile ? 'h-12' : 'h-14'} flex items-center justify-between`}>
+        <div className="h-16 flex items-center justify-between">
           {/* Logo */}
           {/* Logo */}
           <button 

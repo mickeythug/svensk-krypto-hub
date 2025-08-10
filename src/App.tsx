@@ -46,7 +46,7 @@ const App = memo(() => {
         <AuthDebugOverlay />
         <ErrorBoundary>
           <BrowserRouter>
-            <div className={`min-h-screen bg-background ${isMobile ? 'pb-16' : ''}`}>
+            <div className={`min-h-screen bg-background ${isMobile ? 'pt-16 pb-20' : ''}`}>
               <Suspense fallback={<LoadingFallback />}>
                 <Routes>
                   <Route path="/" element={<Index />} />

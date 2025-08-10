@@ -73,7 +73,7 @@ const CryptoDetailPage = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <CryptoPriceTicker />
-        <div className="container mx-auto px-4 pt-20">
+        <div className={`container mx-auto px-4 ${isMobile ? 'pt-4' : 'pt-20'}`}>
           <LoadingSpinner size="lg" text={`Laddar ${symbol?.toUpperCase() || 'kryptovaluta'} data...`} className="py-20" />
         </div>
       </div>
@@ -85,7 +85,7 @@ const CryptoDetailPage = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <CryptoPriceTicker />
-        <div className="container mx-auto px-4 pt-20">
+        <div className={`container mx-auto px-4 ${isMobile ? 'pt-4' : 'pt-20'}`}>
           <Card className="p-8 text-center border-destructive/20">
             <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
             <h2 className="font-crypto text-2xl font-bold mb-4 text-destructive">
@@ -155,14 +155,12 @@ const CryptoDetailPage = () => {
     );
   }
 
+  // Mobile specific layout
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background">
+        <Header />
         <CryptoPriceTicker />
-        <MobileHeader 
-          title={`${crypto.symbol.toUpperCase()}/USDT`}
-          showNotifications={true}
-        />
         <div className="px-4 pt-2">
           <Button variant="outline" size="sm" onClick={() => navigate('/marknad')} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
@@ -182,8 +180,8 @@ const CryptoDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <CryptoPriceTicker />
       <Header />
+      <CryptoPriceTicker />
       <div className="container mx-auto px-4 mt-4">
         <Button variant="outline" size="sm" onClick={() => navigate('/marknad')} className="flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />

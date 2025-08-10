@@ -38,6 +38,7 @@ import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface NewsArticle {
   id: string;
@@ -78,6 +79,7 @@ interface MarketData {
 
 const NewsPage = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [filteredNews, setFilteredNews] = useState<NewsArticle[]>([]);
   const [newsCount24h, setNewsCount24h] = useState<number>(0);
@@ -769,7 +771,8 @@ const NewsPage = () => {
               )}
             </div>
 
-            {/* Sidebar */}
+            {/* Sidebar - Hidden on mobile */}
+            {!isMobile && (
             <div className="space-y-6">
               {/* Market Sentiment */}
               <Card className="p-6">
@@ -874,6 +877,7 @@ const NewsPage = () => {
                 </div>
               </Card>
             </div>
+            )}
           </div>
         </div>
       </main>

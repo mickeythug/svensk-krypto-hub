@@ -734,7 +734,7 @@ const MarketOverviewPage = () => {
         <Header />
         <CryptoPriceTicker />
         
-        <div className="pt-4 bg-background">
+        <div className="bg-background">
           
           {/* Mobile Header */}
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 border-b border-border/20">
@@ -827,7 +827,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Mobile Search and Tabs */}
-          <div className="sticky top-16 z-20 bg-background border-b border-border/30">
+          <div className="sticky top-0 z-30 bg-background/98 backdrop-blur-xl border-b border-border/30 shadow-sm">
             <div className="p-3">
               <div className="relative mb-3">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -867,7 +867,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Mobile List */}
-          <div className="divide-y divide-border/20">
+          <div className="divide-y divide-border/20 pb-20">
             {currentData.map((crypto, index) => (
               <div
                 key={`${crypto.symbol}-${crypto.rank}`}
@@ -925,7 +925,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Mobile Pagination */}
-          <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50 py-3 px-4">
+          <div className="fixed bottom-16 left-0 right-0 bg-background/98 backdrop-blur-xl border-t border-border/50 py-3 px-4 z-40">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}

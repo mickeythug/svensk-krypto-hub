@@ -18,6 +18,7 @@ import {
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import { useCryptoData } from "@/hooks/useCryptoData";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface PortfolioHolding {
   id: string;
@@ -30,6 +31,7 @@ interface PortfolioHolding {
 }
 
 const PortfolioPage = () => {
+  const isMobile = useIsMobile();
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [showValues, setShowValues] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
@@ -125,19 +127,19 @@ const PortfolioPage = () => {
       <Header />
       <CryptoPriceTicker />
       
-      <main className="container mx-auto px-4 pt-8 pb-20">
+      <main className={`container mx-auto px-4 ${isMobile ? 'pt-4 pb-4' : 'pt-8 pb-20'}`}>
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-8">
+        <div className={`${isMobile ? 'flex flex-col space-y-4 mb-6' : 'flex items-center justify-between mb-8'}`}>
           <div>
-            <h1 className="font-crypto text-4xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+            <h1 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent`}>
               MIN PORTFÖLJ
             </h1>
-            <p className="font-display text-lg text-muted-foreground">
+            <p className={`font-display ${isMobile ? 'text-base' : 'text-lg'} text-muted-foreground`}>
               Spåra dina krypto-investeringar
             </p>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center gap-3 ${isMobile ? 'self-end' : ''}`}>
             <Button
               variant="outline"
               size="sm"
@@ -145,18 +147,18 @@ const PortfolioPage = () => {
               className="flex items-center gap-2"
             >
               {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-              {showValues ? "Dölj" : "Visa"}
+              {!isMobile && (showValues ? "Dölj" : "Visa")}
             </Button>
-            <Button className="flex items-center gap-2 bg-gradient-primary">
+            <Button className={`flex items-center gap-2 bg-gradient-primary ${isMobile ? 'px-3' : ''}`}>
               <Plus className="h-4 w-4" />
-              Lägg till
+              {!isMobile && "Lägg till"}
             </Button>
           </div>
         </div>
 
         {/* Portfolio Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="p-6 bg-gradient-to-br from-primary/10 to-accent/10 border-border/30">
+        <div className={`${isMobile ? 'grid grid-cols-1 gap-4 mb-6' : 'grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'}`}>
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-primary/10 to-accent/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-muted-foreground">Totalt värde</h3>
               <Wallet className="h-5 w-5 text-primary" />
@@ -169,7 +171,7 @@ const PortfolioPage = () => {
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-success/10 to-warning/10 border-border/30">
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-success/10 to-warning/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-muted-foreground">Vinst/Förlust</h3>
               {totalPnL >= 0 ? 
@@ -185,7 +187,7 @@ const PortfolioPage = () => {
             </div>
           </Card>
 
-          <Card className="p-6 bg-gradient-to-br from-accent/10 to-secondary/10 border-border/30">
+          <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-accent/10 to-secondary/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium text-muted-foreground">Holdings</h3>
               <PieChart className="h-5 w-5 text-accent" />
