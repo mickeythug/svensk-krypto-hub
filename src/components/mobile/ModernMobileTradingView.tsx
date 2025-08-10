@@ -127,41 +127,37 @@ const ModernMobileTradingView = ({
       )}
 
       {/* MAIN CONTENT AREA */}
-      <div className={`flex-1 ${activeTab !== "chart" ? "pt-32" : "pt-16"}`}>
+      <div className={`flex-1 ${activeTab !== "chart" ? "pt-32" : "pt-0"}`}>
         {activeTab === "chart" && (
-          <div className="h-[calc(100vh-140px)]">
-            {/* FULLSCREEN CHART WITH MINIMAL HEADER */}
+          <div className="h-[calc(100vh-80px)]">
+            {/* FULLSCREEN CHART WITHOUT ANY OVERLAYS */}
             <div className="relative h-full">
-              {/* Mini header for chart mode */}
-              <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-background/90 to-transparent">
-                <div className="flex items-center justify-between px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="sm" onClick={goBack} className="p-2 bg-background/80">
-                      <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <div className="bg-background/80 backdrop-blur-sm rounded-lg px-3 py-1">
-                      <span className="font-bold text-sm">{symbol}/USDT</span>
-                      <span className={`ml-2 text-sm ${isPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-                        {isPositive ? '+' : ''}{priceChange24h.toFixed(2)}%
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={toggleWatchlist}
-                      className={`p-2 bg-background/80 ${watchlist ? 'text-warning' : ''}`}
-                    >
-                      <Star className={`h-4 w-4 ${watchlist ? 'fill-current' : ''}`} />
-                    </Button>
-                  </div>
-                </div>
+              {/* Minimal overlay header - only back button */}
+              <div className="absolute top-4 left-4 z-20">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={goBack} 
+                  className="p-2 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full text-white border border-white/20"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                </Button>
               </div>
               
-              {/* FULLSCREEN CHART */}
-              <div className="h-full bg-[#0f0f23]">
+              {/* Star button top right */}
+              <div className="absolute top-4 right-4 z-20">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={toggleWatchlist}
+                  className={`p-2 bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full border border-white/20 ${watchlist ? 'text-yellow-400' : 'text-white'}`}
+                >
+                  <Star className={`h-5 w-5 ${watchlist ? 'fill-current' : ''}`} />
+                </Button>
+              </div>
+              
+              {/* PURE FULLSCREEN CHART */}
+              <div className="h-full w-full bg-[#0f0f23]">
                 <TradingViewMobileChart symbol={symbol} coinGeckoId={coinGeckoId} />
               </div>
             </div>
