@@ -198,34 +198,44 @@ const ModernMobileTradingView = ({
         )}
       </div>
 
-      {/* BOTTOM NAVIGATION - Always visible */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border/50">
-        <div className="grid grid-cols-4 p-2">
-          {navigationTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            
-            return (
-              <Button
-                key={tab.id}
-                variant="ghost"
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-col items-center gap-1 py-3 h-auto ${
-                  isActive 
-                    ? 'text-primary bg-primary/10' 
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Icon className={`h-5 w-5 ${isActive ? 'text-primary' : ''}`} />
-                <span className={`text-xs font-medium ${isActive ? 'text-primary' : ''}`}>
-                  {tab.label}
-                </span>
-                {isActive && (
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-primary rounded-full" />
-                )}
-              </Button>
-            );
-          })}
+      {/* MODERN BOTTOM NAVIGATION - Production Ready */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-gradient-to-t from-background via-background/98 to-background/95 backdrop-blur-xl border-t border-border/30 shadow-2xl">
+        <div className="px-2 py-3">
+          <div className="grid grid-cols-4 gap-1">
+            {navigationTabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              
+              return (
+                <Button
+                  key={tab.id}
+                  variant="ghost"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative flex flex-col items-center gap-1.5 py-3 px-2 h-auto rounded-xl transition-all duration-300 ${
+                    isActive 
+                      ? 'text-primary bg-primary/15 shadow-lg shadow-primary/20 scale-105' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                  }`}
+                >
+                  <div className={`relative p-1.5 rounded-lg transition-all duration-300 ${
+                    isActive ? 'bg-primary/20 shadow-md' : 'bg-transparent'
+                  }`}>
+                    <Icon className={`h-5 w-5 transition-all duration-300 ${
+                      isActive ? 'text-primary scale-110' : ''
+                    }`} />
+                  </div>
+                  <span className={`text-[10px] font-semibold tracking-wide transition-all duration-300 ${
+                    isActive ? 'text-primary' : ''
+                  }`}>
+                    {tab.label}
+                  </span>
+                  {isActive && (
+                    <div className="absolute -top-0.5 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-primary rounded-full shadow-lg shadow-primary/40" />
+                  )}
+                </Button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

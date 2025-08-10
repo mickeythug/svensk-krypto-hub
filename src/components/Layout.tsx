@@ -16,8 +16,14 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
   const isMobile = useIsMobile();
   const location = useLocation();
   
+  // Check if we're on crypto trading pages
+  const isTradingPage = location.pathname.startsWith('/crypto/');
+  
   // Check if we're on meme pages
   const isMemeZone = location.pathname.startsWith('/meme');
+  
+  // Don't show ticker on trading pages
+  const shouldShowTicker = showTicker && !isTradingPage;
   
   // Mobile header titles for different pages
   const getMobileTitle = () => {
@@ -49,8 +55,8 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
         <Header />
       )}
       
-      {/* Ticker - Always positioned directly under header */}
-      {showTicker && (
+      {/* Ticker - Hidden on trading pages */}
+      {shouldShowTicker && (
         <div className={`${isMobile ? 'fixed top-16 left-0 right-0 z-[45]' : 'fixed top-20 left-0 right-0 z-40'}`}>
           {isMemeZone ? (
             <MemeLiveTicker />
@@ -63,7 +69,8 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
       {/* Main content with proper spacing for fixed header and ticker */}
       <main className={`
         ${isMobile ? 'pt-16' : 'pt-20'}
-        ${showTicker ? (isMobile ? 'mt-10' : 'mt-12') : ''}
+        ${shouldShowTicker ? (isMobile ? 'mt-10' : 'mt-12') : ''}
+        ${isTradingPage && isMobile ? 'pb-0' : 'pb-20'}
         min-h-screen
       `}>
         {children}

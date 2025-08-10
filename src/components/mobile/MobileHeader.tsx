@@ -1,7 +1,7 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { TrendingUp, Newspaper, Wallet, Zap, Users } from "lucide-react";
 import { useState } from "react";
 
@@ -15,7 +15,12 @@ const MobileHeader = ({
   showMenu = true
 }: MobileHeaderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  
+  // Hide menu on trading pages
+  const isTradingPage = location.pathname.startsWith('/crypto/');
+  const shouldShowMenu = showMenu && !isTradingPage;
 
   const navItems = [
     { path: "/", icon: TrendingUp, label: "Hem" },
@@ -52,7 +57,7 @@ const MobileHeader = ({
         </div>
         
         <div className="flex items-center gap-2">
-          {showMenu && (
+          {shouldShowMenu && (
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button
