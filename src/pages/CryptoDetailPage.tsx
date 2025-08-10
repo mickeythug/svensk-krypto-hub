@@ -42,7 +42,8 @@ const CryptoDetailPage = () => {
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
   const crypto = cryptoPrices?.find(c => c.symbol.toLowerCase() === symbol?.toLowerCase());
-  const { connected: solConnected } = useWallet();
+  const { publicKey } = useWallet();
+  const solConnected = !!publicKey;
   const symUpper = (crypto?.symbol || symbol || '').toUpperCase();
   const isSolToken = Boolean(SOL_TOKENS[symUpper]) && symUpper !== 'SOL';
 

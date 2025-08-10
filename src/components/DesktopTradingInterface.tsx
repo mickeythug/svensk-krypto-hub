@@ -24,6 +24,9 @@ import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 import { formatUsd } from "@/lib/utils";
 import { useAccount } from 'wagmi';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useSolBalance } from '@/hooks/useSolBalance';
+import { useTradeHistory } from '@/hooks/useTradeHistory';
 import SmartTradePanel from '@/components/trade/SmartTradePanel';
 
 interface DesktopTradingInterfaceProps {
@@ -44,6 +47,10 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   // Wallet + balances
   const { address: evmAddress, isConnected: isWalletConnected } = useAccount();
   const { data: balances = [], loading: balancesLoading, error: balancesError } = useWalletBalances(evmAddress as any);
+  const { publicKey } = useWallet();
+  const solAddress = publicKey?.toBase58();
+  const { balance: solBalance } = useSolBalance();
+  const { history } = useTradeHistory([solAddress || '', evmAddress || '']);
 
   // Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);

@@ -16,6 +16,7 @@ import { mainnet } from 'viem/chains';
 import { parseUnits, type Address, createPublicClient, http } from 'viem';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { useErc20Balance } from '@/hooks/useErc20Balance';
+import { recordTrade } from '@/lib/tradeHistory';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet };
 
@@ -40,19 +41,24 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
   // EVM
   const { address: evmAddress } = useAccount();
-const evmChainId = 1;
+  const evmConnected = !!evmAddress;
+  const evmChainId = 1;
   const { cryptoPrices } = useCryptoData();
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
   const { sendTransactionAsync } = useSendTransaction();
 
-  // Auto-switch to Solana mode when a Solana wallet is connected
+  // Auto-detect chain mode from connected wallets
   useEffect(() => {
-    if (isSolConnected && chainMode !== 'SOL') {
+    if (isSolConnected) {
       setChainMode('SOL');
+    } else if (evmConnected) {
+      setChainMode('EVM');
+    } else {
+      setChainMode(isSolToken ? 'SOL' : 'EVM');
     }
-  }, [isSolConnected, chainMode]);
+  }, [isSolConnected, evmConnected, isSolToken]);
 
   const available = useMemo(() => {
     if (chainMode === 'SOL') {
@@ -100,9 +106,18 @@ const evmChainId = 1;
       const txBytes = Uint8Array.from(atob(swapTxB64), (c) => c.charCodeAt(0));
       const vtx = VersionedTransaction.deserialize(txBytes);
       const sig = await sendTransaction(vtx, connection);
-      toast({ title: 'Order skickad', description: `Tx: ${sig}` });
+      const explorer = `https://solscan.io/tx/${sig}`;
+      recordTrade(solAddress || 'sol', {
+        chain: 'SOL',
+        symbol: symbolUpper,
+        side,
+        amount: parseFloat(amountInput || '0'),
+        amountUsd: parseFloat(amountInput || '0') * (side === 'buy' ? solUsd : currentPrice),
+        txHash: sig,
+        address: solAddress,
+      });
+      toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Solscan</a>) });
       setAmountInput('');
-    } catch (e: any) {
       toast({ title: 'Solana fel', description: String(e.message || e), variant: 'destructive' });
     }
   }
@@ -168,9 +183,18 @@ const evmChainId = 1;
         data: swapData.tx.data as `0x${string}`,
         value: BigInt(swapData.tx.value || 0),
       } as any);
-      toast({ title: 'Order skickad', description: `Tx: ${hash}` });
+      const explorer = `https://etherscan.io/tx/${hash}`;
+      recordTrade(evmAddress || 'evm', {
+        chain: 'EVM',
+        symbol: symbolUpper,
+        side,
+        amount: parseFloat(amountInput || '0'),
+        amountUsd: parseFloat(amountInput || '0'),
+        txHash: String(hash),
+        address: evmAddress,
+      });
+      toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Etherscan</a>) });
       setAmountInput('');
-    } catch (e: any) {
       const msg = String(e.message || e);
       toast({ title: 'EVM fel', description: msg, variant: 'destructive' });
     }
@@ -202,8 +226,8 @@ const evmChainId = 1;
         </Tabs>
 
         <div>
-          <label className="text-xs text-muted-foreground mb-2 block font-semibold">Belopp ({chainMode==='SOL' ? (side==='buy'?'SOL':symbol) : 'USDT'})</label>
-          <Input type="number" value={amountInput} onChange={(e)=>setAmountInput(e.target.value)} placeholder="0.0" className="h-10 text-sm font-mono" min="0" step="any" />
+          <label className="text-xs text-muted-foreground mb-2 block font-semibold">Belopp ({chainMode==='SOL' ? (side==='buy'?'SOL':symbol) : chainMode==='EVM' ? 'USDT' : ''})</label>
+          <Input type="number" value={amountInput} onChange={(e)=>setAmountInput(e.target.value)} placeholder="0.0" className="h-10 text-sm font-mono" min="0" step="any" disabled={!isSolConnected && !evmConnected} />
         </div>
 
         <div className="grid grid-cols-4 gap-1">
@@ -214,7 +238,7 @@ const evmChainId = 1;
               size="sm"
               className="h-6 text-xs"
               onClick={()=>setPercent(p)}
-              disabled={available <= 0 || (chainMode==='SOL' && (!isSolConnected || !isSolToken))}
+              disabled={available <= 0 || (chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected)}
             >
               {Math.round(p*100)}%
             </Button>
@@ -238,26 +262,8 @@ const evmChainId = 1;
           </div>
         </div>
 
-        <div className="flex gap-2 text-xs">
-          <Button
-            variant={chainMode==='SOL'?'default':'outline'}
-            size="sm"
-            onClick={()=>setChainMode('SOL')}
-            className="flex-1"
-            disabled={!isSolToken}
-            title={!isSolToken ? 'Inte tillgängligt för denna token på Solana' : undefined}
-          >
-            Solana
-          </Button>
-          <Button variant={chainMode==='EVM'?'default':'outline'} size="sm" onClick={()=>setChainMode('EVM')} className="flex-1" disabled={isSolConnected && isSolToken}>EVM</Button>
-        </div>
-        {chainMode==='SOL' && !isSolToken && (
-          <div className="text-[11px] text-destructive mt-1">
-            Denna token stöds inte på Solana. Välj EVM eller en Solana‑token (t.ex. BONK/USDC).
-          </div>
-        )}
 
-        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={(chainMode==='SOL' && (!isSolConnected || !isSolToken)) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
+        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={(chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
           <Wallet className="h-4 w-4 mr-2" /> {side==='buy'?'Buy':'Sell'} {symbol}
         </Button>
       </div>
