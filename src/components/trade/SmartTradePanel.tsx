@@ -9,6 +9,7 @@ import { Transaction } from '@solana/web3.js';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSplTokenBalance } from '@/hooks/useSplTokenBalance';
 import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/tokenMaps';
+import { ERC20_ABI } from '@/lib/erc20';
 import { supabase } from '@/integrations/supabase/client';
 import { useAccount, useChainId, useSendTransaction } from 'wagmi';
 import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
@@ -89,24 +90,63 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   async function executeEvmMarket() {
     try {
       if (!evmAddress) throw new Error('EVM wallet saknas');
-      const usdt = USDT_BY_CHAIN[evmChainId];
+      const client = createPublicClient({ chain: CHAIN_BY_ID[evmChainId], transport: http() });
+
+      const usdt = USDT_BY_CHAIN[evmChainId] as Address;
       if (!usdt) throw new Error('USDT saknas för vald kedja');
-      const toToken = NATIVE_TOKEN_PSEUDO[evmChainId];
-      const fromToken = usdt;
-      const amountWei = parseUnits(amountInput || '0', 6);
+
+      const native = NATIVE_TOKEN_PSEUDO[evmChainId] as Address;
+      const isBuy = side === 'buy';
+      const fromToken = (isBuy ? usdt : native) as Address;
+      const toToken = (isBuy ? native : usdt) as Address;
+      const decimals = isBuy ? 6 : 18;
+      const amountWei = parseUnits(amountInput || '0', decimals);
       if (amountWei <= 0n) throw new Error('Ogiltigt belopp');
 
-      const response = await supabase.functions.invoke('evm-swap', {
+      // Approve if buying with USDT (ERC20)
+      if (isBuy) {
+        const spenderRes = await supabase.functions.invoke('evm-approve', {
+          body: { chainId: evmChainId, tokenAddress: fromToken, action: 'spender' },
+        });
+        if (spenderRes.error) throw spenderRes.error;
+        const spender = (spenderRes.data as any)?.address || (spenderRes.data as any)?.spender;
+        if (!spender) throw new Error('Kunde inte hämta spender');
+
+        const allowance = (await client.readContract({
+          address: fromToken,
+          abi: ERC20_ABI as any,
+          functionName: 'allowance',
+          args: [evmAddress as Address, spender as Address],
+        })) as unknown as bigint;
+
+        if (allowance < amountWei) {
+          const approveTxRes = await supabase.functions.invoke('evm-approve', {
+            body: { chainId: evmChainId, tokenAddress: fromToken, amount: amountWei.toString(), action: 'tx' },
+          });
+          if (approveTxRes.error) throw approveTxRes.error;
+          const approveTx: any = approveTxRes.data?.tx;
+          if (!approveTx?.to || !approveTx?.data) throw new Error('Ogiltig approve-tx');
+          const approveHash = await sendTransactionAsync({
+            to: approveTx.to as Address,
+            data: approveTx.data as `0x${string}`,
+            value: BigInt(approveTx.value || 0),
+          } as any);
+          await client.waitForTransactionReceipt({ hash: approveHash as any });
+        }
+      }
+
+      // Build swap
+      const swapRes = await supabase.functions.invoke('evm-swap', {
         body: { chainId: evmChainId, fromToken, toToken, amount: amountWei.toString(), fromAddress: evmAddress, slippage: slippage / 100 },
       });
-      if (response.error) throw response.error;
-      const data: any = response.data;
-      if (!data || !data.tx) throw new Error('Ogiltig 1inch-respons');
+      if (swapRes.error) throw swapRes.error;
+      const swapData: any = swapRes.data;
+      if (!swapData || !swapData.tx) throw new Error('Ogiltig 1inch-respons');
 
       const hash = await sendTransactionAsync({
-        to: data.tx.to as Address,
-        data: data.tx.data as `0x${string}`,
-        value: BigInt(data.tx.value || 0),
+        to: swapData.tx.to as Address,
+        data: swapData.tx.data as `0x${string}`,
+        value: BigInt(swapData.tx.value || 0),
       } as any);
       toast({ title: 'Order skickad', description: `Tx: ${hash}` });
       setAmountInput('');
