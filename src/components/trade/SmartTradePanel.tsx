@@ -17,6 +17,7 @@ import { parseUnits, type Address, createPublicClient, http } from 'viem';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { useErc20Balance } from '@/hooks/useErc20Balance';
 import { recordTrade } from '@/lib/tradeHistory';
+import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet };
 
@@ -25,6 +26,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const [orderType, setOrderType] = useState<'market'|'limit'>('market');
   const [amountInput, setAmountInput] = useState('');
   const [slippage, setSlippage] = useState(50); // bps
+  const [submitting, setSubmitting] = useState(false);
   const symbolUpper = symbol.toUpperCase();
   const isSolToken = useMemo(() => Boolean(SOL_TOKENS[symbolUpper]) && symbolUpper !== 'SOL', [symbolUpper]);
   const defaultChainMode = isSolToken ? 'SOL' : 'EVM';
@@ -75,6 +77,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
   async function executeSolanaMarket() {
     try {
+      setSubmitting(true);
       if (!solAddress) throw new Error('Solana wallet saknas');
       if (!isSolToken) throw new Error('Denna token är inte tillgänglig på Solana. Välj EVM eller en Solana-token (t.ex. BONK/USDC).');
       const inputMint = side === 'buy' ? SOL_MINT : (solTokenInfo?.mint || SOL_MINT);
@@ -120,11 +123,14 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       setAmountInput('');
     } catch (e: any) {
       toast({ title: 'Solana fel', description: String(e.message || e), variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
     }
   }
 
   async function executeEvmMarket() {
     try {
+      setSubmitting(true);
       if (!evmAddress) throw new Error('EVM wallet saknas');
       const client = createPublicClient({ chain: CHAIN_BY_ID[evmChainId], transport: http() });
 
@@ -199,17 +205,54 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     } catch (e: any) {
       const msg = String(e.message || e);
       toast({ title: 'EVM fel', description: msg, variant: 'destructive' });
+    } finally {
+      setSubmitting(false);
     }
   }
 
   const onSubmit = async () => {
+    if (submitting) return;
+    const amt = parseFloat(amountInput || '0');
+    if (!Number.isFinite(amt) || amt <= 0) {
+      toast({ title: 'Ogiltigt belopp', description: 'Ange ett giltigt belopp > 0.', variant: 'destructive' });
+      return;
+    }
+    if (amt > available) {
+      toast({ title: 'Belopp för stort', description: 'Beloppet överstiger tillgängligt saldo.', variant: 'destructive' });
+      return;
+    }
     if (orderType !== 'market') {
       toast({ title: 'Limit-order', description: 'Limit-orders aktiveras i nästa steg.', variant: 'destructive' });
       return;
     }
-    if (chainMode === 'SOL') return executeSolanaMarket();
+    if (chainMode === 'SOL') {
+      if (!isSolToken) {
+        toast({ title: 'Inte tillgänglig på Solana', description: 'Välj en Solana‑token (t.ex. BONK) eller byt till EVM.', variant: 'destructive' });
+        return;
+      }
+      if (!isSolConnected) {
+        toast({ title: 'Wallet krävs', description: 'Anslut en Solana‑wallet.', variant: 'destructive' });
+        return;
+      }
+      return executeSolanaMarket();
+    }
+    if (!evmConnected) {
+      toast({ title: 'Wallet krävs', description: 'Anslut en EVM‑wallet.', variant: 'destructive' });
+      return;
+    }
     return executeEvmMarket();
   };
+
+  if (!isSolConnected && !evmConnected) {
+    return (
+      <div className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
+        <div className="p-4 space-y-3 bg-background/20">
+          <div className="text-sm">Anslut en wallet för att börja handla.</div>
+          <ConnectWalletButton />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full bg-card/60 backdrop-blur-sm border-border/30 shadow-lg">
@@ -240,7 +283,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
               size="sm"
               className="h-6 text-xs"
               onClick={()=>setPercent(p)}
-              disabled={available <= 0 || (chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected)}
+              disabled={submitting || available <= 0 || (chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected)}
             >
               {Math.round(p*100)}%
             </Button>
@@ -265,8 +308,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         </div>
 
 
-        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={(chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
-          <Wallet className="h-4 w-4 mr-2" /> {side==='buy'?'Buy':'Sell'} {symbol}
+        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={submitting || (chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
+          <Wallet className="h-4 w-4 mr-2" /> {submitting ? 'Skickar...' : `${side==='buy'?'Buy':'Sell'} ${symbol}`}
         </Button>
       </div>
     </div>
