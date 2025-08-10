@@ -45,6 +45,7 @@ import { useOpenOrders } from '@/hooks/useOpenOrders';
 import PositionsPanel from '@/components/trade/PositionsPanel';
 import OrderHistoryPanel from '@/components/trade/OrderHistoryPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
+import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -207,8 +208,6 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                   <div className="text-sm text-muted-foreground flex items-center gap-2">
                     <span>{symbol}/USDT</span>
                     <span>•</span>
-                    <span>{exchange}</span>
-                    <span>•</span>
                     <div className="flex items-center gap-1">
                       {isConnected ? (
                         <Wifi className="h-3 w-3 text-success" />
@@ -268,13 +267,13 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h Volume</span>
               <span className="font-mono font-semibold">
-                {crypto?.volume ? `$${Number(crypto.volume).toLocaleString()}` : 'N/A'}
+                {crypto?.volume ? `$${crypto.volume}` : 'N/A'}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">Market Cap</span>
               <span className="font-mono font-semibold">
-                {crypto?.marketCap ? `$${Number(crypto.marketCap).toLocaleString()}` : 'N/A'}
+                {crypto?.marketCap ? `$${crypto.marketCap}` : 'N/A'}
               </span>
             </div>
             <div className="flex flex-col">
@@ -379,10 +378,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               <p className="text-sm text-muted-foreground mb-4">
                 Connect your wallet to start trading {symbol}
               </p>
-              <Button className="w-full">
-                <Wallet className="h-4 w-4 mr-2" />
-                Connect Wallet
-              </Button>
+              <ConnectWalletButton />
             </Card>
           </div>
         )}
