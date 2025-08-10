@@ -419,7 +419,7 @@ const MarketOverviewPage = () => {
               {/* Category Tabs - Modern Style */}
               <div className="mt-6">
                 <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                  <TabsList className="grid grid-cols-6 h-12 p-1 bg-secondary/10 rounded-xl border border-border/20">
+                  <TabsList className="grid grid-cols-6 h-12 p-1 bg-card border border-border rounded-xl shadow-sm">
                     <TabsTrigger 
                       value="top10" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
@@ -474,10 +474,10 @@ const MarketOverviewPage = () => {
               
               {viewMode === "table" ? (
                 // Table View
-                <div className="bg-background/50 backdrop-blur-sm rounded-t-xl border border-border/20 border-b-0 overflow-hidden">
+                <div className="bg-card rounded-t-xl border border-border border-b-0 overflow-hidden shadow-sm">
                   <Table className="w-full">
                     <TableHeader>
-                      <TableRow className="hover:bg-transparent border-b border-border/20 bg-secondary/10">
+                      <TableRow className="hover:bg-transparent border-b border-border bg-muted/30">
                         <TableHead className="text-center font-semibold py-4 px-6 text-muted-foreground w-16">#</TableHead>
                         <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">Namn</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Pris</TableHead>
@@ -602,7 +602,7 @@ const MarketOverviewPage = () => {
                   {currentData.map((crypto) => (
                     <Card 
                       key={`${crypto.symbol}-${crypto.rank}`}
-                      className="p-6 bg-[hsl(var(--turquoise-dark))] hover:shadow-lg cursor-pointer transition-all duration-200 border border-border/20 hover:border-primary/30 backdrop-blur-sm"
+                      className="p-6 bg-card hover:shadow-lg cursor-pointer transition-all duration-200 border border-border hover:border-primary/30"
                       onClick={() => navigate(`/crypto/${crypto.slug}`)}
                     >
                       <div className="flex items-center justify-between mb-4">
@@ -674,7 +674,7 @@ const MarketOverviewPage = () => {
               )}
 
               {/* Pagination - Modern Style */}
-              <div className="bg-background/50 backdrop-blur-sm border border-border/20 border-t-0 rounded-b-xl px-6 py-4">
+              <div className="bg-card border border-border border-t-0 rounded-b-xl px-6 py-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
                     Visar <span className="font-medium text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredData.length)}</span> av <span className="font-medium text-foreground">{filteredData.length}</span> kryptovalutor
@@ -853,7 +853,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Mobile Search and Tabs */}
-          <div className="sticky top-0 z-30 bg-background/98 backdrop-blur-xl border-b border-border/30 shadow-sm">
+          <div className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
             <div className="p-3">
               <div className="relative mb-3">
                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -866,12 +866,12 @@ const MarketOverviewPage = () => {
               </div>
               
               <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                <TabsList className="grid grid-cols-3 h-auto p-1 bg-secondary/20 w-full">
+                 <TabsList className="grid grid-cols-3 h-auto p-1 bg-card border border-border rounded-lg w-full">
                   <TabsTrigger value="top10" className="text-xs py-2">TOP 10</TabsTrigger>
                   <TabsTrigger value="trending" className="text-xs py-2">Trend</TabsTrigger>
                   <TabsTrigger value="meme" className="text-xs py-2">Meme</TabsTrigger>
                 </TabsList>
-                <TabsList className="grid grid-cols-3 h-auto p-1 bg-secondary/20 w-full mt-1">
+                <TabsList className="grid grid-cols-3 h-auto p-1 bg-card border border-border rounded-lg w-full mt-1">
                   <TabsTrigger value="gainers" className="text-xs py-2">Toppar</TabsTrigger>
                   <TabsTrigger value="losers" className="text-xs py-2">Fallande</TabsTrigger>
                   <TabsTrigger value="all" className="text-xs py-2">Alla</TabsTrigger>
@@ -951,7 +951,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Mobile Pagination - Fixed at bottom only when scrolled to bottom */}
-          <div className="sticky bottom-16 left-0 right-0 bg-background/98 backdrop-blur-xl border-t border-border/50 py-3 px-4 z-30 mt-auto">
+          <div className="sticky bottom-16 left-0 right-0 bg-card border-t border-border py-3 px-4 z-30 mt-auto shadow-sm">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
