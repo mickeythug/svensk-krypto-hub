@@ -5,6 +5,7 @@ import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, 
 import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { useWalletBalances } from '@/hooks/useWalletBalances';
@@ -116,10 +117,12 @@ export default function ConnectWalletButton() {
 
   const handleConnect = async () => {
     try {
-      // Bestäm lokalt läge direkt (undvik setState-race)
-      const hasSol = typeof window !== 'undefined' && (((window as any)?.solana) || ((window as any)?.phantom?.solana));
-      const mode: 'SOL' | 'EVM' = (chainMode as any) || (hasSol ? 'SOL' : 'EVM');
-      if (mode !== chainMode) setChainMode(mode);
+      // Kräv att användaren väljer kedja (ingen auto-detektering)
+      if (!chainMode) {
+        toast({ title: 'Välj kedja', description: 'Välj Solana (Phantom) eller Ethereum (MetaMask/Trust).', variant: 'destructive' });
+        return;
+      }
+      const mode: 'SOL' | 'EVM' = chainMode;
 
       if (mode === 'SOL') {
         // Phantom detection (supports window.solana and window.phantom)
@@ -346,12 +349,16 @@ export default function ConnectWalletButton() {
     }
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
+        <ToggleGroup type="single" value={chainMode || undefined} onValueChange={(v) => setChainMode((v as 'SOL'|'EVM') || null)}>
+          <ToggleGroupItem value="SOL" aria-label="Välj Solana">Solana</ToggleGroupItem>
+          <ToggleGroupItem value="EVM" aria-label="Välj Ethereum">Ethereum</ToggleGroupItem>
+        </ToggleGroup>
         <Button
           onClick={handleConnect}
           size="sm"
           className="font-crypto uppercase"
-          disabled={isConnecting || siwsLoading}
+          disabled={isConnecting || siwsLoading || !chainMode}
         >
           <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
         </Button>
