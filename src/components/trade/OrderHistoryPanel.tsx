@@ -6,12 +6,15 @@ import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { useAccount } from 'wagmi';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
+import { useTradeHistory } from '@/hooks/useTradeHistory';
 
 export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
   const { address: evm } = useAccount();
   const { publicKey } = useWallet();
   const sol = publicKey?.toBase58();
+  const symUpper = (symbol || '').toUpperCase();
   const { rows, loading } = useOrderHistory({ addresses: [sol, evm], symbol });
+  const { history: localHistory } = useTradeHistory([sol || '', evm || '']);
 
   // Return wallet connection prompt if no wallet connected
   if (!sol && !evm) {
@@ -34,7 +37,30 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
     );
   }
 
-  const items = useMemo(() => rows.slice(0, 6), [rows]);
+  const items = useMemo(() => {
+    const mappedLocal = (localHistory || [])
+      .filter((t) => !symUpper || (t.symbol || '').toUpperCase() === symUpper)
+      .map((t) => ({
+        id: `local-${t.id}`,
+        created_at: new Date(t.ts).toISOString(),
+        user_address: t.address || '',
+        chain: t.chain,
+        symbol: t.symbol,
+        side: t.side,
+        event_type: 'local_trade',
+        source: 'LOCAL',
+        base_amount: t.amount,
+        price_usd: t.amountUsd ?? undefined,
+        price_quote: undefined,
+        fee_quote: undefined,
+        tx_hash: t.txHash,
+        meta: undefined,
+      }));
+    const merged = [...rows, ...mappedLocal];
+    return merged
+      .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 6);
+  }, [rows, localHistory, symUpper]);
 
   return (
     <Card className="p-0 bg-card border border-border flex flex-col">
