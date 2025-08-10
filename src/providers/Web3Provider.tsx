@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
+import { mainnet } from 'viem/chains';
 import { walletConnect } from 'wagmi/connectors';
 import { injected } from 'wagmi/connectors';
 import { supabase } from '@/lib/supabase';
 
 // Chains we support initially
-const chains = [mainnet, bsc, polygon, arbitrum, base, optimism] as const;
+const chains = [mainnet] as const;
 
 function useWalletConnectProjectId() {
   const [projectId, setProjectId] = useState<string | null>(null);

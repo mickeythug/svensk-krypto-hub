@@ -37,7 +37,7 @@ export default function ConnectWalletButton() {
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
 
   const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
-  const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(null);
+  const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(1);
   const [isAuthed, setIsAuthed] = useState(false);
   const [nonce, setNonce] = useState<string>('');
   const { data: balances } = useWalletBalances(address as Address | undefined);
@@ -129,9 +129,9 @@ export default function ConnectWalletButton() {
         return;
       }
 
-      // EVM connect + optional chain switch + sign
+// EVM connect + optional chain switch + sign
       if (selectedEvmChainId == null) {
-        toast({ title: 'Välj EVM-kedja', description: 'Välj t.ex. Ethereum eller BNB Smart Chain.', variant: 'destructive' });
+        toast({ title: 'Välj EVM-kedja', description: 'Välj Ethereum.', variant: 'destructive' });
         return;
       }
       const wc = connectors.find((c) => c.id === 'walletConnect') || connectors[0];

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Address, createPublicClient, formatEther, http } from 'viem';
-import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
+import { mainnet } from 'viem/chains';
 
 export type ChainBalance = {
   chainId: number;
@@ -13,11 +13,6 @@ export type ChainBalance = {
 
 const CHAINS = [
   { chain: mainnet, symbol: 'ETH' },
-  { chain: bsc, symbol: 'BNB' },
-  { chain: polygon, symbol: 'MATIC' },
-  { chain: arbitrum, symbol: 'ETH' },
-  { chain: base, symbol: 'ETH' },
-  { chain: optimism, symbol: 'ETH' },
 ] as const;
 
 export function useWalletBalances(address?: Address) {

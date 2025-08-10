@@ -11,13 +11,13 @@ import { useSplTokenBalance } from '@/hooks/useSplTokenBalance';
 import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/tokenMaps';
 import { ERC20_ABI } from '@/lib/erc20';
 import { supabase } from '@/integrations/supabase/client';
-import { useAccount, useChainId, useSendTransaction } from 'wagmi';
-import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
+import { useAccount, useSendTransaction } from 'wagmi';
+import { mainnet } from 'viem/chains';
 import { parseUnits, type Address, createPublicClient, http } from 'viem';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { useErc20Balance } from '@/hooks/useErc20Balance';
 
-const CHAIN_BY_ID: Record<number, any> = { 1: mainnet, 56: bsc, 137: polygon, 42161: arbitrum, 8453: base, 10: optimism };
+const CHAIN_BY_ID: Record<number, any> = { 1: mainnet };
 
 export default function SmartTradePanel({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
   const [side, setSide] = useState<'buy'|'sell'>('buy');
@@ -38,8 +38,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
   // EVM
   const { address: evmAddress } = useAccount();
-  const chainId = useChainId();
-  const evmChainId = chainId || 1;
+const evmChainId = 1;
   const { cryptoPrices } = useCryptoData();
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;

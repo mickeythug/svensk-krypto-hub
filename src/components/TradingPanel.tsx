@@ -336,9 +336,6 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Badge variant="outline" className="justify-center">Ethereum</Badge>
-                  <Badge variant="outline" className="justify-center">BSC</Badge>
-                  <Badge variant="outline" className="justify-center">Polygon</Badge>
-                  <Badge variant="outline" className="justify-center">Arbitrum</Badge>
                 </div>
               </div>
 
