@@ -20,65 +20,94 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   const { tvSymbol } = useTradingViewSymbol(symbol, coinGeckoId);
 
   useEffect(() => {
+    console.log('TradingViewMobileChart mounting for symbol:', symbol);
     loadTradingView()
-      .then(initChart)
+      .then(() => {
+        console.log('TradingView script loaded, initializing mobile chart');
+        initChart();
+      })
       .catch((err) => console.error("Failed to load TradingView script (mobile):", err));
 
     return () => {
-      try { widgetRef.current?.remove?.(); } catch {}
+      if (widgetRef.current) {
+        try {
+          console.log('Cleaning up mobile TradingView widget');
+          widgetRef.current.remove();
+        } catch (e) {
+          console.log('Error cleaning up mobile widget:', e);
+        }
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol, timeframe, tvSymbol]);
 
   const initChart = () => {
-    if (!containerRef.current || !window.TradingView) return;
+    if (!containerRef.current || !window.TradingView) {
+      console.log('Container or TradingView not ready for mobile');
+      return;
+    }
 
-    // clear previous
-    try { widgetRef.current?.remove?.(); } catch {}
+    // Clear previous widget
+    if (widgetRef.current) {
+      try {
+        widgetRef.current.remove();
+      } catch (e) {
+        console.log('Error removing previous mobile widget:', e);
+      }
+    }
+
+    // Clear container
     containerRef.current.innerHTML = "";
 
     const tradingPair = tvSymbol || `BINANCE:${symbol.toUpperCase()}USDT`;
+    console.log('Creating mobile TradingView widget for:', tradingPair);
 
-    widgetRef.current = new window.TradingView.widget({
-      autosize: true,
-      symbol: tradingPair,
-      interval: getInterval(timeframe),
-      container_id: containerIdRef.current,
-      theme: "dark",
-      style: "1",
-      locale: "en",
-      toolbar_bg: "rgba(0, 0, 0, 0)",
-      enable_publishing: false,
-      hide_top_toolbar: false,
-      hide_legend: false,
-      save_image: false,
-      hide_volume: false,
-      width: "100%",
-      height: "100%",
-      studies: ["Volume@tv-basicstudies"],
-      overrides: {
-        "paneProperties.background": "rgba(0, 0, 0, 0)",
-        "paneProperties.backgroundType": "solid",
-        "paneProperties.backgroundGradientStartColor": "rgba(0, 0, 0, 0.1)",
-        "paneProperties.backgroundGradientEndColor": "rgba(0, 0, 0, 0.1)",
-        "mainSeriesProperties.candleStyle.upColor": "hsl(var(--success))",
-        "mainSeriesProperties.candleStyle.downColor": "hsl(var(--destructive))",
-        "mainSeriesProperties.candleStyle.borderUpColor": "hsl(var(--success))",
-        "mainSeriesProperties.candleStyle.borderDownColor": "hsl(var(--destructive))",
-        "mainSeriesProperties.candleStyle.wickUpColor": "hsl(var(--success))",
-        "mainSeriesProperties.candleStyle.wickDownColor": "hsl(var(--destructive))",
-        "paneProperties.vertGridProperties.color": "rgba(255, 255, 255, 0.05)",
-        "paneProperties.horzGridProperties.color": "rgba(255, 255, 255, 0.05)",
-        "scalesProperties.textColor": "hsl(var(--muted-foreground))",
-        "scalesProperties.backgroundColor": "rgba(0, 0, 0, 0.1)",
-      },
-      disabled_features: [
-        "use_localstorage_for_settings",
-        "volume_force_overlay",
-        "create_volume_indicator_by_default_once",
-      ],
-      enabled_features: ["study_templates"],
-    });
+    try {
+      widgetRef.current = new window.TradingView.widget({
+        autosize: true,
+        symbol: tradingPair,
+        interval: getInterval(timeframe),
+        container_id: containerIdRef.current,
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        toolbar_bg: "rgba(0, 0, 0, 0)",
+        enable_publishing: false,
+        hide_top_toolbar: true,
+        hide_legend: true,
+        save_image: false,
+        hide_volume: false,
+        width: "100%",
+        height: "100%",
+        overrides: {
+          "paneProperties.background": "#0f0f23",
+          "paneProperties.backgroundType": "solid",
+          "mainSeriesProperties.candleStyle.upColor": "#10b981",
+          "mainSeriesProperties.candleStyle.downColor": "#ef4444",
+          "mainSeriesProperties.candleStyle.borderUpColor": "#10b981",
+          "mainSeriesProperties.candleStyle.borderDownColor": "#ef4444",
+          "mainSeriesProperties.candleStyle.wickUpColor": "#10b981",
+          "mainSeriesProperties.candleStyle.wickDownColor": "#ef4444",
+          "paneProperties.vertGridProperties.color": "rgba(255, 255, 255, 0.05)",
+          "paneProperties.horzGridProperties.color": "rgba(255, 255, 255, 0.05)",
+          "scalesProperties.textColor": "#8a92b2",
+          "scalesProperties.backgroundColor": "rgba(0, 0, 0, 0.1)"
+        },
+        disabled_features: [
+          "use_localstorage_for_settings",
+          "header_symbol_search",
+          "header_compare",
+          "header_undo_redo", 
+          "header_screenshot",
+          "header_chart_type",
+          "header_saveload",
+          "header_settings"
+        ]
+      });
+
+      console.log('Mobile TradingView widget created successfully');
+    } catch (error) {
+      console.error('Error creating mobile TradingView widget:', error);
+    }
   };
 
   const getInterval = (
@@ -96,7 +125,19 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
     return intervals[timeframe] || "D";
   };
 
-  const handleTimeframeChange = (tf: string) => setTimeframe(tf);
+  const handleTimeframeChange = (tf: string) => {
+    setTimeframe(tf);
+    if (widgetRef.current && widgetRef.current.chart) {
+      try {
+        widgetRef.current.chart().setResolution(getInterval(tf));
+      } catch (e) {
+        console.log('Could not change mobile resolution, reinitializing');
+        initChart();
+      }
+    } else {
+      initChart();
+    }
+  };
 
   const toggleFullscreen = async () => {
     try {
