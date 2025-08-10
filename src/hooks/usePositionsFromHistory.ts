@@ -52,6 +52,7 @@ export function usePositionsFromHistory(rows: OrderHistoryRow[], prices: Record<
     for (const [, p] of map) {
       const price = prices[p.symbol] || 0;
       const amt = Math.abs(p.amount) < 1e-8 ? 0 : p.amount;
+      if (amt === 0) continue; // drop fully closed positions
       out.push({ symbol: p.symbol, amount: amt, avgEntry: p.avgEntry, value: amt * price, realizedPnl: p.realizedPnl });
     }
     return out.sort((a, b) => b.value - a.value);
