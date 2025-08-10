@@ -342,8 +342,6 @@ const NewsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {isMobile ? <MobileHeader title="NYHETER" /> : <Header />}
-      {!isMobile && <CryptoPriceTicker />}
       
       <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16'}`}>
         <div className={`container mx-auto ${isMobile ? 'px-3' : 'px-4'} max-w-7xl`}>

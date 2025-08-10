@@ -279,8 +279,6 @@ const MarketOverviewPage = () => {
     <>
       {/* Desktop Version - Modern CoinMarketCap Style */}
       <div className="hidden md:block min-h-screen bg-background">
-        <Header />
-        <CryptoPriceTicker />
         
         {/* Main Container */}
         <div className="pt-4 bg-background">
