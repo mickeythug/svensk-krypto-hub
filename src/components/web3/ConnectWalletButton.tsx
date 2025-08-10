@@ -116,13 +116,12 @@ export default function ConnectWalletButton() {
 
   const handleConnect = async () => {
     try {
-      // Auto-detect chain if not chosen
-      if (!chainMode) {
-        const hasSol = typeof window !== 'undefined' && ((window as any)?.solana || (window as any)?.phantom?.solana);
-        setChainMode(hasSol ? 'SOL' : 'EVM');
-      }
+      // Bestäm lokalt läge direkt (undvik setState-race)
+      const hasSol = typeof window !== 'undefined' && (((window as any)?.solana) || ((window as any)?.phantom?.solana));
+      const mode: 'SOL' | 'EVM' = (chainMode as any) || (hasSol ? 'SOL' : 'EVM');
+      if (mode !== chainMode) setChainMode(mode);
 
-      if (chainMode === 'SOL') {
+      if (mode === 'SOL') {
         // Phantom detection (supports window.solana and window.phantom)
         const isPhantom = typeof window !== 'undefined' && (
           (window as any)?.solana?.isPhantom || (window as any)?.phantom?.solana?.isPhantom
@@ -138,7 +137,7 @@ export default function ConnectWalletButton() {
         }
 
         try {
-          // Ensure Phantom is selected in the adapter before connecting
+          // Säkerställ att Phantom är vald
           const phantomWallet = wallets?.find?.((w: any) => w?.adapter?.name === 'Phantom');
           if (phantomWallet && wallet?.adapter?.name !== phantomWallet.adapter.name) {
             select?.(phantomWallet.adapter.name as any);
@@ -163,7 +162,7 @@ export default function ConnectWalletButton() {
           if (!pubkeyStr) throw new Error('Kunde inte läsa din Solana‑adress. Godkänn anslutningen i Phantom och försök igen.');
 
           const canAdapterSign = typeof signMessageSol === 'function';
-          const providerSign = (window as any)?.solana?.signMessage as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
+          const providerSign = (typeof window !== 'undefined' ? (window as any)?.solana?.signMessage : undefined) as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
           const canProviderSign = typeof providerSign === 'function';
           if (!canAdapterSign && !canProviderSign) {
             toast({
@@ -201,13 +200,9 @@ export default function ConnectWalletButton() {
           return;
         } catch (err: any) {
           if (err?.name === 'WalletNotSelectedError') {
-            toast({
-              title: 'Välj Solana‑wallet',
-              description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.',
-              variant: 'destructive',
-            });
+            toast({ title: 'Välj Solana‑wallet', description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.', variant: 'destructive' });
             setWalletModalVisible(true);
-            return; // Avbryt utan att kasta fel – användaren väljer wallet i modalen
+            return;
           }
           try { await disconnectSol(); } catch {}
           try {
@@ -223,7 +218,7 @@ export default function ConnectWalletButton() {
         }
       }
 
-// EVM connect + optional chain switch + sign
+      // EVM connect + optional chain switch + sign
       if (selectedEvmChainId == null) {
         toast({ title: 'Välj EVM-kedja', description: 'Välj Ethereum.', variant: 'destructive' });
         return;
