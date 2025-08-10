@@ -32,24 +32,25 @@ export const useOrderbook = (
 
   // Normalized processing from generic bids/asks arrays
   const process = (bids: [string, string][], asks: [string, string][]) => {
+    // Parse then sort first to ensure top-of-book correctness
+    const parsedBids = bids.map(([p, q]) => ({ price: parseFloat(p), size: parseFloat(q) }));
+    const parsedAsks = asks.map(([p, q]) => ({ price: parseFloat(p), size: parseFloat(q) }));
+
+    parsedBids.sort((a, b) => b.price - a.price);
+    parsedAsks.sort((a, b) => a.price - b.price);
+
     let totalBids = 0;
     let totalAsks = 0;
 
-    const processedBids: OrderBookEntry[] = bids.slice(0, limit).map(([p, q]) => {
-      const size = parseFloat(q);
-      totalBids += size;
-      return { price: parseFloat(p), size, total: totalBids };
+    const processedBids: OrderBookEntry[] = parsedBids.slice(0, limit).map((b) => {
+      totalBids += b.size;
+      return { price: b.price, size: b.size, total: totalBids };
     });
 
-    const processedAsks: OrderBookEntry[] = asks.slice(0, limit).map(([p, q]) => {
-      const size = parseFloat(q);
-      totalAsks += size;
-      return { price: parseFloat(p), size, total: totalAsks };
+    const processedAsks: OrderBookEntry[] = parsedAsks.slice(0, limit).map((a) => {
+      totalAsks += a.size;
+      return { price: a.price, size: a.size, total: totalAsks };
     });
-
-    // Sort to consistent order (bids desc, asks asc)
-    processedBids.sort((a, b) => b.price - a.price);
-    processedAsks.sort((a, b) => a.price - b.price);
 
     return { processedBids, processedAsks };
   };

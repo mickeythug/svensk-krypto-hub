@@ -97,6 +97,9 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const { exchange } = useTradingViewSymbol(symbol, crypto?.coinGeckoId);
   const { data: ticker } = useExchangeTicker(symbol, crypto?.coinGeckoId);
 
+  // Connection indicator prefers real book presence
+  const live = Boolean((orderBook?.asks?.length || 0) > 0 && (orderBook?.bids?.length || 0) > 0) || isConnected;
+
   // Debug logging
   useEffect(() => {
     console.log('DesktopTradingInterface loaded for symbol:', symbol);
@@ -156,7 +159,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     const bestAsk = Math.min(...orderBook!.asks.map((a) => a.price));
     const bestBid = Math.max(...orderBook!.bids.map((b) => b.price));
     if (!Number.isFinite(bestAsk) || !Number.isFinite(bestBid) || bestBid <= 0) return '—';
-    return (((bestAsk - bestBid) / bestBid) * 100).toFixed(3);
+    return (Math.abs((bestAsk - bestBid) / bestBid) * 100).toFixed(3);
   };
 
   const toggleWatchlist = () => {
@@ -214,12 +217,12 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                     <span>{symbol}/USDT</span>
                     <span>•</span>
                     <div className="flex items-center gap-1">
-                      {isConnected ? (
+                      {live ? (
                         <Wifi className="h-3 w-3 text-success" />
                       ) : (
                         <WifiOff className="h-3 w-3 text-destructive" />
                       )}
-                      <span>{isConnected ? 'Live' : 'Offline'}</span>
+                      <span>{live ? 'Live' : 'Offline'}</span>
                     </div>
                   </div>
                 </div>
