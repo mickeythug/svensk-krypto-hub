@@ -350,7 +350,7 @@ export default function ConnectWalletButton() {
 
     return (
       <div className="flex items-center gap-3">
-        <ToggleGroup type="single" value={chainMode || undefined} onValueChange={(v) => setChainMode((v as 'SOL'|'EVM') || null)}>
+        <ToggleGroup type="single" value={chainMode || undefined} onValueChange={(v) => { const val = (v as 'SOL'|'EVM') || null; setChainMode(val); if (val === 'EVM') setSelectedEvmChainId(1); }}>
           <ToggleGroupItem value="SOL" aria-label="Välj Solana">Solana</ToggleGroupItem>
           <ToggleGroupItem value="EVM" aria-label="Välj Ethereum">Ethereum</ToggleGroupItem>
         </ToggleGroup>
