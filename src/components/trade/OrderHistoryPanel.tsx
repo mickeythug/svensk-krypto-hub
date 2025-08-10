@@ -22,7 +22,7 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
         <h3 className="text-base font-semibold text-foreground">Orderhistorik</h3>
         <span className="text-sm text-muted-foreground ml-2">Senaste transaktioner</span>
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-modern">
         <Table>
           <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
             <TableRow className="border-border/30 hover:bg-muted/30">

@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatUsd } from '@/lib/utils';
 import { useAccount } from 'wagmi';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { usePositionsFromHistory } from '@/hooks/usePositionsFromHistory';
 import { useEffect, useMemo, useState } from 'react';
@@ -13,6 +13,7 @@ export default function PositionsPanel() {
   const { address: evm } = useAccount();
   const { publicKey } = useWallet();
   const sol = publicKey?.toBase58();
+  const { connection } = useConnection();
   const { rows } = useOrderHistory({ addresses: [sol, evm] });
   const [cryptoPrices, setCryptoPrices] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -42,7 +43,53 @@ export default function PositionsPanel() {
     return m;
   }, [cryptoPrices]);
 
-  const positions = usePositionsFromHistory(rows, priceMap).filter(p => p.amount > 0.0000001);
+  const historyPositions = usePositionsFromHistory(rows, priceMap).filter(p => p.amount > 0.0000001);
+
+  const [tokenList, setTokenList] = useState<Record<string, { mint: string; decimals: number }>>({});
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('https://token.jup.ag/strict', { headers: { Accept: 'application/json' } });
+        const arr = await res.json();
+        const map: Record<string, { mint: string; decimals: number }> = {};
+        (arr || []).forEach((t: any) => {
+          const sym = String(t?.symbol || '').toUpperCase();
+          if (sym && t?.address) map[sym] = { mint: t.address, decimals: Number(t?.decimals || 0) };
+        });
+        if (mounted) setTokenList(map);
+      } catch {}
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const [onChain, setOnChain] = useState<Record<string, number>>({});
+  useEffect(() => {
+    if (!sol || !historyPositions.length) { setOnChain({}); return; }
+    (async () => {
+      try {
+        const owner = new (await import('@solana/web3.js')).PublicKey(sol);
+        const next: Record<string, number> = {};
+        for (const p of historyPositions) {
+          const info = tokenList[p.symbol];
+          if (!info) continue;
+          try {
+            const mint = new (await import('@solana/web3.js')).PublicKey(info.mint);
+            const accs = await connection.getParsedTokenAccountsByOwner(owner, { mint });
+            let sum = 0;
+            for (const a of accs.value) {
+              const ui = (a.account.data as any)?.parsed?.info?.tokenAmount?.uiAmount;
+              if (Number.isFinite(ui)) sum += Number(ui);
+            }
+            next[p.symbol] = sum;
+          } catch {}
+        }
+        setOnChain(next);
+      } catch {}
+    })();
+  }, [sol, connection, historyPositions.map(p => p.symbol).join('|'), tokenList]);
+
+  const positions = useMemo(() => historyPositions.filter(p => !(onChain[p.symbol] !== undefined && onChain[p.symbol] <= 1e-8)), [historyPositions, onChain]);
 
   const summary = useMemo(() => {
     let val = 0;
@@ -71,7 +118,7 @@ export default function PositionsPanel() {
           </span>
         </div>
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-modern">
         <Table>
           <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
             <TableRow className="border-border/30 hover:bg-muted/30">

@@ -66,7 +66,7 @@ export function OpenOrdersList({
           Öppna Ordrar
         </h3>
       </div>
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-modern">
         <Table>
           <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
             <TableRow className="border-border/30 hover:bg-muted/30">
