@@ -7,6 +7,7 @@ import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { usePositionsFromHistory } from '@/hooks/usePositionsFromHistory';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PositionsPanel() {
   const { address: evm } = useAccount();
@@ -14,6 +15,7 @@ export default function PositionsPanel() {
   const sol = publicKey?.toBase58();
   const { rows } = useOrderHistory({ addresses: [sol, evm] });
   const { cryptoPrices } = useCryptoData();
+  const navigate = useNavigate();
 
   const priceMap = useMemo(() => {
     const m: Record<string, number> = {};
@@ -52,7 +54,7 @@ export default function PositionsPanel() {
               const totalPnl = p.realizedPnl + unrealized;
               const pct = p.avgEntry > 0 ? ((market - p.avgEntry) / p.avgEntry) * 100 : 0;
               return (
-                <TableRow key={p.symbol} className="border-border/10">
+                <TableRow key={p.symbol} className="border-border/10 hover:bg-muted/20 cursor-pointer" onClick={() => navigate(`/crypto/${p.symbol.toLowerCase()}`)}>
                   <TableCell className="text-xs font-medium">{p.symbol}</TableCell>
                   <TableCell className="text-xs">{p.amount.toLocaleString(undefined, { maximumFractionDigits: 6 })}</TableCell>
                   <TableCell className="text-xs">{p.avgEntry ? p.avgEntry.toFixed(6) : '-'}</TableCell>

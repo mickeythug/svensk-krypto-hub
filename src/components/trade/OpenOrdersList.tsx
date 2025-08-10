@@ -6,6 +6,7 @@ import { DbLimitOrder, JupOrder } from '@/hooks/useOpenOrders';
 import { useMemo } from 'react';
 import { formatUsd } from '@/lib/utils';
 import { SOL_MINT } from '@/lib/tokenMaps';
+import { useNavigate } from 'react-router-dom';
 
 export function OpenOrdersList({
   symbol,
@@ -55,6 +56,7 @@ export function OpenOrdersList({
   }, [dbOrders, jupOrders]);
 
   const baseSymbol = useMemo(() => (symbol || '').toUpperCase(), [symbol]);
+  const navigate = useNavigate();
 
   return (
     <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
@@ -90,7 +92,8 @@ export function OpenOrdersList({
               </TableRow>
             ) : (
               rows.map((r) => (
-                <TableRow key={r.key} className="border-border/20 hover:bg-muted/20 transition-colors">
+                <TableRow key={r.key} className="border-border/20 hover:bg-muted/20 transition-colors cursor-pointer" onClick={() => navigate(`/crypto/${baseSymbol.toLowerCase()}`)}>
+
                   <TableCell className="py-2">
                   <Badge 
                     variant="outline" 

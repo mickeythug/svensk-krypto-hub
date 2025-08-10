@@ -203,15 +203,37 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       const vtx = VersionedTransaction.deserialize(txBytes);
       const sig = await sendTransaction(vtx, connection);
       const explorer = `https://solscan.io/tx/${sig}`;
+      // Approximate base amount (token) from SOL spent
+      const solSpent = parseFloat(amountInput || '0');
+      const baseAmt = side === 'buy' && currentPrice > 0 ? (solSpent * (solUsd || 0)) / currentPrice : parseFloat(amountInput || '0');
+      const priceQuote = side === 'buy' && baseAmt > 0 ? solSpent / baseAmt : (baseAmt > 0 ? (solSpent * (solUsd || 0)) / (baseAmt * (solUsd || 0)) : null);
       recordTrade(solAddress || 'sol', {
         chain: 'SOL',
         symbol: symbolUpper,
         side,
-        amount: parseFloat(amountInput || '0'),
-        amountUsd: parseFloat(amountInput || '0') * (side === 'buy' ? solUsd : currentPrice),
+        amount: baseAmt,
+        amountUsd: baseAmt * currentPrice,
         txHash: sig,
         address: solAddress,
       });
+      // Persist to Supabase history
+      try {
+        await supabase.functions.invoke('order-history-log', {
+          body: {
+            user_address: solAddress,
+            chain: 'SOL',
+            symbol: symbolUpper,
+            side,
+            event_type: 'market_trade',
+            source: 'JUP',
+            base_amount: baseAmt,
+            quote_amount: solSpent,
+            price_quote: priceQuote,
+            price_usd: currentPrice,
+            tx_hash: sig,
+          }
+        });
+      } catch {}
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Solscan</a>) });
       setAmountInput('');
     } catch (e: any) {
@@ -279,15 +301,36 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         value: BigInt(swapData.tx.value || 0),
       } as any);
       const explorer = `https://etherscan.io/tx/${hash}`;
+      // Approximate base amount from USDT spent
+      const usdtSpent = parseFloat(amountInput || '0');
+      const baseAmt = side === 'buy' && currentPrice > 0 ? (usdtSpent / currentPrice) : parseFloat(amountInput || '0');
       recordTrade(evmAddress || 'evm', {
         chain: 'EVM',
         symbol: symbolUpper,
         side,
-        amount: parseFloat(amountInput || '0'),
-        amountUsd: parseFloat(amountInput || '0'),
+        amount: baseAmt,
+        amountUsd: baseAmt * currentPrice,
         txHash: String(hash),
         address: evmAddress,
       });
+      // Persist to Supabase history
+      try {
+        await supabase.functions.invoke('order-history-log', {
+          body: {
+            user_address: evmAddress,
+            chain: 'EVM',
+            symbol: symbolUpper,
+            side,
+            event_type: 'market_trade',
+            source: 'EVM',
+            base_amount: baseAmt,
+            quote_amount: usdtSpent,
+            price_quote: currentPrice > 0 ? (usdtSpent / Math.max(baseAmt, 1e-12)) : null,
+            price_usd: currentPrice,
+            tx_hash: String(hash),
+          }
+        });
+      } catch {}
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Etherscan</a>) });
       setAmountInput('');
     } catch (e: any) {
