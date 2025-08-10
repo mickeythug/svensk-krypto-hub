@@ -33,6 +33,22 @@ async function invokeWithRetry<T = any>(name: string, body: any, retries = 1): P
 }
 
 
+function parseFunctionError(e: any): string {
+  try {
+    if (!e) return 'Okänt fel';
+    // Supabase Edge Function error shape
+    const ctxResp = (e as any)?.context?.response;
+    if (ctxResp && typeof ctxResp.json === 'function') {
+      // Note: response might be a Response object from fetch
+      // We cannot await here synchronously; fall through to message
+    }
+    const msg = (e as any)?.message || (e as any)?.error || String(e);
+    return typeof msg === 'string' ? msg : JSON.stringify(msg);
+  } catch {
+    return 'Okänt fel';
+  }
+}
+
 export default function SmartTradePanel({ symbol, currentPrice }: { symbol: string; currentPrice: number }) {
   const [side, setSide] = useState<'buy'|'sell'>('buy');
   const [orderType, setOrderType] = useState<'market'|'limit'>('market');
@@ -87,6 +103,19 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     setAmountInput(amt.toString());
   };
 
+  const amountStep = useMemo(() => {
+    try {
+      if (chainMode === 'SOL') {
+        const d = side === 'buy' ? 9 : (solTokenInfo?.decimals ?? 9);
+        return Number((1 / Math.pow(10, Math.min(9, Math.max(0, d)))).toFixed(Math.min(9, Math.max(0, d))));
+      }
+      // EVM USDT har 6 decimals
+      return 0.000001;
+    } catch {
+      return 0.000001;
+    }
+  }, [chainMode, side, solTokenInfo]);
+
   async function executeSolanaMarket() {
     try {
       setSubmitting(true);
@@ -134,7 +163,8 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Solscan</a>) });
       setAmountInput('');
     } catch (e: any) {
-      toast({ title: 'Solana fel', description: String(e.message || e), variant: 'destructive' });
+      const msg = parseFunctionError(e);
+      toast({ title: 'Solana fel', description: msg, variant: 'destructive' });
       setSubmitting(false);
     }
   }
@@ -209,7 +239,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Etherscan</a>) });
       setAmountInput('');
     } catch (e: any) {
-      const msg = String(e.message || e);
+      const msg = parseFunctionError(e);
       toast({ title: 'EVM fel', description: msg, variant: 'destructive' });
     } finally {
       setSubmitting(false);
@@ -218,6 +248,10 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
   const onSubmit = async () => {
     if (submitting) return;
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      toast({ title: 'Offline', description: 'Ingen nätverksanslutning. Försök igen när du är online.', variant: 'destructive' });
+      return;
+    }
     const amt = parseFloat(amountInput || '0');
     if (!Number.isFinite(amt) || amt <= 0) {
       toast({ title: 'Ogiltigt belopp', description: 'Ange ett giltigt belopp > 0.', variant: 'destructive' });
@@ -278,7 +312,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
 
         <div>
           <label className="text-xs text-muted-foreground mb-2 block font-semibold">Belopp ({chainMode==='SOL' ? (side==='buy'?'SOL':symbol) : chainMode==='EVM' ? 'USDT' : ''})</label>
-          <Input type="number" value={amountInput} onChange={(e)=>setAmountInput(e.target.value)} placeholder="0.0" className="h-10 text-sm font-mono" min="0" step="any" disabled={!isSolConnected && !evmConnected} />
+          <Input type="number" value={amountInput} onChange={(e)=>setAmountInput(e.target.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g,'$1'))} placeholder="0.0" className="h-10 text-sm font-mono" min="0" step={amountStep} inputMode="decimal" disabled={!isSolConnected && !evmConnected} />
         </div>
 
         <div className="grid grid-cols-4 gap-1">
@@ -294,6 +328,34 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
               {Math.round(p*100)}%
             </Button>
           ))}
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs text-muted-foreground mb-1 block font-semibold">Slippage (%)</label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              value={(slippage/100).toString()}
+              onChange={(e)=>{
+                const v = parseFloat(e.target.value || '0');
+                if (!Number.isFinite(v)) return;
+                const bps = Math.round(v * 100);
+                const clamped = Math.min(500, Math.max(10, bps)); // 0.10% - 5.00%
+                setSlippage(clamped);
+              }}
+              min={0.1}
+              max={5}
+              step={0.1}
+              className="h-8 text-xs font-mono"
+              inputMode="decimal"
+            />
+            {[0.1,0.5,1].map(p => (
+              <Button key={p} variant="outline" size="sm" className="h-8 text-xs" onClick={()=>setSlippage(Math.round(p*100))}>
+                {p}%
+              </Button>
+            ))}
+          </div>
+          <div className="text-[10px] text-muted-foreground">Lägre slippage kan orsaka missade fills; högre ökar prispåverkan. Standard 0.5%.</div>
         </div>
 
         <div className="text-xs text-muted-foreground">
@@ -314,7 +376,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         </div>
 
 
-        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={submitting || (chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0}>
+        <Button onClick={onSubmit} className={`w-full ${side==='buy'?'bg-success':'bg-destructive'} text-white`} disabled={submitting || (chainMode==='SOL' && (!isSolConnected || !isSolToken)) || (chainMode==='EVM' && !evmConnected) || !amountInput || parseFloat(amountInput) <= 0 || available <= 0 || (typeof navigator !== 'undefined' && !navigator.onLine)}>
           <Wallet className="h-4 w-4 mr-2" /> {submitting ? 'Skickar...' : `${side==='buy'?'Buy':'Sell'} ${symbol}`}
         </Button>
       </div>
