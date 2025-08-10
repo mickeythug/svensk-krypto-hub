@@ -89,9 +89,9 @@ export function OpenOrdersList({
                 <TableCell className="text-right">
                   {r.cancelable ? (
                     r.source === 'DB' ? (
-                      <Button size="sm" variant="outline" onClick={() => onCancelDb((r.data as DbLimitOrder).id, (r.data as DbLimitOrder).user_address)}>Cancel</Button>
+                      <Button size="sm" variant="outline" onClick={() => onCancelDb((r.data as DbLimitOrder).id, (r.data as DbLimitOrder).user_address)}>Avbryt</Button>
                     ) : currentUser?.sol ? (
-                      <Button size="sm" variant="outline" onClick={() => onCancelJup((r.data as JupOrder).order, currentUser.sol!)}>Cancel</Button>
+                      <Button size="sm" variant="outline" onClick={() => onCancelJup((r.data as JupOrder).order, currentUser.sol!)}>Avbryt</Button>
                     ) : (
                       <span className="text-xs text-muted-foreground">Kräver Solana‑wallet</span>
                     )

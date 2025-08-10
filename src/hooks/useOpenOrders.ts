@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 
 export type DbLimitOrder = {
@@ -120,8 +121,11 @@ export function useOpenOrders(params: {
     setDbOrders((list) => list.map((o) => (o.id === id ? { ...o, status: 'canceled', updated_at: new Date().toISOString() } : o)));
     const { data, error } = await supabase.functions.invoke('limit-order-cancel', { body: { id, user_address } });
     if (error || !(data as any)?.ok) {
+      toast({ title: 'Misslyckades att avbryta order', description: String((error as any)?.message || (data as any)?.error || 'Okänt fel'), variant: 'destructive' });
       // Re-sync from server on failure
       await loadDb();
+    } else {
+      toast({ title: 'Order avbruten', description: `Order ${id} avbröts` });
     }
     return { data, error };
   };
@@ -131,7 +135,11 @@ export function useOpenOrders(params: {
     setJupOrders((list) => list.map((o) => (o.order === order ? { ...o, status: 'canceled' } : o)));
     const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order } });
     if (error || !(data as any)?.ok) {
+      const msg = (error as any)?.message || (data as any)?.error || (data as any)?.details || 'Okänt fel';
+      toast({ title: 'Kunde inte avbryta Jupiter‑order', description: msg, variant: 'destructive' });
       await loadJup();
+    } else {
+      toast({ title: 'Jupiter‑order avbruten', description: `Order ${order} avbröts` });
     }
     return { data, error };
   };
