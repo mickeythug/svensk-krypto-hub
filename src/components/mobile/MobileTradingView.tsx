@@ -65,7 +65,7 @@ const MobileTradingView = ({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-background">
       {/* Enhanced Header */}
       <div className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
         <div className="p-4">

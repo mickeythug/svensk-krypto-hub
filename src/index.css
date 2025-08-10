@@ -148,6 +148,8 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden; /* Only hide horizontal scroll */
+    overflow-y: auto; /* Ensure vertical scroll is enabled */
   }
 
   .text-shadow-lg {

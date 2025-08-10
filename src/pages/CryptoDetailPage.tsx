@@ -181,7 +181,7 @@ const CryptoDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-y-auto">
       <Header />
       <div className="pt-16"> {/* Add top padding to clear the fixed header */}
         <CryptoPriceTicker />
