@@ -32,17 +32,23 @@ export function OpenOrdersList({
       cancelable: o.status === 'open',
       data: o,
     }));
-    const jup = (jupOrders || []).map((o) => ({
-      key: `jup:${o.order}`,
-      source: 'JUP',
-      side: (o as any).side as any,
-      price: undefined as any,
-      amount: undefined as any,
-      status: o.status,
-      time: o.createdAt || '',
-      cancelable: ['active', 'open'].includes(String(o.status || '').toLowerCase()),
-      data: o,
-    }));
+    const jup = (jupOrders || []).map((o) => {
+      const rawPrice = Number((o as any).priceUsd);
+      const price = Number.isFinite(rawPrice) ? rawPrice : (undefined as any);
+      const rawAmount = Number((o as any).amountDisplay);
+      const amount = Number.isFinite(rawAmount) ? rawAmount : (undefined as any);
+      return {
+        key: `jup:${o.order}`,
+        source: 'JUP',
+        side: (o as any).side as any,
+        price,
+        amount,
+        status: o.status,
+        time: o.createdAt || '',
+        cancelable: ['active', 'open'].includes(String(o.status || '').toLowerCase()),
+        data: o,
+      };
+    });
     return [...db, ...jup];
   }, [dbOrders, jupOrders]);
 
