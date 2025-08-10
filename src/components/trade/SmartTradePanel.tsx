@@ -12,7 +12,7 @@ import { SOL_MINT, SOL_TOKENS, USDT_BY_CHAIN, NATIVE_TOKEN_PSEUDO } from '@/lib/
 import { supabase } from '@/integrations/supabase/client';
 import { useAccount, useChainId, useSendTransaction } from 'wagmi';
 import { mainnet, bsc, polygon, arbitrum, base, optimism } from 'viem/chains';
-import { parseUnits, type Address } from 'viem';
+import { parseUnits, type Address, createPublicClient, http } from 'viem';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { useErc20Balance } from '@/hooks/useErc20Balance';
 
@@ -43,6 +43,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => c.symbol?.toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
+  const { sendTransactionAsync } = useSendTransaction();
 
   const available = useMemo(() => {
     if (chainMode === 'SOL') {
@@ -102,8 +103,6 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       const data: any = response.data;
       if (!data || !data.tx) throw new Error('Ogiltig 1inch-respons');
 
-      // Skicka transaktionen via wagmi hook
-      const { sendTransactionAsync } = useSendTransaction();
       const hash = await sendTransactionAsync({
         to: data.tx.to as Address,
         data: data.tx.data as `0x${string}`,
