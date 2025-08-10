@@ -12,6 +12,7 @@ import { useWalletBalances } from '@/hooks/useWalletBalances';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSiwsSolana } from '@/hooks/useSiwsSolana';
 import type { Address } from 'viem';
+import { authLog } from '@/lib/authDebug';
 
 function formatAddress(addr?: string) {
   if (!addr) return '';

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
+import { authLog } from '@/lib/authDebug';
 export type SiwsNonceResponse = {
   message: string;
   nonce: string;

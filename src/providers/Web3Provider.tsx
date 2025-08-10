@@ -4,6 +4,7 @@ import { mainnet } from 'viem/chains';
 import { walletConnect } from 'wagmi/connectors';
 import { injected } from 'wagmi/connectors';
 import { supabase } from '@/integrations/supabase/client';
+import { authLog } from '@/lib/authDebug';
 
 
 // Chains we support initially
@@ -20,15 +21,19 @@ function useWalletConnectProjectId() {
       .then(({ data, error }) => {
         if (!mounted) return;
         if (error) {
+          authLog('WC project id error', error.message || error, 'error');
           setError(error.message || 'Kunde inte hämta WalletConnect Project ID');
         } else if (data?.projectId) {
+          authLog('WC project id loaded', data.projectId);
           setProjectId(data.projectId);
         } else {
+          authLog('WC project id missing in response', data, 'warn');
           setError('Ogiltigt svar från wc-project');
         }
       })
       .catch((e) => {
         if (!mounted) return;
+        authLog('WC project id fetch failed', String(e), 'error');
         setError(String(e));
       });
     return () => {

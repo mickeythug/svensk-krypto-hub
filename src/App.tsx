@@ -21,6 +21,7 @@ const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 import { queryClient } from "@/lib/queryClient";
+import { AuthDebugOverlay } from "@/lib/authDebug";
 
 // Loading component för Suspense
 const LoadingFallback = memo(() => (
@@ -42,6 +43,7 @@ const App = memo(() => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <AuthDebugOverlay />
         <ErrorBoundary>
           <BrowserRouter>
             <div className={`min-h-screen bg-background ${isMobile ? 'pb-16' : ''}`}>
