@@ -118,6 +118,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       });
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Solscan</a>) });
       setAmountInput('');
+    } catch (e: any) {
       toast({ title: 'Solana fel', description: String(e.message || e), variant: 'destructive' });
     }
   }
@@ -195,6 +196,7 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       });
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Etherscan</a>) });
       setAmountInput('');
+    } catch (e: any) {
       const msg = String(e.message || e);
       toast({ title: 'EVM fel', description: msg, variant: 'destructive' });
     }
