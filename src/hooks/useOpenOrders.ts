@@ -63,31 +63,32 @@ export function useOpenOrders(params: {
     try {
       setLoading((s) => ({ ...s, jup: true }));
       if (!params.solAddress) { setJupOrders([]); return; }
-      // Filter to symbol via outputMint if available
-      const body: any = { user: params.solAddress, orderStatus: 'active' };
-      if (params.solMint) body.outputMint = params.solMint;
-      const { data, error } = await supabase.functions.invoke('jup-lo-open', { body });
-      if (!error && data && (data as any).data) {
-        const raw = (data as any).data?.data || (data as any).data?.orders || (data as any).data || [];
-        // Normalize array
-        const items: JupOrder[] = Array.isArray(raw) ? raw.map((o: any) => ({
-          order: o.order || o.id || o.orderId || '',
-          status: o.status || 'active',
-          inputMint: o.inputMint || o.inMint || o.input || undefined,
-          outputMint: o.outputMint || o.outMint || o.output || undefined,
-          makingAmount: o.makingAmount || o.inAmount || undefined,
-          takingAmount: o.takingAmount || o.outAmount || undefined,
-          createdAt: o.createdAt || o.time || undefined,
-        })) : [];
-        setJupOrders(items);
-      } else {
-        setJupOrders([]);
+      const aggregated: JupOrder[] = [];
+      for (let page = 1; page <= 5; page++) {
+        const { data, error } = await supabase.functions.invoke('jup-lo-open', { body: { user: params.solAddress, orderStatus: 'active', page } });
+        if (error) break;
+        const raw = (data as any)?.data?.data || (data as any)?.data?.orders || (data as any)?.data || [];
+        const pageItems: JupOrder[] = Array.isArray(raw)
+          ? raw.map((o: any) => ({
+              order: o.order || o.id || o.orderId || '',
+              status: o.status || 'active',
+              inputMint: o.inputMint || o.inMint || o.input || undefined,
+              outputMint: o.outputMint || o.outMint || o.output || undefined,
+              makingAmount: o.makingAmount || o.inAmount || undefined,
+              takingAmount: o.takingAmount || o.outAmount || undefined,
+              createdAt: o.createdAt || o.time || undefined,
+            }))
+          : [];
+        if (pageItems.length === 0) break;
+        aggregated.push(...pageItems);
+        // Stop early if less than a typical page size (avoid endless loops)
+        if (pageItems.length < 50) break;
       }
+      setJupOrders(aggregated);
     } finally {
       setLoading((s) => ({ ...s, jup: false }));
     }
   };
-
   useEffect(() => {
     loadDb();
     // Realtime updates for DB orders on this symbol (+ safe polling fallback)
@@ -131,20 +132,18 @@ export function useOpenOrders(params: {
   };
 
   const cancelJupOrder = async (order: string, maker: string) => {
-    // Optimistic UI update
-    setJupOrders((list) => list.map((o) => (o.order === order ? { ...o, status: 'canceled' } : o)));
     const { data, error } = await supabase.functions.invoke('jup-lo-cancel', { body: { maker, order } });
     if (error || !(data as any)?.ok) {
       const msg = (error as any)?.message || (data as any)?.error || (data as any)?.details || 'Okänt fel';
       toast({ title: 'Kunde inte avbryta Jupiter‑order', description: msg, variant: 'destructive' });
-      await loadJup();
     } else {
       toast({ title: 'Jupiter‑order avbruten', description: `Order ${order} avbröts` });
-      // Force refresh of wallet balances immediately so användaren ser pengarna tillbaka
+      // Force immediate wallet refresh so användaren ser pengarna tillbaka
       window.dispatchEvent(new CustomEvent('wallet:refresh'));
     }
+    // Alltid hämta om från kedjan så att UI speglar verkligheten
+    await loadJup();
     return { data, error };
   };
-
   return { dbOrders, jupOrders, loading, cancelDbOrder, cancelJupOrder };
 }
