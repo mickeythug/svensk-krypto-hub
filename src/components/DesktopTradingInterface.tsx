@@ -183,8 +183,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Main Chart Area */}
-      <div className="flex-1 flex flex-col min-h-0">
+      {/* Expanded Chart Area - From Left Edge */}
+      <div className="flex-1 flex flex-col min-h-0 w-full max-w-none">
         {/* Enhanced Price Header */}
         <div className="p-4 bg-card border-b border-border shadow-sm">
           <div className="flex items-center justify-between">
@@ -295,9 +295,9 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           </div>
         </div>
 
-        {/* Chart Container */}
-        <div className="flex-1 p-4 min-h-0">
-          <div className="h-full rounded-lg overflow-hidden border border-border shadow-sm">
+        {/* Expanded Chart Container - Full Width to Left Edge */}
+        <div className="flex-1 p-0 pl-4 pr-4 pb-4 min-h-0">
+          <div className="h-full rounded-xl overflow-hidden border border-border shadow-lg bg-[#0f0f23]">
             <TradingViewChart 
               symbol={symbol} 
               currentPrice={currentPrice} 
@@ -307,8 +307,8 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           </div>
         </div>
 
-        {/* Bottom Panels */}
-        <div className="h-80 p-4 pt-0">
+        {/* Bottom Panels - Maintain Position */}
+        <div className="h-80 px-4 pb-4">
           <Tabs defaultValue="positions" className="h-full">
             <TabsList className="mb-3 bg-card border border-border rounded-lg p-1 shadow-sm">
               <TabsTrigger value="positions" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
@@ -363,7 +363,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
         </div>
       </div>
 
-      {/* Enhanced Right Sidebar */}
+      {/* Right Sidebar - OrderBook & Trading - Maintain Position */}
       <div className="w-96 flex flex-col bg-card border-l border-border">
         {/* Orderbook */}
         <div className="flex-1 p-4 min-h-0 max-h-[calc(100vh-520px)]">
