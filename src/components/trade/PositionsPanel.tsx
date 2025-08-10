@@ -20,20 +20,20 @@ export default function PositionsPanel() {
   // Return wallet connection prompt if no wallet connected
   if (!sol && !evm) {
     return (
-      <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
-        <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          <h3 className="text-base font-semibold text-foreground">Positioner</h3>
-        </div>
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
-              <div className="w-6 h-6 border-2 border-muted-foreground/30 rounded border-dashed" />
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se positioner</p>
+    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+      <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
+        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        <h3 className="text-base font-semibold text-foreground">Positioner</h3>
+      </div>
+      <div className="flex items-center justify-center p-6">
+        <div className="text-center space-y-2">
+          <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
+            <div className="w-4 h-4 border-2 border-muted-foreground/30 rounded border-dashed" />
           </div>
+          <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se positioner</p>
         </div>
-      </Card>
+      </div>
+    </Card>
     );
   }
 
@@ -125,7 +125,7 @@ export default function PositionsPanel() {
   }, [positions, priceMap]);
 
   return (
-    <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+    <Card className="p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
       <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -139,7 +139,7 @@ export default function PositionsPanel() {
           </span>
         </div>
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-modern">
+      <div className={`overflow-y-auto scrollbar-modern ${positions.length > 0 ? 'max-h-[50vh]' : ''}`}>
         <Table>
           <TableHeader className="sticky top-0 bg-card/95 backdrop-blur-sm">
             <TableRow className="border-border/30 hover:bg-muted/30">
@@ -154,10 +154,10 @@ export default function PositionsPanel() {
           <TableBody>
             {positions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center">
-                      <div className="w-4 h-4 border-2 border-muted-foreground/30 rounded border-dashed" />
+                <TableCell colSpan={6} className="text-center py-4">
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="w-6 h-6 rounded-full bg-muted/50 flex items-center justify-center">
+                      <div className="w-3 h-3 border-2 border-muted-foreground/30 rounded border-dashed" />
                     </div>
                     <p className="text-sm font-medium text-muted-foreground">Inga positioner</p>
                   </div>
