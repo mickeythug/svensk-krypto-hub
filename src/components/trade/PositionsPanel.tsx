@@ -5,6 +5,7 @@ import { formatUsd } from '@/lib/utils';
 import { useAccount } from 'wagmi';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
+import { useCryptoData } from '@/hooks/useCryptoData';
 import { toast } from '@/hooks/use-toast';
 import { usePositionsFromHistory } from '@/hooks/usePositionsFromHistory';
 import { useEffect, useMemo, useState } from 'react';
@@ -120,25 +121,51 @@ export default function PositionsPanel() {
 
   const [closing, setClosing] = useState<Record<string, boolean>>({});
 
+  const { cryptoPrices: richPrices } = useCryptoData();
+  const cgIdBySymbol = useMemo(() => {
+    const m: Record<string, string> = {};
+    (richPrices || []).forEach((r: any) => {
+      const sym = (r.symbol || '').toUpperCase();
+      const cgid = (r.coinGeckoId || r.coin_gecko_id || r.data?.id);
+      if (sym && cgid) m[sym] = String(cgid);
+    });
+    return m;
+  }, [richPrices]);
+
   async function handleClosePosition(symbol: string, amountHint: number) {
     try {
       if (!sol) {
         toast({ variant: 'destructive', title: 'Solana‑wallet saknas', description: 'Anslut din Solana‑wallet för att stänga positioner.' });
         return;
       }
-      if (!solSymbols.has(symbol)) {
-        toast({ variant: 'destructive', title: 'Ej Solana‑position', description: 'Stängning stöds just nu bara för Solana‑tokens.' });
-        return;
-      }
       setClosing((s) => ({ ...s, [symbol]: true }));
-      const mintSet = solMintMap[symbol];
-      const mintStr = mintSet ? Array.from(mintSet)[0] : undefined;
-      if (!mintStr) throw new Error('Saknar mint‑adress för token');
+      const symbolUpper = symbol.toUpperCase();
+      let mintStr: string | undefined = (() => {
+        const set = solMintMap[symbolUpper];
+        return set && set.size > 0 ? Array.from(set)[0] : undefined;
+      })();
+      let decimals = 9;
 
-      const { VersionedTransaction, PublicKey } = await import('@solana/web3.js');
-      const mintPk = new PublicKey(mintStr);
-      const mintInfo = await connection.getParsedAccountInfo(mintPk, 'confirmed');
-      const decimals = Number((mintInfo.value as any)?.data?.parsed?.info?.decimals ?? 9);
+      if (!mintStr) {
+        try {
+          const cgid = cgIdBySymbol[symbolUpper];
+          if (cgid) {
+            const res = await fetch('https://token.jup.ag/all', { cache: 'no-cache' });
+            if (res.ok) {
+              const list = await res.json();
+              const match = list.find((t: any) => (t?.extensions?.coingeckoId || '').toLowerCase() === String(cgid).toLowerCase());
+              if (match?.address) {
+                mintStr = match.address as string;
+                decimals = Number(match?.decimals ?? 9);
+              }
+            }
+          }
+        } catch {}
+      }
+
+      if (!mintStr) throw new Error('Kunde inte hitta mint‑adress för token');
+
+      const { VersionedTransaction } = await import('@solana/web3.js');
 
       const onChainAmt = onChain[symbol] ?? 0;
       const closeAmt = Math.max(0, Math.min(amountHint || 0, onChainAmt > 0 ? onChainAmt : amountHint || 0));
@@ -255,7 +282,7 @@ export default function PositionsPanel() {
                       variant="destructive"
                       size="sm"
                       onClick={(e) => { e.stopPropagation(); handleClosePosition(p.symbol, p.amount); }}
-                      disabled={!!closing[p.symbol] || !sol || !solSymbols.has(p.symbol)}
+                      disabled={!!closing[p.symbol] || !sol}
                       aria-label={`Stäng position ${p.symbol}`}
                     >
                       Stäng position
