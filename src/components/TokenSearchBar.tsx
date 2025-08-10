@@ -40,17 +40,23 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
 
   // Filter tokens based on search query
   const filteredTokens = useMemo(() => {
-    if (!cryptoPrices || query.length < 1) return [];
+    if (!cryptoPrices || query.length < 1) {
+      console.log('No crypto prices or query too short:', { cryptoPrices: !!cryptoPrices, queryLength: query.length });
+      return [];
+    }
     
     const searchTerm = query.toLowerCase().replace(/usdt$/i, '');
     
-    return cryptoPrices
+    const filtered = cryptoPrices
       .filter(crypto => 
         crypto.symbol.toLowerCase().includes(searchTerm) ||
         crypto.name.toLowerCase().includes(searchTerm)
       )
       .filter(crypto => crypto.symbol.toLowerCase() !== currentSymbol?.toLowerCase())
       .slice(0, 8); // Limit to 8 results
+    
+    console.log('Filtered tokens:', filtered.length, 'from query:', searchTerm);
+    return filtered;
   }, [cryptoPrices, query, currentSymbol]);
 
   // Handle click outside
@@ -87,6 +93,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
 
   const handleTokenSelect = (symbol: string) => {
     console.log('Token selected:', symbol); // Debug log
+    console.log('Current URL:', window.location.href); // Debug log  
     navigate(`/crypto/${symbol.toLowerCase()}`);
     setQuery("");
     setIsOpen(false);
@@ -95,6 +102,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    console.log('Search query changed:', value); // Debug log
     setQuery(value);
     if (value.length > 0) {
       updateDropdownPosition();
@@ -152,7 +160,7 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           </div>
         </div>
         
-        <ScrollArea className="max-h-[320px] custom-scrollbar">
+        <ScrollArea className="max-h-[320px] scrollbar-modern">
           <div className="p-1">
             {filteredTokens.map((token, index) => {
               const isPositive = token.change24h >= 0;
