@@ -76,34 +76,9 @@ const ModernMobileTradingView = ({
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* SIMPLE HEADER FOR NON-CHART TABS */}
-      {activeTab !== "chart" && (
-        <div className="fixed top-16 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
-          <div className="flex items-center justify-between px-4 py-4">
-            <h1 className="font-bold text-lg capitalize">{activeTab}</h1>
-            
-            {/* Hamburger Menu */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => {
-                // Toggle main menu - you can implement this with a sheet/drawer
-                console.log('Open main menu');
-              }}
-              className="p-2 hover:bg-primary/10"
-            >
-              <div className="flex flex-col gap-1">
-                <div className="w-5 h-0.5 bg-current rounded-full"></div>
-                <div className="w-5 h-0.5 bg-current rounded-full"></div>
-                <div className="w-5 h-0.5 bg-current rounded-full"></div>
-              </div>
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* MAIN CONTENT AREA */}
-      <div className={`flex-1 ${activeTab !== "chart" ? "pt-32" : "pt-0"}`}>
+      <div className={`flex-1 ${activeTab !== "chart" ? "pt-16" : "pt-0"}`}>
         {activeTab === "chart" && (
           <div className="h-[calc(100vh-80px)] flex flex-col">
             {/* TOKEN SEARCH BAR - Modern mobile design */}
