@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { useAccount, useConnect, useDisconnect, useSignMessage, useSwitchChain, useChains } from 'wagmi';
 import { Wallet, LogOut, CopyCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -76,6 +77,18 @@ export default function ConnectWalletButton() {
 
 
 
+  // Lås kedja till den verifierade kedjan och synka UI
+  useEffect(() => {
+    if (authedSol) {
+      setChainMode('SOL');
+      setSelectedEvmChainId(null);
+    } else if (authedEvm) {
+      setChainMode('EVM');
+      if (selectedEvmChainId == null) setSelectedEvmChainId(1);
+    }
+  }, [authedSol, authedEvm]);
+
+  // EVM: byt nät vid behov
   useEffect(() => {
     if (chainMode !== 'EVM' || !isConnected || selectedEvmChainId == null) return;
     (async () => {
@@ -139,7 +152,15 @@ export default function ConnectWalletButton() {
           }
           const pubkeyStr = pk?.toBase58?.() || (wallet as any)?.adapter?.publicKey?.toBase58?.();
           if (!pubkeyStr) throw new Error('Kunde inte läsa din Solana‑adress. Godkänn anslutningen i Phantom och försök igen.');
-          if (!signMessageSol) throw new Error('Din wallet stöder inte meddelandesignering');
+          if (!signMessageSol) {
+            toast({
+              title: 'Din wallet saknar meddelandesignering',
+              description: 'Använd Phantom eller aktivera “Sign message” i din wallet. Du är ansluten men inte inloggad.',
+              variant: 'destructive',
+            });
+            // Behåll anslutningen men avbryt inloggning
+            return;
+          }
 
           const ok = await signAndVerify(pubkeyStr, signMessageSol);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
@@ -307,30 +328,9 @@ export default function ConnectWalletButton() {
 
   return (
     <div className="flex items-center gap-2">
-      <Select
-        value={chainMode === 'SOL' ? 'sol' : selectedEvmChainId ? String(selectedEvmChainId) : undefined}
-        onValueChange={(v) => {
-          if (v === 'sol') {
-            setChainMode('SOL');
-            setSelectedEvmChainId(null);
-          } else {
-            setChainMode('EVM');
-            setSelectedEvmChainId(Number(v));
-          }
-        }}
-      >
-        <SelectTrigger className="w-[160px]">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {evmChains.map((c) => (
-            <SelectItem key={c.id} value={String(c.id)}>
-              {c.name}
-            </SelectItem>
-          ))}
-          <SelectItem value="sol">Solana</SelectItem>
-        </SelectContent>
-      </Select>
+      <Badge variant="secondary">
+        {activeMode === 'SOL' ? 'Solana' : 'Ethereum'}
+      </Badge>
       <Button
         variant="outline"
         size="sm"
