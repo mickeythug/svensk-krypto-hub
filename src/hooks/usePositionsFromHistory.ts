@@ -16,7 +16,7 @@ export function usePositionsFromHistory(rows: OrderHistoryRow[], prices: Record<
       const sym = (r.symbol || '').toUpperCase();
       if (!sym) continue;
       const base = Number(r.base_amount || 0);
-      const px = Number(r.price_quote || 0);
+      const px = Number((r as any).price_usd ?? r.price_quote ?? 0);
       if (!['market_trade', 'limit_execute'].includes(String(r.event_type))) continue;
       const key = sym;
       if (!map.has(key)) map.set(key, { symbol: sym, amount: 0, avgEntry: 0, value: 0, realizedPnl: 0, cost: 0 });

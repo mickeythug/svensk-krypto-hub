@@ -23,28 +23,46 @@ export default function PositionsPanel() {
     return m;
   }, [cryptoPrices]);
 
-  const positions = usePositionsFromHistory(rows, priceMap).filter(p => p.amount > 0.0000001).slice(0, 5);
+  const positions = usePositionsFromHistory(rows, priceMap).filter(p => p.amount > 0.0000001);
+
+  const summary = useMemo(() => {
+    let val = 0;
+    let pnl = 0;
+    for (const p of positions) {
+      const m = priceMap[p.symbol] || 0;
+      const unrealized = (m - p.avgEntry) * p.amount;
+      pnl += p.realizedPnl + unrealized;
+      val += p.amount * m;
+    }
+    return { val, pnl };
+  }, [positions, priceMap]);
 
   return (
     <Card className="h-full p-0 bg-card/60 backdrop-blur-sm border-border/30 flex flex-col">
-      <div className="px-3 py-2 border-b border-border/30 flex-shrink-0">
+      <div className="px-3 py-2 border-b border-border/30 flex items-center justify-between flex-shrink-0">
         <h3 className="text-sm font-semibold">Positioner</h3>
+        <div className="flex items-center gap-4 text-xs">
+          <span className="text-muted-foreground">Totalt värde</span>
+          <span className="font-semibold">{formatUsd(summary.val)}</span>
+          <span className={`font-semibold ${summary.pnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>{formatUsd(summary.pnl)}</span>
+        </div>
       </div>
       <div className="flex-1 min-h-0">
         <Table>
           <TableHeader>
             <TableRow className="border-border/20">
               <TableHead className="text-xs">Token</TableHead>
-              <TableHead className="text-xs">Belopp</TableHead>
-              <TableHead className="text-xs">Entry</TableHead>
-              <TableHead className="text-xs">Marknad</TableHead>
+              <TableHead className="text-xs">QTY</TableHead>
+              <TableHead className="text-xs">Entry Price</TableHead>
+              <TableHead className="text-xs">Market Price</TableHead>
+              <TableHead className="text-xs">Value</TableHead>
               <TableHead className="text-xs">PnL</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {positions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-xs text-muted-foreground py-6">
+                <TableCell colSpan={6} className="text-center text-xs text-muted-foreground py-6">
                   Inga positioner
                 </TableCell>
               </TableRow>
@@ -53,13 +71,15 @@ export default function PositionsPanel() {
               const unrealized = (market - p.avgEntry) * p.amount;
               const totalPnl = p.realizedPnl + unrealized;
               const pct = p.avgEntry > 0 ? ((market - p.avgEntry) / p.avgEntry) * 100 : 0;
+              const value = p.amount * market;
               return (
                 <TableRow key={p.symbol} className="border-border/10 hover:bg-muted/20 cursor-pointer" onClick={() => navigate(`/crypto/${p.symbol.toLowerCase()}`)}>
                   <TableCell className="text-xs font-medium">{p.symbol}</TableCell>
-                  <TableCell className="text-xs">{p.amount.toLocaleString(undefined, { maximumFractionDigits: 6 })}</TableCell>
-                  <TableCell className="text-xs">{p.avgEntry ? p.avgEntry.toFixed(6) : '-'}</TableCell>
-                  <TableCell className="text-xs">{market ? market.toFixed(6) : '-'}</TableCell>
-                  <TableCell className={`text-xs font-semibold ${totalPnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                  <TableCell className="text-xs">{p.amount.toLocaleString(undefined, { maximumFractionDigits: 6 })} {p.symbol}</TableCell>
+                  <TableCell className="text-xs">{p.avgEntry ? formatUsd(p.avgEntry) : '-'}</TableCell>
+                  <TableCell className="text-xs">{market ? formatUsd(market) : '-'}</TableCell>
+                  <TableCell className="text-xs">{formatUsd(value)}</TableCell>
+                  <TableCell className={`text-xs font-semibold ${totalPnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}> 
                     {formatUsd(totalPnl)} ({pct >= 0 ? '+' : ''}{pct.toFixed(2)}%)
                   </TableCell>
                 </TableRow>
