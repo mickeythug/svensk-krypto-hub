@@ -216,45 +216,46 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
 
   return (
     <Card className="h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden">
-      {/* Chart Controls */}
-      <div className="absolute top-4 left-4 flex gap-2 z-10">
-        {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
-          <Badge
-            key={tf}
-            variant={timeframe === tf ? "default" : "outline"}
-            className={`cursor-pointer bg-background/80 backdrop-blur-sm transition-all hover:scale-105 ${
-              timeframe === tf ? "bg-primary text-primary-foreground" : "hover:bg-primary/20"
-            }`}
-            onClick={() => handleTimeframeChange(tf)}
+      {/* Controls Header Above Chart */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/20 bg-background/90">
+        <div className="flex gap-2">
+          {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map((tf) => (
+            <Badge
+              key={tf}
+              variant={timeframe === tf ? "default" : "outline"}
+              className={`cursor-pointer bg-background/80 backdrop-blur-sm transition-all hover:scale-105 ${
+                timeframe === tf ? "bg-primary text-primary-foreground" : "hover:bg-primary/20"
+              }`}
+              onClick={() => handleTimeframeChange(tf)}
+            >
+              {tf}
+            </Badge>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20"
+            onClick={toggleFullscreen}
           >
-            {tf}
-          </Badge>
-        ))}
-      </div>
-      
-      <div className="absolute top-4 right-4 flex gap-2 z-10">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20"
-          onClick={toggleFullscreen}
-        >
-          <Maximize2 className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20"
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20"
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+            <Maximize2 className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20"
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Price Display */}
