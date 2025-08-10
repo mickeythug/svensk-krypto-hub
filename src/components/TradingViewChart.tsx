@@ -12,6 +12,7 @@ interface TradingViewChartProps {
   symbol: string;
   currentPrice: number;
   limitLines?: { price: number; side: 'buy' | 'sell' }[];
+  coinGeckoId?: string;
 }
 
 
@@ -21,7 +22,7 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
   const widgetRef = useRef<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [timeframe, setTimeframe] = useState("1D");
-  const [fallback, setFallback] = useState(false);
+  const [fallback, setFallback] = useState(true);
   const { tvSymbol } = useTradingViewSymbol(symbol, undefined);
 
   useEffect(() => {
@@ -138,6 +139,7 @@ const TradingViewChart = ({ symbol, currentPrice, limitLines }: TradingViewChart
       try {
         widgetRef.current.onChartReady?.(() => {
           try {
+            setFallback(false);
             const chart = widgetRef.current?.chart?.();
             if (!chart || !Array.isArray(limitLines)) return;
             limitLines.forEach((l) => {
