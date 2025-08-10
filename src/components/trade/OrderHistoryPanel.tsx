@@ -16,9 +16,11 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
   const items = useMemo(() => rows.slice(0, 6), [rows]);
 
   return (
-    <Card className="h-full p-0 bg-card/60 backdrop-blur-sm border-border/30 flex flex-col">
-      <div className="px-3 py-2 border-b border-border/30 flex-shrink-0">
-        <h3 className="text-sm font-semibold">Orderhistorik</h3>
+    <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+      <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
+        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        <h3 className="text-base font-semibold text-foreground">Orderhistorik</h3>
+        <span className="text-sm text-muted-foreground ml-2">Senaste transaktioner</span>
       </div>
       <div className="flex-1 min-h-0">
         <Table>

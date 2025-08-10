@@ -38,13 +38,18 @@ export default function PositionsPanel() {
   }, [positions, priceMap]);
 
   return (
-    <Card className="h-full p-0 bg-card/60 backdrop-blur-sm border-border/30 flex flex-col">
-      <div className="px-3 py-2 border-b border-border/30 flex items-center justify-between flex-shrink-0">
-        <h3 className="text-sm font-semibold">Positioner</h3>
-        <div className="flex items-center gap-4 text-xs">
-          <span className="text-muted-foreground">Totalt värde</span>
-          <span className="font-semibold">{formatUsd(summary.val)}</span>
-          <span className={`font-semibold ${summary.pnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>{formatUsd(summary.pnl)}</span>
+    <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+      <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <h3 className="text-base font-semibold text-foreground">Positioner</h3>
+        </div>
+        <div className="flex items-center gap-4 text-sm">
+          <span className="text-muted-foreground">Total:</span>
+          <span className="font-semibold text-foreground">{formatUsd(summary.val)}</span>
+          <span className={`font-semibold ${summary.pnl >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+            {summary.pnl >= 0 ? '+' : ''}{formatUsd(summary.pnl)}
+          </span>
         </div>
       </div>
       <div className="flex-1 min-h-0">
