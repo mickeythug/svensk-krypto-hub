@@ -6,12 +6,35 @@ import { useOpenOrders } from '@/hooks/useOpenOrders';
 import OpenOrdersList from './OpenOrdersList';
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { SOL_MINT } from '@/lib/tokenMaps';
+import { Card } from '@/components/ui/card';
 
 export default function OpenOrdersPanel({ symbol }: { symbol: string }) {
   const { publicKey } = useWallet();
   const solAddress = publicKey?.toBase58();
   const { address: evmAddress } = useAccount();
   const { info: solInfo } = useSolanaTokenInfo(symbol);
+
+  // Return wallet connection prompt if no wallet connected
+  if (!solAddress && !evmAddress) {
+    return (
+      <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+        <div className="p-3 border-b border-border/30 flex-shrink-0">
+          <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Öppna Ordrar
+          </h3>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
+              <div className="w-6 h-6 border-2 border-muted-foreground/30 rounded border-dashed" />
+            </div>
+            <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se öppna ordrar</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
 
   const { dbOrders, jupOrders, loading, cancelDbOrder, cancelJupOrder } = useOpenOrders({
     symbol,

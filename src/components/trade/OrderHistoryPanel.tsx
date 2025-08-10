@@ -13,6 +13,27 @@ export default function OrderHistoryPanel({ symbol }: { symbol?: string }) {
   const sol = publicKey?.toBase58();
   const { rows, loading } = useOrderHistory({ addresses: [sol, evm], symbol });
 
+  // Return wallet connection prompt if no wallet connected
+  if (!sol && !evm) {
+    return (
+      <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+        <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <h3 className="text-base font-semibold text-foreground">Orderhistorik</h3>
+          <span className="text-sm text-muted-foreground ml-2">Senaste transaktioner</span>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
+              <div className="w-6 h-6 border-2 border-muted-foreground/30 rounded border-dashed" />
+            </div>
+            <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se orderhistorik</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   const items = useMemo(() => rows.slice(0, 6), [rows]);
 
   return (

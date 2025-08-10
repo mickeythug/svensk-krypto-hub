@@ -27,11 +27,17 @@ export function useOrderHistory(params: { addresses?: (string | undefined)[]; sy
   const [rows, setRows] = useState<OrderHistoryRow[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Return empty if no addresses (no wallet connected)
+  if (!addresses.length) {
+    return { rows: [], loading: false, refresh: () => {} } as const;
+  }
+
   async function load() {
+    if (!addresses.length) return;
     try {
       setLoading(true);
       let q = supabase.from('order_history').select('*').order('created_at', { ascending: false }).limit(100);
-      if (addresses.length) q = q.in('user_address', addresses);
+      q = q.in('user_address', addresses);
       if (symbol) q = q.eq('symbol', symbol);
       const { data, error } = await q;
       if (!error && Array.isArray(data)) setRows(data as any);

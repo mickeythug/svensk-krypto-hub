@@ -15,8 +15,29 @@ export default function PositionsPanel() {
   const sol = publicKey?.toBase58();
   const { connection } = useConnection();
   const { rows } = useOrderHistory({ addresses: [sol, evm] });
-  const [cryptoPrices, setCryptoPrices] = useState<any[]>([]);
   const navigate = useNavigate();
+
+  // Return wallet connection prompt if no wallet connected
+  if (!sol && !evm) {
+    return (
+      <Card className="h-full p-0 bg-gradient-to-br from-card/90 to-card/60 backdrop-blur-md border-border/40 flex flex-col">
+        <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2 flex-shrink-0">
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <h3 className="text-base font-semibold text-foreground">Positioner</h3>
+        </div>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
+              <div className="w-6 h-6 border-2 border-muted-foreground/30 rounded border-dashed" />
+            </div>
+            <p className="text-sm font-medium text-muted-foreground">Anslut din wallet för att se positioner</p>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  const [cryptoPrices, setCryptoPrices] = useState<any[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -43,7 +64,7 @@ export default function PositionsPanel() {
     return m;
   }, [cryptoPrices]);
 
-  const historyPositions = usePositionsFromHistory(rows, priceMap).filter(p => p.amount > 0.0000001);
+  const historyPositions = usePositionsFromHistory(Array.isArray(rows) ? rows : [], priceMap).filter(p => p.amount > 0.0000001);
 
   const [tokenList, setTokenList] = useState<Record<string, { mint: string; decimals: number }>>({});
   useEffect(() => {
