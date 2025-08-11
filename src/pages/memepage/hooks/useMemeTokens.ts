@@ -46,7 +46,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         let addresses: string[] = [];
         if (category === 'trending') {
           const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'hotpools' },
+            body: { action: 'gainers' },
           });
           if (error) throw error;
           const list: any[] = Array.isArray(data) ? data : data?.results || [];
