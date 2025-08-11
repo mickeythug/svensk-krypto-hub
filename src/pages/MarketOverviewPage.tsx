@@ -835,7 +835,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Search and Filters Section */}
-          <div className="sticky top-[140px] z-40 bg-background/98 backdrop-blur-xl border-b border-border/30">
+          <div className="sticky top-[120px] z-40 bg-background/98 backdrop-blur-xl border-b border-border/30">
             <div className="p-4">
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
