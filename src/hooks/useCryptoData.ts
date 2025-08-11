@@ -439,7 +439,9 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
 
     // Reset circuit breaker on success
     this.failureCount = 0;
-    return this.filterAllowed(finalData);
+    
+    // HARD OVERRIDE: ENDAST dessa 16 tokens returneras
+    return this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData());
   } catch (error: any) {
     clearTimeout(timer);
     this.recordFailure();
@@ -537,54 +539,25 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
   }
 
   private getFallbackData(): CryptoPrice[] {
-    // Prioriterade tokens som ska visas - endast de specificerade
-    const priorityTokens = [
-      { symbol: 'BTC', name: 'Bitcoin', price: 97234.56, change24h: 2.45, coinGeckoId: 'bitcoin' },
-      { symbol: 'ETH', name: 'Ethereum', price: 3456.78, change24h: -1.23, coinGeckoId: 'ethereum' },
-      { symbol: 'SOL', name: 'Solana', price: 234.56, change24h: 5.67, coinGeckoId: 'solana' },
-      { symbol: 'BNB', name: 'BNB', price: 567.89, change24h: 1.89, coinGeckoId: 'binancecoin' },
-      { symbol: 'XRP', name: 'XRP', price: 2.34, change24h: -0.56, coinGeckoId: 'ripple' },
-      { symbol: 'ADA', name: 'Cardano', price: 1.23, change24h: 3.45, coinGeckoId: 'cardano' },
-      { symbol: 'AVAX', name: 'Avalanche', price: 45.67, change24h: -2.10, coinGeckoId: 'avalanche-2' },
-      { symbol: 'LINK', name: 'Chainlink', price: 23.45, change24h: 4.12, coinGeckoId: 'chainlink' },
-      { symbol: 'DOGE', name: 'Dogecoin', price: 0.3567, change24h: 8.90, coinGeckoId: 'dogecoin' },
-      { symbol: 'TRX', name: 'TRON', price: 0.2345, change24h: -1.45, coinGeckoId: 'tron' },
-      { symbol: 'HBAR', name: 'Hedera', price: 0.2890, change24h: 2.67, coinGeckoId: 'hedera-hashgraph' },
-      { symbol: 'ALGO', name: 'Algorand', price: 0.4567, change24h: -0.89, coinGeckoId: 'algorand' },
-      { symbol: 'SUI', name: 'Sui', price: 4.23, change24h: 6.78, coinGeckoId: 'sui' },
-      { symbol: 'APT', name: 'Aptos', price: 12.34, change24h: 3.21, coinGeckoId: 'aptos' },
-      { symbol: 'BONK', name: 'Bonk', price: 0.00003456, change24h: 15.67, coinGeckoId: 'bonk' },
-      { symbol: 'HYPE', name: 'Hyperliquid', price: 28.90, change24h: -3.45, coinGeckoId: 'hyperliquid' }
+    // ENDAST dessa 16 tokens - inga andra!
+    return [
+      { symbol: 'BTC', name: 'Bitcoin', price: 97234.56, change24h: 2.45, coinGeckoId: 'bitcoin', rank: 1, lastUpdated: new Date().toISOString(), marketCap: '1.92T', volume: '45.2B', image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png' },
+      { symbol: 'ETH', name: 'Ethereum', price: 3456.78, change24h: -1.23, coinGeckoId: 'ethereum', rank: 2, lastUpdated: new Date().toISOString(), marketCap: '415B', volume: '23.1B', image: 'https://assets.coingecko.com/coins/images/279/thumb/ethereum.png' },
+      { symbol: 'HBAR', name: 'Hedera', price: 0.2890, change24h: 2.67, coinGeckoId: 'hedera-hashgraph', rank: 3, lastUpdated: new Date().toISOString(), marketCap: '12.3B', volume: '891M', image: 'https://assets.coingecko.com/coins/images/3688/thumb/hbar.png' },
+      { symbol: 'ALGO', name: 'Algorand', price: 0.4567, change24h: -0.89, coinGeckoId: 'algorand', rank: 4, lastUpdated: new Date().toISOString(), marketCap: '3.8B', volume: '234M', image: 'https://assets.coingecko.com/coins/images/4380/thumb/download.png' },
+      { symbol: 'SUI', name: 'Sui', price: 4.23, change24h: 6.78, coinGeckoId: 'sui', rank: 5, lastUpdated: new Date().toISOString(), marketCap: '12.1B', volume: '1.2B', image: 'https://assets.coingecko.com/coins/images/26375/thumb/sui.jpg' },
+      { symbol: 'XRP', name: 'XRP', price: 2.34, change24h: -0.56, coinGeckoId: 'ripple', rank: 6, lastUpdated: new Date().toISOString(), marketCap: '134B', volume: '8.9B', image: 'https://assets.coingecko.com/coins/images/44/thumb/xrp-symbol-white-128.png' },
+      { symbol: 'DOGE', name: 'Dogecoin', price: 0.3567, change24h: 8.90, coinGeckoId: 'dogecoin', rank: 7, lastUpdated: new Date().toISOString(), marketCap: '52.4B', volume: '2.1B', image: 'https://assets.coingecko.com/coins/images/5/thumb/dogecoin.png' },
+      { symbol: 'BONK', name: 'Bonk', price: 0.00003456, change24h: 15.67, coinGeckoId: 'bonk', rank: 8, lastUpdated: new Date().toISOString(), marketCap: '2.8B', volume: '456M', image: 'https://assets.coingecko.com/coins/images/28600/thumb/bonk.jpg' },
+      { symbol: 'SOL', name: 'Solana', price: 234.56, change24h: 5.67, coinGeckoId: 'solana', rank: 9, lastUpdated: new Date().toISOString(), marketCap: '112B', volume: '4.5B', image: 'https://assets.coingecko.com/coins/images/4128/thumb/solana.png' },
+      { symbol: 'LINK', name: 'Chainlink', price: 23.45, change24h: 4.12, coinGeckoId: 'chainlink', rank: 10, lastUpdated: new Date().toISOString(), marketCap: '14.2B', volume: '1.1B', image: 'https://assets.coingecko.com/coins/images/877/thumb/chainlink-new-logo.png' },
+      { symbol: 'APT', name: 'Aptos', price: 12.34, change24h: 3.21, coinGeckoId: 'aptos', rank: 11, lastUpdated: new Date().toISOString(), marketCap: '5.8B', volume: '678M', image: 'https://assets.coingecko.com/coins/images/26455/thumb/aptos_round.png' },
+      { symbol: 'BNB', name: 'BNB', price: 567.89, change24h: 1.89, coinGeckoId: 'binancecoin', rank: 12, lastUpdated: new Date().toISOString(), marketCap: '85.1B', volume: '1.8B', image: 'https://assets.coingecko.com/coins/images/825/thumb/bnb-icon2_2x.png' },
+      { symbol: 'ADA', name: 'Cardano', price: 1.23, change24h: 3.45, coinGeckoId: 'cardano', rank: 13, lastUpdated: new Date().toISOString(), marketCap: '43.2B', volume: '1.9B', image: 'https://assets.coingecko.com/coins/images/975/thumb/cardano.png' },
+      { symbol: 'HYPE', name: 'Hyperliquid', price: 28.90, change24h: -3.45, coinGeckoId: 'hyperliquid', rank: 14, lastUpdated: new Date().toISOString(), marketCap: '9.7B', volume: '890M', image: 'https://assets.coingecko.com/coins/images/34344/thumb/hype.png' },
+      { symbol: 'TRX', name: 'TRON', price: 0.2345, change24h: -1.45, coinGeckoId: 'tron', rank: 15, lastUpdated: new Date().toISOString(), marketCap: '20.1B', volume: '1.4B', image: 'https://assets.coingecko.com/coins/images/1094/thumb/tron-logo.png' },
+      { symbol: 'AVAX', name: 'Avalanche', price: 45.67, change24h: -2.10, coinGeckoId: 'avalanche-2', rank: 16, lastUpdated: new Date().toISOString(), marketCap: '18.9B', volume: '1.7B', image: 'https://assets.coingecko.com/coins/images/12559/thumb/Avalanche_Circle_RedWhite_Trans.png' }
     ];
-
-    // CoinGecko logo mapping för korrekt image ID
-    const logoMapping: { [key: string]: number } = {
-      'bitcoin': 1,
-      'ethereum': 279,
-      'solana': 4128,
-      'binancecoin': 825,
-      'ripple': 44,
-      'cardano': 2010,
-      'avalanche-2': 12559,
-      'chainlink': 1975,
-      'dogecoin': 5470,
-      'tron': 1958,
-      'hedera-hashgraph': 4642,
-      'algorand': 4030,
-      'sui': 26375,
-      'aptos': 21794,
-      'bonk': 28600,
-      'hyperliquid': 32416
-    };
-
-    return priorityTokens.map((coin, index) => ({
-      ...coin,
-      marketCap: formatters.marketCap(coin.price * 21000000),
-      volume: formatters.volume(coin.price * 1000000),
-      rank: index + 1,
-      lastUpdated: new Date().toISOString(),
-      image: `https://assets.coingecko.com/coins/images/${logoMapping[coin.coinGeckoId]}/thumb/${coin.coinGeckoId}.png`
-    }));
   }
 
   private recordFailure(): void {
