@@ -53,23 +53,46 @@ const BuyTokenPage = () => {
     setIsLoading(true);
     try {
       const mint = searchTerm.trim();
-      const sym = mint.slice(0, 4).toUpperCase();
-      setSelectedToken({
-        symbol: sym,
-        name: 'Token',
-        logo: '/placeholder.svg',
-        price: '-',
-        change24h: '—',
-        marketCap: '—',
-        holders: '—',
-        volume24h: '—',
-        contractAddress: mint,
-        supply: '—',
-        verified: false,
-        risk: '—',
-        socials: { twitter: '', telegram: '', website: '' },
+      const { supabase } = await import('@/lib/supabase');
+      const { data, error } = await supabase.functions.invoke('dextools-proxy', {
+        body: { action: 'tokenFull', address: mint },
       });
-      toast({ title: 'Token vald', description: `Mint: ${mint.slice(0,8)}...` });
+      if (error) throw error;
+      const d: any = data || {};
+      const price = d?.price?.price ?? null;
+      const variation24h = d?.price?.variation24h ?? 0;
+      const mcap = d?.info?.mcap ?? null;
+      const holders = d?.info?.holders ?? null;
+      const socials = d?.meta?.socialInfo || {};
+
+      const formatPrice = (p: number | null) => {
+        if (p == null) return '—';
+        if (p < 0.000001) return `$${p.toExponential(2)}`;
+        if (p < 0.01) return `$${p.toFixed(6)}`;
+        if (p < 1) return `$${p.toFixed(4)}`;
+        return `$${p.toFixed(2)}`;
+      };
+      const formatNumber = (n: number | null) => (n == null ? '—' : Number(n).toLocaleString());
+
+      setSelectedToken({
+        symbol: d?.meta?.symbol || mint.slice(0, 4).toUpperCase(),
+        name: d?.meta?.name || 'Token',
+        logo: d?.meta?.logo || '/placeholder.svg',
+        price: formatPrice(price),
+        change24h: `${variation24h >= 0 ? '+' : ''}${Number(variation24h).toFixed(2)}%`,
+        marketCap: mcap == null ? '—' : `$${formatNumber(mcap)}`,
+        holders: formatNumber(holders),
+        volume24h: d?.poolPrice?.volume24h ? `$${formatNumber(d.poolPrice.volume24h)}` : '—',
+        contractAddress: mint,
+        supply: d?.info?.totalSupply ? formatNumber(d.info.totalSupply) : '—',
+        verified: (d?.audit?.isContractRenounced === 'yes') && (d?.audit?.isHoneypot === 'no'),
+        risk: d?.audit?.isHoneypot === 'yes' ? 'High' : 'Low',
+        socials: { twitter: socials.twitter || '', telegram: socials.telegram || '', website: socials.website || '' },
+      });
+      toast({ title: 'Token hittad', description: `${(d?.meta?.symbol || 'TOKEN')} — ${mint.slice(0,8)}...` });
+    } catch (e: any) {
+      console.error('DEXTools token fetch failed', e);
+      toast({ title: 'Misslyckades att hämta token', description: 'Kontrollera adressen och försök igen.', variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
