@@ -49,15 +49,17 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
           });
           if (error) throw error;
           const list: any[] = Array.isArray(data) ? data : data?.results || [];
-          addresses = list.map((i: any) => i?.mainToken?.address).filter(Boolean);
+          addresses = list.map((i: any) => i?.mainToken?.address).filter(Boolean).slice(0, limit);
         } else {
-          // newest and potential start from newest token listing
+          // newest and potential start from newest token listing (last 24h)
+          const to = new Date().toISOString();
+          const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
           const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'newest', page: 0, pageSize: 50 },
+            body: { action: 'newest', page: 0, pageSize: 50, from, to },
           });
           if (error) throw error;
           const results: any[] = data?.results || [];
-          addresses = results.map((r: any) => r?.address).filter(Boolean);
+          addresses = results.map((r: any) => r?.address).filter(Boolean).slice(0, limit);
         }
 
         // If no addresses, don't call batch
