@@ -53,7 +53,7 @@ const MobileHeader = ({
   ];
   
   return (
-    <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-[100] md:hidden">
+    <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-[110] md:hidden">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <button 
@@ -92,7 +92,7 @@ const MobileHeader = ({
             </SheetTrigger>
               <SheetContent 
                 side="right" 
-                className="w-full bg-background/98 backdrop-blur-xl border-l border-border z-[60] flex flex-col"
+                className="w-full bg-background/98 backdrop-blur-xl border-l border-border z-[120] flex flex-col"
               >
                 <div className="flex-1 overflow-y-auto">
                 <div className="flex items-center justify-between mb-8">

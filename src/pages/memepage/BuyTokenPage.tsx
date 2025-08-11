@@ -149,7 +149,6 @@ const BuyTokenPage = () => {
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Köp Meme Tokens
               </h1>
-              <p className="text-sm text-muted-foreground">Handla med avancerad analys</p>
             </div>
           </div>
         </div>
@@ -164,7 +163,7 @@ const BuyTokenPage = () => {
           <CardContent className="space-y-4">
             <div className="relative">
               <Input
-                placeholder="Sök token namn (BONK, DOGE) eller klistra in contract address..."
+                placeholder="Sök token adress"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -183,21 +182,6 @@ const BuyTokenPage = () => {
                   <Search className="h-4 w-4" />
                 )}
               </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {['BONK', 'DOGE'].map((token) => (
-                <Badge 
-                  key={token}
-                  variant="secondary" 
-                  className="cursor-pointer hover:bg-primary/20 transition-all duration-300 hover:scale-105"
-                  onClick={() => {
-                    setSearchTerm(token);
-                    handleSearch();
-                  }}
-                >
-                  {token}
-                </Badge>
-              ))}
             </div>
           </CardContent>
         </Card>
@@ -451,12 +435,6 @@ const BuyTokenPage = () => {
                 <Badge variant="outline" className="text-xs">Säker handel</Badge>
                 <Badge variant="outline" className="text-xs">Avancerad analys</Badge>
               </div>
-              <Button 
-                onClick={() => setSearchTerm('BONK')}
-                className="bg-primary hover:bg-primary/90"
-              >
-                Prova med BONK
-              </Button>
             </CardContent>
           </Card>
         )}

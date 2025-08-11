@@ -9,9 +9,9 @@ const MemeZoneBottomNavigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { path: "/meme/create", icon: Coins, label: "Skapa Coin", badge: "New" },
+    { path: "/meme/create", icon: Coins, label: "Skapa Coin", badge: null },
     { path: "/meme", icon: Zap, label: "Meme Zone", badge: null },
-    { path: "/meme/buy", icon: ShoppingCart, label: "Köp", badge: "Beta" }
+    { path: "/meme/buy", icon: ShoppingCart, label: "Köp", badge: null }
   ];
 
   return (

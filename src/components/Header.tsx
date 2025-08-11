@@ -91,7 +91,7 @@ const Header = () => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[110] transition-all duration-300 ${
         isScrolled 
           ? "bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl" 
           : "bg-background/90 backdrop-blur-md"
@@ -156,7 +156,7 @@ const Header = () => {
                 </SheetTrigger>
                 <SheetContent 
                   side="right" 
-                  className="w-96 bg-background/98 backdrop-blur-xl border-l border-border z-[60] flex flex-col"
+                  className="w-96 bg-background/98 backdrop-blur-xl border-l border-border z-[120] flex flex-col"
                 >
                   <div className="flex items-center justify-between mb-8 flex-shrink-0">
                     <button 
