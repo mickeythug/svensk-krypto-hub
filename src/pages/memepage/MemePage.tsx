@@ -2,11 +2,12 @@ import { useEffect } from 'react';
 import MemeHeroNew from './components/MemeHeroNew';
 import MemeLiveTicker from './components/MemeLiveTicker';
 import MemeTopCoins from './components/MemeTopCoins';
-import MemeTokenGrid from './components/MemeTokenGrid';
+
 import MemeStatsBanner from './components/MemeStatsBanner';
 import MemePageHeader from './components/MemePageHeader';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
+import MemeZoneTabs from './components/MemeZoneTabs';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
 
@@ -73,15 +74,8 @@ const MemePage: React.FC = () => {
         {/* Stats Banner */}
         <MemeStatsBanner />
 
-        {/* All Meme Tokens Grid */}
-        <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'} bg-meme-grid-bg/50`}>
-          <div className="container mx-auto">
-            <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-5xl'} font-bold text-center ${isMobile ? 'mb-6' : 'mb-12'} bg-gradient-neon bg-clip-text text-transparent`}>
-              ALLA MEME TOKENS
-            </h2>
-            <MemeTokenGrid category="all" />
-          </div>
-        </section>
+        {/* Explore Tabs */}
+        <MemeZoneTabs />
       </main>
       
       {/* Custom Navigation for Meme Zone */}

@@ -58,6 +58,22 @@ Deno.serve(async (req) => {
         const data = await fetchJSON('/v2/ranking/solana/hotpools');
         return json(data);
       }
+      case 'newest': {
+        const page = Number(payload.page ?? 0);
+        const pageSize = Number(payload.pageSize ?? 50);
+        const from = payload.from as string | undefined;
+        const to = payload.to as string | undefined;
+        const qs = new URLSearchParams({
+          sort: 'creationTime',
+          order: 'desc',
+          page: String(page),
+          pageSize: String(pageSize),
+        });
+        if (from) qs.set('from', from);
+        if (to) qs.set('to', to);
+        const data = await fetchJSON(`/v2/token/solana?${qs.toString()}`);
+        return json(data);
+      }
       case 'tokenFull': {
         if (!address) return json({ error: 'address required' }, 400);
         const [meta, price, info, audit] = await Promise.all([
@@ -80,6 +96,35 @@ Deno.serve(async (req) => {
         }
 
         return json({ meta, price, info, audit, poolPrice });
+      }
+      case 'tokenBatch': {
+        const addresses = (payload.addresses as string[] | undefined)?.filter(Boolean) ?? [];
+        if (!Array.isArray(addresses) || addresses.length === 0) {
+          return json({ error: 'addresses array required' }, 400);
+        }
+        const unique = Array.from(new Set(addresses)).slice(0, 60); // safety cap
+        const results = await Promise.all(unique.map(async (addr) => {
+          try {
+            const [meta, price, info, audit] = await Promise.all([
+              fetchJSON(`/v2/token/solana/${addr}`),
+              fetchJSON(`/v2/token/solana/${addr}/price`).catch(() => null),
+              fetchJSON(`/v2/token/solana/${addr}/info`).catch(() => null),
+              fetchJSON(`/v2/token/solana/${addr}/audit`).catch(() => null),
+            ]);
+            let poolPrice: any = null;
+            try {
+              const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
+              const firstPool = poolsResp?.results?.[0]?.address;
+              if (firstPool) {
+                poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+              }
+            } catch (_) {}
+            return { ok: true, address: addr, meta, price, info, audit, poolPrice };
+          } catch (e: any) {
+            return { ok: false, address: addr, error: e?.message ?? String(e) };
+          }
+        }));
+        return json({ results });
       }
       default:
         return json({ error: 'Unknown action' }, 400);
