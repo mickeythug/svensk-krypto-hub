@@ -44,30 +44,28 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         // 1) Get base list (addresses)
         let addresses: string[] = [];
         if (category === 'trending') {
-          let list: any[] | null = null;
-          try {
-            const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-              body: { action: 'gainers' },
-            });
-            if (error) throw error;
-            list = Array.isArray(data) ? data : data?.results || [];
-          } catch (_) {
-            // Fallback to hotpools if gainers fails (rate limit etc)
-            const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-              body: { action: 'hotpools' },
-            });
-            if (error) throw error;
-            list = Array.isArray(data) ? data : data?.results || [];
-          }
-          addresses = (list || []).map((i: any) => i?.mainToken?.address).filter(Boolean);
+          const { data, error } = await supabase.functions.invoke('dextools-proxy', {
+            body: { action: 'gainers' },
+          });
+          if (error) throw error;
+          const list: any[] = Array.isArray(data) ? data : data?.results || [];
+          addresses = list.map((i: any) => i?.mainToken?.address).filter(Boolean);
         } else {
           // newest and potential start from newest token listing
           const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'newest', page: 0, pageSize: Math.max(limit * 2, 60) },
+            body: { action: 'newest', page: 0, pageSize: 50 },
           });
           if (error) throw error;
           const results: any[] = data?.results || [];
           addresses = results.map((r: any) => r?.address).filter(Boolean);
+        }
+
+        // If no addresses, don't call batch
+        if (!addresses.length) {
+          if (mounted) {
+            setTokens([]);
+          }
+          return;
         }
 
         // Safety cap

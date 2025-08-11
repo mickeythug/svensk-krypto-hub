@@ -59,8 +59,9 @@ Deno.serve(async (req) => {
         return json(data);
       }
       case 'newest': {
-        const page = Number(payload.page ?? 0);
-        const pageSize = Number(payload.pageSize ?? 50);
+        const page = Math.max(0, Number(payload.page ?? 0));
+        const rawSize = Number(payload.pageSize ?? 50);
+        const pageSize = Math.min(50, Math.max(1, isNaN(rawSize) ? 50 : rawSize));
         const from = payload.from as string | undefined;
         const to = payload.to as string | undefined;
         const qs = new URLSearchParams({
