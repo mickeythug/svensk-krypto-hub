@@ -254,6 +254,33 @@ export type Database = {
         }
         Relationships: []
       }
+      trading_wallets: {
+        Row: {
+          acknowledged_backup: boolean
+          created_at: string
+          id: string
+          pump_api_key: string
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          acknowledged_backup?: boolean
+          created_at?: string
+          id?: string
+          pump_api_key: string
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          acknowledged_backup?: boolean
+          created_at?: string
+          id?: string
+          pump_api_key?: string
+          user_id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       user_wallets: {
         Row: {
           chain: string
