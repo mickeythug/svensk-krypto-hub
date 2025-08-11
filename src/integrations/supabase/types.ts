@@ -254,12 +254,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_wallets: {
+        Row: {
+          chain: string
+          created_at: string | null
+          id: string
+          user_id: string
+          verified_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          chain: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+          verified_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          chain?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+          verified_at?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      user_owns_wallet: {
+        Args: { wallet_addr: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
