@@ -190,15 +190,15 @@ const ModernMobileTradingView = ({
                   onClick={() => setActiveTab(tab.id)}
                   className={`relative flex flex-col items-center gap-1.5 py-3 px-2 h-auto rounded-xl transition-all duration-300 ${
                     isActive 
-                      ? 'text-primary bg-primary/15 shadow-lg shadow-primary/20 scale-105' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                      ? 'text-primary border-2 border-primary/60 bg-transparent' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/30 border-2 border-transparent'
                   }`}
                 >
                   <div className={`relative p-1.5 rounded-lg transition-all duration-300 ${
-                    isActive ? 'bg-primary/20 shadow-md' : 'bg-transparent'
+                    isActive ? 'bg-transparent' : 'bg-transparent'
                   }`}>
                     <Icon className={`h-5 w-5 transition-all duration-300 ${
-                      isActive ? 'text-primary scale-110' : ''
+                      isActive ? 'text-primary' : ''
                     }`} />
                   </div>
                   <span className={`text-[10px] font-semibold tracking-wide transition-all duration-300 ${
@@ -206,9 +206,6 @@ const ModernMobileTradingView = ({
                   }`}>
                     {tab.label}
                   </span>
-                  {isActive && (
-                    <div className="absolute -top-0.5 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-primary rounded-full shadow-lg shadow-primary/40" />
-                  )}
                 </Button>
               );
             })}
