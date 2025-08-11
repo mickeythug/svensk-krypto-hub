@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, User, Eye, BookOpen, Calendar, Tag, Share2, Bookmark, ChevronRight } from 'lucide-react';
 import Header from '@/components/Header';
-import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
 import MobileHeader from '@/components/mobile/MobileHeader';
@@ -159,7 +158,7 @@ const ArticleDetailPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {isMobile ? <MobileHeader title="Artikel" /> : <Header />}
-      {!isMobile && <CryptoPriceTicker />}
+      {/* Removed duplicate ticker - main header already includes CryptoPriceTicker */}
       
       <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16'}`}>
         <div className={`container mx-auto ${isMobile ? 'px-3 max-w-full' : 'px-4 max-w-4xl'}`}>

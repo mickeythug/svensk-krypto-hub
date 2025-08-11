@@ -18,7 +18,6 @@ import {
   StarOff
 } from "lucide-react";
 import Header from "@/components/Header";
-import CryptoPriceTicker from "@/components/CryptoPriceTicker";
 import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useCryptoData } from "@/hooks/useCryptoData";
@@ -115,7 +114,7 @@ const PortfolioPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <CryptoPriceTicker />
+        {/* Removed duplicate ticker - main header already includes CryptoPriceTicker */}
         <div className="container mx-auto px-4 pt-8">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
