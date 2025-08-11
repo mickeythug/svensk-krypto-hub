@@ -670,18 +670,7 @@ const MemeTokenDetailPage = () => {
                     {/* Trading Tools */}
                     <div className="space-y-4">
                       {/* Price Alerts */}
-                      <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/20">
-                        <div className="flex items-center gap-3 mb-3">
-                          <Bell className="w-5 h-5 text-orange-500" />
-                          <span className="font-crypto font-bold tracking-wider uppercase text-orange-500">Price Alerts</span>
-                        </div>
-                        <div className="space-y-2">
-                          <input type="text" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" value={priceAlert} onChange={e => setPriceAlert(e.target.value)} placeholder="Set price alert" className="w-full h-10 px-3 text-sm font-crypto bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                          <Button variant="outline" size="sm" className="w-full h-8 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
-                            Set Alert
-                          </Button>
-                        </div>
-                      </div>
+                      
 
                       {/* Performance Metrics */}
                       <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20">
