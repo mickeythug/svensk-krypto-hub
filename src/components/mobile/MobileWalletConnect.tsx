@@ -5,11 +5,13 @@ import { ChevronLeft, Wallet, ExternalLink } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 // Import wallet logos
-import phantomLogo from '@/assets/wallet-logos/phantom-logo.png';
 import metamaskLogo from '@/assets/wallet-logos/metamask-logo.png';
-import trustwalletLogo from '@/assets/wallet-logos/trustwallet-logo-correct.png';
 import solanaLogo from '@/assets/wallet-logos/solana-logo.png';
 import ethereumLogo from '@/assets/wallet-logos/ethereum-logo.png';
+
+// Use uploaded official logos directly
+const phantomLogo = '/lovable-uploads/e2a4369f-6af0-4da7-9b8a-53ab33ba6b25.png';
+const trustwalletLogo = '/lovable-uploads/d6919cdc-0e38-4a94-8537-48c11d876ba4.png';
 
 interface MobileWalletConnectProps {
   onBack: () => void;
