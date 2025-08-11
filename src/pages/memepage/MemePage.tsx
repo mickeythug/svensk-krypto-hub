@@ -6,6 +6,7 @@ import MemeTokenGrid from './components/MemeTokenGrid';
 import MemeStatsBanner from './components/MemeStatsBanner';
 import MemePageHeader from './components/MemePageHeader';
 import { useIsMobile } from '@/hooks/use-mobile';
+import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
 
@@ -82,6 +83,9 @@ const MemePage: React.FC = () => {
           </div>
         </section>
       </main>
+      
+      {/* Custom Navigation for Meme Zone */}
+      {isMobile && <MemeZoneBottomNavigation />}
     </div>
   );
 };

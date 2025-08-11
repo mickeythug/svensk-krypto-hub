@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Sparkles, Coins } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import MemeTokenCreator from './components/MemeTokenCreator';
-import MobileBottomNavigation from '@/components/mobile/MobileBottomNavigation';
+import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const CreateTokenPage: React.FC = () => {
@@ -55,50 +55,48 @@ const CreateTokenPage: React.FC = () => {
   }, []);
 
   return (
-    <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/10 relative overflow-hidden">
       {/* Animated background elements */}
-      <div className="fixed inset-0 opacity-10 pointer-events-none">
+      <div className="fixed inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-accent rounded-full animate-bounce"></div>
         <div className="absolute bottom-32 left-32 w-28 h-28 bg-secondary rounded-full animate-pulse-glow"></div>
-        <div className="absolute bottom-20 right-10 w-20 h-20 bg-primary-glow rounded-full animate-spin"></div>
       </div>
 
       {/* Header */}
-      <section className={`${isMobile ? 'py-4 px-3' : 'py-8 px-4'}`}>
-        <div className="container mx-auto">
-          <div className={`flex items-center gap-4 ${isMobile ? 'mb-4' : 'mb-8'}`}>
-            <Button 
-              variant="outline" 
-              size={isMobile ? "default" : "lg"}
-              onClick={() => navigate('/meme')}
-              className="font-crypto font-bold border-2 border-primary/50 hover:bg-primary/10 text-primary hover:text-primary-foreground hover:border-primary"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              {isMobile ? "TILLBAKA" : "TILLBAKA TILL MEME TOKENS"}
-            </Button>
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50">
+        <div className="flex items-center gap-4 p-4">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate('/meme')}
+            className="h-12 w-12 rounded-full bg-muted/50 hover:bg-muted transition-all duration-300"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="h-5 w-5 text-primary" />
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Skapa Meme Token
+              </h1>
+            </div>
+            <p className="text-sm text-muted-foreground">Designa din egen meme cryptocurrency med AI</p>
           </div>
-          
-          <div className={`text-center ${isMobile ? 'mb-6' : 'mb-12'}`}>
-            <h1 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-6xl'} font-black ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-primary bg-clip-text text-transparent animate-pulse-glow tracking-wider`}>
-              SKAPA DIN MEME TOKEN
-            </h1>
-            <p className={`font-crypto ${isMobile ? 'text-sm' : 'text-xl md:text-2xl'} text-muted-foreground max-w-3xl mx-auto font-semibold ${isMobile ? 'px-2' : ''}`}>
-              DESIGNA OCH LANSERA DIN EGEN MEME TOKEN MED VÅR AVANCERADE CREATOR
-            </p>
+          <div className="hidden sm:flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+            <Coins className="h-4 w-4 text-primary" />
+            <span className="text-sm font-medium text-primary">Beta</span>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Creator Section */}
-      <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'}`}>
-        <div className="container mx-auto">
-          <MemeTokenCreator />
-        </div>
-      </section>
+      <main className={`${isMobile ? 'pb-24 px-4' : 'px-8'} pt-6`}>
+        <MemeTokenCreator />
+      </main>
       
-      {isMobile && <MobileBottomNavigation />}
-    </main>
+      {/* Mobile Navigation */}
+      {isMobile && <MemeZoneBottomNavigation />}
+    </div>
   );
 };
 

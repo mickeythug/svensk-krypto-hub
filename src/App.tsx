@@ -20,6 +20,7 @@ const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
 const MemePage = lazy(() => import("./pages/memepage"));
 const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
+const BuyTokenPage = lazy(() => import("./pages/memepage/BuyTokenPage"));
 const MobileConnectPage = lazy(() => import("./pages/MobileConnectPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -42,9 +43,10 @@ const AppContent = memo(() => {
   const isMobile = useIsMobile();
   const location = useLocation();
   
-  // Hide main navigation on trading pages
+  // Hide main navigation on trading pages and meme zone pages (they have custom nav)
   const isTradingPage = location.pathname.startsWith('/crypto/');
-  const shouldShowMobileNav = isMobile && !isTradingPage;
+  const isMemeZonePage = location.pathname.startsWith('/meme');
+  const shouldShowMobileNav = isMobile && !isTradingPage && !isMemeZonePage;
 
   return (
     <div className={`min-h-screen bg-background ${shouldShowMobileNav ? 'pb-20' : ''}`}>
@@ -60,6 +62,7 @@ const AppContent = memo(() => {
           <Route path="/crypto/:symbol" element={<Layout><CryptoDetailPage /></Layout>} />
           <Route path="/meme" element={<Layout><MemePage /></Layout>} />
           <Route path="/meme/create" element={<Layout><CreateTokenPage /></Layout>} />
+          <Route path="/meme/buy" element={<Layout><BuyTokenPage /></Layout>} />
           <Route path="/connect" element={<Layout showTicker={false}><MobileConnectPage /></Layout>} />
           <Route path="*" element={<Layout showTicker={false}><NotFound /></Layout>} />
         </Routes>
