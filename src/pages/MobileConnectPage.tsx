@@ -52,15 +52,16 @@ export default function MobileConnectPage() {
           const pubkeyStr = pk?.toBase58?.();
           if (!pubkeyStr) throw new Error("Kunde inte läsa Solana‑adress");
 
-          const msgBytes = new TextEncoder().encode(`Logga in på ${window.location.host}`);
           const canAdapterSign = typeof signMessageSol === "function";
           if (!canAdapterSign) {
-            setWalletModalVisible(true);
-            throw new Error("Din wallet stöder inte Sign Message – välj Phantom");
+            // Fallback: öppna Phantom deeplink till vår connect-sida för in-app signering
+            const deeplink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(redirect))}`;
+            window.location.href = deeplink;
+            throw new Error("Öppnar Phantom för säker signering...");
           }
-          const sig = await (signMessageSol as any)(msgBytes);
-          if (!(sig instanceof Uint8Array)) throw new Error("Signatur ogiltig");
-          const ok = await signAndVerify(pubkeyStr, async () => sig);
+
+          // SIWS: Signera exakt serverns nonce-meddelande och verifiera
+          const ok = await signAndVerify(pubkeyStr, signMessageSol as any);
           if (!ok) throw new Error("Verifiering misslyckades");
           sessionStorage.setItem("siws_verified", "true");
           sessionStorage.setItem("siws_address", pubkeyStr);
