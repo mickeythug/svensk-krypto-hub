@@ -4,6 +4,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate, useLocation } from "react-router-dom";
 import { TrendingUp, Newspaper, Wallet, Zap, Users } from "lucide-react";
 import { useState } from "react";
+import CryptoPriceTicker from '@/components/CryptoPriceTicker';
+import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 
 interface MobileHeaderProps {
   title: string;
@@ -20,7 +22,9 @@ const MobileHeader = ({
   
   // Hide menu on trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');
+  const isMemeZone = location.pathname.startsWith('/meme');
   const shouldShowMenu = showMenu && !isTradingPage;
+  const shouldShowTicker = !isTradingPage;
 
   const navItems = [
     { path: "/", icon: TrendingUp, label: "Hem" },
@@ -29,6 +33,7 @@ const MobileHeader = ({
     { path: "/crypto/btc", icon: Wallet, label: "Handel" },
     { path: "/nyheter", icon: Newspaper, label: "Nyheter" }
   ];
+  
   return (
     <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-40 md:hidden">
       <div className="flex items-center justify-between p-4">
@@ -122,6 +127,17 @@ const MobileHeader = ({
           )}
         </div>
       </div>
+      
+      {/* Crypto Ticker - Integrated into mobile header */}
+      {shouldShowTicker && (
+        <div className="border-t border-border/30">
+          {isMemeZone ? (
+            <MemeLiveTicker />
+          ) : (
+            <CryptoPriceTicker />
+          )}
+        </div>
+      )}
     </div>
   );
 };
