@@ -501,13 +501,13 @@ const MarketOverviewPage = () => {
                           {/* Name & Logo */}
                           <TableCell className="py-4 px-6">
                             <div className="flex items-center space-x-4">
-                              <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
-                                <img 
-                                  src={getCryptoLogo(crypto)} 
-                                  alt={crypto.name}
-                                  className="w-full h-full object-contain"
-                                />
-                              </div>
+                               <div className="w-10 h-10 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
+                                 <img 
+                                   src={getCryptoLogo(crypto)} 
+                                   alt={crypto.name}
+                                   className="w-8 h-8 object-contain drop-shadow-sm"
+                                 />
+                               </div>
                               <div className="min-w-0 flex-1">
                                 <div className="font-semibold text-foreground group-hover:text-primary transition-colors text-base">
                                   {crypto.name}
@@ -603,13 +603,13 @@ const MarketOverviewPage = () => {
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden bg-white shadow-sm border border-border/20">
-                            <img 
-                              src={getCryptoLogo(crypto)} 
-                              alt={crypto.name}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
+                           <div className="w-12 h-12 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
+                             <img 
+                               src={getCryptoLogo(crypto)} 
+                               alt={crypto.name}
+                               className="w-10 h-10 object-contain drop-shadow-sm"
+                             />
+                           </div>
                            <div>
                              <h3 className="font-semibold text-white text-lg">{crypto.name}</h3>
                              <p className="text-white/80 font-mono">{crypto.symbol}</p>
