@@ -133,9 +133,9 @@ const BuyTokenPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20">
-      <main className={`${isMobile ? 'pb-24 px-4 pt-6' : 'px-8 pt-6'}`}>
-        {/* Internal Page Header - No sticky needed, flows with content */}
-        <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 mb-6 shadow-lg">
+      <main className={`${isMobile ? 'pb-24 px-4 pt-12' : 'px-8 pt-12'}`}>
+        {/* Internal Page Header - Extra margin to prevent overlap */}
+        <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 mb-6 shadow-lg mt-4">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 

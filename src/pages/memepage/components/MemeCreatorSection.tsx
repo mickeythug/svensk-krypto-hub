@@ -183,7 +183,7 @@ const MemeCreatorSection = () => {
 
           <TabsContent value="gallery" className="space-y-6">
             <h3 className="text-3xl font-bold text-center bg-gradient-neon bg-clip-text text-transparent">
-              🎨 AI-Generated Meme Images
+              🎨 Fördesignade Meme Bilder
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {generatedImages.map((img, index) => (
@@ -191,14 +191,14 @@ const MemeCreatorSection = () => {
                   <AspectRatio ratio={1}>
                     <OptimizedImage
                       src={img}
-                      alt={`AI generated meme ${index + 1}`}
+                      alt={`Fördesignad meme ${index + 1}`}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       fallbackSrc="/placeholder.svg"
                     />
                   </AspectRatio>
                   <div className="p-3 bg-card/90">
                     <Badge className="w-full bg-gradient-primary text-primary-foreground">
-                      AI Generated #{index + 1}
+                      Premium Design #{index + 1}
                     </Badge>
                   </div>
                 </Card>

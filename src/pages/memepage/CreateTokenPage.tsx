@@ -63,9 +63,9 @@ const CreateTokenPage: React.FC = () => {
         <div className="absolute bottom-32 left-32 w-28 h-28 bg-secondary rounded-full animate-pulse-glow"></div>
       </div>
 
-      <main className={`${isMobile ? 'pb-24 px-4 pt-6' : 'px-8 pt-6'} relative z-10 space-y-8`}>
-        {/* Internal Page Header - No sticky, flows with content */}
-        <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 shadow-lg">
+      <main className={`${isMobile ? 'pb-24 px-4 pt-12' : 'px-8 pt-12'} relative z-10 space-y-8`}>
+        {/* Internal Page Header - Extra margin to prevent overlap */}
+        <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 shadow-lg mt-4">
           <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
@@ -82,7 +82,7 @@ const CreateTokenPage: React.FC = () => {
                   Skapa Meme Token
                 </h1>
               </div>
-              <p className="text-sm text-muted-foreground">Designa din egen meme cryptocurrency med AI</p>
+              <p className="text-sm text-muted-foreground">Designa din egen meme cryptocurrency</p>
             </div>
             <div className="hidden sm:flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
               <Coins className="h-4 w-4 text-primary" />
@@ -95,13 +95,13 @@ const CreateTokenPage: React.FC = () => {
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-primary font-medium text-sm">
             <Sparkles className="h-4 w-4" />
-            Powered by AI • Blockchain Ready
+            Advanced Creator • Blockchain Ready
           </div>
           <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
             Skapa Din Egen Meme Token
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Designa och förhandsgranska din meme cryptocurrency med AI-genererade bilder, anpassningsbara metadata och modern UI.
+            Designa och förhandsgranska din meme cryptocurrency med professionella verktyg, anpassningsbara metadata och modern UI.
           </p>
         </div>
 
