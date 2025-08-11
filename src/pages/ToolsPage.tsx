@@ -283,13 +283,6 @@ const ToolsPage = () => {
           {/* Mobile Hero Section */}
           {isMobile ? (
             <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Badge className="bg-primary/20 text-primary border-primary/30 px-3 py-1 text-xs">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  VERKTYG
-                </Badge>
-              </div>
-              
               <h1 className="font-crypto text-2xl sm:text-3xl font-bold mb-3">
                 <span className="text-brand-turquoise">TELEGRAM</span>
                 <span className="text-brand-white"> BOTS</span>
