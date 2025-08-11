@@ -156,9 +156,9 @@ const Header = () => {
                 </SheetTrigger>
                 <SheetContent 
                   side="right" 
-                  className="w-96 bg-background/98 backdrop-blur-xl border-l border-border z-[60]"
+                  className="w-96 bg-background/98 backdrop-blur-xl border-l border-border z-[60] flex flex-col"
                 >
-                  <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center justify-between mb-8 flex-shrink-0">
                     <button 
                       onClick={() => {navigate('/'); setIsOpen(false);}}
                       className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
@@ -183,31 +183,31 @@ const Header = () => {
                     </button>
                   </div>
 
-                  {/* Wallet Connect Section */}
-                  {!showWalletConnect ? (
-                    <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Plånbok</div>
-                      <Button 
-                        onClick={() => setShowWalletConnect(true)}
-                        className="w-full justify-center bg-gradient-primary hover:opacity-90"
-                      >
-                        <Wallet className="h-4 w-4 mr-2" />
-                        Connect Wallet
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="mb-6">
-                      <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
-                    </div>
-                  )}
+                  {/* Scrollable Content */}
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-6 scrollbar-thin scrollbar-track-background scrollbar-thumb-primary/30 hover:scrollbar-thumb-primary/50 scrollbar-thumb-rounded-full">
+                    {/* Wallet Connect Section */}
+                    {!showWalletConnect ? (
+                      <div className="p-4 rounded-xl border border-border bg-muted/30">
+                        <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                        <Button 
+                          onClick={() => setShowWalletConnect(true)}
+                          className="w-full justify-center bg-gradient-primary hover:opacity-90"
+                        >
+                          <Wallet className="h-4 w-4 mr-2" />
+                          Connect Wallet
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
+                      </div>
+                    )}
 
-                  {/* Complete Navigation Menu */}
-                  <div className="space-y-6">
+                    {/* Complete Navigation Menu */}
                     <div>
                       <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>
                       <nav className="space-y-2">
                         {allPages.map((item) => {
-                          const IconComponent = item.icon;
                           const isActive = location.pathname === item.href || 
                             (item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto'));
                           
