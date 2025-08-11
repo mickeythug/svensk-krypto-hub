@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Missing DEXTOOLS_API_KEY' }, 500);
     }
 
-    const BASE = 'https://public-api.dextools.io/trial';
+    const BASE = 'https://public-api.dextools.io';
     const headers = { 'X-API-KEY': API_KEY } as Record<string, string>;
 
     const url = new URL(req.url);
