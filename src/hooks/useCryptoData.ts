@@ -499,15 +499,40 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     }));
   }
 
-  // Enforce exact token set and order
+  // Enforce exact token set and order - ONLY these 16 tokens
   private filterAllowed(data: CryptoPrice[]): CryptoPrice[] {
     const allowedOrder = ['BTC','ETH','HBAR','ALGO','SUI','XRP','DOGE','BONK','SOL','LINK','APT','BNB','ADA','HYPE','TRX','AVAX'] as const;
     const orderMap = new Map(allowedOrder.map((s, i) => [s, i]));
-    // Deduplicate by symbol
+    
+    // Filter to ONLY allowed tokens, deduplicate by symbol
     const seen = new Set<string>();
-    const filtered = data.filter(d => orderMap.has(d.symbol as any) && !seen.has(d.symbol) && (seen.add(d.symbol), true));
+    const filtered = data.filter(d => {
+      const isAllowed = orderMap.has(d.symbol as any);
+      const isNotSeen = !seen.has(d.symbol);
+      if (isAllowed && isNotSeen) {
+        seen.add(d.symbol);
+        return true;
+      }
+      return false;
+    });
+    
     // Sort according to allowed order
     filtered.sort((a,b) => (orderMap.get(a.symbol as any)! - orderMap.get(b.symbol as any)!));
+    
+    // If we don't have all 16, fill missing ones with fallback data
+    const missing = allowedOrder.filter(symbol => !filtered.find(f => f.symbol === symbol));
+    if (missing.length > 0) {
+      const fallback = this.getFallbackData();
+      missing.forEach(symbol => {
+        const fallbackToken = fallback.find(f => f.symbol === symbol);
+        if (fallbackToken) {
+          filtered.push(fallbackToken);
+        }
+      });
+      // Re-sort after adding missing tokens
+      filtered.sort((a,b) => (orderMap.get(a.symbol as any)! - orderMap.get(b.symbol as any)!));
+    }
+    
     return filtered;
   }
 
