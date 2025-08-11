@@ -53,7 +53,7 @@ const MobileHeader = ({
   ];
   
   return (
-    <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-40 md:hidden">
+    <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-[100] md:hidden">
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <button 

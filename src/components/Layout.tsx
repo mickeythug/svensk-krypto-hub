@@ -59,9 +59,10 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
       
       {/* Main content with proper spacing for fixed header with integrated ticker */}
       <main className={`
-        ${isMobile ? 'pt-20' : 'pt-20'}
+        ${isMobile ? 'pt-16' : 'pt-20'}
         ${shouldShowTicker ? (isMobile ? 'mt-14' : 'mt-12') : ''}
-        ${isTradingPage && isMobile ? 'pb-0' : 'pb-20'}
+        ${isTradingPage && isMobile ? 'pb-0' : 'pb-4'}
+        ${isMemeZone && isMobile ? 'pb-0' : ''}
         min-h-screen
       `}>
         {children}

@@ -92,26 +92,25 @@ const MemeHubPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50">
-        <div className="flex items-center gap-4 p-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <Zap className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Meme Zone Hub
-              </h1>
+      <main className={`${isMobile ? 'pb-24 px-4 pt-6' : 'px-8 pt-6'} space-y-8`}>
+        {/* Internal Page Header */}
+        <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 shadow-lg">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <Zap className="h-6 w-6 text-primary" />
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  Meme Zone Hub
+                </h1>
+              </div>
+              <p className="text-sm text-muted-foreground">Ditt centrum för meme token ekosystemet</p>
             </div>
-            <p className="text-sm text-muted-foreground">Ditt centrum för meme token ekosystemet</p>
-          </div>
-          <div className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
-            <Star className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Premium</span>
+            <div className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+              <Star className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Premium</span>
+            </div>
           </div>
         </div>
-      </div>
-
-      <main className={`${isMobile ? 'pb-24 px-4' : 'px-8'} pt-6 space-y-8`}>
         {/* Hero Section */}
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/20 to-primary/10 px-4 py-2 rounded-full text-primary font-medium text-sm border border-primary/30">

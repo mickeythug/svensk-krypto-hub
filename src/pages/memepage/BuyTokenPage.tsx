@@ -133,27 +133,26 @@ const BuyTokenPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20">
-      {/* Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/50">
-        <div className="flex items-center gap-4 p-4">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => navigate('/meme')}
-            className="h-10 w-10 rounded-full"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Köp Meme Tokens
-            </h1>
-            <p className="text-sm text-muted-foreground">Handla med avancerad analys</p>
+      <main className={`${isMobile ? 'pb-24 px-4 pt-6' : 'px-8 pt-6'}`}>
+        {/* Internal Page Header - No sticky needed, flows with content */}
+        <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 mb-6 shadow-lg">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => navigate('/meme')}
+              className="h-10 w-10 rounded-full hover:bg-primary/10 transition-all duration-300"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Köp Meme Tokens
+              </h1>
+              <p className="text-sm text-muted-foreground">Handla med avancerad analys</p>
+            </div>
           </div>
         </div>
-      </div>
-
-      <main className={`${isMobile ? 'pb-24 px-4' : 'px-8'} pt-6`}>
         {/* Search Section */}
         <Card className="mb-6 bg-card/50 backdrop-blur-sm border-primary/20">
           <CardHeader className="pb-4">
