@@ -113,38 +113,14 @@ const MemeTokenDetailPage = () => {
   // Find the token based on symbol
   const token = tokens.find(t => t.symbol.toLowerCase() === symbol?.toLowerCase());
 
+  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   useEffect(() => {
     if (!token && tokens.length > 0) {
       navigate('/meme');
     }
   }, [token, tokens, navigate]);
 
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Laddar token...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const formatPrice = (price: number): string => {
-    if (price < 0.000001) return `$${price.toExponential(2)}`;
-    if (price < 0.01) return `$${price.toFixed(6)}`;
-    if (price < 1) return `$${price.toFixed(4)}`;
-    return `$${price.toFixed(2)}`;
-  };
-
-  const formatMarketCap = (marketCap: number): string => {
-    if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
-    if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
-    if (marketCap >= 1e3) return `$${(marketCap / 1e3).toFixed(2)}K`;
-    return `$${marketCap.toFixed(2)}`;
-  };
-
-  // Enhanced Trading Functions
+  // Enhanced Trading Functions - ALL useCallback hooks must be before early returns
   const handleAmountSelect = useCallback((amount: number) => {
     setSelectedAmount(amount);
     setCustomAmount(amount.toString());
@@ -156,13 +132,14 @@ const MemeTokenDetailPage = () => {
   }, []);
 
   const calculateTradeValue = useCallback(() => {
+    if (!token) return 0;
     const amount = selectedAmount || parseFloat(customAmount) || 0;
     if (tradeType === 'buy') {
       return amount * token.price;
     } else {
       return amount; // For sell, amount is in tokens
     }
-  }, [selectedAmount, customAmount, tradeType, token.price]);
+  }, [selectedAmount, customAmount, tradeType, token]);
 
   const calculateSellPercentage = useCallback((percentage: number) => {
     const amount = (tokenBalance * percentage) / 100;
@@ -171,6 +148,7 @@ const MemeTokenDetailPage = () => {
   }, [tokenBalance]);
 
   const handleTrade = useCallback(async () => {
+    if (!token) return;
     setIsTrading(true);
     try {
       // Simulate trading delay
@@ -194,7 +172,7 @@ const MemeTokenDetailPage = () => {
     } finally {
       setIsTrading(false);
     }
-  }, [tradeType, selectedAmount, customAmount, orderType, slippage, autoSlippage, priority, mevProtection, limitPrice, stopPrice, token.symbol]);
+  }, [tradeType, selectedAmount, customAmount, orderType, slippage, autoSlippage, priority, mevProtection, limitPrice, stopPrice, token]);
 
   const getPriorityFee = useCallback(() => {
     switch (priority) {
@@ -208,6 +186,33 @@ const MemeTokenDetailPage = () => {
   const getEstimatedGas = useCallback(() => {
     return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
   }, [orderType]);
+
+  // Helper functions (non-hooks)
+  const formatPrice = (price: number): string => {
+    if (price < 0.000001) return `$${price.toExponential(2)}`;
+    if (price < 0.01) return `$${price.toFixed(6)}`;
+    if (price < 1) return `$${price.toFixed(4)}`;
+    return `$${price.toFixed(2)}`;
+  };
+
+  const formatMarketCap = (marketCap: number): string => {
+    if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
+    if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
+    if (marketCap >= 1e3) return `$${(marketCap / 1e3).toFixed(2)}K`;
+    return `$${marketCap.toFixed(2)}`;
+  };
+
+  // EARLY RETURN AFTER ALL HOOKS
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Laddar token...</p>
+        </div>
+      </div>
+    );
+  }
 
   const isPositive = token.change24h > 0;
   const coverImage = covers[Math.abs(token.symbol.charCodeAt(0)) % covers.length];
