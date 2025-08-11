@@ -212,7 +212,7 @@ const Header = () => {
                             (item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto'));
                           
                           return (
-                            <button
+                             <button
                               key={item.name}
                               onClick={() => handleNavigation(item)}
                               className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-200 group ${
@@ -222,13 +222,6 @@ const Header = () => {
                               }`}
                             >
                               <div className="flex items-center space-x-3">
-                                <div className={`p-2 rounded-lg transition-colors ${
-                                  isActive 
-                                    ? 'bg-primary/20 text-primary' 
-                                    : 'bg-muted/30 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
-                                }`}>
-                                  <IconComponent className="h-4 w-4" />
-                                </div>
                                 <div className="text-left">
                                   <div className="font-crypto font-bold tracking-wider uppercase text-sm">
                                     {item.name}
@@ -238,9 +231,6 @@ const Header = () => {
                                   </div>
                                 </div>
                               </div>
-                              {item.route && (
-                                <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                              )}
                             </button>
                           );
                         })}
