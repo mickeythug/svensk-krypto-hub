@@ -94,6 +94,7 @@ export default {
 				'crypto': ['Orbitron', 'monospace'],
 				'display': ['Exo 2', 'sans-serif'],
 				'orbitron': ['Orbitron', 'monospace'],
+				'oblivion': ['Cinzel', 'serif'], // Using Cinzel as close alternative to Oblivion
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
