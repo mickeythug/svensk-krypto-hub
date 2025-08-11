@@ -7,30 +7,58 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 
 const BuyTokenPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedToken, setSelectedToken] = useState<any>(null);
   const [activeView, setActiveView] = useState<'info' | 'chart'>('info');
+  const [isLoading, setIsLoading] = useState(false);
+  const [amount, setAmount] = useState('');
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  // Mock token data - in real app, this would come from API
-  const mockTokenData = {
-    symbol: 'BONK',
-    name: 'Bonk Inu',
-    logo: '/src/assets/crypto-logos/btc.png', // placeholder
-    price: '$0.000015',
-    change24h: '+12.5%',
-    marketCap: '$1.2B',
-    holders: '125,000',
-    volume24h: '$45M',
-    contractAddress: '5vMjf47c8LKLqK7ZiYBG8pTMRiRgTJyqVnkPqUPmmp1',
-    socials: {
-      twitter: '@bonk_inu',
-      telegram: 't.me/bonkinu',
-      website: 'bonkinu.com'
+  // Expanded mock token data with more realistic information
+  const mockTokens = {
+    'BONK': {
+      symbol: 'BONK',
+      name: 'Bonk Inu',
+      logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNGRkE1MDAiLz4KPHR4dCB4PSIyMCIgeT0iMjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkZGIj5CTks8L3RleHQ+Cjwvc3ZnPg==',
+      price: '$0.000015234',
+      change24h: '+12.5%',
+      marketCap: '$1.2B',
+      holders: '125,847',
+      volume24h: '$45.2M',
+      contractAddress: '5vMjf47c8LKLqK7ZiYBG8pTMRiRgTJyqVnkPqUPmmp1',
+      supply: '100T',
+      verified: true,
+      risk: 'Medium',
+      socials: {
+        twitter: '@bonk_inu',
+        telegram: 't.me/bonkinu',
+        website: 'bonkinu.com'
+      }
+    },
+    'DOGE': {
+      symbol: 'DOGE',
+      name: 'Dogecoin',
+      logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNDM0E2MzQiLz4KPHR4dCB4PSIyMCIgeT0iMjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkZGIj5ETzwvdGV4dD4KPC9zdmc+',
+      price: '$0.087432',
+      change24h: '+8.2%',
+      marketCap: '$12.8B',
+      holders: '4.2M',
+      volume24h: '$892M',
+      contractAddress: 'DGE8KBPyqUeHFXnhX9AaqnJGwFcR34F7jjx5uqG7h6jk',
+      supply: '146B',
+      verified: true,
+      risk: 'Low',
+      socials: {
+        twitter: '@dogecoin',
+        telegram: 't.me/dogecoin',
+        website: 'dogecoin.com'
+      }
     }
   };
 
@@ -55,10 +83,52 @@ const BuyTokenPage = () => {
     md.setAttribute('content', description);
   }, []);
 
-  const handleSearch = () => {
-    if (searchTerm.toLowerCase() === 'bonk' || searchTerm === mockTokenData.contractAddress) {
-      setSelectedToken(mockTokenData);
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) return;
+    
+    setIsLoading(true);
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const searchKey = searchTerm.toUpperCase();
+    const token = mockTokens[searchKey as keyof typeof mockTokens];
+    
+    if (token) {
+      setSelectedToken(token);
+      toast({
+        title: "Token hittad!",
+        description: `${token.name} (${token.symbol}) laddad framgångsrikt.`,
+      });
+    } else {
+      toast({
+        title: "Token ej hittad",
+        description: "Försök med BONK eller DOGE för demo.",
+        variant: "destructive",
+      });
     }
+    setIsLoading(false);
+  };
+
+  const handleBuy = () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      toast({
+        title: "Ogiltigt belopp",
+        description: "Ange ett giltigt belopp att köpa för.",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Köp initierat",
+      description: `Öppnar wallet för att köpa ${amount} SOL av ${selectedToken?.symbol}`,
+    });
+  };
+
+  const handleSell = () => {
+    toast({
+      title: "Sälj initierat", 
+      description: `Öppnar wallet för att sälja ${selectedToken?.symbol}`,
+    });
   };
 
   return (
@@ -95,26 +165,36 @@ const BuyTokenPage = () => {
           <CardContent className="space-y-4">
             <div className="relative">
               <Input
-                placeholder="Sök token namn eller klistra in contract address..."
+                placeholder="Sök token namn (BONK, DOGE) eller klistra in contract address..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pr-12 h-12 text-base border-primary/30 focus:border-primary"
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                className="pr-12 h-12 text-base border-primary/30 focus:border-primary bg-background/50 backdrop-blur-sm"
+                disabled={isLoading}
               />
               <Button 
                 onClick={handleSearch}
                 size="sm"
                 className="absolute right-2 top-2 h-8 w-8 p-0"
+                disabled={isLoading}
               >
-                <Search className="h-4 w-4" />
+                {isLoading ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                ) : (
+                  <Search className="h-4 w-4" />
+                )}
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
-              {['BONK', 'DOGE', 'SHIB', 'PEPE'].map((token) => (
+              {['BONK', 'DOGE'].map((token) => (
                 <Badge 
                   key={token}
                   variant="secondary" 
-                  className="cursor-pointer hover:bg-primary/20 transition-colors"
-                  onClick={() => setSearchTerm(token)}
+                  className="cursor-pointer hover:bg-primary/20 transition-all duration-300 hover:scale-105"
+                  onClick={() => {
+                    setSearchTerm(token);
+                    handleSearch();
+                  }}
                 >
                   {token}
                 </Badge>
@@ -127,71 +207,89 @@ const BuyTokenPage = () => {
         {selectedToken && (
           <div className="space-y-6">
             {/* Token Header */}
-            <Card className="bg-gradient-to-br from-card to-card/80 border-primary/30">
+            <Card className="bg-gradient-to-br from-card/90 to-card/60 border-primary/30 backdrop-blur-xl shadow-2xl">
               <CardContent className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
-                    <img 
-                      src={selectedToken.logo} 
-                      alt={selectedToken.name}
-                      className="w-12 h-12 object-contain"
-                      onError={(e) => {
-                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNGRkY4RkMiLz4KPHRleHQgeD0iMjAiIHk9IjI2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzAwMCI+e3NlbGVjdGVkVG9rZW4uc3ltYm9sWzBdfTwvdGV4dD4KPC9zdmc+';
-                      }}
-                    />
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center overflow-hidden ring-2 ring-primary/20">
+                      <img
+                        src={selectedToken.logo} 
+                        alt={selectedToken.name}
+                        className="w-12 h-12 object-contain"
+                      />
+                    </div>
+                    {selectedToken.verified && (
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold">{selectedToken.name}</h2>
-                    <p className="text-muted-foreground">{selectedToken.symbol}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-lg font-semibold">{selectedToken.price}</span>
-                      <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h2 className="text-2xl font-bold">{selectedToken.name}</h2>
+                      <Badge variant={selectedToken.risk === 'Low' ? 'default' : selectedToken.risk === 'Medium' ? 'secondary' : 'destructive'} className="text-xs">
+                        {selectedToken.risk} Risk
+                      </Badge>
+                    </div>
+                    <p className="text-muted-foreground text-sm">{selectedToken.symbol} • Supply: {selectedToken.supply}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xl font-bold">{selectedToken.price}</span>
+                      <Badge variant="secondary" className={`${
+                        selectedToken.change24h.startsWith('+') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                      } animate-pulse`}>
                         {selectedToken.change24h}
                       </Badge>
                     </div>
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="flex items-center justify-center gap-1 mb-1">
+                <div className="grid grid-cols-3 gap-3 mb-6">
+                  <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
+                    <div className="flex items-center justify-center gap-1 mb-2">
                       <TrendingUp className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium">Market Cap</span>
+                      <span className="text-xs font-medium">Market Cap</span>
                     </div>
-                    <p className="font-semibold">{selectedToken.marketCap}</p>
+                    <p className="font-bold text-sm">{selectedToken.marketCap}</p>
                   </div>
-                  <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <div className="flex items-center justify-center gap-1 mb-1">
+                  <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
+                    <div className="flex items-center justify-center gap-1 mb-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium">Holders</span>
+                      <span className="text-xs font-medium">Holders</span>
                     </div>
-                    <p className="font-semibold">{selectedToken.holders}</p>
+                    <p className="font-bold text-sm">{selectedToken.holders}</p>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                      <BarChart3 className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-medium">24h Volume</span>
+                    </div>
+                    <p className="font-bold text-sm">{selectedToken.volume24h}</p>
                   </div>
                 </div>
 
                 {/* View Toggle */}
-                <div className="flex bg-muted rounded-lg p-1 mb-4">
+                <div className="flex bg-muted/80 rounded-xl p-1 mb-6 backdrop-blur-sm">
                   <button
                     onClick={() => setActiveView('info')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg transition-all duration-300 ${
                       activeView === 'info' 
-                        ? 'bg-background text-foreground shadow-sm' 
-                        : 'text-muted-foreground'
+                        ? 'bg-background text-foreground shadow-lg scale-[0.98] font-medium' 
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <Info className="h-4 w-4" />
-                    Info & Köp
+                    Info & Handel
                   </button>
                   <button
                     onClick={() => setActiveView('chart')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg transition-all duration-300 ${
                       activeView === 'chart' 
-                        ? 'bg-background text-foreground shadow-sm' 
-                        : 'text-muted-foreground'
+                        ? 'bg-background text-foreground shadow-lg scale-[0.98] font-medium' 
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <BarChart3 className="h-4 w-4" />
-                    Chart
+                    Pris Chart
                   </button>
                 </div>
               </CardContent>
@@ -201,70 +299,133 @@ const BuyTokenPage = () => {
             {activeView === 'info' ? (
               <div className="space-y-6">
                 {/* Token Stats */}
-                <Card className="bg-card/50 backdrop-blur-sm">
+                <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
                   <CardHeader>
-                    <CardTitle className="text-lg">Token Statistik</CardTitle>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Info className="h-5 w-5 text-primary" />
+                      Token Information
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">24h Volym</span>
-                      <span className="font-semibold">{selectedToken.volume24h}</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Contract Address</span>
-                      <span className="font-mono text-sm bg-muted px-2 py-1 rounded">
-                        {selectedToken.contractAddress.slice(0, 8)}...{selectedToken.contractAddress.slice(-8)}
-                      </span>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <span className="text-muted-foreground text-sm">Total Supply</span>
+                        <p className="font-bold">{selectedToken.supply}</p>
+                      </div>
+                      <div className="space-y-2">
+                        <span className="text-muted-foreground text-sm">Verified</span>
+                        <p className="font-bold text-green-400">{selectedToken.verified ? 'Verified ✓' : 'Unverified'}</p>
+                      </div>
                     </div>
                     <Separator />
                     <div className="space-y-2">
-                      <span className="text-muted-foreground">Sociala länkar</span>
-                      <div className="flex gap-2">
-                        <Badge variant="outline">Twitter: {selectedToken.socials.twitter}</Badge>
-                        <Badge variant="outline">Web: {selectedToken.socials.website}</Badge>
+                      <span className="text-muted-foreground text-sm">Contract Address</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm bg-muted/80 px-3 py-2 rounded-lg flex-1">
+                          {selectedToken.contractAddress.slice(0, 8)}...{selectedToken.contractAddress.slice(-8)}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            navigator.clipboard.writeText(selectedToken.contractAddress);
+                            toast({ title: "Kopierad!", description: "Contract address kopierad till urklipp." });
+                          }}
+                        >
+                          Kopiera
+                        </Button>
+                      </div>
+                    </div>
+                    <Separator />
+                    <div className="space-y-3">
+                      <span className="text-muted-foreground text-sm">Sociala länkar</span>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="outline" className="hover:bg-blue-500/10 cursor-pointer">
+                          Twitter: {selectedToken.socials.twitter}
+                        </Badge>
+                        <Badge variant="outline" className="hover:bg-primary/10 cursor-pointer">
+                          Web: {selectedToken.socials.website}
+                        </Badge>
+                        <Badge variant="outline" className="hover:bg-blue-400/10 cursor-pointer">
+                          Telegram: {selectedToken.socials.telegram}
+                        </Badge>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Buy/Sell Section */}
-                <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30">
+                <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/30 shadow-xl">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5 text-primary" />
                       Handla {selectedToken.symbol}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium">Belopp (SOL)</label>
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className="h-12 text-lg font-mono bg-background/50"
+                      />
+                      <div className="flex gap-2">
+                        {['0.1', '0.5', '1.0', '5.0'].map((preset) => (
+                          <Button
+                            key={preset}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setAmount(preset)}
+                            className="text-xs"
+                          >
+                            {preset} SOL
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <Button className="h-12 text-lg font-semibold bg-green-600 hover:bg-green-700">
-                        Köp
+                      <Button 
+                        onClick={handleBuy}
+                        className="h-12 text-lg font-semibold bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg"
+                      >
+                        Köp Nu
                       </Button>
-                      <Button variant="outline" className="h-12 text-lg font-semibold border-red-500 text-red-500 hover:bg-red-500/10">
+                      <Button 
+                        onClick={handleSell}
+                        variant="outline" 
+                        className="h-12 text-lg font-semibold border-red-500/50 text-red-500 hover:bg-red-500/10 hover:border-red-500"
+                      >
                         Sälj
                       </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground text-center">
-                      Handeln kommer att öppnas i din anslutna plånbok
+                    <p className="text-xs text-muted-foreground text-center bg-muted/30 p-3 rounded-lg">
+                      💡 Handeln kommer att öppnas i din anslutna plånbok (Phantom, Solflare, etc.)
                     </p>
                   </CardContent>
                 </Card>
               </div>
             ) : (
-              <Card className="bg-card/50 backdrop-blur-sm">
+              <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-primary" />
-                    {selectedToken.symbol} Chart
+                    {selectedToken.symbol} Pris Chart
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64 bg-muted/30 rounded-lg flex items-center justify-center">
+                  <div className="h-80 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl flex items-center justify-center border-2 border-dashed border-primary/20">
                     <div className="text-center">
-                      <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-muted-foreground">Chart kommer här</p>
-                      <p className="text-sm text-muted-foreground">TradingView integration</p>
+                      <BarChart3 className="h-16 w-16 text-primary/60 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold mb-2">Avancerat Chart</h3>
+                      <p className="text-muted-foreground mb-1">TradingView integration kommer här</p>
+                      <p className="text-sm text-muted-foreground">Realtids prisdata och teknisk analys</p>
+                      <div className="mt-4 flex justify-center gap-2">
+                        <Badge variant="secondary">Live Data</Badge>
+                        <Badge variant="secondary">Technical Analysis</Badge>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -273,15 +434,30 @@ const BuyTokenPage = () => {
           </div>
         )}
 
-        {/* Empty state */}
+        {/* Enhanced Empty state */}
         {!selectedToken && (
-          <Card className="bg-card/30 backdrop-blur-sm border-dashed border-primary/30">
-            <CardContent className="py-12 text-center">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Sök efter en token</h3>
-              <p className="text-muted-foreground">
-                Använd sökrutan ovan för att hitta och analysera meme tokens
-              </p>
+          <Card className="bg-gradient-to-br from-card/30 to-background/30 backdrop-blur-sm border-dashed border-primary/30 shadow-xl">
+            <CardContent className="py-16 text-center">
+              <div className="mb-6">
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Search className="h-10 w-10 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Upptäck Meme Tokens</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  Använd sökfunktionen för att hitta och analysera meme tokens. Få detaljerad information, prisdata och handelsverktyg.
+                </p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2 mb-6">
+                <Badge variant="outline" className="text-xs">Realtids data</Badge>
+                <Badge variant="outline" className="text-xs">Säker handel</Badge>
+                <Badge variant="outline" className="text-xs">Avancerad analys</Badge>
+              </div>
+              <Button 
+                onClick={() => setSearchTerm('BONK')}
+                className="bg-primary hover:bg-primary/90"
+              >
+                Prova med BONK
+              </Button>
             </CardContent>
           </Card>
         )}

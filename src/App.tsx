@@ -21,6 +21,7 @@ const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
 const MemePage = lazy(() => import("./pages/memepage"));
 const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
 const BuyTokenPage = lazy(() => import("./pages/memepage/BuyTokenPage"));
+const MemeStatsPage = lazy(() => import("./pages/memepage/MemeStatsPage"));
 const MobileConnectPage = lazy(() => import("./pages/MobileConnectPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -63,6 +64,7 @@ const AppContent = memo(() => {
           <Route path="/meme" element={<Layout><MemePage /></Layout>} />
           <Route path="/meme/create" element={<Layout><CreateTokenPage /></Layout>} />
           <Route path="/meme/buy" element={<Layout><BuyTokenPage /></Layout>} />
+          <Route path="/meme/stats" element={<Layout><MemeStatsPage /></Layout>} />
           <Route path="/connect" element={<Layout showTicker={false}><MobileConnectPage /></Layout>} />
           <Route path="*" element={<Layout showTicker={false}><NotFound /></Layout>} />
         </Routes>

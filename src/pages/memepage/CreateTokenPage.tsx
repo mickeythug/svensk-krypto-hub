@@ -90,7 +90,21 @@ const CreateTokenPage: React.FC = () => {
         </div>
       </div>
 
-      <main className={`${isMobile ? 'pb-24 px-4' : 'px-8'} pt-6`}>
+      <main className={`${isMobile ? 'pb-24 px-4' : 'px-8'} pt-6 space-y-8`}>
+        {/* Hero Section */}
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-primary font-medium text-sm">
+            <Sparkles className="h-4 w-4" />
+            Powered by AI • Blockchain Ready
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+            Skapa Din Egen Meme Token
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Designa och förhandsgranska din meme cryptocurrency med AI-genererade bilder, anpassningsbara metadata och modern UI.
+          </p>
+        </div>
+
         <MemeTokenCreator />
       </main>
       
