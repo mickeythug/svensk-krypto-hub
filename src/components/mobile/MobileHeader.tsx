@@ -80,17 +80,16 @@ const MobileHeader = ({
         </div>
         
         <div className="flex items-center gap-2">
-          {shouldShowMenu && (
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
               <SheetContent 
                 side="right" 
                 className="w-full bg-background/98 backdrop-blur-xl border-l border-border z-[60]"
@@ -187,7 +186,6 @@ const MobileHeader = ({
                 </nav>
               </SheetContent>
             </Sheet>
-          )}
         </div>
       </div>
       

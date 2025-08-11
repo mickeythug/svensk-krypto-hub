@@ -143,123 +143,114 @@ const Header = () => {
             </nav>
           )}
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons & Hamburger Menu for Desktop */}
           {!isMobile && (
-            <div className="hidden md:flex items-center gap-4 shrink-0 mr-2">
+            <div className="flex items-center gap-4 shrink-0 mr-2">
               <ConnectWalletButton />
+              {/* Desktop Hamburger Menu */}
+              <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="border-primary/20 hover:border-primary/40 hover:bg-primary/10">
+                    <Menu size={20} className="text-primary" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent 
+                  side="right" 
+                  className="w-96 bg-background/98 backdrop-blur-xl border-l border-border z-[60]"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <button 
+                      onClick={() => {navigate('/'); setIsOpen(false);}}
+                      className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
+                    >
+                      <img 
+                        src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
+                        alt="Crypto Network Sweden"
+                        className="h-8 w-auto"
+                      />
+                      <div>
+                        <h1 className="font-crypto text-sm font-bold">
+                          <span className="text-brand-turquoise">CRY</span>
+                          <span className="text-brand-white">PTO</span>
+                          <span> </span>
+                          <span className="text-brand-white">NET</span>
+                          <span className="text-brand-turquoise">WORK</span>
+                        </h1>
+                        <p className="font-crypto text-xs text-muted-foreground">
+                          SWEDEN
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+
+                  {/* Wallet Connect Section */}
+                  {!showWalletConnect ? (
+                    <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
+                      <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                      <Button 
+                        onClick={() => setShowWalletConnect(true)}
+                        className="w-full justify-center bg-gradient-primary hover:opacity-90"
+                      >
+                        <Wallet className="h-4 w-4 mr-2" />
+                        Connect Wallet
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="mb-6">
+                      <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
+                    </div>
+                  )}
+
+                  {/* Complete Navigation Menu */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-crypto text-xs text-muted-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>
+                      <nav className="space-y-2">
+                        {allPages.map((item) => {
+                          const IconComponent = item.icon;
+                          const isActive = location.pathname === item.href || 
+                            (item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto'));
+                          
+                          return (
+                            <button
+                              key={item.name}
+                              onClick={() => handleNavigation(item)}
+                              className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-200 group ${
+                                isActive 
+                                  ? 'bg-primary/10 border border-primary/20 text-primary' 
+                                  : 'hover:bg-muted/50 border border-transparent'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className={`p-2 rounded-lg transition-colors ${
+                                  isActive 
+                                    ? 'bg-primary/20 text-primary' 
+                                    : 'bg-muted/30 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                                }`}>
+                                  <IconComponent className="h-4 w-4" />
+                                </div>
+                                <div className="text-left">
+                                  <div className="font-crypto font-bold tracking-wider uppercase text-sm">
+                                    {item.name}
+                                  </div>
+                                  <div className="text-xs text-muted-foreground font-display">
+                                    {item.description}
+                                  </div>
+                                </div>
+                              </div>
+                              {item.route && (
+                                <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </nav>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           )}
-
-          {/* Mobile Menu */}
-          <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger asChild className={`${isMobile ? 'block mr-2' : 'lg:hidden mr-2'}`}>
-              <Button variant="ghost" size="sm">
-                <Menu size={isMobile ? 18 : 20} />
-              </Button>
-            </SheetTrigger>
-            <SheetContent 
-              side="right" 
-              className={`${isMobile ? 'w-full' : 'w-80'} bg-background/98 backdrop-blur-xl border-l border-border z-[60]`}
-            >
-              <div className="flex items-center justify-between mb-8">
-                <button 
-                  onClick={() => navigate('/')}
-                  className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer"
-                >
-                  <img 
-                    src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
-                    alt="Crypto Network Sweden"
-                    className="h-8 w-auto"
-                  />
-                    <div>
-                      <h1 className="font-crypto text-sm font-bold">
-                        <span className="text-brand-turquoise">CRY</span>
-                        <span className="text-brand-white">PTO</span>
-                        <span> </span>
-                        <span className="text-brand-white">NET</span>
-                        <span className="text-brand-turquoise">WORK</span>
-                      </h1>
-                      <p className="font-crypto text-xs text-muted-foreground">
-                        SWEDEN
-                      </p>
-                    </div>
-                </button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setIsOpen(false)}
-                >
-                  <X size={20} />
-                </Button>
-              </div>
-
-              {/* Wallet Connect Section */}
-              {!showWalletConnect ? (
-                <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
-                  <Button 
-                    onClick={() => setShowWalletConnect(true)}
-                    className="w-full justify-center bg-gradient-primary hover:opacity-90"
-                  >
-                    <Wallet className="h-4 w-4 mr-2" />
-                    Connect Wallet
-                  </Button>
-                </div>
-              ) : (
-                <div className="mb-6">
-                  <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
-                </div>
-              )}
-
-              {/* Complete Navigation Menu */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-crypto text-xs text-muted-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>
-                  <nav className="space-y-2">
-                    {allPages.map((item) => {
-                      const IconComponent = item.icon;
-                      const isActive = location.pathname === item.href || 
-                        (item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto'));
-                      
-                      return (
-                        <button
-                          key={item.name}
-                          onClick={() => handleNavigation(item)}
-                          className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-200 group ${
-                            isActive 
-                              ? 'bg-primary/10 border border-primary/20 text-primary' 
-                              : 'hover:bg-muted/50 border border-transparent'
-                          }`}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className={`p-2 rounded-lg transition-colors ${
-                              isActive 
-                                ? 'bg-primary/20 text-primary' 
-                                : 'bg-muted/30 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
-                            }`}>
-                              <IconComponent className="h-4 w-4" />
-                            </div>
-                            <div className="text-left">
-                              <div className="font-crypto font-bold tracking-wider uppercase text-sm">
-                                {item.name}
-                              </div>
-                              <div className="text-xs text-muted-foreground font-display">
-                                {item.description}
-                              </div>
-                            </div>
-                          </div>
-                          {item.route && (
-                            <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </nav>
-                </div>
-              </div>
-
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
       
