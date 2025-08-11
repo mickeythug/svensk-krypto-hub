@@ -727,32 +727,9 @@ const MarketOverviewPage = () => {
 
       {/* Mobile Version - Premium App Store Quality */}
       <div className="block md:hidden min-h-screen bg-background flex flex-col">
-        {/* Sticky Header with Brand */}
+        {/* Simple Header */}
         <div className="sticky top-0 bg-background/98 backdrop-blur-xl border-b border-border/30 z-50">
-          <div className="flex items-center justify-between p-4">
-            <button 
-              onClick={() => navigate('/')}
-              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-            >
-              <div className="relative">
-                <img 
-                  src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
-                  alt="Crypto Network Sweden"
-                  className="h-9 w-9 object-contain drop-shadow-[0_0_20px_rgba(0,255,204,0.4)]"
-                />
-                <div className="absolute inset-0 rounded-full bg-brand-turquoise/20 animate-pulse"></div>
-              </div>
-              <div className="text-left">
-                <h1 className="font-crypto text-base font-bold leading-none tracking-wider">
-                  <span className="text-brand-turquoise">CRYPTO</span>
-                  <span className="text-brand-white">NETWORK</span>
-                </h1>
-                <p className="font-crypto text-xs text-brand-turquoise/70 leading-none mt-0.5 tracking-wide">
-                  SWEDEN
-                </p>
-              </div>
-            </button>
-            
+          <div className="flex items-center justify-end p-4">
             {/* Hamburger Menu */}
             <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
               <div className="flex flex-col space-y-1">
