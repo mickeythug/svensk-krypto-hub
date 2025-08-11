@@ -486,456 +486,365 @@ const MemeTokenDetailPage = () => {
     );
   }
 
-  // DESKTOP VERSION - World-class App Store like design
+  // DESKTOP VERSION - Modern Trading App Layout
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/5">
-      {/* Desktop Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <OptimizedImage
-            src={coverImage}
-            alt={`${token.name} background`}
-            className="w-full h-full object-cover scale-105 blur-3xl opacity-10"
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/98 to-background/95" />
-          <div className="absolute inset-0 opacity-[0.02] bg-[radial-gradient(circle_at_1px_1px,_rgb(255,255,255)_1px,_transparent_0)]" style={{backgroundSize: '40px 40px'}} />
-        </div>
-
-        <div className="relative z-10 pt-8 pb-12">
-          <div className="container mx-auto px-8 max-w-7xl">
-            {/* Navigation */}
-            <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-background">
+      {/* Main Container */}
+      <div className="max-w-[1920px] mx-auto">
+        {/* Top Header Bar */}
+        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
-                size="lg"
+                size="sm"
                 onClick={() => navigate(-1)}
-                className="h-12 px-6 rounded-2xl bg-card/80 backdrop-blur-md hover:bg-card border border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+                className="h-10 px-4 rounded-xl hover:bg-accent transition-colors"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                <span className="font-medium">Tillbaka</span>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Tillbaka
               </Button>
-
               <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => setIsLiked(!isLiked)}
-                  className="h-12 w-12 rounded-2xl bg-card/80 backdrop-blur-md hover:bg-card border border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
-                >
-                  <Heart className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-muted-foreground'} transition-colors`} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => setIsBookmarked(!isBookmarked)}
-                  className="h-12 w-12 rounded-2xl bg-card/80 backdrop-blur-md hover:bg-card border border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
-                >
-                  <Bookmark className={`h-5 w-5 ${isBookmarked ? 'fill-primary text-primary' : 'text-muted-foreground'} transition-colors`} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="h-12 w-12 rounded-2xl bg-card/80 backdrop-blur-md hover:bg-card border border-border/50 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
-                >
-                  <Share2 className="h-5 w-5 text-muted-foreground" />
-                </Button>
+                <div className="w-8 h-8 rounded-lg overflow-hidden bg-primary/10">
+                  <OptimizedImage
+                    src={coverImage}
+                    alt={token.symbol}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold">{token.emoji} {token.symbol}</h1>
+                  <p className="text-sm text-muted-foreground">{token.name}</p>
+                </div>
               </div>
             </div>
-
-            {/* Hero Content */}
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              {/* Left Column - Token Info */}
-              <motion.div 
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className="space-y-8"
+            
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 mr-4">
+                <span className="text-2xl font-bold">{formatPrice(token.price)}</span>
+                <Badge 
+                  variant={isPositive ? "default" : "destructive"}
+                  className={`${isPositive ? 'bg-green-500' : 'bg-red-500'} text-white`}
+                >
+                  {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
+                </Badge>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsLiked(!isLiked)}
+                className="h-10 w-10 rounded-xl"
               >
-                {/* Token Header */}
-                <div className="flex items-start gap-6">
-                  <div className="relative">
-                    <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-primary/20 via-accent/20 to-primary/30 shadow-2xl border border-border/30">
-                      <OptimizedImage
-                        src={coverImage}
-                        alt={`${token.name} logo`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    {token.isHot && (
-                      <motion.div 
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute -top-2 -right-2"
-                      >
-                        <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 text-sm font-bold rounded-xl shadow-lg">
-                          🔥 HOT
-                        </Badge>
-                      </motion.div>
-                    )}
-                  </div>
-
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-3">
-                      <h1 className="text-5xl font-crypto font-black bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                        {token.emoji} {token.symbol}
-                      </h1>
-                      <Badge variant="secondary" className="px-3 py-1 text-sm font-bold rounded-xl">
-                        Rank {stats.marketCapRank}
-                      </Badge>
-                    </div>
-                    
-                    <h2 className="text-2xl text-muted-foreground font-crypto font-semibold mb-6">
-                      {token.name}
-                    </h2>
-
-                    {/* Price Section */}
-                    <div className="space-y-4">
-                      <div className="flex items-baseline gap-4">
-                        <span className="text-4xl font-crypto font-black">
-                          {formatPrice(token.price)}
-                        </span>
-                        <Badge 
-                          variant={isPositive ? "default" : "destructive"}
-                          className={`${isPositive ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' : 'bg-gradient-to-r from-red-500 to-red-600 text-white'} font-bold text-lg px-4 py-2 rounded-xl shadow-lg`}
-                        >
-                          {isPositive ? <TrendingUp className="w-4 h-4 mr-2" /> : <TrendingDown className="w-4 h-4 mr-2" />}
-                          {isPositive ? '+' : ''}{token.change24h.toFixed(2)}% 24h
-                        </Badge>
-                      </div>
-
-                      {/* Additional Price Changes */}
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">1h:</span>
-                          <span className="text-sm font-bold text-green-500">{stats.priceChange1h}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">7d:</span>
-                          <span className="text-sm font-bold text-green-500">{stats.priceChange7d}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">30d:</span>
-                          <span className="text-sm font-bold text-green-500">{stats.priceChange30d}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Quick Action Buttons */}
-                    <div className="flex items-center gap-4 mt-8">
-                      <Button 
-                        size="lg"
-                        className="bg-gradient-to-r from-primary via-primary-glow to-primary hover:from-primary-glow hover:via-primary hover:to-primary-glow text-white font-crypto font-bold h-14 px-8 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-105 border border-primary/20"
-                        onClick={() => setActiveTab('trade')}
-                      >
-                        <ShoppingCart className="w-5 h-5 mr-3" />
-                        KÖP {token.symbol}
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        size="lg"
-                        className="font-crypto font-bold h-14 px-8 rounded-2xl border-2 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 bg-card/50 backdrop-blur-sm"
-                      >
-                        <BarChart3 className="w-5 h-5 mr-3" />
-                        ANALYS
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        size="lg"
-                        className="font-crypto font-bold h-14 px-8 rounded-2xl border-2 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 bg-card/50 backdrop-blur-sm"
-                      >
-                        <Bell className="w-5 h-5 mr-3" />
-                        ALERT
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                <div className="flex flex-wrap gap-3">
-                  {token.tags.map((tag, index) => (
-                    <Badge 
-                      key={index} 
-                      variant="secondary" 
-                      className="bg-gradient-to-r from-primary/10 to-accent/10 text-primary border border-primary/20 font-crypto font-semibold px-4 py-2 rounded-xl hover:bg-primary/20 transition-colors cursor-pointer"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Right Column - Key Stats Cards */}
-              <motion.div 
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-                className="grid grid-cols-2 gap-6"
+                <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsBookmarked(!isBookmarked)}
+                className="h-10 w-10 rounded-xl"
               >
-                {/* Market Cap Card */}
-                <Card className="bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-md border border-border/50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
-                        <PieChart className="w-5 h-5 text-blue-500" />
-                      </div>
-                      <span className="text-sm text-muted-foreground font-medium">Market Cap</span>
-                    </div>
-                    <div className="text-2xl font-crypto font-black mb-2">{formatMarketCap(token.marketCap)}</div>
-                    <div className="text-xs text-muted-foreground">Ranking {stats.marketCapRank}</div>
-                  </div>
-                </Card>
-
-                {/* Volume Card */}
-                <Card className="bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-md border border-border/50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
-                        <BarChart className="w-5 h-5 text-green-500" />
-                      </div>
-                      <span className="text-sm text-muted-foreground font-medium">Volym 24h</span>
-                    </div>
-                    <div className="text-2xl font-crypto font-black mb-2">{stats.volume24h}</div>
-                    <div className="text-xs text-muted-foreground">7d: {stats.volume7d}</div>
-                  </div>
-                </Card>
-
-                {/* Holders Card */}
-                <Card className="bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-md border border-border/50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center">
-                        <Users className="w-5 h-5 text-purple-500" />
-                      </div>
-                      <span className="text-sm text-muted-foreground font-medium">Holders</span>
-                    </div>
-                    <div className="text-2xl font-crypto font-black mb-2">{token.holders.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Unika adresser</div>
-                  </div>
-                </Card>
-
-                {/* Views Card */}
-                <Card className="bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-md border border-border/50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105">
-                  <div className="p-6">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-orange-500" />
-                      </div>
-                      <span className="text-sm text-muted-foreground font-medium">Visningar</span>
-                    </div>
-                    <div className="text-2xl font-crypto font-black mb-2">{token.views.toLocaleString()}</div>
-                    <div className="text-xs text-muted-foreground">Total intresse</div>
-                  </div>
-                </Card>
-              </motion.div>
+                <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-primary text-primary' : ''}`} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-10 w-10 rounded-xl"
+              >
+                <Share2 className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Desktop Content Tabs */}
-      <div className="container mx-auto px-8 max-w-7xl pb-16">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          {/* Modern Tab Navigation */}
-          <div className="flex justify-center mb-12">
-            <TabsList className="grid w-fit grid-cols-4 bg-card/90 backdrop-blur-md rounded-3xl p-2 shadow-2xl border border-border/50">
-              <TabsTrigger value="overview" className="rounded-2xl font-crypto font-bold px-8 py-4 text-lg transition-all duration-300">
-                <BarChart3 className="w-5 h-5 mr-3" />
-                Översikt
-              </TabsTrigger>
-              <TabsTrigger value="stats" className="rounded-2xl font-crypto font-bold px-8 py-4 text-lg transition-all duration-300">
-                <Activity className="w-5 h-5 mr-3" />
-                Statistik
-              </TabsTrigger>
-              <TabsTrigger value="trade" className="rounded-2xl font-crypto font-bold px-8 py-4 text-lg transition-all duration-300">
-                <ShoppingCart className="w-5 h-5 mr-3" />
-                Handel
-              </TabsTrigger>
-              <TabsTrigger value="community" className="rounded-2xl font-crypto font-bold px-8 py-4 text-lg transition-all duration-300">
-                <Users className="w-5 h-5 mr-3" />
-                Community
-              </TabsTrigger>
-            </TabsList>
+        {/* Main Content Area */}
+        <div className="flex h-[calc(100vh-81px)]">
+          {/* Left Panel - Chart */}
+          <div className="flex-1 border-r border-border/50">
+            <div className="h-full flex flex-col">
+              {/* Chart Header */}
+              <div className="flex items-center justify-between p-4 border-b border-border/50 bg-card/30">
+                <div className="flex items-center gap-4">
+                  <h3 className="text-xl font-bold">Live Chart</h3>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Activity className="w-4 h-4" />
+                    <span>TradingView Professional</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="h-8">
+                    <Maximize2 className="w-3 h-3 mr-1" />
+                    Fullskärm
+                  </Button>
+                  <Button variant="outline" size="sm" className="h-8">
+                    <Settings className="w-3 h-3 mr-1" />
+                    Inställningar
+                  </Button>
+                </div>
+              </div>
+
+              {/* Chart Area */}
+              <div className="flex-1 bg-[#0f0f23] relative">
+                <TradingViewChart 
+                  symbol={token.symbol} 
+                  currentPrice={token.price}
+                  coinGeckoId={token.symbol.toLowerCase()} 
+                />
+              </div>
+
+              {/* Chart Tools */}
+              <div className="p-4 border-t border-border/50 bg-card/30">
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
+                    <Signal className="w-4 h-4 text-primary" />
+                    <div className="text-xs">
+                      <div className="font-medium">Tekniska Indikatorer</div>
+                      <div className="text-muted-foreground">RSI, MACD, EMA</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/5 border border-green-500/10">
+                    <Volume2 className="w-4 h-4 text-green-500" />
+                    <div className="text-xs">
+                      <div className="font-medium">Volymanalys</div>
+                      <div className="text-muted-foreground">Live handelsdata</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
+                    <BarChart3 className="w-4 h-4 text-blue-500" />
+                    <div className="text-xs">
+                      <div className="font-medium">Marknadsdjup</div>
+                      <div className="text-muted-foreground">Orderbok data</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/10">
+                    <CloudLightning className="w-4 h-4 text-purple-500" />
+                    <div className="text-xs">
+                      <div className="font-medium">AI Insights</div>
+                      <div className="text-muted-foreground">Smart analys</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Overview Tab - Advanced Chart */}
-          <TabsContent value="overview" className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card className="bg-gradient-to-br from-card/95 to-card/85 backdrop-blur-md border border-border/50 shadow-2xl overflow-hidden">
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                        <LineChart className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-2xl font-crypto font-black">Live Trading Chart</h3>
-                        <p className="text-muted-foreground">Professionell prisanalys för {token.symbol}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Button variant="outline" size="sm" className="rounded-xl">
-                        <Maximize2 className="w-4 h-4 mr-2" />
-                        Fullskärm
-                      </Button>
-                      <Button variant="outline" size="sm" className="rounded-xl">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Inställningar
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-[#0f0f23] rounded-3xl overflow-hidden shadow-2xl border border-border/20">
-                    <div className="h-[600px] relative">
-                      <TradingViewChart 
-                        symbol={token.symbol} 
-                        currentPrice={token.price}
-                        coinGeckoId={token.symbol.toLowerCase()} 
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 grid grid-cols-4 gap-4">
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Activity className="w-4 h-4 text-primary" />
-                        <span className="text-sm text-muted-foreground font-medium">Live Data</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        Realtidsdata från TradingView
-                      </span>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 border border-green-500/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Signal className="w-4 h-4 text-green-500" />
-                        <span className="text-sm text-muted-foreground font-medium">Tekniska Indikatorer</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        RSI, MACD, Moving Averages
-                      </span>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/5 to-cyan-500/5 border border-blue-500/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Volume2 className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm text-muted-foreground font-medium">Volymanalys</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        Handelsvolym och liquiditet
-                      </span>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-500/5 to-violet-500/5 border border-purple-500/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <CloudLightning className="w-4 h-4 text-purple-500" />
-                        <span className="text-sm text-muted-foreground font-medium">AI Insights</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        Marknadsanalys och prognoser
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          </TabsContent>
+          {/* Right Panel - Trading & Stats */}
+          <div className="w-[400px] bg-card/20 backdrop-blur-sm">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+              {/* Tab Navigation */}
+              <div className="p-3 border-b border-border/50">
+                <TabsList className="grid w-full grid-cols-3 bg-muted/30 rounded-xl">
+                  <TabsTrigger value="trade" className="rounded-lg font-medium">
+                    <ShoppingCart className="w-4 h-4 mr-1" />
+                    Handel
+                  </TabsTrigger>
+                  <TabsTrigger value="stats" className="rounded-lg font-medium">
+                    <Activity className="w-4 h-4 mr-1" />
+                    Stats
+                  </TabsTrigger>
+                  <TabsTrigger value="community" className="rounded-lg font-medium">
+                    <Users className="w-4 h-4 mr-1" />
+                    Community
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-          {/* Stats Tab */}
-          <TabsContent value="stats" className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card className="bg-card/90 backdrop-blur-md border border-border/50 shadow-2xl p-8">
-                <h3 className="text-3xl font-crypto font-bold mb-6">Detaljerad Statistik</h3>
-                <div className="grid grid-cols-3 gap-8">
-                  <div>
-                    <h4 className="text-xl font-semibold mb-4">Supply</h4>
-                    <ul className="space-y-3 text-muted-foreground">
-                      <li><strong>Max Supply:</strong> {stats.maxSupply}</li>
-                      <li><strong>Circulating Supply:</strong> {stats.circulatingSupply}</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-semibold mb-4">Price History</h4>
-                    <ul className="space-y-3 text-muted-foreground">
-                      <li><strong>All Time High:</strong> {stats.ath} ({stats.athDate})</li>
-                      <li><strong>All Time Low:</strong> {stats.atl} ({stats.atlDate})</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-xl font-semibold mb-4">Performance</h4>
-                    <ul className="space-y-3 text-muted-foreground">
-                      <li><strong>Volatility:</strong> {stats.volatility}</li>
-                      <li><strong>Liquidity Score:</strong> {stats.liquidityScore}</li>
-                      <li><strong>Risk Score:</strong> {stats.riskScore}</li>
-                      <li><strong>Sentiment:</strong> {stats.sentiment}</li>
-                    </ul>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          </TabsContent>
+              {/* Tab Content */}
+              <div className="flex-1 overflow-y-auto">
+                <TabsContent value="trade" className="p-0 m-0 h-full">
+                  <div className="p-4 space-y-4">
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <Card className="p-3">
+                        <div className="text-xs text-muted-foreground mb-1">Market Cap</div>
+                        <div className="text-sm font-bold">{formatMarketCap(token.marketCap)}</div>
+                      </Card>
+                      <Card className="p-3">
+                        <div className="text-xs text-muted-foreground mb-1">24h Volym</div>
+                        <div className="text-sm font-bold">{stats.volume24h}</div>
+                      </Card>
+                    </div>
 
-          {/* Trade Tab */}
-          <TabsContent value="trade" className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card className="bg-card/90 backdrop-blur-md border border-border/50 shadow-2xl p-8">
-                <h3 className="text-3xl font-crypto font-bold mb-6">Handla {token.symbol}</h3>
-                <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-3xl p-6 shadow-lg">
-                  <JupiterSwapWidget height={600} />
-                </div>
-                <div className="mt-8 p-6 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
-                  <AlertCircle className="w-6 h-6 text-amber-500 mt-1" />
-                  <div>
-                    <h4 className="font-crypto font-bold text-amber-500 mb-2">Säkerhetsvarning</h4>
-                    <p className="text-muted-foreground text-sm max-w-xl">
-                      Kom ihåg att alltid DYOR (Do Your Own Research) innan du investerar i meme-tokens. 
-                      Dessa investeringar är högrisk och kan resultera i total förlust.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          </TabsContent>
+                    {/* Trading Interface */}
+                    <Card className="p-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <ShoppingCart className="w-4 h-4 text-primary" />
+                        <h3 className="font-bold">Snabbhandel</h3>
+                      </div>
+                      
+                      {/* Large Buy/Sell Buttons */}
+                      <div className="space-y-3 mb-4">
+                        <Button 
+                          size="lg"
+                          className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold h-12 rounded-xl shadow-lg"
+                          onClick={() => setActiveTab('trade')}
+                        >
+                          <ShoppingCart className="w-5 h-5 mr-2" />
+                          KÖP {token.symbol}
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          size="lg"
+                          className="w-full border-red-200 text-red-600 hover:bg-red-50 font-bold h-12 rounded-xl"
+                        >
+                          <TrendingDown className="w-5 h-5 mr-2" />
+                          SÄLJ {token.symbol}
+                        </Button>
+                      </div>
 
-          {/* Community Tab */}
-          <TabsContent value="community" className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card className="bg-card/90 backdrop-blur-md border border-border/50 shadow-2xl p-8">
-                <h3 className="text-3xl font-crypto font-bold mb-6">Community</h3>
-                <div className="grid grid-cols-4 gap-6">
-                  <Button variant="outline" size="lg" className="font-crypto font-semibold flex items-center justify-center gap-3">
-                    <ExternalLink className="w-5 h-5" />
-                    Telegram
-                  </Button>
-                  <Button variant="outline" size="lg" className="font-crypto font-semibold flex items-center justify-center gap-3">
-                    <ExternalLink className="w-5 h-5" />
-                    Twitter
-                  </Button>
-                  <Button variant="outline" size="lg" className="font-crypto font-semibold flex items-center justify-center gap-3">
-                    <ExternalLink className="w-5 h-5" />
-                    Discord
-                  </Button>
-                  <Button variant="outline" size="lg" className="font-crypto font-semibold flex items-center justify-center gap-3">
-                    <ExternalLink className="w-5 h-5" />
-                    Website
-                  </Button>
-                </div>
-              </Card>
-            </motion.div>
-          </TabsContent>
-        </Tabs>
+                      {/* Jupiter Widget */}
+                      <div className="bg-muted/20 rounded-xl p-2">
+                        <JupiterSwapWidget height={400} />
+                      </div>
+                    </Card>
+
+                    {/* Warning */}
+                    <Card className="p-4 bg-amber-500/5 border-amber-500/20">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h4 className="font-bold text-amber-600 text-sm mb-1">Riskvarning</h4>
+                          <p className="text-xs text-muted-foreground">
+                            Meme-tokens är högrisksinvesteringar. Investera endast vad du har råd att förlora.
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="stats" className="p-0 m-0 h-full">
+                  <div className="p-4 space-y-4">
+                    {/* Token Info */}
+                    <Card className="p-4">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-primary/10">
+                          <OptimizedImage
+                            src={coverImage}
+                            alt={token.symbol}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-lg">{token.symbol}</h3>
+                          <p className="text-sm text-muted-foreground">{token.name}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Price Info */}
+                      <div className="space-y-3">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Aktuellt pris</span>
+                          <span className="font-bold">{formatPrice(token.price)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">24h förändring</span>
+                          <span className={`font-bold ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                            {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Market Cap</span>
+                          <span className="font-bold">{formatMarketCap(token.marketCap)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Volym 24h</span>
+                          <span className="font-bold">{stats.volume24h}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-muted-foreground">Holders</span>
+                          <span className="font-bold">{token.holders.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* Detailed Stats */}
+                    <Card className="p-4">
+                      <h4 className="font-bold mb-3">Detaljerad Statistik</h4>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">ATH</span>
+                          <span className="font-medium">{stats.ath}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">ATL</span>
+                          <span className="font-medium">{stats.atl}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Max Supply</span>
+                          <span className="font-medium">{stats.maxSupply}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Volatilitet</span>
+                          <span className="font-medium">{stats.volatility}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Likviditetspoäng</span>
+                          <span className="font-medium">{stats.liquidityScore}</span>
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* Tags */}
+                    <Card className="p-4">
+                      <h4 className="font-bold mb-3">Kategorier</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {token.tags.map((tag, index) => (
+                          <Badge 
+                            key={index} 
+                            variant="secondary" 
+                            className="text-xs"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="community" className="p-0 m-0 h-full">
+                  <div className="p-4 space-y-4">
+                    <Card className="p-4">
+                      <h4 className="font-bold mb-4">Community Länkar</h4>
+                      <div className="space-y-3">
+                        <Button variant="outline" className="w-full justify-start">
+                          <ExternalLink className="w-4 h-4 mr-3" />
+                          Telegram
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start">
+                          <ExternalLink className="w-4 h-4 mr-3" />
+                          Twitter
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start">
+                          <ExternalLink className="w-4 h-4 mr-3" />
+                          Discord
+                        </Button>
+                        <Button variant="outline" className="w-full justify-start">
+                          <ExternalLink className="w-4 h-4 mr-3" />
+                          Website
+                        </Button>
+                      </div>
+                    </Card>
+
+                    <Card className="p-4">
+                      <h4 className="font-bold mb-3">Community Stats</h4>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Visningar</span>
+                          <span className="font-medium">{token.views.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Sentiment</span>
+                          <span className="font-medium text-green-500">{stats.sentiment}</span>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                </TabsContent>
+              </div>
+            </Tabs>
+          </div>
+        </div>
       </div>
     </div>
   );
