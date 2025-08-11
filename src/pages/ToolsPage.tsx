@@ -274,7 +274,6 @@ const ToolsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {isMobile ? <MobileHeader title="VERKTYG" /> : <Header />}
-      {!isMobile && <CryptoPriceTicker />}
       
       <div className={`${isMobile ? 'pt-4 pb-20' : 'pt-20 pb-12'}`}>
         <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>

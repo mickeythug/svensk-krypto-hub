@@ -3,6 +3,41 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { useCryptoData } from "@/hooks/useCryptoData";
+import TransparentLogo from "@/components/TransparentLogo";
+
+// Import crypto logos
+import btcLogo from "@/assets/crypto-logos/svg/btc.svg";
+import ethLogo from "@/assets/crypto-logos/svg/eth.svg";
+import bnbLogo from "@/assets/crypto-logos/svg/bnb.svg";
+import adaLogo from "@/assets/crypto-logos/svg/ada.svg";
+import solLogo from "@/assets/crypto-logos/svg/sol.svg";
+import dotLogo from "@/assets/crypto-logos/svg/dot.svg";
+import avaxLogo from "@/assets/crypto-logos/svg/avax.svg";
+import linkLogo from "@/assets/crypto-logos/svg/link.svg";
+import uniLogo from "@/assets/crypto-logos/svg/uni.svg";
+import dogeLogo from "@/assets/crypto-logos/svg/doge.svg";
+import shibLogo from "@/assets/crypto-logos/svg/shib.svg";
+import maticLogo from "@/assets/crypto-logos/svg/matic.svg";
+import ltcLogo from "@/assets/crypto-logos/svg/ltc.svg";
+import xrpLogo from "@/assets/crypto-logos/svg/xrp.svg";
+
+// Logo mapping
+const CRYPTO_LOGOS = Object.freeze({
+  'BTC': btcLogo,
+  'ETH': ethLogo,
+  'BNB': bnbLogo,
+  'ADA': adaLogo,
+  'SOL': solLogo,
+  'DOT': dotLogo,
+  'AVAX': avaxLogo,
+  'LINK': linkLogo,
+  'UNI': uniLogo,
+  'DOGE': dogeLogo,
+  'SHIB': shibLogo,
+  'MATIC': maticLogo,
+  'LTC': ltcLogo,
+  'XRP': xrpLogo
+} as const);
 
 // Memoized token color mapping för optimal prestanda
 const TOKEN_COLORS = Object.freeze({
@@ -84,6 +119,11 @@ const TokenItem = memo<TokenItemProps>(({ crypto, isMobile, onTokenClick }) => {
       className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-3'} bg-secondary/50 rounded-lg ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'} border border-border/50 flex-shrink-0 group hover:bg-secondary/70 transition-colors cursor-pointer`}
     >
       <div className={`flex items-center ${isMobile ? 'space-x-1' : 'space-x-2'}`}>
+        <TransparentLogo
+          originalSrc={CRYPTO_LOGOS[crypto.symbol as keyof typeof CRYPTO_LOGOS] || btcLogo}
+          alt={crypto.symbol}
+          className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} flex-shrink-0`}
+        />
         <span className={`symbol-text font-crypto font-bold text-primary group-hover:text-destructive ${isMobile ? 'text-xs' : 'text-sm'} transition-colors`}>
           {crypto.symbol}
         </span>
