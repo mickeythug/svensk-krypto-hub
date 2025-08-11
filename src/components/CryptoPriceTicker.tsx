@@ -198,7 +198,7 @@ const CryptoPriceTicker = memo(() => {
             <div className="h-full w-1/3 bg-muted/70 animate-[shimmer_1.6s_infinite]" />
           </div>
         ) : (
-          <div className={`flex animate-ticker ${isMobile ? 'space-x-3' : 'space-x-6'} whitespace-nowrap`}>
+          <div className={`flex animate-ticker-seamless ${isMobile ? 'space-x-3' : 'space-x-6'} whitespace-nowrap will-change-transform`}>
             {doubledPrices.map((crypto, index) => (
               <TokenItem
                 key={`${crypto.symbol}-${index}`}

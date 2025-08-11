@@ -137,6 +137,10 @@ export default {
           '0%': { transform: 'translateX(0%)' },
           '100%': { transform: 'translateX(-50%)' }
         },
+        'ticker-seamless': {
+          'from': { transform: 'translateX(0%)' },
+          'to': { transform: 'translateX(-50%)' }
+        },
         'pulse-glow': {
           '0%, 100%': { 
             boxShadow: '0 0 5px hsl(var(--primary) / 0.5)',
@@ -163,7 +167,8 @@ export default {
 				'glow': 'glow 2s ease-in-out infinite',
         'slide-up': 'slide-up 0.6s ease-out',
         'fade-in': 'fade-in 0.8s ease-out forwards',
-        'ticker': 'ticker 15s linear infinite',
+        'ticker': 'ticker 20s linear infinite',
+        'ticker-seamless': 'ticker-seamless 30s linear infinite',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'spin': 'spin 1s linear infinite',
         'bounce': 'bounce 1s infinite'
