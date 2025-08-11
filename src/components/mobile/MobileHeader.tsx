@@ -2,7 +2,19 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate, useLocation } from "react-router-dom";
-import { TrendingUp, Newspaper, Wallet, Zap, Users, Wrench, Home } from "lucide-react";
+import { 
+  TrendingUp, 
+  Newspaper, 
+  Wallet, 
+  Zap, 
+  Users, 
+  Settings, 
+  Home, 
+  BarChart3,
+  PieChart,
+  Star,
+  ExternalLink
+} from "lucide-react";
 import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
@@ -29,13 +41,15 @@ const MobileHeader = ({
   const shouldShowTicker = !isTradingPage;
 
   const navItems = [
-    { path: "/", icon: Home, label: "Hem" },
-    { path: "/marknad", icon: TrendingUp, label: "Marknad" },
-    { path: "/meme", icon: Zap, label: "Meme Zone" },
-    { path: "/crypto/btc", icon: Wallet, label: "Handel" },
-    { path: "/nyheter", icon: Newspaper, label: "Nyheter" },
-    { path: "/verktyg", icon: Wrench, label: "Verktyg" },
-    { path: "/community", icon: Users, label: "Community" }
+    { name: "Hem", href: "/", icon: Home, route: true, description: "Startsida" },
+    { name: "Marknad", href: "/marknad", icon: TrendingUp, route: true, description: "Marknadsöversikt" },
+    { name: "Portfolio", href: "/portfolio", icon: PieChart, route: true, description: "Min portfolio & watchlist" },
+    { name: "Handel", href: "/crypto/btc", icon: BarChart3, route: true, description: "Trading & analys" },
+    { name: "Meme Zone", href: "/meme", icon: Zap, route: true, description: "Meme coins & tokens" },
+    { name: "Skapa Token", href: "/meme/create", icon: Star, route: true, description: "Skapa din egen token" },
+    { name: "Verktyg", href: "/verktyg", icon: Settings, route: true, description: "Krypto verktyg" },
+    { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true, description: "Senaste nyheterna" },
+    { name: "Community", href: "/community", icon: Users, route: true, description: "Community & forum" }
   ];
   
   return (
@@ -126,20 +140,47 @@ const MobileHeader = ({
                   </div>
                 )}
 
-                <nav className="space-y-4">
+                <nav className="space-y-2">
                   {navItems.map((item) => {
-                    const Icon = item.icon;
+                    const IconComponent = item.icon;
+                    const isActive = location.pathname === item.href || 
+                      (item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto'));
+                    
                     return (
                       <button
-                        key={item.path}
+                        key={item.name}
                         onClick={() => {
-                          navigate(item.path);
+                          if (item.route) {
+                            navigate(item.href);
+                          }
                           setIsOpen(false);
                         }}
-                        className="flex items-center space-x-3 w-full p-3 rounded-lg hover:bg-muted transition-colors font-crypto font-bold tracking-wider uppercase"
+                        className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-200 group ${
+                          isActive 
+                            ? 'bg-primary/10 border border-primary/20 text-primary' 
+                            : 'hover:bg-muted/50 border border-transparent'
+                        }`}
                       >
-                        <Icon className="h-5 w-5" />
-                        <span>{item.label}</span>
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg transition-colors ${
+                            isActive 
+                              ? 'bg-primary/20 text-primary' 
+                              : 'bg-muted/30 text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
+                          }`}>
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div className="text-left">
+                            <div className="font-crypto font-bold tracking-wider uppercase text-sm">
+                              {item.name}
+                            </div>
+                            <div className="text-xs text-muted-foreground font-display">
+                              {item.description}
+                            </div>
+                          </div>
+                        </div>
+                        {item.route && (
+                          <ExternalLink className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors" />
+                        )}
                       </button>
                     );
                   })}

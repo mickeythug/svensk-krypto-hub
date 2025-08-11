@@ -131,7 +131,7 @@ const PortfolioPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {isMobile ? <MobileHeader title="PORTFÖLJ" /> : <Header />}
-      {!isMobile && <CryptoPriceTicker />}
+      {/* Removed duplicate ticker - keeping only main header ticker */}
       
       <main className={`container mx-auto px-4 ${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-20'}`}>
         {/* Header Section */}
