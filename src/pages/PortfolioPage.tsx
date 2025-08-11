@@ -13,7 +13,9 @@ import {
   Target,
   Eye,
   EyeOff,
-  Settings
+  Settings,
+  Star,
+  StarOff
 } from "lucide-react";
 import Header from "@/components/Header";
 import CryptoPriceTicker from "@/components/CryptoPriceTicker";
@@ -21,6 +23,7 @@ import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useWatchlist } from "@/hooks/useWatchlist";
 
 interface PortfolioHolding {
   id: string;
@@ -38,6 +41,7 @@ const PortfolioPage = () => {
   const [showValues, setShowValues] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const { cryptoPrices, isLoading } = useCryptoData();
+  const { watchlist, toggleWatchlist, isInWatchlist } = useWatchlist();
 
   // Demo portfolio data
   useEffect(() => {
@@ -207,13 +211,20 @@ const PortfolioPage = () => {
 
         {/* Portfolio Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-2 h-12 p-1 bg-secondary/10 rounded-xl border border-border/20 w-full max-w-md">
+          <TabsList className="grid grid-cols-3 h-12 p-1 bg-secondary/10 rounded-xl border border-border/20 w-full max-w-lg">
             <TabsTrigger 
               value="overview" 
               className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
             >
               <Wallet className="h-4 w-4" />
               <span>Översikt</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="watchlist" 
+              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
+            >
+              <Star className="h-4 w-4" />
+              <span>Watchlist</span>
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
@@ -293,6 +304,157 @@ const PortfolioPage = () => {
                 <Button className="bg-gradient-primary">
                   <Plus className="h-4 w-4 mr-2" />
                   Lägg till första holding
+                </Button>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="watchlist" className="mt-6">
+            {watchlist.length > 0 ? (
+              <div className="space-y-4">
+                {/* Watchlist Table Header */}
+                <div className={`${isMobile ? 'hidden' : 'grid grid-cols-7 gap-4 p-4 bg-muted/30 rounded-lg border'}`}>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider">Namn</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Pris</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">1h %</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">24h %</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">7d %</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Market Cap</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Volym(24h)</div>
+                </div>
+
+                {/* Watchlist Items */}
+                {watchlist.map((item) => {
+                  const cryptoData = cryptoPrices?.find(c => c.symbol === item.symbol);
+                  
+                  if (!cryptoData) return null;
+
+                  return (
+                    <Card 
+                      key={item.id} 
+                      className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
+                    >
+                      {isMobile ? (
+                        // Mobile Layout
+                        <div className="p-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <img 
+                                src={cryptoData.image} 
+                                alt={cryptoData.name}
+                                className="h-10 w-10 rounded-full"
+                                onError={(e) => {
+                                  e.currentTarget.src = '/placeholder.svg';
+                                }}
+                              />
+                              <div>
+                                <h3 className="font-semibold text-base">{cryptoData.name}</h3>
+                                <p className="text-sm text-muted-foreground">{cryptoData.symbol.toUpperCase()}</p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleWatchlist({ id: item.id, symbol: item.symbol, name: item.name })}
+                              className="p-2 text-yellow-500 hover:text-yellow-600"
+                            >
+                              <Star className="h-4 w-4 fill-current" />
+                            </Button>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <div className="text-muted-foreground">Pris</div>
+                              <div className="font-semibold">{formatCurrency(cryptoData.price)}</div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">24h %</div>
+                              <div className={`font-semibold ${cryptoData.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
+                                {cryptoData.change24h >= 0 ? '+' : ''}{cryptoData.change24h.toFixed(2)}%
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Market Cap</div>
+                              <div className="font-semibold">
+                                {cryptoData.marketCap || '—'}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-muted-foreground">Volym 24h</div>
+                              <div className="font-semibold">
+                                {cryptoData.volume || '—'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        // Desktop Layout
+                        <div className="grid grid-cols-7 gap-4 p-4 items-center">
+                          <div className="flex items-center gap-3">
+                            <img 
+                              src={cryptoData.image} 
+                              alt={cryptoData.name}
+                              className="h-8 w-8 rounded-full"
+                              onError={(e) => {
+                                e.currentTarget.src = '/placeholder.svg';
+                              }}
+                            />
+                            <div>
+                              <div className="font-semibold">{cryptoData.name}</div>
+                              <div className="text-sm text-muted-foreground">{cryptoData.symbol.toUpperCase()}</div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleWatchlist({ id: item.id, symbol: item.symbol, name: item.name })}
+                              className="p-1 text-yellow-500 hover:text-yellow-600 ml-2"
+                            >
+                              <Star className="h-3 w-3 fill-current" />
+                            </Button>
+                          </div>
+                          
+                          <div className="text-right font-semibold">
+                            {formatCurrency(cryptoData.price)}
+                          </div>
+                          
+                          <div className={`text-right font-semibold ${(cryptoData.change1h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {(cryptoData.change1h || 0) >= 0 ? '+' : ''}{(cryptoData.change1h || 0).toFixed(2)}%
+                          </div>
+                          
+                          <div className={`text-right font-semibold ${cryptoData.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {cryptoData.change24h >= 0 ? '+' : ''}{cryptoData.change24h.toFixed(2)}%
+                          </div>
+                          
+                          <div className={`text-right font-semibold ${(cryptoData.change7d || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {(cryptoData.change7d || 0) >= 0 ? '+' : ''}{(cryptoData.change7d || 0).toFixed(2)}%
+                          </div>
+                          
+                          <div className="text-right font-semibold">
+                            {cryptoData.marketCap || '—'}
+                          </div>
+                          
+                          <div className="text-right font-semibold">
+                            {cryptoData.volume || '—'}
+                          </div>
+                        </div>
+                      )}
+                    </Card>
+                  );
+                })}
+              </div>
+            ) : (
+              <Card className="p-12 text-center">
+                <Star className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="font-semibold text-lg mb-2">Din watchlist är tom</h3>
+                <p className="text-muted-foreground mb-6">
+                  Börja med att lägga till kryptovalutor genom att klicka på stjärnan
+                </p>
+                <Button 
+                  onClick={() => window.location.href = '/marknad'}
+                  className="bg-gradient-primary"
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  Utforska marknaden
                 </Button>
               </Card>
             )}

@@ -2,10 +2,11 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate, useLocation } from "react-router-dom";
-import { TrendingUp, Newspaper, Wallet, Zap, Users, Wrench, Home, ExternalLink, Smartphone } from "lucide-react";
+import { TrendingUp, Newspaper, Wallet, Zap, Users, Wrench, Home } from "lucide-react";
 import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
+import MobileWalletConnect from './MobileWalletConnect';
 
 interface MobileHeaderProps {
   title: string;
@@ -19,6 +20,7 @@ const MobileHeader = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [showWalletConnect, setShowWalletConnect] = useState(false);
   
   // Hide menu on trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');
@@ -106,36 +108,23 @@ const MobileHeader = ({
                   </button>
                 </div>
 
-                {/* Quick mobile wallet connect */}
-                <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Snabbanslut plånbok</div>
-                  <div className="grid grid-cols-1 gap-2">
-                    <a
-                      href={`https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(location.pathname))}`}
+                {/* Wallet Connect Section */}
+                {!showWalletConnect ? (
+                  <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
+                    <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                    <Button 
+                      onClick={() => setShowWalletConnect(true)}
+                      className="w-full justify-center bg-gradient-primary hover:opacity-90"
                     >
-                      <Button className="w-full justify-between">
-                        <span className="flex items-center"><Wallet className="h-4 w-4 mr-2" /> Phantom (Solana)</span>
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    </a>
-                    <a
-                      href={`https://metamask.app.link/dapp/${window.location.host}/connect?chain=evm&wallet=metamask&redirect=${encodeURIComponent(location.pathname)}`}
-                    >
-                      <Button variant="outline" className="w-full justify-between">
-                        <span className="flex items-center"><Smartphone className="h-4 w-4 mr-2" /> MetaMask (EVM)</span>
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    </a>
-                    <a
-                      href={`https://link.trustwallet.com/open_url?url=${encodeURIComponent(window.location.origin + "/connect?chain=evm&wallet=trust&redirect=" + encodeURIComponent(location.pathname))}`}
-                    >
-                      <Button variant="outline" className="w-full justify-between">
-                        <span className="flex items-center"><Smartphone className="h-4 w-4 mr-2" /> Trust Wallet (EVM)</span>
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    </a>
+                      <Wallet className="h-4 w-4 mr-2" />
+                      Connect Wallet
+                    </Button>
                   </div>
-                </div>
+                ) : (
+                  <div className="mb-6">
+                    <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
+                  </div>
+                )}
 
                 <nav className="space-y-4">
                   {navItems.map((item) => {

@@ -54,6 +54,7 @@ import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { prefetchTradingViewSymbols } from "@/hooks/useTradingViewSymbol";
+import { useWatchlist } from "@/hooks/useWatchlist";
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
@@ -79,6 +80,7 @@ const MarketOverviewPage = () => {
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
   const queryClient = useQueryClient();
+  const { toggleWatchlist, isInWatchlist } = useWatchlist();
 
   // Använd riktiga logo bilder från CoinGecko API
   const getCryptoLogo = (crypto: any) => {
@@ -498,26 +500,45 @@ const MarketOverviewPage = () => {
                             </Badge>
                           </TableCell>
                           
-                          {/* Name & Logo */}
-                          <TableCell className="py-4 px-6">
-                            <div className="flex items-center space-x-4">
-                               <div className="w-10 h-10 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
-                                 <img 
-                                   src={getCryptoLogo(crypto)} 
-                                   alt={crypto.name}
-                                   className="w-8 h-8 object-contain drop-shadow-sm"
-                                 />
+                           {/* Name & Logo */}
+                           <TableCell className="py-4 px-6">
+                             <div className="flex items-center space-x-4">
+                                <div className="w-10 h-10 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
+                                  <img 
+                                    src={getCryptoLogo(crypto)} 
+                                    alt={crypto.name}
+                                    className="w-8 h-8 object-contain drop-shadow-sm"
+                                  />
+                                </div>
+                               <div className="min-w-0 flex-1">
+                                 <div className="font-semibold text-foreground group-hover:text-primary transition-colors text-base">
+                                   {crypto.name}
+                                 </div>
+                                 <div className="text-sm text-muted-foreground font-mono font-medium">
+                                   {crypto.symbol}
+                                 </div>
                                </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="font-semibold text-foreground group-hover:text-primary transition-colors text-base">
-                                  {crypto.name}
-                                </div>
-                                <div className="text-sm text-muted-foreground font-mono font-medium">
-                                  {crypto.symbol}
-                                </div>
-                              </div>
-                            </div>
-                          </TableCell>
+                               <Button
+                                 variant="ghost"
+                                 size="sm"
+                                 onClick={(e) => {
+                                   e.stopPropagation();
+                                   toggleWatchlist({ 
+                                     id: crypto.symbol.toLowerCase(), 
+                                     symbol: crypto.symbol, 
+                                     name: crypto.name 
+                                   });
+                                 }}
+                                 className={`p-2 hover:scale-110 transition-all ${
+                                   isInWatchlist(crypto.symbol.toLowerCase()) 
+                                     ? 'text-yellow-500 hover:text-yellow-600' 
+                                     : 'text-muted-foreground hover:text-yellow-500'
+                                 }`}
+                               >
+                                 <Star className={`h-4 w-4 ${isInWatchlist(crypto.symbol.toLowerCase()) ? 'fill-current' : ''}`} />
+                               </Button>
+                             </div>
+                           </TableCell>
                           
                           {/* Price */}
                           <TableCell className="py-4 px-6 text-right">
