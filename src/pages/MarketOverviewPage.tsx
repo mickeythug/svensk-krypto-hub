@@ -727,26 +727,12 @@ const MarketOverviewPage = () => {
 
       {/* Mobile Version - Premium App Store Quality */}
       <div className="block md:hidden min-h-screen bg-background flex flex-col">
-        {/* Simple Header */}
-        <div className="sticky top-0 bg-background/98 backdrop-blur-xl border-b border-border/30 z-50">
-          <div className="flex items-center justify-end p-4">
-            {/* Hamburger Menu */}
-            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
-              <div className="flex flex-col space-y-1">
-                <div className="w-5 h-0.5 bg-foreground rounded-full"></div>
-                <div className="w-5 h-0.5 bg-foreground rounded-full"></div>
-                <div className="w-5 h-0.5 bg-foreground rounded-full"></div>
-              </div>
-            </Button>
-          </div>
-        </div>
-        
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto">
           {/* Hero Section */}
-          <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 p-6 border-b border-border/20">
-            <div className="text-center mb-6">
-              <h1 className="font-crypto text-4xl font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+          <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 p-4 border-b border-border/20">
+            <div className="text-center mb-4">
+              <h1 className="font-crypto text-4xl font-bold mb-2 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
                 MARKNAD
               </h1>
               <p className="text-muted-foreground font-medium">Live kryptodata och marknadsanalys</p>
@@ -754,7 +740,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Premium Sentiment Dashboard */}
-          <div className="p-4 bg-gradient-to-b from-secondary/5 to-transparent border-b border-border/10">
+          <div className="p-4 bg-gradient-to-b from-secondary/5 to-transparent">
             <div className="space-y-4">
               
               {/* Market Overview Cards */}
@@ -902,21 +888,12 @@ const MarketOverviewPage = () => {
 
                 {/* Coin Info */}
                 <div className="flex-1 flex items-center space-x-3">
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
-                      <img 
-                        src={getCryptoLogo(crypto)} 
-                        alt={crypto.name}
-                        className="w-8 h-8 object-contain drop-shadow-sm"
-                      />
-                    </div>
-                    {crypto.rank <= 3 && (
-                      <div className="absolute -top-1 -right-1">
-                        <div className="w-4 h-4 bg-gradient-to-r from-warning to-accent rounded-full flex items-center justify-center">
-                          <Trophy className="h-2.5 w-2.5 text-white" />
-                        </div>
-                      </div>
-                    )}
+                  <div className="w-10 h-10 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
+                    <img 
+                      src={getCryptoLogo(crypto)} 
+                      alt={crypto.name}
+                      className="w-8 h-8 object-contain drop-shadow-sm"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-foreground text-sm tracking-wide">
