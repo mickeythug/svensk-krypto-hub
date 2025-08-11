@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { TrendingUp, TrendingDown, DollarSign, Users, Eye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,7 @@ interface MemeTokenGridProps {
 const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   const { tokens, loading, error } = useMemeTokens(category, limit);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   
   // Add cover images to tokens
   const tokensWithCovers = tokens.map((token, index) => ({
@@ -106,15 +108,12 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
           className="group"
         >
           <Card className="relative overflow-hidden rounded-xl border border-border/60 bg-card/60 backdrop-blur-sm hover:shadow-glow-primary hover:border-primary/40 transition-all duration-300 cursor-pointer"
-               onClick={() => {
-                 // Add click handler for token details
-                 console.log(`View details for ${token.symbol}`);
-               }}
+               onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}`)}
                role="button"
                tabIndex={0}
                onKeyDown={(e) => {
                  if (e.key === 'Enter' || e.key === ' ') {
-                   console.log(`View details for ${token.symbol}`);
+                   navigate(`/meme/token/${token.symbol.toLowerCase()}`);
                  }
                }}
                aria-label={`View details for ${token.name}`}
@@ -193,11 +192,17 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
               </div>
               
               <Button 
-                className={`w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold ${isMobile ? 'text-sm h-9' : 'text-sm h-10'} shadow-lg hover:shadow-glow-primary transition-all duration-300 group/btn`}
-                size="sm"
+                className={`w-full font-crypto bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-bold ${isMobile ? 'text-xs h-8 px-2' : 'text-sm h-10'} shadow-lg hover:shadow-glow-primary transition-all duration-300 group/btn rounded-full`}
+                size={isMobile ? "sm" : "default"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/meme/token/${token.symbol.toLowerCase()}`);
+                }}
               >
-                <Eye className={`mr-2 h-4 w-4 group-hover/btn:scale-110 transition-transform`} />
-                VISA DETALJER
+                <Eye className={`${isMobile ? 'mr-1 h-3 w-3' : 'mr-2 h-4 w-4'} group-hover/btn:scale-110 transition-transform`} />
+                <span className={`${isMobile ? 'text-xs font-semibold tracking-tight' : ''}`}>
+                  {isMobile ? 'VISA' : 'VISA DETALJER'}
+                </span>
               </Button>
             </div>
           </Card>

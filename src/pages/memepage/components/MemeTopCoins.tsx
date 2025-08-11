@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,6 +45,7 @@ const formatMarketCap = (cap: number): string => {
 
 const MemeTopCoins = () => {
   const { tokens, loading, error } = useMemeTokens('trending', 6);
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
 
   const processedTokens = useMemo(() => {
@@ -175,11 +177,14 @@ const MemeTopCoins = () => {
 
               {/* Action Button */}
               <Button 
-                className="w-full font-crypto bg-gradient-primary hover:shadow-glow-primary transition-all duration-300" 
-                size="lg"
+                className={`w-full font-crypto bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-full ${isMobile ? 'h-9 text-sm px-4' : 'h-12 text-base'}`}
+                size={isMobile ? "default" : "lg"}
+                onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}`)}
               >
-                <Zap className="w-4 h-4 mr-2" />
-                VISA DETALJER
+                <Zap className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
+                <span className={`${isMobile ? 'text-xs font-semibold tracking-tight' : ''}`}>
+                  {isMobile ? 'VISA' : 'VISA DETALJER'}
+                </span>
               </Button>
             </div>
           </Card>
