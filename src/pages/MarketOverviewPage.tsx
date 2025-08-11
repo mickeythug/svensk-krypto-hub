@@ -903,11 +903,11 @@ const MarketOverviewPage = () => {
                 {/* Coin Info */}
                 <div className="flex-1 flex items-center space-x-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center overflow-hidden border border-border/20">
+                    <div className="w-10 h-10 rounded-xl bg-transparent backdrop-blur-sm flex items-center justify-center overflow-hidden border border-border/10 shadow-sm">
                       <img 
                         src={getCryptoLogo(crypto)} 
                         alt={crypto.name}
-                        className="w-8 h-8 object-contain"
+                        className="w-8 h-8 object-contain drop-shadow-sm"
                       />
                     </div>
                     {crypto.rank <= 3 && (
