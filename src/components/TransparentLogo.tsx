@@ -42,11 +42,7 @@ const TransparentLogo = ({ originalSrc, alt, className }: TransparentLogoProps) 
 
   if (isProcessing) {
     return (
-      <div className={`${className} flex items-center justify-center bg-primary/10 rounded-lg animate-pulse`}>
-        <div className="text-primary text-sm font-crypto">
-          Bearbetar logo...
-        </div>
-      </div>
+      <div className={`${className} w-6 h-6 rounded-full bg-muted/50 animate-pulse`} />
     );
   }
 

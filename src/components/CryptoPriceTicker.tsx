@@ -21,7 +21,7 @@ import maticLogo from "@/assets/crypto-logos/svg/matic.svg";
 import ltcLogo from "@/assets/crypto-logos/svg/ltc.svg";
 import xrpLogo from "@/assets/crypto-logos/svg/xrp.svg";
 
-// Logo mapping
+// Logo mapping - cachade SVG logotyper för optimal prestanda
 const CRYPTO_LOGOS = Object.freeze({
   'BTC': btcLogo,
   'ETH': ethLogo,
@@ -31,11 +31,14 @@ const CRYPTO_LOGOS = Object.freeze({
   'DOT': dotLogo,
   'AVAX': avaxLogo,
   'LINK': linkLogo,
-  'UNI': uniLogo,
   'DOGE': dogeLogo,
-  'SHIB': shibLogo,
-  'MATIC': maticLogo,
-  'LTC': ltcLogo,
+  'TRX': '/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png',
+  'HBAR': '/lovable-uploads/3e6ed0e2-f9f8-4aa6-94e8-62aa1bdc11ce.png',
+  'ALGO': '/lovable-uploads/9749ce60-cc5c-4316-bb4e-d89a819b14cd.png',
+  'SUI': solLogo, // Placeholder - använder SOL tills SUI logo finns
+  'APT': linkLogo, // Placeholder - använder LINK tills APT logo finns  
+  'BONK': dogeLogo, // Placeholder - använder DOGE tills BONK logo finns
+  'HYPE': ethLogo, // Placeholder - använder ETH tills HYPE logo finns
   'XRP': xrpLogo
 } as const);
 
@@ -49,11 +52,14 @@ const TOKEN_COLORS = Object.freeze({
   'DOT': '[&_.symbol-text]:hover:text-[#E6007A]',
   'AVAX': '[&_.symbol-text]:hover:text-[#E84142]',
   'LINK': '[&_.symbol-text]:hover:text-[#375BD2]',
-  'UNI': '[&_.symbol-text]:hover:text-[#FF007A]',
   'DOGE': '[&_.symbol-text]:hover:text-[#C2A633]',
-  'SHIB': '[&_.symbol-text]:hover:text-[#FFA409]',
-  'MATIC': '[&_.symbol-text]:hover:text-[#8247E5]',
-  'LTC': '[&_.symbol-text]:hover:text-[#BFBBBB]',
+  'TRX': '[&_.symbol-text]:hover:text-[#FF0013]',
+  'HBAR': '[&_.symbol-text]:hover:text-[#00D4AA]',
+  'ALGO': '[&_.symbol-text]:hover:text-[#000000]',
+  'SUI': '[&_.symbol-text]:hover:text-[#4DA2FF]',
+  'APT': '[&_.symbol-text]:hover:text-[#00D4AA]',
+  'BONK': '[&_.symbol-text]:hover:text-[#F69500]',
+  'HYPE': '[&_.symbol-text]:hover:text-[#6366F1]',
   'XRP': '[&_.symbol-text]:hover:text-[#23292F]'
 } as const);
 
@@ -119,10 +125,11 @@ const TokenItem = memo<TokenItemProps>(({ crypto, isMobile, onTokenClick }) => {
       className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-3'} bg-secondary/50 rounded-lg ${isMobile ? 'px-3 py-1.5' : 'px-4 py-2'} border border-border/50 flex-shrink-0 group hover:bg-secondary/70 transition-colors cursor-pointer`}
     >
       <div className={`flex items-center ${isMobile ? 'space-x-1' : 'space-x-2'}`}>
-        <TransparentLogo
-          originalSrc={CRYPTO_LOGOS[crypto.symbol as keyof typeof CRYPTO_LOGOS] || btcLogo}
+        <img
+          src={CRYPTO_LOGOS[crypto.symbol as keyof typeof CRYPTO_LOGOS] || btcLogo}
           alt={crypto.symbol}
-          className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} flex-shrink-0`}
+          className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} flex-shrink-0 object-contain`}
+          loading="eager"
         />
         <span className={`symbol-text font-crypto font-bold text-primary group-hover:text-destructive ${isMobile ? 'text-xs' : 'text-sm'} transition-colors`}>
           {crypto.symbol}
@@ -189,7 +196,7 @@ const CryptoPriceTicker = memo(() => {
             <div className="h-full w-1/3 bg-muted/70 animate-[shimmer_1.6s_infinite]" />
           </div>
         ) : (
-          <div className={`flex animate-ticker ${isMobile ? 'space-x-4' : 'space-x-8'} whitespace-nowrap`}>
+          <div className={`flex animate-ticker ${isMobile ? 'space-x-3' : 'space-x-6'} whitespace-nowrap`}>
             {doubledPrices.map((crypto, index) => (
               <TokenItem
                 key={`${crypto.symbol}-${index}`}
