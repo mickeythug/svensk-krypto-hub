@@ -874,7 +874,7 @@ const MarketOverviewPage = () => {
           </div>
 
           {/* Crypto List */}
-          <div className="divide-y divide-border/10 pb-20">
+          <div className="divide-y divide-border/10 pb-6">
             {currentData.map((crypto, index) => (
               <div
                 key={`${crypto.symbol}-${crypto.rank}`}
@@ -931,42 +931,42 @@ const MarketOverviewPage = () => {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Fixed Pagination at Bottom */}
-        <div className="fixed bottom-16 left-0 right-0 bg-background/98 backdrop-blur-xl border-t border-border/30 py-3 px-4 z-40 shadow-lg">
-          <div className="flex items-center justify-between max-w-sm mx-auto">
-            <span className="text-xs text-muted-foreground font-medium">
-              {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
-            </span>
             
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="h-9 w-9 p-0 rounded-xl border-border/50 hover:border-primary/50 disabled:opacity-30"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              
-              <div className="px-3 py-1 bg-primary/10 rounded-lg">
-                <span className="text-sm font-bold text-primary">
-                  {currentPage} / {totalPages}
+            {/* Pagination at bottom of list */}
+            <div className="pt-8 pb-20">
+              <div className="flex items-center justify-between max-w-sm mx-auto px-4 py-4 bg-card/80 backdrop-blur-sm rounded-xl border border-border/30 shadow-sm">
+                <span className="text-xs text-muted-foreground font-medium">
+                  {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
                 </span>
+                
+                <div className="flex items-center space-x-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="h-9 w-9 p-0 rounded-xl border-border/50 hover:border-primary/50 disabled:opacity-30"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  
+                  <div className="px-3 py-1 bg-primary/10 rounded-lg">
+                    <span className="text-sm font-bold text-primary">
+                      {currentPage} / {totalPages}
+                    </span>
+                  </div>
+                  
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="h-9 w-9 p-0 rounded-xl border-border/50 hover:border-primary/50 disabled:opacity-30"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="h-9 w-9 p-0 rounded-xl border-border/50 hover:border-primary/50 disabled:opacity-30"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </div>
