@@ -92,8 +92,9 @@ const MobileHeader = ({
             </SheetTrigger>
               <SheetContent 
                 side="right" 
-                className="w-full bg-background/98 backdrop-blur-xl border-l border-border z-[60]"
+                className="w-full bg-background/98 backdrop-blur-xl border-l border-border z-[60] flex flex-col"
               >
+                <div className="flex-1 overflow-y-auto">
                 <div className="flex items-center justify-between mb-8">
                   <button 
                     onClick={() => {
@@ -139,7 +140,7 @@ const MobileHeader = ({
                   </div>
                 )}
 
-                <nav className="space-y-2">
+                <nav className="space-y-2 pb-6">
                   {navItems.map((item) => {
                     const IconComponent = item.icon;
                     const isActive = location.pathname === item.href || 
@@ -184,6 +185,7 @@ const MobileHeader = ({
                     );
                   })}
                 </nav>
+                </div>
               </SheetContent>
             </Sheet>
         </div>

@@ -6,7 +6,7 @@ import { useLocation } from 'react-router-dom';
 
 // Import wallet logos
 import metamaskLogo from '@/assets/wallet-logos/metamask-logo.png';
-import solanaLogo from '@/assets/wallet-logos/solana-logo.png';
+import solanaLogo from '@/assets/crypto-logos/svg/sol.svg';
 import ethereumLogo from '@/assets/wallet-logos/ethereum-logo.png';
 
 // Use uploaded official logos directly
@@ -102,16 +102,6 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
           </Button>
         </div>
 
-        <div className="mt-8 p-4 rounded-lg bg-muted/30 border border-border/30">
-          <div className="flex items-start gap-3">
-            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <div className="w-2 h-2 rounded-full bg-primary" />
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Genom att ansluta godkänner du våra användarvillkor. Din plånbok kommer att öppnas i en säker miljö.
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
@@ -192,16 +182,6 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
         )}
       </div>
 
-      <div className="mt-8 p-4 rounded-lg bg-muted/30 border border-border/30">
-        <div className="flex items-start gap-3">
-          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <div className="w-2 h-2 rounded-full bg-primary" />
-          </div>
-          <div className="text-xs text-muted-foreground">
-            Du kommer att signera ett meddelande för att bekräfta din identitet. Detta kostar ingen gas och är helt säkert.
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
