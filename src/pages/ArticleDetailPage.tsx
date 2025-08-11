@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { ArrowLeft, Clock, User, Eye, BookOpen, Calendar, Tag, Share2, Bookmark, ChevronRight } from 'lucide-react';
 import Header from '@/components/Header';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -155,6 +156,15 @@ const ArticleDetailPage = () => {
     return date.toLocaleDateString('sv-SE');
   };
 
+  // Sanitize content to prevent XSS attacks
+  const sanitizedContent = useMemo(() => {
+    return DOMPurify.sanitize(article.content, {
+      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'strong', 'em', 'u', 'blockquote', 'ul', 'ol', 'li', 'a'],
+      ALLOWED_ATTR: ['href', 'target', 'rel'],
+      ALLOW_DATA_ATTR: false,
+    });
+  }, [article.content]);
+
   return (
     <div className="min-h-screen bg-background">
       {isMobile ? <MobileHeader title="Artikel" /> : <Header />}
@@ -251,7 +261,7 @@ const ArticleDetailPage = () => {
           <Card className={`${isMobile ? 'p-4 mb-6' : 'p-8 mb-8'}`}>
             <div 
               className={`prose ${isMobile ? 'prose-sm' : 'prose-lg'} max-w-none dark:prose-invert prose-headings:text-primary prose-a:text-primary prose-strong:text-foreground prose-blockquote:border-primary prose-blockquote:text-muted-foreground`}
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{ __html: sanitizedContent }}
             />
           </Card>
 

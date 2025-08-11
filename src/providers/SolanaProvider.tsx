@@ -4,8 +4,8 @@ import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
-// Minimal Solana provider with Phantom support, autoConnect aktiverat för att bibehålla inloggning
-const endpoint = 'https://mainnet.helius-rpc.com/?api-key=3e72ca18-d67a-4df3-9d1c-a656ae8385b1';
+// Minimal Solana provider with Phantom support - using secure RPC proxy
+const endpoint = 'https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy';
 
 export default function SolanaProvider({ children }: { children: ReactNode }) {
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
