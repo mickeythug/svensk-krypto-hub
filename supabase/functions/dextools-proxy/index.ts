@@ -4,6 +4,7 @@
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 
 function json(body: unknown, status = 200) {
@@ -20,7 +21,9 @@ Deno.serve(async (req) => {
 
   try {
     const API_KEY = Deno.env.get('DEXTOOLS_API_KEY');
+    console.log('dextools-proxy invoked');
     if (!API_KEY) {
+      console.error('DEXTOOLS_API_KEY missing');
       return json({ error: 'Missing DEXTOOLS_API_KEY' }, 500);
     }
 

@@ -38,6 +38,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     let mounted = true;
     setLoading(true);
     setError(null);
+    console.log('[useMemeTokens] start', { category, limit });
 
     const load = async () => {
       try {
