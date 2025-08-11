@@ -577,7 +577,7 @@ const MemeTokenDetailPage = () => {
                               {percentage}%
                             </Button>)}
                           <div className="relative flex-1">
-                            <input type="number" value={customSlippage} onChange={e => setCustomSlippage(e.target.value)} placeholder="Custom" className="w-full h-10 px-3 text-sm font-crypto font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300" />
+                            <input type="text" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" value={customSlippage} onChange={e => setCustomSlippage(e.target.value)} placeholder="Custom" className="w-full h-10 px-3 text-sm font-crypto font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                             <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">%</span>
                           </div>
                         </div>}
@@ -676,7 +676,7 @@ const MemeTokenDetailPage = () => {
                           <span className="font-crypto font-bold tracking-wider uppercase text-orange-500">Price Alerts</span>
                         </div>
                         <div className="space-y-2">
-                          <input type="number" value={priceAlert} onChange={e => setPriceAlert(e.target.value)} placeholder="Set price alert" className="w-full h-10 px-3 text-sm font-crypto bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300" />
+                          <input type="text" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" value={priceAlert} onChange={e => setPriceAlert(e.target.value)} placeholder="Set price alert" className="w-full h-10 px-3 text-sm font-crypto bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                           <Button variant="outline" size="sm" className="w-full h-8 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
                             Set Alert
                           </Button>
@@ -793,7 +793,7 @@ const MemeTokenDetailPage = () => {
                       Custom {tradeType === 'buy' ? 'SOL Amount' : 'Token Amount'}
                     </label>
                     <div className="relative">
-                      <input type="number" value={customAmount} onChange={e => handleCustomAmountChange(e.target.value)} placeholder={tradeType === 'buy' ? "Enter SOL amount" : "Enter token amount"} className="w-full h-16 px-6 text-xl font-crypto font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300" />
+                      <input type="text" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" value={customAmount} onChange={e => handleCustomAmountChange(e.target.value)} placeholder={tradeType === 'buy' ? "Enter SOL amount" : "Enter token amount"} className="w-full h-16 px-6 text-xl font-crypto font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                       <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-xl font-crypto font-bold text-muted-foreground">
                         {tradeType === 'buy' ? 'SOL' : token.symbol}
                       </span>
