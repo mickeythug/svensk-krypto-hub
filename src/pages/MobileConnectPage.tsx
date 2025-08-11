@@ -34,35 +34,71 @@ export default function MobileConnectPage() {
 
   const [status, setStatus] = useState<string>("Förbereder...");
 
+  // Hjälpare för stabil Phantom-initiering i mobil in-app browser
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const waitForPhantomProvider = async () => {
+    for (let i = 0; i < 120; i++) {
+      if ((window as any)?.solana?.isPhantom) return;
+      await wait(50);
+    }
+    throw new Error("Phantom provider ej tillgänglig. Öppna via Phantom-länken igen.");
+  };
+  const isInPhantomInApp = () => {
+    const ua = navigator.userAgent || "";
+    return /Phantom/i.test(ua) || (window as any)?.solana?.isPhantom;
+  };
+
   useEffect(() => {
     let mounted = true;
     const run = async () => {
       try {
         if (chain === "sol") {
-          setStatus("Ansluter till Phantom...");
+          setStatus("Öppnar i Phantom..."); authLog("SOL connect: start");
           const phantomWallet = wallets?.find((w: any) => w?.adapter?.name === "Phantom");
           if (phantomWallet && wallet?.adapter?.name !== phantomWallet.adapter.name) {
             select?.(phantomWallet.adapter.name as any);
-            await new Promise((r) => setTimeout(r, 0));
+            await wait(50);
           }
-          await connectSol();
-          // Vänta kort på publicKey
+
+          // Säkerställ att vi kör i Phantoms in‑app browser och att provider finns
+          try {
+            await waitForPhantomProvider();
+          } catch {
+            if (!isInPhantomInApp()) {
+              const deeplink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(redirect))}`;
+              window.location.href = deeplink;
+              return;
+            }
+          }
+
+          setStatus("Begär anslutning i Phantom...");
+          await connectSol(); authLog("SOL connect invoked");
+
+          // Vänta upp till 10s på att Phantom sätter publicKey
           let pk = publicKey;
-          for (let i = 0; i < 20 && !pk; i++) { await new Promise((r) => setTimeout(r, 50)); pk = publicKey; }
-          const pubkeyStr = pk?.toBase58?.();
-          if (!pubkeyStr) throw new Error("Kunde inte läsa Solana‑adress");
+          for (let i = 0; i < 200 && !pk; i++) {
+            await wait(50);
+            pk = publicKey;
+          }
+          const pubkeyStr = pk?.toBase58?.(); if (pubkeyStr) authLog("SOL publicKey", pubkeyStr);
+          if (!pubkeyStr) throw new Error("Kunde inte läsa Solana‑adress från Phantom");
 
           const canAdapterSign = typeof signMessageSol === "function";
           if (!canAdapterSign) {
             // Fallback: öppna Phantom deeplink till vår connect-sida för in-app signering
-            const deeplink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(redirect))}`;
-            window.location.href = deeplink;
-            throw new Error("Öppnar Phantom för säker signering...");
+            if (!isInPhantomInApp()) {
+              const deeplink = `https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(redirect))}`;
+              window.location.href = deeplink;
+              return;
+            }
+            throw new Error("Phantom saknar signMessage-stöd i denna miljö");
           }
 
           // SIWS: Signera exakt serverns nonce-meddelande och verifiera
+          authLog("SOL signing & verify: start");
           const ok = await signAndVerify(pubkeyStr, signMessageSol as any);
           if (!ok) throw new Error("Verifiering misslyckades");
+          authLog("SOL verified ok");
           sessionStorage.setItem("siws_verified", "true");
           sessionStorage.setItem("siws_address", pubkeyStr);
           toast({ title: "Ansluten", description: "Solana ansluten och verifierad." });
@@ -115,19 +151,19 @@ export default function MobileConnectPage() {
             <p className="text-muted-foreground mb-6">{status}</p>
 
             <div className="grid grid-cols-1 gap-3">
-              <a href={`https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(redirect))}`}>
+              <a href={`https://phantom.app/ul/browse/${encodeURIComponent(window.location.origin + "/connect?chain=sol&redirect=" + encodeURIComponent(redirect))}`} rel="noopener noreferrer">
                 <Button className="w-full justify-between">
                   Phantom (Solana)
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </a>
-              <a href={`https://metamask.app.link/dapp/${window.location.host}/connect?chain=evm&wallet=metamask&redirect=${encodeURIComponent(redirect)}`}>
+              <a href={`https://metamask.app.link/dapp/${window.location.host}/connect?chain=evm&wallet=metamask&redirect=${encodeURIComponent(redirect)}`} rel="noopener noreferrer">
                 <Button variant="outline" className="w-full justify-between">
                   MetaMask (Ethereum)
                   <ExternalLink className="h-4 w-4" />
                 </Button>
               </a>
-              <a href={`https://link.trustwallet.com/open_url?url=${encodeURIComponent(window.location.origin + "/connect?chain=evm&wallet=trust&redirect=" + encodeURIComponent(redirect))}`}>
+              <a href={`https://link.trustwallet.com/open_url?url=${encodeURIComponent(window.location.origin + "/connect?chain=evm&wallet=trust&redirect=" + encodeURIComponent(redirect))}`} rel="noopener noreferrer">
                 <Button variant="outline" className="w-full justify-between">
                   Trust Wallet (EVM)
                   <ExternalLink className="h-4 w-4" />

@@ -22,6 +22,7 @@ export function useSiwsSolana() {
   const [error, setError] = useState<string | null>(null);
 
   const getNonce = useCallback(async (address: string, domain: string): Promise<SiwsNonceResponse> => {
+    authLog("SIWS getNonce", { address, domain });
     const { data, error } = await supabase.functions.invoke('sol-siws-nonce', {
       body: { address, domain },
     });
@@ -30,6 +31,7 @@ export function useSiwsSolana() {
   }, []);
 
   const verify = useCallback(async (req: SiwsVerifyRequest): Promise<boolean> => {
+    authLog("SIWS verify request", { domain: req.domain, nonce: req.nonce });
     const { data, error } = await supabase.functions.invoke('sol-siws-verify', {
       body: req,
     });
@@ -59,6 +61,7 @@ export function useSiwsSolana() {
         });
         return ok;
       } catch (e: any) {
+        authLog("SIWS error", String(e?.message || e), "error");
         setError(String(e.message || e));
         return false;
       } finally {
