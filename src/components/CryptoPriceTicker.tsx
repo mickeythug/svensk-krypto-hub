@@ -104,6 +104,7 @@ interface TokenItemProps {
     name: string;
     price: number;
     change24h: number;
+    image?: string; // API logo URL
   };
   isMobile: boolean;
   onTokenClick: (symbol: string) => void;
@@ -127,7 +128,7 @@ const TokenItem = memo<TokenItemProps>(({ crypto, isMobile, onTokenClick }) => {
     >
       <div className={`flex items-center ${isMobile ? 'space-x-1' : 'space-x-2'}`}>
         <img
-          src={CRYPTO_LOGOS[crypto.symbol as keyof typeof CRYPTO_LOGOS] || btcLogo}
+          src={crypto.image || CRYPTO_LOGOS[crypto.symbol as keyof typeof CRYPTO_LOGOS] || btcLogo}
           alt={crypto.symbol}
           className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} flex-shrink-0 object-contain`}
           loading="eager"
