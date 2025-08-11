@@ -20,6 +20,7 @@ const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
 const MemePage = lazy(() => import("./pages/memepage"));
 const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
+const MobileConnectPage = lazy(() => import("./pages/MobileConnectPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 import { queryClient } from "@/lib/queryClient";
@@ -59,6 +60,7 @@ const AppContent = memo(() => {
           <Route path="/crypto/:symbol" element={<Layout><CryptoDetailPage /></Layout>} />
           <Route path="/meme" element={<Layout><MemePage /></Layout>} />
           <Route path="/meme/create" element={<Layout><CreateTokenPage /></Layout>} />
+          <Route path="/connect" element={<Layout showTicker={false}><MobileConnectPage /></Layout>} />
           <Route path="*" element={<Layout showTicker={false}><NotFound /></Layout>} />
         </Routes>
       </Suspense>
