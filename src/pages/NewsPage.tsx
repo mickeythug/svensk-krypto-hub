@@ -413,56 +413,71 @@ const NewsPage = () => {
               <div className="flex-1 relative">
                 <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
                 <Input
-                  placeholder="Sök nyheter, författare eller taggar..."
+                  placeholder={isMobile ? "Sök nyheter" : "Sök nyheter, författare eller taggar..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`${isMobile ? 'pl-10 h-10 text-base' : 'pl-12 h-12 text-lg'} bg-secondary/50 border-border focus:border-primary transition-all duration-300 hover:bg-secondary/70 focus:bg-background`}
                 />
               </div>
-              <div className={`flex ${isMobile ? 'gap-2' : 'gap-3'}`}>
-                <Button
-                  variant="outline"
-                  onClick={() => setSortBy(sortBy === "date" ? "impact" : "date")}
-                  className={`${isMobile ? 'h-10 px-4 text-sm' : 'h-12 px-6'} hover:bg-primary/10 hover:border-primary/30 transition-all duration-300`}
-                >
-                  <Clock className={`mr-2 ${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
-                  {sortBy === "date" ? "Datum" : "Påverkan"}
-                </Button>
-                <div className="flex border border-border rounded-lg overflow-hidden bg-secondary/50 hover:bg-secondary/70 transition-colors">
+              {!isMobile && (
+                <div className="flex gap-3">
                   <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className={`${isMobile ? 'h-10 px-3' : 'h-12 px-4'} rounded-none hover:bg-primary/10 transition-all duration-300`}
+                    variant="outline"
+                    onClick={() => setSortBy(sortBy === "date" ? "impact" : "date")}
+                    className="h-12 px-6 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300"
                   >
-                    <Grid3X3 className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
+                    <Clock className="mr-2 h-4 w-4" />
+                    {sortBy === "date" ? "Datum" : "Påverkan"}
                   </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className={`${isMobile ? 'h-10 px-3' : 'h-12 px-4'} rounded-none hover:bg-primary/10 transition-all duration-300`}
-                  >
-                    <List className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'}`} />
-                  </Button>
+                  <div className="flex border border-border rounded-lg overflow-hidden bg-secondary/50 hover:bg-secondary/70 transition-colors">
+                    <Button
+                      variant={viewMode === "grid" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setViewMode("grid")}
+                      className="h-12 px-4 rounded-none hover:bg-primary/10 transition-all duration-300"
+                    >
+                      <Grid3X3 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === "list" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setViewMode("list")}
+                      className="h-12 px-4 rounded-none hover:bg-primary/10 transition-all duration-300"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
           {/* Enhanced Category Tabs */}
           <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className={`${isMobile ? 'mb-6' : 'mb-10'}`}>
-            <TabsList className={`${isMobile ? 'grid grid-cols-3 w-full h-10 p-0.5' : 'grid grid-cols-3 lg:grid-cols-6 w-full h-12 p-1'} bg-secondary/50 rounded-xl hover:bg-secondary/70 transition-colors`}>
-              {categories.map((category) => (
+            <TabsList className={`${isMobile ? 'grid grid-cols-3 w-full h-12 p-1 gap-1' : 'grid grid-cols-3 lg:grid-cols-6 w-full h-12 p-1'} bg-secondary/50 rounded-xl hover:bg-secondary/70 transition-colors`}>
+              {categories.slice(0, isMobile ? 6 : categories.length).map((category) => (
                 <TabsTrigger
                   key={category.id}
                   value={category.id}
-                  className={`font-orbitron font-black text-foreground ${isMobile ? 'text-xs tracking-wide' : 'text-sm tracking-widest'} data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg px-3 py-2 transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg`}
+                  className={`font-orbitron font-black text-foreground ${isMobile ? 'text-xs tracking-wide px-2 py-2' : 'text-sm tracking-widest px-3 py-2'} data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg`}
                 >
                   {category.label}
                 </TabsTrigger>
               ))}
             </TabsList>
+            {isMobile && categories.length > 6 && (
+              <TabsList className="grid grid-cols-3 w-full h-12 p-1 gap-1 bg-secondary/50 rounded-xl hover:bg-secondary/70 transition-colors mt-2">
+                {categories.slice(6).map((category) => (
+                  <TabsTrigger
+                    key={category.id}
+                    value={category.id}
+                    className="font-orbitron font-black text-foreground text-xs tracking-wide px-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg"
+                  >
+                    {category.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            )}
           </Tabs>
 
           {/* Main Content Grid */}
