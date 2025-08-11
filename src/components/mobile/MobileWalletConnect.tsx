@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, Wallet, ExternalLink } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
-// Import wallet logos
+// Import modern wallet logos with transparent backgrounds
 import metamaskLogo from '@/assets/wallet-logos/metamask-logo.png';
-import solanaLogo from '@/assets/crypto-logos/svg/sol.svg';
+import solanaLogo from '@/assets/crypto-logos/svg/sol.svg'; // Same as market page
 import ethereumLogo from '@/assets/wallet-logos/ethereum-logo.png';
 
-// Use uploaded official logos directly
+// Use uploaded official modern logos with transparent backgrounds
 const phantomLogo = '/lovable-uploads/e2a4369f-6af0-4da7-9b8a-53ab33ba6b25.png';
 const trustwalletLogo = '/lovable-uploads/d6919cdc-0e38-4a94-8537-48c11d876ba4.png';
 
@@ -68,11 +68,11 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
             className="w-full h-16 flex items-center justify-between text-left bg-gradient-to-r from-purple-600/20 to-purple-700/20 border border-purple-500/30 hover:border-purple-500/50 hover:from-purple-600/30 hover:to-purple-700/30 text-white"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center overflow-hidden">
+              <div className="w-14 h-14 rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                 <img 
                   src={solanaLogo} 
                   alt="Solana" 
-                  className="w-6 h-6 object-contain"
+                  className="w-10 h-10 object-contain filter drop-shadow-lg"
                 />
               </div>
               <div>
@@ -87,11 +87,11 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
             className="w-full h-16 flex items-center justify-between text-left bg-gradient-to-r from-blue-600/20 to-blue-700/20 border border-blue-500/30 hover:border-blue-500/50 hover:from-blue-600/30 hover:to-blue-700/30 text-white"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center overflow-hidden">
+              <div className="w-14 h-14 rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                 <img 
                   src={ethereumLogo} 
                   alt="Ethereum" 
-                  className="w-6 h-6 object-contain"
+                  className="w-10 h-10 object-contain filter drop-shadow-lg"
                 />
               </div>
               <div>
@@ -124,11 +124,11 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
             className="w-full h-16 flex items-center justify-between text-left bg-gradient-to-r from-purple-600/20 to-purple-700/20 border border-purple-500/30 hover:border-purple-500/50 hover:from-purple-600/30 hover:to-purple-700/30"
           >
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                 <img 
                   src={phantomLogo} 
                   alt="Phantom Wallet" 
-                  className="w-6 h-6 object-contain"
+                  className="w-12 h-12 object-contain filter drop-shadow-xl"
                 />
               </div>
               <div>
@@ -146,11 +146,11 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
               className="w-full h-16 flex items-center justify-between text-left bg-gradient-to-r from-orange-600/20 to-orange-700/20 border border-orange-500/30 hover:border-orange-500/50 hover:from-orange-600/30 hover:to-orange-700/30"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-orange-600/20 flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                   <img 
                     src={metamaskLogo} 
                     alt="MetaMask" 
-                    className="w-6 h-6 object-contain"
+                    className="w-12 h-12 object-contain filter drop-shadow-xl"
                   />
                 </div>
                 <div>
@@ -165,11 +165,11 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
               className="w-full h-16 flex items-center justify-between text-left bg-gradient-to-r from-blue-600/20 to-blue-700/20 border border-blue-500/30 hover:border-blue-500/50 hover:from-blue-600/30 hover:to-blue-700/30"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center overflow-hidden">
+                <div className="w-16 h-16 rounded-full bg-transparent flex items-center justify-center overflow-hidden">
                   <img 
                     src={trustwalletLogo} 
                     alt="Trust Wallet" 
-                    className="w-6 h-6 object-contain"
+                    className="w-12 h-12 object-contain filter drop-shadow-xl"
                   />
                 </div>
                 <div>
