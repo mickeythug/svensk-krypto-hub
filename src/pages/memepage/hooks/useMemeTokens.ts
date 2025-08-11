@@ -44,12 +44,22 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         // 1) Get base list (addresses)
         let addresses: string[] = [];
         if (category === 'trending') {
-          const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'gainers' },
-          });
-          if (error) throw error;
-          const list: any[] = Array.isArray(data) ? data : data?.results || [];
-          addresses = list.map((i: any) => i?.mainToken?.address).filter(Boolean);
+          let list: any[] | null = null;
+          try {
+            const { data, error } = await supabase.functions.invoke('dextools-proxy', {
+              body: { action: 'gainers' },
+            });
+            if (error) throw error;
+            list = Array.isArray(data) ? data : data?.results || [];
+          } catch (_) {
+            // Fallback to hotpools if gainers fails (rate limit etc)
+            const { data, error } = await supabase.functions.invoke('dextools-proxy', {
+              body: { action: 'hotpools' },
+            });
+            if (error) throw error;
+            list = Array.isArray(data) ? data : data?.results || [];
+          }
+          addresses = (list || []).map((i: any) => i?.mainToken?.address).filter(Boolean);
         } else {
           // newest and potential start from newest token listing
           const { data, error } = await supabase.functions.invoke('dextools-proxy', {

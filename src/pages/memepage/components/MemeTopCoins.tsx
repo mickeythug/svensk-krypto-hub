@@ -51,7 +51,7 @@ const MemeTopCoins = () => {
   const processedTokens = useMemo(() => {
     return tokens.map((token, index) => ({
       ...token,
-      image: tokenImages[token.symbol.toLowerCase()] || covers[index % covers.length],
+      image: token.image || tokenImages[token.symbol.toLowerCase()] || covers[index % covers.length],
       rank: index + 1,
     }));
   }, [tokens]);
