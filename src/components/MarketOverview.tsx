@@ -27,6 +27,7 @@ import solLogo from "@/assets/crypto-logos/svg/sol.svg";
 import uniLogo from "@/assets/crypto-logos/svg/uni.svg";
 import xrpLogo from "@/assets/crypto-logos/svg/xrp.svg";
 import trxLogo from "@/assets/crypto-logos/svg/trx.svg";
+import TransparentLogo from "@/components/TransparentLogo";
 
 const COIN_LOGOS: Record<string, string> = {
   BTC: btcLogo,

@@ -4,13 +4,14 @@ import { Badge } from '@/components/ui/badge';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
 
-import btc from '@/assets/crypto-logos/btc.png';
-import eth from '@/assets/crypto-logos/eth.png';
-import doge from '@/assets/crypto-logos/doge.png';
-import shib from '@/assets/crypto-logos/shib.png';
-import sol from '@/assets/crypto-logos/sol.png';
-import xrp from '@/assets/crypto-logos/xrp.png';
-import bnb from '@/assets/crypto-logos/bnb.png';
+import btc from '@/assets/crypto-logos/svg/btc.svg';
+import eth from '@/assets/crypto-logos/svg/eth.svg';
+import doge from '@/assets/crypto-logos/svg/doge.svg';
+import shib from '@/assets/crypto-logos/svg/shib.svg';
+import sol from '@/assets/crypto-logos/svg/sol.svg';
+import xrp from '@/assets/crypto-logos/svg/xrp.svg';
+import bnb from '@/assets/crypto-logos/svg/bnb.svg';
+import TransparentLogo from '@/components/TransparentLogo';
 
 const logoMap: Record<string, string> = {
   btc, eth, doge, shib, sol, xrp, bnb,
@@ -22,7 +23,7 @@ const TokenChip = ({ symbol, name, price, change24h }: any) => {
   return (
     <div className="group flex items-center gap-3 px-4 py-2 rounded-full border border-border/60 bg-card/70 backdrop-blur-sm hover:shadow-glow-secondary transition">
       {logo ? (
-        <OptimizedImage src={logo} alt={`${name} logotyp`} className="h-6 w-6 rounded-full object-contain" fallbackSrc="/placeholder.svg" />
+        <TransparentLogo originalSrc={logo} alt={`${name} logotyp`} className="h-6 w-6" />
       ) : (
         <div className="h-6 w-6 rounded-full bg-primary/20" />
       )}
