@@ -666,26 +666,26 @@ const MemeTokenDetailPage = () => {
                       <LineChart className="w-8 h-8 text-primary" />
                     </div>
                     <div>
-                      <h2 className="text-3xl font-oblivion font-black mb-1">Live Trading Chart</h2>
-                      <p className="text-xl text-muted-foreground font-oblivion font-medium">Professional {token.symbol} Analysis</p>
+                      <h2 className="text-3xl font-crypto font-bold tracking-wider uppercase mb-1">Live Trading Chart</h2>
+                      <p className="text-xl text-muted-foreground font-crypto font-medium tracking-wider uppercase">Professional {token.symbol} Analysis</p>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-oblivion font-semibold border-2">
+                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
                     Fullscreen
                   </Button>
-                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-oblivion font-semibold border-2">
+                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
                     Settings
                   </Button>
-                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-oblivion font-semibold border-2">
+                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
                     Refresh
                   </Button>
                 </div>
               </div>
 
               {/* Chart Container with NO padding - only chart visible */}
-              <div className="flex-1 bg-[#0f0f23] rounded-b-3xl overflow-hidden">
+              <div className="flex-1 bg-[#0f0f23]">
                 <div className="h-[600px] w-full">
                   <TradingViewChart 
                     symbol={token.symbol} 
@@ -695,36 +695,197 @@ const MemeTokenDetailPage = () => {
                 </div>
               </div>
 
-              {/* Chart Analytics Footer */}
+              {/* Modern Trading Settings Panel - Moved from analytics section */}
               <div className="p-8 border-t border-border/20 bg-gradient-to-r from-card/60 to-card/40">
-                <div className="grid grid-cols-4 gap-6">
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Signal className="w-6 h-6 text-blue-500" />
-                      <span className="text-lg font-oblivion font-bold text-blue-500">Technical Analysis</span>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  
+                  {/* Left Column - Advanced Settings */}
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase text-primary mb-6">Advanced Trading Settings</h3>
+                    
+                    {/* Slippage Tolerance */}
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
+                      <div className="flex justify-between items-center mb-4">
+                        <span className="text-lg font-crypto font-bold tracking-wider uppercase text-blue-500">Slippage Tolerance</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setAutoSlippage(!autoSlippage)}
+                          className={`h-8 px-3 text-sm rounded-lg font-crypto font-bold tracking-wider uppercase ${autoSlippage ? 'bg-primary text-primary-foreground' : ''}`}
+                        >
+                          Auto
+                        </Button>
+                      </div>
+                      
+                      {!autoSlippage && (
+                        <div className="flex gap-2">
+                          {[1, 2, 5].map((percentage) => (
+                            <Button 
+                              key={percentage}
+                              variant={slippage === percentage ? "default" : "outline"}
+                              size="sm" 
+                              onClick={() => setSlippage(percentage)}
+                              className="h-10 px-4 text-sm font-crypto font-bold tracking-wider uppercase rounded-xl"
+                            >
+                              {percentage}%
+                            </Button>
+                          ))}
+                          <div className="relative flex-1">
+                            <input 
+                              type="number" 
+                              value={customSlippage}
+                              onChange={(e) => setCustomSlippage(e.target.value)}
+                              placeholder="Custom"
+                              className="w-full h-10 px-3 text-sm font-crypto font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300"
+                            />
+                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">%</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground font-oblivion">RSI, MACD, Moving Averages</p>
+
+                    {/* Priority Fee */}
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
+                      <span className="text-lg font-crypto font-bold tracking-wider uppercase text-green-500 mb-4 block">Priority Fee</span>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { key: 'low', label: 'Low', desc: '0.0001 SOL' },
+                          { key: 'medium', label: 'Medium', desc: '0.0005 SOL' },
+                          { key: 'high', label: 'High', desc: '0.001 SOL' }
+                        ].map(({ key, label, desc }) => (
+                          <Button
+                            key={key}
+                            variant={priority === key ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setPriority(key as typeof priority)}
+                            className={`h-12 flex flex-col items-center justify-center text-xs font-crypto font-bold tracking-wider uppercase rounded-xl transition-all duration-300 ${
+                              priority === key ? 'bg-primary text-primary-foreground' : ''
+                            }`}
+                          >
+                            <span>{label}</span>
+                            <span className="text-xs opacity-70">{desc}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* MEV Protection */}
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Shield className="w-5 h-5 text-purple-500" />
+                          <div>
+                            <span className="text-lg font-crypto font-bold tracking-wider uppercase text-purple-500">MEV Protection</span>
+                            <p className="text-sm font-crypto text-muted-foreground">Protect against frontrunning</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setMevProtection(!mevProtection)}
+                          className={`h-8 w-16 rounded-full font-crypto font-bold tracking-wider uppercase ${
+                            mevProtection 
+                              ? 'bg-green-500 text-white' 
+                              : 'bg-muted border border-border'
+                          }`}
+                        >
+                          {mevProtection ? 'ON' : 'OFF'}
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Volume2 className="w-6 h-6 text-green-500" />
-                      <span className="text-lg font-oblivion font-bold text-green-500">Volume Analysis</span>
+
+                  {/* Right Column - Trade Summary & Tools */}
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase text-primary mb-6">Trade Summary & Tools</h3>
+                    
+                    {/* Trade Summary */}
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
+                      <h4 className="text-xl font-crypto font-bold tracking-wider uppercase mb-4">Trade Summary</h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">
+                            {tradeType === 'buy' ? 'You Pay' : 'You Sell'}
+                          </span>
+                          <span className="font-crypto font-bold text-lg">
+                            {customAmount || selectedAmount || 0} {tradeType === 'buy' ? 'SOL' : token.symbol}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">
+                            {tradeType === 'buy' ? 'You Receive' : 'You Receive'}
+                          </span>
+                          <span className="font-crypto font-bold text-lg">
+                            {tradeType === 'buy' 
+                              ? `~${((parseFloat(customAmount) || selectedAmount || 0) / token.price).toLocaleString()} ${token.symbol}`
+                              : `~${((parseFloat(customAmount) || 0) * token.price).toFixed(4)} SOL`
+                            }
+                          </span>
+                        </div>
+                        <Separator />
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">Priority Fee</span>
+                          <span className="font-crypto">{getPriorityFee()}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">Est. Gas</span>
+                          <span className="font-crypto">{getEstimatedGas()}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">Slippage</span>
+                          <span className="font-crypto">{autoSlippage ? 'Auto' : `${customSlippage || slippage}%`}</span>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground font-oblivion">Real-time trading volume</p>
-                  </div>
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <BarChart3 className="w-6 h-6 text-purple-500" />
-                      <span className="text-lg font-oblivion font-bold text-purple-500">Market Depth</span>
+
+                    {/* Trading Tools */}
+                    <div className="space-y-4">
+                      {/* Price Alerts */}
+                      <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/20">
+                        <div className="flex items-center gap-3 mb-3">
+                          <Bell className="w-5 h-5 text-orange-500" />
+                          <span className="font-crypto font-bold tracking-wider uppercase text-orange-500">Price Alerts</span>
+                        </div>
+                        <div className="space-y-2">
+                          <input 
+                            type="number" 
+                            value={priceAlert}
+                            onChange={(e) => setPriceAlert(e.target.value)}
+                            placeholder="Set price alert"
+                            className="w-full h-10 px-3 text-sm font-crypto bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300"
+                          />
+                          <Button variant="outline" size="sm" className="w-full h-8 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
+                            Set Alert
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Performance Metrics */}
+                      <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20">
+                        <div className="flex items-center gap-3 mb-3">
+                          <Award className="w-5 h-5 text-green-500" />
+                          <span className="font-crypto font-bold tracking-wider uppercase text-green-500">Performance</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">1h:</span>
+                            <span className="text-green-500 font-crypto font-bold">+2.34%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">7d:</span>
+                            <span className="text-green-500 font-crypto font-bold">+15.67%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">30d:</span>
+                            <span className="text-green-500 font-crypto font-bold">+89.12%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">ATH:</span>
+                            <span className="font-crypto font-bold">{formatPrice(token.price * 2.5)}</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground font-oblivion">Order book analysis</p>
-                  </div>
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <CloudLightning className="w-6 h-6 text-orange-500" />
-                      <span className="text-lg font-oblivion font-bold text-orange-500">AI Insights</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground font-oblivion">Smart market predictions</p>
                   </div>
                 </div>
               </div>
@@ -737,22 +898,22 @@ const MemeTokenDetailPage = () => {
               
               {/* Quick Stats Card */}
               <Card className="p-6 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
-                <h3 className="text-2xl font-oblivion font-black mb-6 flex items-center gap-3">
+                <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase mb-6 flex items-center gap-3">
                   <Activity className="w-6 h-6 text-primary" />
                   Market Stats
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-oblivion font-semibold text-muted-foreground">Market Cap</span>
-                    <span className="text-xl font-oblivion font-black">{formatMarketCap(token.marketCap)}</span>
+                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">Market Cap</span>
+                    <span className="text-xl font-crypto font-black">{formatMarketCap(token.marketCap)}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-oblivion font-semibold text-muted-foreground">24h Volume</span>
-                    <span className="text-xl font-oblivion font-black">{stats.volume24h}</span>
+                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">24h Volume</span>
+                    <span className="text-xl font-crypto font-black">{stats.volume24h}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-oblivion font-semibold text-muted-foreground">Holders</span>
-                    <span className="text-xl font-oblivion font-black">{token.holders.toLocaleString()}</span>
+                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">Holders</span>
+                    <span className="text-xl font-crypto font-black">{token.holders.toLocaleString()}</span>
                   </div>
                 </div>
               </Card>
@@ -760,7 +921,7 @@ const MemeTokenDetailPage = () => {
               {/* Advanced Trading Panel */}
               <Card className="p-8 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
                 <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-3xl font-oblivion font-black flex items-center gap-4">
+                  <h3 className="text-3xl font-crypto font-bold tracking-wider uppercase flex items-center gap-4">
                     <ShoppingCart className="w-8 h-8 text-primary" />
                     Professional Trading
                   </h3>
@@ -768,7 +929,7 @@ const MemeTokenDetailPage = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-                    className="text-primary hover:text-primary/80 font-oblivion"
+                    className="text-primary hover:text-primary/80 font-crypto font-bold tracking-wider uppercase"
                   >
                     Advanced
                   </Button>
@@ -776,7 +937,7 @@ const MemeTokenDetailPage = () => {
                 
                 {/* Order Type Selection */}
                 <div className="mb-8">
-                  <label className="text-xl font-oblivion font-bold text-muted-foreground mb-4 block">Order Type</label>
+                  <label className="text-xl font-crypto font-bold tracking-wider uppercase text-muted-foreground mb-4 block">Order Type</label>
                   <div className="grid grid-cols-3 gap-3">
                     {['market', 'limit', 'stop'].map((type) => (
                       <Button
@@ -784,7 +945,7 @@ const MemeTokenDetailPage = () => {
                         variant={orderType === type ? "default" : "outline"}
                         size="lg"
                         onClick={() => setOrderType(type as typeof orderType)}
-                        className={`h-14 text-lg font-oblivion font-bold rounded-2xl border-2 transition-all duration-300 ${
+                        className={`h-14 text-lg font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${
                           orderType === type 
                             ? 'bg-primary text-primary-foreground shadow-lg scale-105' 
                             : 'hover:bg-primary/10 hover:border-primary/50'
@@ -801,7 +962,7 @@ const MemeTokenDetailPage = () => {
                   <Button 
                     size="lg"
                     onClick={() => setTradeType('buy')}
-                    className={`h-20 font-oblivion font-black text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${
+                    className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${
                       tradeType === 'buy'
                         ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
                         : 'bg-green-500/20 text-green-500 hover:bg-green-500/30'
@@ -812,7 +973,7 @@ const MemeTokenDetailPage = () => {
                   <Button 
                     size="lg"
                     onClick={() => setTradeType('sell')}
-                    className={`h-20 font-oblivion font-black text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${
+                    className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${
                       tradeType === 'sell'
                         ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white'
                         : 'bg-red-500/20 text-red-500 hover:bg-red-500/30'
@@ -824,7 +985,7 @@ const MemeTokenDetailPage = () => {
 
                 {/* Dynamic Amount Selection based on Buy/Sell */}
                 <div className="space-y-6 mb-8">
-                  <label className="text-xl font-oblivion font-bold text-muted-foreground">
+                  <label className="text-xl font-crypto font-bold tracking-wider uppercase text-muted-foreground">
                     {tradeType === 'buy' ? 'Buy Amount (SOL)' : 'Sell Amount (%)'}
                   </label>
                   
@@ -836,7 +997,7 @@ const MemeTokenDetailPage = () => {
                           variant={selectedAmount === amount ? "default" : "outline"}
                           size="lg"
                           onClick={() => handleAmountSelect(amount)}
-                          className={`h-16 text-xl font-oblivion font-bold rounded-2xl border-2 transition-all duration-300 ${
+                          className={`h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${
                             selectedAmount === amount
                               ? 'bg-primary text-primary-foreground shadow-lg scale-105'
                               : 'hover:bg-primary/10 hover:border-primary/50'
@@ -854,7 +1015,7 @@ const MemeTokenDetailPage = () => {
                           variant="outline"
                           size="lg"
                           onClick={() => calculateSellPercentage(percentage)}
-                          className="h-16 text-xl font-oblivion font-bold rounded-2xl border-2 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-300"
+                          className="h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-300"
                         >
                           {percentage === 100 ? 'SELL ALL' : `${percentage}%`}
                         </Button>
@@ -864,7 +1025,7 @@ const MemeTokenDetailPage = () => {
                   
                   {/* Custom Amount Input */}
                   <div className="space-y-3">
-                    <label className="text-lg font-oblivion font-bold text-muted-foreground">
+                    <label className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">
                       Custom {tradeType === 'buy' ? 'SOL Amount' : 'Token Amount'}
                     </label>
                     <div className="relative">
@@ -873,9 +1034,9 @@ const MemeTokenDetailPage = () => {
                         value={customAmount}
                         onChange={(e) => handleCustomAmountChange(e.target.value)}
                         placeholder={tradeType === 'buy' ? "Enter SOL amount" : "Enter token amount"}
-                        className="w-full h-16 px-6 text-xl font-oblivion font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
+                        className="w-full h-16 px-6 text-xl font-crypto font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
                       />
-                      <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-xl font-oblivion font-bold text-muted-foreground">
+                      <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-xl font-crypto font-bold text-muted-foreground">
                         {tradeType === 'buy' ? 'SOL' : token.symbol}
                       </span>
                     </div>
@@ -887,196 +1048,12 @@ const MemeTokenDetailPage = () => {
                   </div>
                 </div>
 
-                {/* Limit/Stop Price Inputs */}
-                {orderType !== 'market' && (
-                  <div className="space-y-4 mb-8">
-                    {orderType === 'limit' && (
-                      <div className="space-y-3">
-                        <label className="text-lg font-oblivion font-bold text-muted-foreground">Limit Price</label>
-                        <div className="relative">
-                          <input 
-                            type="number" 
-                            value={limitPrice}
-                            onChange={(e) => setLimitPrice(e.target.value)}
-                            placeholder={`Enter limit price (current: ${formatPrice(token.price)})`}
-                            className="w-full h-14 px-6 text-lg font-oblivion font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
-                          />
-                          <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-lg font-oblivion font-bold text-muted-foreground">USD</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {orderType === 'stop' && (
-                      <div className="space-y-3">
-                        <label className="text-lg font-oblivion font-bold text-muted-foreground">Stop Price</label>
-                        <div className="relative">
-                          <input 
-                            type="number" 
-                            value={stopPrice}
-                            onChange={(e) => setStopPrice(e.target.value)}
-                            placeholder={`Enter stop price (current: ${formatPrice(token.price)})`}
-                            className="w-full h-14 px-6 text-lg font-oblivion font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
-                          />
-                          <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-lg font-oblivion font-bold text-muted-foreground">USD</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Advanced Settings Panel */}
-                <AnimatePresence>
-                  {showAdvancedSettings && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-muted/20 to-muted/10 border border-border/30"
-                    >
-                      <h4 className="text-xl font-oblivion font-bold mb-6 flex items-center gap-3">
-                        <Shield className="w-5 h-5 text-primary" />
-                        Advanced Trading Settings
-                      </h4>
-                      
-                      {/* Slippage Settings */}
-                      <div className="space-y-4 mb-6">
-                        <div className="flex justify-between items-center">
-                          <span className="text-lg font-oblivion font-bold text-muted-foreground">Slippage Tolerance</span>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setAutoSlippage(!autoSlippage)}
-                              className={`h-8 px-3 text-sm rounded-lg font-oblivion ${autoSlippage ? 'bg-primary text-primary-foreground' : ''}`}
-                            >
-                              Auto
-                            </Button>
-                          </div>
-                        </div>
-                        
-                        {!autoSlippage && (
-                          <div className="flex gap-2">
-                            {[1, 2, 5].map((percentage) => (
-                              <Button 
-                                key={percentage}
-                                variant={slippage === percentage ? "default" : "outline"}
-                                size="sm" 
-                                onClick={() => setSlippage(percentage)}
-                                className="h-10 px-4 text-sm font-oblivion font-bold rounded-xl"
-                              >
-                                {percentage}%
-                              </Button>
-                            ))}
-                            <div className="relative flex-1">
-                              <input 
-                                type="number" 
-                                value={customSlippage}
-                                onChange={(e) => setCustomSlippage(e.target.value)}
-                                placeholder="Custom"
-                                className="w-full h-10 px-3 text-sm font-oblivion font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300"
-                              />
-                              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">%</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Priority Fee */}
-                      <div className="space-y-4 mb-6">
-                        <span className="text-lg font-oblivion font-bold text-muted-foreground">Priority Fee</span>
-                        <div className="grid grid-cols-3 gap-2">
-                          {[
-                            { key: 'low', label: 'Low', desc: '0.0001 SOL' },
-                            { key: 'medium', label: 'Medium', desc: '0.0005 SOL' },
-                            { key: 'high', label: 'High', desc: '0.001 SOL' }
-                          ].map(({ key, label, desc }) => (
-                            <Button
-                              key={key}
-                              variant={priority === key ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => setPriority(key as typeof priority)}
-                              className={`h-12 flex flex-col items-center justify-center text-xs font-oblivion font-bold rounded-xl transition-all duration-300 ${
-                                priority === key ? 'bg-primary text-primary-foreground' : ''
-                              }`}
-                            >
-                              <span>{label}</span>
-                              <span className="text-xs opacity-70">{desc}</span>
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* MEV Protection */}
-                      <div className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-muted/30 to-muted/20">
-                        <div className="flex items-center gap-3">
-                          <Shield className="w-5 h-5 text-green-500" />
-                          <div>
-                            <span className="text-lg font-oblivion font-bold">MEV Protection</span>
-                            <p className="text-sm font-oblivion text-muted-foreground">Protect against frontrunning</p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setMevProtection(!mevProtection)}
-                          className={`h-8 w-16 rounded-full ${
-                            mevProtection 
-                              ? 'bg-green-500 text-white' 
-                              : 'bg-muted border border-border'
-                          }`}
-                          >
-                            {mevProtection ? 'ON' : 'OFF'}
-                          </Button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Trade Summary */}
-                <div className="space-y-4 mb-8 p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
-                  <h4 className="text-xl font-oblivion font-bold mb-4">Trade Summary</h4>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-oblivion">
-                        {tradeType === 'buy' ? 'You Pay' : 'You Sell'}
-                      </span>
-                      <span className="font-oblivion font-bold text-lg">
-                        {customAmount || selectedAmount || 0} {tradeType === 'buy' ? 'SOL' : token.symbol}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-oblivion">
-                        {tradeType === 'buy' ? 'You Receive' : 'You Receive'}
-                      </span>
-                      <span className="font-oblivion font-bold text-lg">
-                        {tradeType === 'buy' 
-                          ? `~${((parseFloat(customAmount) || selectedAmount || 0) / token.price).toLocaleString()} ${token.symbol}`
-                          : `~${((parseFloat(customAmount) || 0) * token.price).toFixed(4)} SOL`
-                        }
-                      </span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground font-oblivion">Priority Fee</span>
-                      <span className="font-oblivion">{getPriorityFee()}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground font-oblivion">Est. Gas</span>
-                      <span className="font-oblivion">{getEstimatedGas()}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground font-oblivion">Slippage</span>
-                      <span className="font-oblivion">{autoSlippage ? 'Auto' : `${customSlippage || slippage}%`}</span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Execute Trade Button - FIXED text overflow and removed icons */}
                 <Button 
                   size="lg"
                   onClick={handleTrade}
                   disabled={!customAmount && !selectedAmount || isTrading}
-                  className={`w-full h-20 text-2xl font-oblivion font-black rounded-3xl shadow-xl transition-all duration-300 hover:scale-105 px-4 ${
+                  className={`w-full h-20 text-2xl font-crypto font-bold tracking-wider uppercase rounded-3xl shadow-xl transition-all duration-300 hover:scale-105 px-4 ${
                     tradeType === 'buy'
                       ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
                       : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
@@ -1097,10 +1074,10 @@ const MemeTokenDetailPage = () => {
                 {/* Wallet Balance Info */}
                 <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-oblivion text-muted-foreground">Wallet Balance</span>
+                    <span className="text-sm font-crypto font-bold tracking-wider uppercase text-muted-foreground">Wallet Balance</span>
                     <div className="text-right">
-                      <div className="text-sm font-oblivion font-bold">{solBalance.toFixed(4)} SOL</div>
-                      <div className="text-xs font-oblivion text-muted-foreground">{tokenBalance.toLocaleString()} {token.symbol}</div>
+                      <div className="text-sm font-crypto font-bold">{solBalance.toFixed(4)} SOL</div>
+                      <div className="text-xs font-crypto text-muted-foreground">{tokenBalance.toLocaleString()} {token.symbol}</div>
                     </div>
                   </div>
                 </div>
@@ -1110,8 +1087,8 @@ const MemeTokenDetailPage = () => {
                   <div className="flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
                     <div>
-                      <h4 className="font-oblivion font-bold text-amber-500 mb-1">Trading Risk</h4>
-                      <p className="text-sm font-oblivion text-muted-foreground">
+                      <h4 className="font-crypto font-bold tracking-wider uppercase text-amber-500 mb-1">Trading Risk</h4>
+                      <p className="text-sm font-crypto text-muted-foreground">
                         Meme tokens are highly volatile. Only invest what you can afford to lose.
                       </p>
                     </div>
@@ -1119,75 +1096,29 @@ const MemeTokenDetailPage = () => {
                 </div>
               </Card>
 
-              {/* Additional Trading Tools */}
+              {/* Token Address Card */}
               <Card className="p-6 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
-                <h3 className="text-2xl font-oblivion font-black mb-6 flex items-center gap-3">
-                  <Target className="w-6 h-6 text-primary" />
-                  Trading Tools
+                <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase mb-6 flex items-center gap-3">
+                  <Copy className="w-6 h-6 text-primary" />
+                  Token Info
                 </h3>
                 
                 <div className="space-y-4">
-                  {/* Price Alerts */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Bell className="w-5 h-5 text-blue-500" />
-                      <span className="font-oblivion font-bold text-blue-500">Price Alerts</span>
-                    </div>
-                    <div className="space-y-2">
-                      <input 
-                        type="number" 
-                        value={priceAlert}
-                        onChange={(e) => setPriceAlert(e.target.value)}
-                        placeholder="Set price alert"
-                        className="w-full h-10 px-3 text-sm font-oblivion bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300"
-                      />
-                      <Button variant="outline" size="sm" className="w-full h-8 text-xs font-oblivion rounded-lg">
-                        Set Alert
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Copy Trade Address */}
+                  {/* Token Address */}
                   <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/20">
                     <div className="flex items-center gap-3 mb-3">
                       <Copy className="w-5 h-5 text-purple-500" />
-                      <span className="font-oblivion font-bold text-purple-500">Token Address</span>
+                      <span className="font-crypto font-bold tracking-wider uppercase text-purple-500">Token Address</span>
                     </div>
                     <div className="flex gap-2">
                       <input 
                         readOnly
                         value="7xKXt..."
-                        className="flex-1 h-8 px-3 text-xs font-oblivion bg-muted/20 border border-border/30 rounded-lg"
+                        className="flex-1 h-8 px-3 text-xs font-crypto bg-muted/20 border border-border/30 rounded-lg"
                       />
-                      <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-oblivion rounded-lg">
+                      <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
                         Copy
                       </Button>
-                    </div>
-                  </div>
-
-                  {/* Performance Metrics */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Award className="w-5 h-5 text-green-500" />
-                      <span className="font-oblivion font-bold text-green-500">Performance</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground font-oblivion">1h:</span>
-                        <span className="text-green-500 font-oblivion font-bold">+2.34%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground font-oblivion">7d:</span>
-                        <span className="text-green-500 font-oblivion font-bold">+15.67%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground font-oblivion">30d:</span>
-                        <span className="text-green-500 font-oblivion font-bold">+89.12%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground font-oblivion">ATH:</span>
-                        <span className="font-oblivion font-bold">{formatPrice(token.price * 2.5)}</span>
-                      </div>
                     </div>
                   </div>
                 </div>
