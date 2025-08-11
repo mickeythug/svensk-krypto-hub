@@ -1,0 +1,95 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+type TradeBody = {
+  action: "buy" | "sell";
+  mint: string;
+  amount: number | string; // allow percentages for sell like "100%"
+  denominatedInSol: "true" | "false";
+  slippage: number;
+  priorityFee: number; // in SOL
+  pool?: "pump" | "raydium" | "pump-amm" | "launchlab" | "raydium-cpmm" | "bonk" | "auto";
+  skipPreflight?: "true" | "false";
+  jitoOnly?: "true" | "false";
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    if (req.method !== "POST") {
+      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const payload = (await req.json()) as TradeBody;
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      {
+        global: { headers: { Authorization: req.headers.get("Authorization")! } },
+      }
+    );
+
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Fetch user's PumpPortal API key
+    const { data: walletRow, error: wErr } = await supabase
+      .from("trading_wallets")
+      .select("pump_api_key, wallet_address, acknowledged_backup")
+      .eq("user_id", authData.user.id)
+      .maybeSingle();
+
+    if (wErr || !walletRow?.pump_api_key) {
+      return new Response(JSON.stringify({ error: "Trading wallet not found" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!walletRow.acknowledged_backup) {
+      return new Response(JSON.stringify({ error: "Backup not acknowledged" }), {
+        status: 428,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Call PumpPortal trade endpoint with user's API key
+    const url = `https://pumpportal.fun/api/trade?api-key=${encodeURIComponent(walletRow.pump_api_key)}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await res.text();
+    let json: any;
+    try { json = JSON.parse(text); } catch { json = { raw: text }; }
+
+    return new Response(JSON.stringify({ status: res.status, result: json }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "Unexpected error", details: String(e) }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});

@@ -9,6 +9,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
+import { useTradingWallet } from '@/hooks/useTradingWallet';
+import { usePumpTrade } from '@/hooks/usePumpTrade';
+import TradingWalletOnboardingModal from './components/TradingWalletOnboardingModal';
 
 const BuyTokenPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -20,47 +23,9 @@ const BuyTokenPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Expanded mock token data with more realistic information
-  const mockTokens = {
-    'BONK': {
-      symbol: 'BONK',
-      name: 'Bonk Inu',
-      logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNGRkE1MDAiLz4KPHR4dCB4PSIyMCIgeT0iMjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkZGIj5CTks8L3RleHQ+Cjwvc3ZnPg==',
-      price: '$0.000015234',
-      change24h: '+12.5%',
-      marketCap: '$1.2B',
-      holders: '125,847',
-      volume24h: '$45.2M',
-      contractAddress: '5vMjf47c8LKLqK7ZiYBG8pTMRiRgTJyqVnkPqUPmmp1',
-      supply: '100T',
-      verified: true,
-      risk: 'Medium',
-      socials: {
-        twitter: '@bonk_inu',
-        telegram: 't.me/bonkinu',
-        website: 'bonkinu.com'
-      }
-    },
-    'DOGE': {
-      symbol: 'DOGE',
-      name: 'Dogecoin',
-      logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNDM0E2MzQiLz4KPHR4dCB4PSIyMCIgeT0iMjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjRkZGIj5ETzwvdGV4dD4KPC9zdmc+',
-      price: '$0.087432',
-      change24h: '+8.2%',
-      marketCap: '$12.8B',
-      holders: '4.2M',
-      volume24h: '$892M',
-      contractAddress: 'DGE8KBPyqUeHFXnhX9AaqnJGwFcR34F7jjx5uqG7h6jk',
-      supply: '146B',
-      verified: true,
-      risk: 'Low',
-      socials: {
-        twitter: '@dogecoin',
-        telegram: 't.me/dogecoin',
-        website: 'dogecoin.com'
-      }
-    }
-  };
+  const { walletAddress, privateKey, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
+  const { loading: tradeLoading, trade } = usePumpTrade();
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     const title = 'Köp Meme Tokens - Crypto Network Sweden';
@@ -85,28 +50,29 @@ const BuyTokenPage = () => {
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
-    
     setIsLoading(true);
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const searchKey = searchTerm.toUpperCase();
-    const token = mockTokens[searchKey as keyof typeof mockTokens];
-    
-    if (token) {
-      setSelectedToken(token);
-      toast({
-        title: "Token hittad!",
-        description: `${token.name} (${token.symbol}) laddad framgångsrikt.`,
+    try {
+      const mint = searchTerm.trim();
+      const sym = mint.slice(0, 4).toUpperCase();
+      setSelectedToken({
+        symbol: sym,
+        name: 'Token',
+        logo: '/placeholder.svg',
+        price: '-',
+        change24h: '—',
+        marketCap: '—',
+        holders: '—',
+        volume24h: '—',
+        contractAddress: mint,
+        supply: '—',
+        verified: false,
+        risk: '—',
+        socials: { twitter: '', telegram: '', website: '' },
       });
-    } else {
-      toast({
-        title: "Token ej hittad",
-        description: "Försök med BONK eller DOGE för demo.",
-        variant: "destructive",
-      });
+      toast({ title: 'Token vald', description: `Mint: ${mint.slice(0,8)}...` });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleBuy = () => {
