@@ -186,7 +186,7 @@ const Header = () => {
                   {/* Wallet Connect Section */}
                   {!showWalletConnect ? (
                     <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                      <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Plånbok</div>
                       <Button 
                         onClick={() => setShowWalletConnect(true)}
                         className="w-full justify-center bg-gradient-primary hover:opacity-90"
@@ -204,7 +204,7 @@ const Header = () => {
                   {/* Complete Navigation Menu */}
                   <div className="space-y-6">
                     <div>
-                      <h3 className="font-crypto text-xs text-muted-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>
+                      <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>
                       <nav className="space-y-2">
                         {allPages.map((item) => {
                           const IconComponent = item.icon;
