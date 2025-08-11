@@ -16,6 +16,7 @@ const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const MarketOverviewPage = lazy(() => import("./pages/MarketOverviewPage"));
 const PortfolioPage = lazy(() => import("./pages/PortfolioPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
+const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
 const MemePage = lazy(() => import("./pages/memepage"));
 const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
@@ -53,6 +54,7 @@ const AppContent = memo(() => {
           <Route path="/artikel/:id" element={<Layout><ArticleDetailPage /></Layout>} />
           <Route path="/marknad" element={<Layout><MarketOverviewPage /></Layout>} />
           <Route path="/verktyg" element={<Layout><ToolsPage /></Layout>} />
+          <Route path="/community" element={<Layout><CommunityPage /></Layout>} />
           <Route path="/portfolio" element={<Layout><PortfolioPage /></Layout>} />
           <Route path="/crypto/:symbol" element={<Layout><CryptoDetailPage /></Layout>} />
           <Route path="/meme" element={<Layout><MemePage /></Layout>} />

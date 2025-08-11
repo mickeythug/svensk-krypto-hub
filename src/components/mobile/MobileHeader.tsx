@@ -2,7 +2,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate, useLocation } from "react-router-dom";
-import { TrendingUp, Newspaper, Wallet, Zap, Users } from "lucide-react";
+import { TrendingUp, Newspaper, Wallet, Zap, Users, Wrench, Home } from "lucide-react";
 import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
@@ -27,11 +27,13 @@ const MobileHeader = ({
   const shouldShowTicker = !isTradingPage;
 
   const navItems = [
-    { path: "/", icon: TrendingUp, label: "Hem" },
+    { path: "/", icon: Home, label: "Hem" },
     { path: "/marknad", icon: TrendingUp, label: "Marknad" },
     { path: "/meme", icon: Zap, label: "Meme Zone" },
     { path: "/crypto/btc", icon: Wallet, label: "Handel" },
-    { path: "/nyheter", icon: Newspaper, label: "Nyheter" }
+    { path: "/nyheter", icon: Newspaper, label: "Nyheter" },
+    { path: "/verktyg", icon: Wrench, label: "Verktyg" },
+    { path: "/community", icon: Users, label: "Community" }
   ];
   
   return (

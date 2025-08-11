@@ -3,13 +3,15 @@ import {
   TrendingUp, 
   Newspaper, 
   Zap,
-  Wallet
+  Wallet,
+  Home
 } from "lucide-react";
 
 const MobileBottomNavigation = () => {
   const location = useLocation();
 
   const navItems = [
+    { path: "/", icon: Home, label: "Hem" },
     { path: "/marknad", icon: TrendingUp, label: "Marknad" },
     { path: "/meme", icon: Zap, label: "Meme Zone" },
     { path: "/crypto/btc", icon: Wallet, label: "Handel" },
