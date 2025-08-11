@@ -55,18 +55,7 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
         <Header />
       )}
       
-      {/* Ticker - Hidden on trading pages */}
-      {shouldShowTicker && (
-        <div className={`${isMobile ? 'fixed top-16 left-0 right-0 z-[45]' : 'fixed top-20 left-0 right-0 z-40'}`}>
-          {isMemeZone ? (
-            <MemeLiveTicker />
-          ) : (
-            <CryptoPriceTicker />
-          )}
-        </div>
-      )}
-      
-      {/* Main content with proper spacing for fixed header and ticker */}
+      {/* Main content with proper spacing for fixed header with integrated ticker */}
       <main className={`
         ${isMobile ? 'pt-16' : 'pt-20'}
         ${shouldShowTicker ? (isMobile ? 'mt-10' : 'mt-12') : ''}

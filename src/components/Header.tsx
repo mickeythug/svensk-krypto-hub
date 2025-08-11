@@ -13,6 +13,8 @@ import {
   BarChart3
 } from "lucide-react";
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
+import CryptoPriceTicker from '@/components/CryptoPriceTicker';
+import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 
 
 const Header = () => {
@@ -61,6 +63,11 @@ const Header = () => {
     setIsOpen(false);
   };
 
+  // Check if we're on trading pages (no ticker on trading pages)
+  const isTradingPage = location.pathname.startsWith('/crypto/');
+  const isMemeZone = location.pathname.startsWith('/meme');
+  const shouldShowTicker = !isTradingPage;
+
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -69,9 +76,9 @@ const Header = () => {
           : "bg-background/90 backdrop-blur-md"
       }`}
     >
+      {/* Main Header */}
       <div className="px-0">
         <div className="h-16 flex items-center justify-between">
-          {/* Logo */}
           {/* Logo */}
           <button 
             onClick={() => navigate('/')}
@@ -185,6 +192,17 @@ const Header = () => {
           </Sheet>
         </div>
       </div>
+      
+      {/* Crypto Ticker - Integrated into header */}
+      {shouldShowTicker && (
+        <div className="border-t border-border/30">
+          {isMemeZone ? (
+            <MemeLiveTicker />
+          ) : (
+            <CryptoPriceTicker />
+          )}
+        </div>
+      )}
     </header>
   );
 };
