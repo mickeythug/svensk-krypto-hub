@@ -128,20 +128,8 @@ const CryptoPriceTicker = memo(() => {
     return [...cryptoPrices, ...cryptoPrices];
   }, [cryptoPrices]);
 
-  // Early return för loading/error states
-  if (isLoading || !cryptoPrices || cryptoPrices.length === 0) {
-    return (
-      <section className={`bg-background border-b border-border ${isMobile ? 'py-2' : 'py-3'} relative z-40 w-full`}>
-        <div className="bg-muted/50 border-b border-border py-1">
-          <div className="container mx-auto px-4">
-            <p className="text-muted-foreground text-xs text-center animate-pulse">
-              📡 Hämtar live kryptovalutapriser...
-            </p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Always render ticker without loading text; show subtle skeleton if empty
+  const showSkeleton = !cryptoPrices || cryptoPrices.length === 0;
 
   return (
     <section className={`bg-background border-b border-border ${isMobile ? 'py-2' : 'py-3'} relative z-40 w-full`}>
@@ -155,18 +143,23 @@ const CryptoPriceTicker = memo(() => {
           </div>
         </div>
       )}
-      
       <div className="relative overflow-hidden">
-        <div className={`flex animate-ticker ${isMobile ? 'space-x-4' : 'space-x-8'} whitespace-nowrap`}>
-          {doubledPrices.map((crypto, index) => (
-            <TokenItem
-              key={`${crypto.symbol}-${index}`}
-              crypto={crypto}
-              isMobile={isMobile}
-              onTokenClick={handleTokenClick}
-            />
-          ))}
-        </div>
+        {showSkeleton ? (
+          <div className={`h-7 ${isMobile ? 'mx-2' : 'mx-4'} rounded-md bg-muted/40 overflow-hidden`}>
+            <div className="h-full w-1/3 bg-muted/70 animate-[shimmer_1.6s_infinite]" />
+          </div>
+        ) : (
+          <div className={`flex animate-ticker ${isMobile ? 'space-x-4' : 'space-x-8'} whitespace-nowrap`}>
+            {doubledPrices.map((crypto, index) => (
+              <TokenItem
+                key={`${crypto.symbol}-${index}`}
+                crypto={crypto}
+                isMobile={isMobile}
+                onTokenClick={handleTokenClick}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

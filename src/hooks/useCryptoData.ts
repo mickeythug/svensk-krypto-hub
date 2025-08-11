@@ -581,6 +581,19 @@ export const useCryptoData = () => {
     gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
     refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
     refetchIntervalInBackground: true,
+    // Seed immediately from cache (localStorage) to avoid any loading flashes
+    initialData: () => {
+      try {
+        const raw = localStorage.getItem('crypto-prices-cache-v2');
+        if (!raw) return undefined;
+        const parsed = JSON.parse(raw);
+        if (Date.now() - parsed.ts <= CACHE_DURATIONS.STALE_WHILE_REVALIDATE) {
+          return parsed.data as CryptoPrice[];
+        }
+      } catch {}
+      // Fallback to any in-memory cached data
+      return queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined;
+    },
     placeholderData: () => queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined,
     retry: (failureCount, error) => {
       // Intelligent retry logik

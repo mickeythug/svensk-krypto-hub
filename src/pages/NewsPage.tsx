@@ -154,12 +154,33 @@ const NewsPage = () => {
 
   useEffect(() => {
     let active = true;
+
+    // 1) Seed immediately from cache to avoid any loading flashes
+    try {
+      const raw = localStorage.getItem('news-cache-v1');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // Accept cache up to 5 minutes old
+        if (Date.now() - (parsed.ts || 0) <= 5 * 60 * 1000) {
+          const cachedNews: NewsArticle[] = parsed.data ?? [];
+          if (cachedNews.length) {
+            setNews(cachedNews);
+            setFilteredNews(cachedNews);
+            const nowMs = Date.now();
+            const count24 = cachedNews.filter(a => (nowMs - new Date(a.publishedAt).getTime()) <= 24 * 60 * 60 * 1000).length;
+            setNewsCount24h(count24);
+            setIsLoading(false);
+          }
+        }
+      }
+    } catch {}
+
     const load = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading((prev) => prev && news.length === 0); // only show loading if nothing to show yet
         const projectRef = "jcllcrvomxdrhtkqpcbr";
         const url = `https://${projectRef}.supabase.co/functions/v1/news-aggregator?lang=sv&limit=500`;
-        const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+        const res = await fetch(url, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' } });
         const json = await res.json();
         const items = (json.articles ?? []) as any[];
         const mapped: NewsArticle[] = items.map((a) => {
@@ -193,6 +214,7 @@ const NewsPage = () => {
         const nowMs = Date.now();
         const count24 = mapped.filter(a => (nowMs - new Date(a.publishedAt).getTime()) <= 24 * 60 * 60 * 1000).length;
         setNewsCount24h(count24);
+        try { localStorage.setItem('news-cache-v1', JSON.stringify({ ts: Date.now(), data: mapped })); } catch {}
       } catch (e) {
         console.error('Failed to load news', e);
       } finally {
@@ -200,7 +222,7 @@ const NewsPage = () => {
       }
     };
     
-    // Initial load
+    // Initial load from network (will update cache and UI)
     load();
     
     // Auto-refresh every 3 minutes
