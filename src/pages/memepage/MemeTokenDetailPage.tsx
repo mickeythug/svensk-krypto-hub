@@ -486,26 +486,25 @@ const MemeTokenDetailPage = () => {
     );
   }
 
-  // DESKTOP VERSION - Modern Trading App Layout
+  // DESKTOP VERSION - Modern Meme Trading Platform (Axiom/BullX inspired)
   return (
-    <div className="min-h-screen bg-background">
-      {/* Main Container */}
-      <div className="max-w-[1920px] mx-auto">
-        {/* Top Header Bar */}
-        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50">
-          <div className="flex items-center justify-between p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/98 to-muted/30">
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/20 shadow-sm">
+        <div className="max-w-[1800px] mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
-                size="sm"
+                size="lg"
                 onClick={() => navigate(-1)}
-                className="h-10 px-4 rounded-xl hover:bg-accent transition-colors"
+                className="h-12 px-6 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30 transition-all duration-300"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Tillbaka
+                <ArrowLeft className="h-5 w-5 mr-3" />
+                <span className="text-lg font-semibold">Tillbaka</span>
               </Button>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg overflow-hidden bg-primary/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30">
                   <OptimizedImage
                     src={coverImage}
                     alt={token.symbol}
@@ -513,336 +512,285 @@ const MemeTokenDetailPage = () => {
                   />
                 </div>
                 <div>
-                  <h1 className="text-lg font-bold">{token.emoji} {token.symbol}</h1>
-                  <p className="text-sm text-muted-foreground">{token.name}</p>
+                  <h1 className="text-2xl font-black">{token.emoji} {token.symbol}</h1>
+                  <p className="text-lg text-muted-foreground font-medium">{token.name}</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 mr-4">
-                <span className="text-2xl font-bold">{formatPrice(token.price)}</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-card/60 border border-border/30">
+                <span className="text-3xl font-black">{formatPrice(token.price)}</span>
                 <Badge 
                   variant={isPositive ? "default" : "destructive"}
-                  className={`${isPositive ? 'bg-green-500' : 'bg-red-500'} text-white`}
+                  className={`${isPositive ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'} text-white font-bold text-lg px-4 py-2 rounded-xl`}
                 >
+                  {isPositive ? <TrendingUp className="w-5 h-5 mr-2" /> : <TrendingDown className="w-5 h-5 mr-2" />}
                   {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
                 </Badge>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsLiked(!isLiked)}
-                className="h-10 w-10 rounded-xl"
-              >
-                <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsBookmarked(!isBookmarked)}
-                className="h-10 w-10 rounded-xl"
-              >
-                <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-primary text-primary' : ''}`} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-10 w-10 rounded-xl"
-              >
-                <Share2 className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => setIsLiked(!isLiked)}
+                  className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30"
+                >
+                  <Heart className={`h-6 w-6 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => setIsBookmarked(!isBookmarked)}
+                  className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30"
+                >
+                  <Bookmark className={`h-6 w-6 ${isBookmarked ? 'fill-primary text-primary' : ''}`} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30"
+                >
+                  <Share2 className="h-6 w-6" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Main Content Area */}
-        <div className="flex h-[calc(100vh-81px)]">
-          {/* Left Panel - Chart */}
-          <div className="flex-1 border-r border-border/50">
-            <div className="h-full flex flex-col">
+      {/* Main Trading Interface */}
+      <div className="max-w-[1800px] mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-120px)]">
+          
+          {/* Left Panel - Chart (Takes 3/4 width) */}
+          <div className="lg:col-span-3">
+            <Card className="h-full bg-card/40 backdrop-blur-xl border-border/30 shadow-2xl rounded-3xl overflow-hidden">
               {/* Chart Header */}
-              <div className="flex items-center justify-between p-4 border-b border-border/50 bg-card/30">
+              <div className="flex items-center justify-between p-8 border-b border-border/20 bg-gradient-to-r from-card/60 to-card/40 backdrop-blur-sm">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center border-2 border-primary/40">
+                      <LineChart className="w-8 h-8 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-3xl font-black mb-1">Live Trading Chart</h2>
+                      <p className="text-xl text-muted-foreground font-medium">Professional {token.symbol} Analysis</p>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex items-center gap-4">
-                  <h3 className="text-xl font-bold">Live Chart</h3>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Activity className="w-4 h-4" />
-                    <span>TradingView Professional</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" className="h-8">
-                    <Maximize2 className="w-3 h-3 mr-1" />
-                    Fullskärm
+                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-semibold border-2">
+                    <Maximize2 className="w-5 h-5 mr-3" />
+                    Fullscreen
                   </Button>
-                  <Button variant="outline" size="sm" className="h-8">
-                    <Settings className="w-3 h-3 mr-1" />
-                    Inställningar
+                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-semibold border-2">
+                    <Settings className="w-5 h-5 mr-3" />
+                    Settings
+                  </Button>
+                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-semibold border-2">
+                    <RefreshCw className="w-5 h-5 mr-3" />
+                    Refresh
                   </Button>
                 </div>
               </div>
 
-              {/* Chart Area */}
-              <div className="flex-1 bg-[#0f0f23] relative">
-                <TradingViewChart 
-                  symbol={token.symbol} 
-                  currentPrice={token.price}
-                  coinGeckoId={token.symbol.toLowerCase()} 
-                />
-              </div>
-
-              {/* Chart Tools */}
-              <div className="p-4 border-t border-border/50 bg-card/30">
-                <div className="grid grid-cols-4 gap-3">
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
-                    <Signal className="w-4 h-4 text-primary" />
-                    <div className="text-xs">
-                      <div className="font-medium">Tekniska Indikatorer</div>
-                      <div className="text-muted-foreground">RSI, MACD, EMA</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/5 border border-green-500/10">
-                    <Volume2 className="w-4 h-4 text-green-500" />
-                    <div className="text-xs">
-                      <div className="font-medium">Volymanalys</div>
-                      <div className="text-muted-foreground">Live handelsdata</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
-                    <BarChart3 className="w-4 h-4 text-blue-500" />
-                    <div className="text-xs">
-                      <div className="font-medium">Marknadsdjup</div>
-                      <div className="text-muted-foreground">Orderbok data</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/10">
-                    <CloudLightning className="w-4 h-4 text-purple-500" />
-                    <div className="text-xs">
-                      <div className="font-medium">AI Insights</div>
-                      <div className="text-muted-foreground">Smart analys</div>
-                    </div>
+              {/* Chart Container with Proper Padding */}
+              <div className="p-8">
+                <div className="bg-[#0f0f23] rounded-3xl overflow-hidden shadow-inner border-4 border-border/10 relative">
+                  <div className="h-[600px] p-4">
+                    <TradingViewChart 
+                      symbol={token.symbol} 
+                      currentPrice={token.price}
+                      coinGeckoId={token.symbol.toLowerCase()} 
+                    />
                   </div>
                 </div>
               </div>
-            </div>
+
+              {/* Chart Analytics Footer */}
+              <div className="p-8 border-t border-border/20 bg-gradient-to-r from-card/60 to-card/40">
+                <div className="grid grid-cols-4 gap-6">
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Signal className="w-6 h-6 text-blue-500" />
+                      <span className="text-lg font-bold text-blue-500">Technical Analysis</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">RSI, MACD, Moving Averages</p>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Volume2 className="w-6 h-6 text-green-500" />
+                      <span className="text-lg font-bold text-green-500">Volume Analysis</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Real-time trading volume</p>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <BarChart3 className="w-6 h-6 text-purple-500" />
+                      <span className="text-lg font-bold text-purple-500">Market Depth</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Order book analysis</p>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-500/10 to-orange-600/10 border border-orange-500/20">
+                    <div className="flex items-center gap-3 mb-3">
+                      <CloudLightning className="w-6 h-6 text-orange-500" />
+                      <span className="text-lg font-bold text-orange-500">AI Insights</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Smart market predictions</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
 
-          {/* Right Panel - Trading & Stats */}
-          <div className="w-[400px] bg-card/20 backdrop-blur-sm">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-              {/* Tab Navigation */}
-              <div className="p-3 border-b border-border/50">
-                <TabsList className="grid w-full grid-cols-3 bg-muted/30 rounded-xl">
-                  <TabsTrigger value="trade" className="rounded-lg font-medium">
-                    <ShoppingCart className="w-4 h-4 mr-1" />
-                    Handel
-                  </TabsTrigger>
-                  <TabsTrigger value="stats" className="rounded-lg font-medium">
-                    <Activity className="w-4 h-4 mr-1" />
-                    Stats
-                  </TabsTrigger>
-                  <TabsTrigger value="community" className="rounded-lg font-medium">
-                    <Users className="w-4 h-4 mr-1" />
-                    Community
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+          {/* Right Panel - Trading Interface (Takes 1/4 width) */}
+          <div className="lg:col-span-1">
+            <div className="space-y-6">
+              
+              {/* Quick Stats Card */}
+              <Card className="p-6 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
+                <h3 className="text-2xl font-black mb-6 flex items-center gap-3">
+                  <Activity className="w-6 h-6 text-primary" />
+                  Market Stats
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
+                    <span className="text-lg font-semibold text-muted-foreground">Market Cap</span>
+                    <span className="text-xl font-black">{formatMarketCap(token.marketCap)}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
+                    <span className="text-lg font-semibold text-muted-foreground">24h Volume</span>
+                    <span className="text-xl font-black">{stats.volume24h}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
+                    <span className="text-lg font-semibold text-muted-foreground">Holders</span>
+                    <span className="text-xl font-black">{token.holders.toLocaleString()}</span>
+                  </div>
+                </div>
+              </Card>
 
-              {/* Tab Content */}
-              <div className="flex-1 overflow-y-auto">
-                <TabsContent value="trade" className="p-0 m-0 h-full">
-                  <div className="p-4 space-y-4">
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <Card className="p-3">
-                        <div className="text-xs text-muted-foreground mb-1">Market Cap</div>
-                        <div className="text-sm font-bold">{formatMarketCap(token.marketCap)}</div>
-                      </Card>
-                      <Card className="p-3">
-                        <div className="text-xs text-muted-foreground mb-1">24h Volym</div>
-                        <div className="text-sm font-bold">{stats.volume24h}</div>
-                      </Card>
+              {/* Advanced Trading Panel */}
+              <Card className="p-6 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
+                <h3 className="text-2xl font-black mb-6 flex items-center gap-3">
+                  <ShoppingCart className="w-6 h-6 text-primary" />
+                  Quick Trade
+                </h3>
+                
+                {/* Buy/Sell Toggle */}
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <Button 
+                    size="lg"
+                    className="h-16 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-black text-xl rounded-2xl shadow-lg transition-all duration-300 hover:scale-105"
+                  >
+                    <TrendingUp className="w-6 h-6 mr-3" />
+                    BUY
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    size="lg"
+                    className="h-16 border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-black text-xl rounded-2xl transition-all duration-300 hover:scale-105"
+                  >
+                    <TrendingDown className="w-6 h-6 mr-3" />
+                    SELL
+                  </Button>
+                </div>
+
+                {/* Amount Selection */}
+                <div className="space-y-4 mb-6">
+                  <label className="text-lg font-bold text-muted-foreground">Select Amount (SOL)</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="h-14 text-lg font-bold rounded-2xl border-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+                    >
+                      1 SOL
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="h-14 text-lg font-bold rounded-2xl border-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+                    >
+                      5 SOL
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="h-14 text-lg font-bold rounded-2xl border-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+                    >
+                      10 SOL
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="h-14 text-lg font-bold rounded-2xl border-2 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+                    >
+                      25 SOL
+                    </Button>
+                  </div>
+                  
+                  {/* Custom Amount Input */}
+                  <div className="space-y-3">
+                    <label className="text-lg font-bold text-muted-foreground">Custom Amount</label>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        placeholder="Enter SOL amount"
+                        className="w-full h-14 px-6 text-lg font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
+                      />
+                      <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-lg font-bold text-muted-foreground">SOL</span>
                     </div>
-
-                    {/* Trading Interface */}
-                    <Card className="p-4">
-                      <div className="flex items-center gap-2 mb-4">
-                        <ShoppingCart className="w-4 h-4 text-primary" />
-                        <h3 className="font-bold">Snabbhandel</h3>
-                      </div>
-                      
-                      {/* Large Buy/Sell Buttons */}
-                      <div className="space-y-3 mb-4">
-                        <Button 
-                          size="lg"
-                          className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold h-12 rounded-xl shadow-lg"
-                          onClick={() => setActiveTab('trade')}
-                        >
-                          <ShoppingCart className="w-5 h-5 mr-2" />
-                          KÖP {token.symbol}
-                        </Button>
-                        <Button 
-                          variant="outline"
-                          size="lg"
-                          className="w-full border-red-200 text-red-600 hover:bg-red-50 font-bold h-12 rounded-xl"
-                        >
-                          <TrendingDown className="w-5 h-5 mr-2" />
-                          SÄLJ {token.symbol}
-                        </Button>
-                      </div>
-
-                      {/* Jupiter Widget */}
-                      <div className="bg-muted/20 rounded-xl p-2">
-                        <JupiterSwapWidget height={400} />
-                      </div>
-                    </Card>
-
-                    {/* Warning */}
-                    <Card className="p-4 bg-amber-500/5 border-amber-500/20">
-                      <div className="flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <h4 className="font-bold text-amber-600 text-sm mb-1">Riskvarning</h4>
-                          <p className="text-xs text-muted-foreground">
-                            Meme-tokens är högrisksinvesteringar. Investera endast vad du har råd att förlora.
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
                   </div>
-                </TabsContent>
+                </div>
 
-                <TabsContent value="stats" className="p-0 m-0 h-full">
-                  <div className="p-4 space-y-4">
-                    {/* Token Info */}
-                    <Card className="p-4">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-primary/10">
-                          <OptimizedImage
-                            src={coverImage}
-                            alt={token.symbol}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-lg">{token.symbol}</h3>
-                          <p className="text-sm text-muted-foreground">{token.name}</p>
-                        </div>
-                      </div>
-                      
-                      {/* Price Info */}
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Aktuellt pris</span>
-                          <span className="font-bold">{formatPrice(token.price)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">24h förändring</span>
-                          <span className={`font-bold ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                            {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Market Cap</span>
-                          <span className="font-bold">{formatMarketCap(token.marketCap)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Volym 24h</span>
-                          <span className="font-bold">{stats.volume24h}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-muted-foreground">Holders</span>
-                          <span className="font-bold">{token.holders.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* Detailed Stats */}
-                    <Card className="p-4">
-                      <h4 className="font-bold mb-3">Detaljerad Statistik</h4>
-                      <div className="space-y-3 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">ATH</span>
-                          <span className="font-medium">{stats.ath}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">ATL</span>
-                          <span className="font-medium">{stats.atl}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Max Supply</span>
-                          <span className="font-medium">{stats.maxSupply}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Volatilitet</span>
-                          <span className="font-medium">{stats.volatility}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Likviditetspoäng</span>
-                          <span className="font-medium">{stats.liquidityScore}</span>
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* Tags */}
-                    <Card className="p-4">
-                      <h4 className="font-bold mb-3">Kategorier</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {token.tags.map((tag, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="secondary" 
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </Card>
+                {/* Slippage & Settings */}
+                <div className="space-y-4 mb-6">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-bold text-muted-foreground">Slippage</span>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="h-10 px-4 text-sm font-bold rounded-xl">1%</Button>
+                      <Button variant="outline" size="sm" className="h-10 px-4 text-sm font-bold rounded-xl">3%</Button>
+                      <Button variant="outline" size="sm" className="h-10 px-4 text-sm font-bold rounded-xl">5%</Button>
+                    </div>
                   </div>
-                </TabsContent>
+                </div>
 
-                <TabsContent value="community" className="p-0 m-0 h-full">
-                  <div className="p-4 space-y-4">
-                    <Card className="p-4">
-                      <h4 className="font-bold mb-4">Community Länkar</h4>
-                      <div className="space-y-3">
-                        <Button variant="outline" className="w-full justify-start">
-                          <ExternalLink className="w-4 h-4 mr-3" />
-                          Telegram
-                        </Button>
-                        <Button variant="outline" className="w-full justify-start">
-                          <ExternalLink className="w-4 h-4 mr-3" />
-                          Twitter
-                        </Button>
-                        <Button variant="outline" className="w-full justify-start">
-                          <ExternalLink className="w-4 h-4 mr-3" />
-                          Discord
-                        </Button>
-                        <Button variant="outline" className="w-full justify-start">
-                          <ExternalLink className="w-4 h-4 mr-3" />
-                          Website
-                        </Button>
-                      </div>
-                    </Card>
+                {/* Execute Trade Button */}
+                <Button 
+                  size="lg"
+                  className="w-full h-16 bg-gradient-to-r from-primary via-primary-glow to-primary hover:from-primary-glow hover:via-primary hover:to-primary-glow text-white font-black text-xl rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 mb-4"
+                >
+                  <Zap className="w-6 h-6 mr-3" />
+                  EXECUTE TRADE
+                </Button>
 
-                    <Card className="p-4">
-                      <h4 className="font-bold mb-3">Community Stats</h4>
-                      <div className="space-y-3 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Visningar</span>
-                          <span className="font-medium">{token.views.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Sentiment</span>
-                          <span className="font-medium text-green-500">{stats.sentiment}</span>
-                        </div>
-                      </div>
-                    </Card>
+                {/* Advanced Jupiter Widget */}
+                <div className="mt-6 p-4 bg-gradient-to-br from-muted/20 to-muted/10 rounded-2xl border border-border/20">
+                  <h4 className="text-lg font-bold mb-3 flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
+                    Advanced Trading
+                  </h4>
+                  <div className="h-[400px] rounded-xl overflow-hidden">
+                    <JupiterSwapWidget height={400} />
                   </div>
-                </TabsContent>
-              </div>
-            </Tabs>
+                </div>
+              </Card>
+
+              {/* Risk Warning */}
+              <Card className="p-6 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-orange-500/10 border-2 border-amber-500/20 shadow-xl rounded-3xl">
+                <div className="flex items-start gap-4">
+                  <AlertCircle className="w-8 h-8 text-amber-500 flex-shrink-0 mt-1" />
+                  <div>
+                    <h4 className="text-xl font-black text-amber-600 mb-3">⚠️ High Risk Warning</h4>
+                    <p className="text-lg text-muted-foreground leading-relaxed">
+                      Meme tokens are extremely volatile and high-risk investments. Only invest what you can afford to lose completely.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+            </div>
           </div>
         </div>
       </div>
