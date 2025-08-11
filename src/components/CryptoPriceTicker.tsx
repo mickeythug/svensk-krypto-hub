@@ -3,7 +3,7 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 import { useCryptoData } from "@/hooks/useCryptoData";
-import TransparentLogo from "@/components/TransparentLogo";
+
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/svg/btc.svg";
@@ -20,6 +20,7 @@ import shibLogo from "@/assets/crypto-logos/svg/shib.svg";
 import maticLogo from "@/assets/crypto-logos/svg/matic.svg";
 import ltcLogo from "@/assets/crypto-logos/svg/ltc.svg";
 import xrpLogo from "@/assets/crypto-logos/svg/xrp.svg";
+import trxLogo from "@/assets/crypto-logos/svg/trx.svg";
 
 // Logo mapping - cachade SVG logotyper för optimal prestanda
 const CRYPTO_LOGOS = Object.freeze({
@@ -32,13 +33,13 @@ const CRYPTO_LOGOS = Object.freeze({
   'AVAX': avaxLogo,
   'LINK': linkLogo,
   'DOGE': dogeLogo,
-  'TRX': '/lovable-uploads/f033b264-ccdb-4b65-8df9-12676c6fd752.png',
+  'TRX': trxLogo,
   'HBAR': '/lovable-uploads/3e6ed0e2-f9f8-4aa6-94e8-62aa1bdc11ce.png',
   'ALGO': '/lovable-uploads/9749ce60-cc5c-4316-bb4e-d89a819b14cd.png',
-  'SUI': solLogo, // Placeholder - använder SOL tills SUI logo finns
-  'APT': linkLogo, // Placeholder - använder LINK tills APT logo finns  
-  'BONK': dogeLogo, // Placeholder - använder DOGE tills BONK logo finns
-  'HYPE': ethLogo, // Placeholder - använder ETH tills HYPE logo finns
+  'SUI': solLogo, // TODO: add local SUI svg
+  'APT': linkLogo, // TODO: add local APT svg
+  'BONK': dogeLogo, // TODO: add local BONK svg
+  'HYPE': ethLogo, // TODO: add local HYPE svg
   'XRP': xrpLogo
 } as const);
 

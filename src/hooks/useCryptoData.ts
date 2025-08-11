@@ -439,7 +439,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
 
     // Reset circuit breaker on success
     this.failureCount = 0;
-    return finalData;
+    return this.filterAllowed(finalData);
   } catch (error: any) {
     clearTimeout(timer);
     this.recordFailure();
@@ -450,7 +450,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Date.now() - parsed.ts <= CACHE_DURATIONS.STALE_WHILE_REVALIDATE) {
-          return parsed.data as CryptoPrice[];
+          return this.filterAllowed(parsed.data as CryptoPrice[]);
         }
       }
     } catch {}
@@ -474,7 +474,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       const transformed = this.transformCoinGeckoResponse(results);
       try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: transformed })); } catch {}
       this.failureCount = 0;
-      return transformed;
+      return this.filterAllowed(transformed);
     } catch (e2: any) {
       // Do NOT fabricate data
       throw (e2 instanceof Error ? e2 : new Error(String(e2)));
@@ -497,6 +497,18 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       image: coin.image,
       coinGeckoId: coin.id,
     }));
+  }
+
+  // Enforce exact token set and order
+  private filterAllowed(data: CryptoPrice[]): CryptoPrice[] {
+    const allowedOrder = ['BTC','ETH','HBAR','ALGO','SUI','XRP','DOGE','BONK','SOL','LINK','APT','BNB','ADA','HYPE','TRX','AVAX'] as const;
+    const orderMap = new Map(allowedOrder.map((s, i) => [s, i]));
+    // Deduplicate by symbol
+    const seen = new Set<string>();
+    const filtered = data.filter(d => orderMap.has(d.symbol as any) && !seen.has(d.symbol) && (seen.add(d.symbol), true));
+    // Sort according to allowed order
+    filtered.sort((a,b) => (orderMap.get(a.symbol as any)! - orderMap.get(b.symbol as any)!));
+    return filtered;
   }
 
   private getFallbackData(): CryptoPrice[] {
