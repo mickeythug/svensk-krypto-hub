@@ -1,60 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ArrowLeft, 
-  Star, 
-  TrendingUp, 
-  TrendingDown, 
-  Users, 
-  Eye, 
-  Share2, 
-  Heart,
-  Copy,
-  ExternalLink,
-  Shield,
-  Zap,
-  Target,
-  BarChart3,
-  Clock,
-  DollarSign,
-  ShoppingCart,
-  Bookmark,
-  AlertCircle,
-  CheckCircle,
-  Info,
-  Download,
-  Globe,
-  MessageCircle,
-  Award,
-  Activity,
-  Layers,
-  Volume2,
-  Calendar,
-  PieChart,
-  LineChart,
-  BarChart,
-  Maximize2,
-  Settings,
-  RefreshCw,
-  Filter,
-  Search,
-  Bell,
-  Flag,
-  Lock,
-  Unlock,
-  Play,
-  Pause,
-  RotateCcw,
-  Database,
-  Network,
-  Cpu,
-  HardDrive,
-  Wifi,
-  Signal,
-  Battery,
-  CloudLightning
-} from 'lucide-react';
+import { ArrowLeft, Star, TrendingUp, TrendingDown, Users, Eye, Share2, Heart, Copy, ExternalLink, Shield, Zap, Target, BarChart3, Clock, DollarSign, ShoppingCart, Bookmark, AlertCircle, CheckCircle, Info, Download, Globe, MessageCircle, Award, Activity, Layers, Volume2, Calendar, PieChart, LineChart, BarChart, Maximize2, Settings, RefreshCw, Filter, Search, Bell, Flag, Lock, Unlock, Play, Pause, RotateCcw, Database, Network, Cpu, HardDrive, Wifi, Signal, Battery, CloudLightning } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -76,14 +23,16 @@ import c3 from '@/assets/meme-covers/meme-cover-3.jpg';
 import c4 from '@/assets/meme-covers/meme-cover-4.jpg';
 import c5 from '@/assets/meme-covers/meme-cover-5.jpg';
 import c6 from '@/assets/meme-covers/meme-cover-6.jpg';
-
 const covers = [c1, c2, c3, c4, c5, c6];
-
 const MemeTokenDetailPage = () => {
-  const { symbol } = useParams();
+  const {
+    symbol
+  } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { tokens } = useMemeTokens('all');
+  const {
+    tokens
+  } = useMemeTokens('all');
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
@@ -100,7 +49,7 @@ const MemeTokenDetailPage = () => {
   const [autoSlippage, setAutoSlippage] = useState(true);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
-  
+
   // Price alerts and limits
   const [limitPrice, setLimitPrice] = useState('');
   const [stopPrice, setStopPrice] = useState('');
@@ -125,12 +74,10 @@ const MemeTokenDetailPage = () => {
     setSelectedAmount(amount);
     setCustomAmount(amount.toString());
   }, []);
-
   const handleCustomAmountChange = useCallback((value: string) => {
     setCustomAmount(value);
     setSelectedAmount(null);
   }, []);
-
   const calculateTradeValue = useCallback(() => {
     if (!token) return 0;
     const amount = selectedAmount || parseFloat(customAmount) || 0;
@@ -140,20 +87,17 @@ const MemeTokenDetailPage = () => {
       return amount; // For sell, amount is in tokens
     }
   }, [selectedAmount, customAmount, tradeType, token]);
-
   const calculateSellPercentage = useCallback((percentage: number) => {
-    const amount = (tokenBalance * percentage) / 100;
+    const amount = tokenBalance * percentage / 100;
     setCustomAmount(amount.toString());
     setSelectedAmount(null);
   }, [tokenBalance]);
-
   const handleTrade = useCallback(async () => {
     if (!token) return;
     setIsTrading(true);
     try {
       // Simulate trading delay
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
       const amount = selectedAmount || parseFloat(customAmount) || 0;
       console.log(`${tradeType.toUpperCase()} ${amount} ${tradeType === 'buy' ? 'SOL' : token.symbol}`, {
         orderType,
@@ -163,7 +107,7 @@ const MemeTokenDetailPage = () => {
         limitPrice: orderType === 'limit' ? limitPrice : null,
         stopPrice: orderType === 'stop' ? stopPrice : null
       });
-      
+
       // Reset form after successful trade
       setCustomAmount('');
       setSelectedAmount(null);
@@ -173,16 +117,18 @@ const MemeTokenDetailPage = () => {
       setIsTrading(false);
     }
   }, [tradeType, selectedAmount, customAmount, orderType, slippage, autoSlippage, priority, mevProtection, limitPrice, stopPrice, token]);
-
   const getPriorityFee = useCallback(() => {
     switch (priority) {
-      case 'low': return '0.0001 SOL';
-      case 'medium': return '0.0005 SOL';
-      case 'high': return '0.001 SOL';
-      default: return '0.0005 SOL';
+      case 'low':
+        return '0.0001 SOL';
+      case 'medium':
+        return '0.0005 SOL';
+      case 'high':
+        return '0.001 SOL';
+      default:
+        return '0.0005 SOL';
     }
   }, [priority]);
-
   const getEstimatedGas = useCallback(() => {
     return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
   }, [orderType]);
@@ -194,7 +140,6 @@ const MemeTokenDetailPage = () => {
     if (price < 1) return `$${price.toFixed(4)}`;
     return `$${price.toFixed(2)}`;
   };
-
   const formatMarketCap = (marketCap: number): string => {
     if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
     if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
@@ -204,16 +149,13 @@ const MemeTokenDetailPage = () => {
 
   // EARLY RETURN AFTER ALL HOOKS
   if (!token) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Laddar token...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   const isPositive = token.change24h > 0;
   const coverImage = covers[Math.abs(token.symbol.charCodeAt(0)) % covers.length];
 
@@ -237,31 +179,19 @@ const MemeTokenDetailPage = () => {
     riskScore: 'Medel-Hög',
     sentiment: 'Positiv'
   });
-
   const stats = getEnhancedStats();
-
   if (isMobile) {
-    return (
-      <div className="min-h-screen bg-background">
+    return <div className="min-h-screen bg-background">
         {/* Mobile Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <OptimizedImage
-              src={coverImage}
-              alt={`${token.name} background`}
-              className="w-full h-full object-cover scale-110 blur-xl opacity-20"
-            />
+            <OptimizedImage src={coverImage} alt={`${token.name} background`} className="w-full h-full object-cover scale-110 blur-xl opacity-20" />
             <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
           </div>
 
           <div className="relative z-10 pt-6 pb-8">
             <div className="container mx-auto px-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(-1)}
-                className="mb-6 h-10 w-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card"
-              >
+              <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-6 h-10 w-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
 
@@ -270,19 +200,13 @@ const MemeTokenDetailPage = () => {
                   <div className="flex items-start gap-4">
                     <div className="relative">
                       <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg">
-                        <OptimizedImage
-                          src={coverImage}
-                          alt={`${token.name} logo`}
-                          className="w-full h-full object-cover"
-                        />
+                        <OptimizedImage src={coverImage} alt={`${token.name} logo`} className="w-full h-full object-cover" />
                       </div>
-                      {token.isHot && (
-                        <div className="absolute -top-1 -right-1">
+                      {token.isHot && <div className="absolute -top-1 -right-1">
                           <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 animate-pulse">
                             🔥
                           </Badge>
-                        </div>
-                      )}
+                        </div>}
                     </div>
 
                     <div className="flex-1">
@@ -290,12 +214,7 @@ const MemeTokenDetailPage = () => {
                         <h1 className="text-3xl font-crypto font-black">
                           {token.emoji} {token.symbol}
                         </h1>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setIsLiked(!isLiked)}
-                          className="h-8 w-8 rounded-full p-0"
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => setIsLiked(!isLiked)} className="h-8 w-8 rounded-full p-0">
                           <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
                         </Button>
                       </div>
@@ -308,10 +227,7 @@ const MemeTokenDetailPage = () => {
                         <span className="text-2xl font-crypto font-black">
                           {formatPrice(token.price)}
                         </span>
-                        <Badge 
-                          variant={isPositive ? "default" : "destructive"}
-                          className={`${isPositive ? 'bg-success text-success-foreground' : ''} font-bold text-sm px-3 py-1`}
-                        >
+                        <Badge variant={isPositive ? "default" : "destructive"} className={`${isPositive ? 'bg-success text-success-foreground' : ''} font-bold text-sm px-3 py-1`}>
                           {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                           {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
                         </Badge>
@@ -319,19 +235,10 @@ const MemeTokenDetailPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setIsBookmarked(!isBookmarked)}
-                        className="h-8 w-8 rounded-full p-0"
-                      >
+                      <Button variant="ghost" size="sm" onClick={() => setIsBookmarked(!isBookmarked)} className="h-8 w-8 rounded-full p-0">
                         <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-primary text-primary' : ''}`} />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 rounded-full p-0"
-                      >
+                      <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
                         <Share2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -345,7 +252,7 @@ const MemeTokenDetailPage = () => {
                     <div className="text-center">
                       <div className="text-xs text-muted-foreground mb-1">Holders</div>
                       <div className="font-crypto font-bold text-sm">
-                        {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
+                        {token.holders > 1000 ? `${Math.floor(token.holders / 1000)}K` : token.holders}
                       </div>
                     </div>
                     <div className="text-center">
@@ -355,17 +262,11 @@ const MemeTokenDetailPage = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mt-6">
-                    <Button 
-                      className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-crypto font-bold h-11 rounded-xl shadow-lg"
-                      onClick={() => setActiveTab('trade')}
-                    >
+                    <Button className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-crypto font-bold h-11 rounded-xl shadow-lg" onClick={() => setActiveTab('trade')}>
                       <ShoppingCart className="w-4 h-4 mr-2" />
                       KÖP TOKEN
                     </Button>
-                    <Button 
-                      variant="outline"
-                      className="font-crypto font-bold h-11 rounded-xl border-2"
-                    >
+                    <Button variant="outline" className="font-crypto font-bold h-11 rounded-xl border-2">
                       <BarChart3 className="w-4 h-4 mr-2" />
                       ANALYS
                     </Button>
@@ -396,10 +297,7 @@ const MemeTokenDetailPage = () => {
                   
                   <div className="bg-[#0f0f23] rounded-xl overflow-hidden shadow-lg border border-border/20">
                     <div className="h-[400px] relative">
-                      <TradingViewMobileChart 
-                        symbol={token.symbol} 
-                        coinGeckoId={token.symbol.toLowerCase()} 
-                      />
+                      <TradingViewMobileChart symbol={token.symbol} coinGeckoId={token.symbol.toLowerCase()} />
                     </div>
                   </div>
                   
@@ -472,11 +370,9 @@ const MemeTokenDetailPage = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-crypto font-bold mb-4">Kategorier</h3>
                   <div className="flex flex-wrap gap-2">
-                    {token.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="bg-primary/10 text-primary border border-primary/20 font-crypto font-semibold">
+                    {token.tags.map((tag, index) => <Badge key={index} variant="secondary" className="bg-primary/10 text-primary border border-primary/20 font-crypto font-semibold">
                         {tag}
-                      </Badge>
-                    ))}
+                      </Badge>)}
                   </div>
                 </div>
               </Card>
@@ -492,7 +388,7 @@ const MemeTokenDetailPage = () => {
                       <span className="text-sm text-muted-foreground">Market Cap Progress</span>
                       <span className="text-sm font-crypto font-bold">{formatMarketCap(token.marketCap)}</span>
                     </div>
-                    <Progress value={Math.min((token.marketCap / 10000000) * 100, 100)} className="h-2" />
+                    <Progress value={Math.min(token.marketCap / 10000000 * 100, 100)} className="h-2" />
                     <div className="text-xs text-muted-foreground mt-1">Till $10M market cap</div>
                   </div>
 
@@ -574,34 +470,23 @@ const MemeTokenDetailPage = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
-    );
+      </div>;
   }
 
   // DESKTOP VERSION - Modern Meme Trading Platform (Axiom/BullX inspired)
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/98 to-muted/30">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background/98 to-muted/30">
       {/* Top Navigation Bar */}
       <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/20 shadow-sm">
         <div className="max-w-[1800px] mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="lg"
-                onClick={() => navigate(-1)}
-                className="h-12 px-6 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30 transition-all duration-300"
-              >
+              <Button variant="ghost" size="lg" onClick={() => navigate(-1)} className="h-12 px-6 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30 transition-all duration-300">
                 <ArrowLeft className="h-5 w-5 mr-3" />
                 <span className="text-lg font-semibold">Tillbaka</span>
               </Button>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30">
-                  <OptimizedImage
-                    src={coverImage}
-                    alt={token.symbol}
-                    className="w-full h-full object-cover"
-                  />
+                  <OptimizedImage src={coverImage} alt={token.symbol} className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-black">{token.emoji} {token.symbol}</h1>
@@ -613,36 +498,17 @@ const MemeTokenDetailPage = () => {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-card/60 border border-border/30">
                 <span className="text-3xl font-black">{formatPrice(token.price)}</span>
-                <Badge 
-                  variant={isPositive ? "default" : "destructive"}
-                  className={`${isPositive ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'} text-white font-bold text-lg px-4 py-2 rounded-xl`}
-                >
+                <Badge variant={isPositive ? "default" : "destructive"} className={`${isPositive ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'} text-white font-bold text-lg px-4 py-2 rounded-xl`}>
                   {isPositive ? <TrendingUp className="w-5 h-5 mr-2" /> : <TrendingDown className="w-5 h-5 mr-2" />}
                   {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
                 </Badge>
               </div>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => setIsLiked(!isLiked)}
-                  className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30"
-                >
+                <Button variant="ghost" size="lg" onClick={() => setIsLiked(!isLiked)} className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30">
                   <Heart className={`h-6 w-6 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => setIsBookmarked(!isBookmarked)}
-                  className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30"
-                >
-                  <Bookmark className={`h-6 w-6 ${isBookmarked ? 'fill-primary text-primary' : ''}`} />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30"
-                >
+                
+                <Button variant="ghost" size="lg" className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30">
                   <Share2 className="h-6 w-6" />
                 </Button>
               </div>
@@ -675,9 +541,7 @@ const MemeTokenDetailPage = () => {
                   <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
                     Fullscreen
                   </Button>
-                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
-                    Settings
-                  </Button>
+                  
                   <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
                     Refresh
                   </Button>
@@ -687,11 +551,7 @@ const MemeTokenDetailPage = () => {
               {/* Chart Container with NO padding - only chart visible */}
               <div className="flex-1 bg-[#0f0f23]">
                 <div className="h-[600px] w-full">
-                  <TradingViewChart 
-                    symbol={token.symbol} 
-                    currentPrice={token.price}
-                    coinGeckoId={token.symbol.toLowerCase()} 
-                  />
+                  <TradingViewChart symbol={token.symbol} currentPrice={token.price} coinGeckoId={token.symbol.toLowerCase()} />
                 </div>
               </div>
 
@@ -707,65 +567,46 @@ const MemeTokenDetailPage = () => {
                     <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
                       <div className="flex justify-between items-center mb-4">
                         <span className="text-lg font-crypto font-bold tracking-wider uppercase text-blue-500">Slippage Tolerance</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setAutoSlippage(!autoSlippage)}
-                          className={`h-8 px-3 text-sm rounded-lg font-crypto font-bold tracking-wider uppercase ${autoSlippage ? 'bg-primary text-primary-foreground' : ''}`}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => setAutoSlippage(!autoSlippage)} className={`h-8 px-3 text-sm rounded-lg font-crypto font-bold tracking-wider uppercase ${autoSlippage ? 'bg-primary text-primary-foreground' : ''}`}>
                           Auto
                         </Button>
                       </div>
                       
-                      {!autoSlippage && (
-                        <div className="flex gap-2">
-                          {[1, 2, 5].map((percentage) => (
-                            <Button 
-                              key={percentage}
-                              variant={slippage === percentage ? "default" : "outline"}
-                              size="sm" 
-                              onClick={() => setSlippage(percentage)}
-                              className="h-10 px-4 text-sm font-crypto font-bold tracking-wider uppercase rounded-xl"
-                            >
+                      {!autoSlippage && <div className="flex gap-2">
+                          {[1, 2, 5].map(percentage => <Button key={percentage} variant={slippage === percentage ? "default" : "outline"} size="sm" onClick={() => setSlippage(percentage)} className="h-10 px-4 text-sm font-crypto font-bold tracking-wider uppercase rounded-xl">
                               {percentage}%
-                            </Button>
-                          ))}
+                            </Button>)}
                           <div className="relative flex-1">
-                            <input 
-                              type="number" 
-                              value={customSlippage}
-                              onChange={(e) => setCustomSlippage(e.target.value)}
-                              placeholder="Custom"
-                              className="w-full h-10 px-3 text-sm font-crypto font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300"
-                            />
+                            <input type="number" value={customSlippage} onChange={e => setCustomSlippage(e.target.value)} placeholder="Custom" className="w-full h-10 px-3 text-sm font-crypto font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300" />
                             <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">%</span>
                           </div>
-                        </div>
-                      )}
+                        </div>}
                     </div>
 
                     {/* Priority Fee */}
                     <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
                       <span className="text-lg font-crypto font-bold tracking-wider uppercase text-green-500 mb-4 block">Priority Fee</span>
                       <div className="grid grid-cols-3 gap-2">
-                        {[
-                          { key: 'low', label: 'Low', desc: '0.0001 SOL' },
-                          { key: 'medium', label: 'Medium', desc: '0.0005 SOL' },
-                          { key: 'high', label: 'High', desc: '0.001 SOL' }
-                        ].map(({ key, label, desc }) => (
-                          <Button
-                            key={key}
-                            variant={priority === key ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setPriority(key as typeof priority)}
-                            className={`h-12 flex flex-col items-center justify-center text-xs font-crypto font-bold tracking-wider uppercase rounded-xl transition-all duration-300 ${
-                              priority === key ? 'bg-primary text-primary-foreground' : ''
-                            }`}
-                          >
+                        {[{
+                        key: 'low',
+                        label: 'Low',
+                        desc: '0.0001 SOL'
+                      }, {
+                        key: 'medium',
+                        label: 'Medium',
+                        desc: '0.0005 SOL'
+                      }, {
+                        key: 'high',
+                        label: 'High',
+                        desc: '0.001 SOL'
+                      }].map(({
+                        key,
+                        label,
+                        desc
+                      }) => <Button key={key} variant={priority === key ? "default" : "outline"} size="sm" onClick={() => setPriority(key as typeof priority)} className={`h-12 flex flex-col items-center justify-center text-xs font-crypto font-bold tracking-wider uppercase rounded-xl transition-all duration-300 ${priority === key ? 'bg-primary text-primary-foreground' : ''}`}>
                             <span>{label}</span>
                             <span className="text-xs opacity-70">{desc}</span>
-                          </Button>
-                        ))}
+                          </Button>)}
                       </div>
                     </div>
 
@@ -779,16 +620,7 @@ const MemeTokenDetailPage = () => {
                             <p className="text-sm font-crypto text-muted-foreground">Protect against frontrunning</p>
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setMevProtection(!mevProtection)}
-                          className={`h-8 w-16 rounded-full font-crypto font-bold tracking-wider uppercase ${
-                            mevProtection 
-                              ? 'bg-green-500 text-white' 
-                              : 'bg-muted border border-border'
-                          }`}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => setMevProtection(!mevProtection)} className={`h-8 w-16 rounded-full font-crypto font-bold tracking-wider uppercase ${mevProtection ? 'bg-green-500 text-white' : 'bg-muted border border-border'}`}>
                           {mevProtection ? 'ON' : 'OFF'}
                         </Button>
                       </div>
@@ -816,10 +648,7 @@ const MemeTokenDetailPage = () => {
                             {tradeType === 'buy' ? 'You Receive' : 'You Receive'}
                           </span>
                           <span className="font-crypto font-bold text-lg">
-                            {tradeType === 'buy' 
-                              ? `~${((parseFloat(customAmount) || selectedAmount || 0) / token.price).toLocaleString()} ${token.symbol}`
-                              : `~${((parseFloat(customAmount) || 0) * token.price).toFixed(4)} SOL`
-                            }
+                            {tradeType === 'buy' ? `~${((parseFloat(customAmount) || selectedAmount || 0) / token.price).toLocaleString()} ${token.symbol}` : `~${((parseFloat(customAmount) || 0) * token.price).toFixed(4)} SOL`}
                           </span>
                         </div>
                         <Separator />
@@ -847,13 +676,7 @@ const MemeTokenDetailPage = () => {
                           <span className="font-crypto font-bold tracking-wider uppercase text-orange-500">Price Alerts</span>
                         </div>
                         <div className="space-y-2">
-                          <input 
-                            type="number" 
-                            value={priceAlert}
-                            onChange={(e) => setPriceAlert(e.target.value)}
-                            placeholder="Set price alert"
-                            className="w-full h-10 px-3 text-sm font-crypto bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300"
-                          />
+                          <input type="number" value={priceAlert} onChange={e => setPriceAlert(e.target.value)} placeholder="Set price alert" className="w-full h-10 px-3 text-sm font-crypto bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300" />
                           <Button variant="outline" size="sm" className="w-full h-8 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
                             Set Alert
                           </Button>
@@ -922,63 +745,28 @@ const MemeTokenDetailPage = () => {
               <Card className="p-8 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
                 <div className="flex items-center justify-between mb-8">
                   <h3 className="text-3xl font-crypto font-bold tracking-wider uppercase flex items-center gap-4">
-                    <ShoppingCart className="w-8 h-8 text-primary" />
+                    
                     Professional Trading
                   </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
-                    className="text-primary hover:text-primary/80 font-crypto font-bold tracking-wider uppercase"
-                  >
-                    Advanced
-                  </Button>
+                  
                 </div>
                 
                 {/* Order Type Selection */}
                 <div className="mb-8">
                   <label className="text-xl font-crypto font-bold tracking-wider uppercase text-muted-foreground mb-4 block">Order Type</label>
                   <div className="grid grid-cols-3 gap-3">
-                    {['market', 'limit', 'stop'].map((type) => (
-                      <Button
-                        key={type}
-                        variant={orderType === type ? "default" : "outline"}
-                        size="lg"
-                        onClick={() => setOrderType(type as typeof orderType)}
-                        className={`h-14 text-lg font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${
-                          orderType === type 
-                            ? 'bg-primary text-primary-foreground shadow-lg scale-105' 
-                            : 'hover:bg-primary/10 hover:border-primary/50'
-                        }`}
-                      >
+                    {['market', 'limit', 'stop'].map(type => <Button key={type} variant={orderType === type ? "default" : "outline"} size="lg" onClick={() => setOrderType(type as typeof orderType)} className={`h-14 text-lg font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${orderType === type ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'hover:bg-primary/10 hover:border-primary/50'}`}>
                         {type.toUpperCase()}
-                      </Button>
-                    ))}
+                      </Button>)}
                   </div>
                 </div>
 
                 {/* Buy/Sell Toggle - FIXED text overflow and removed icons */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
-                  <Button 
-                    size="lg"
-                    onClick={() => setTradeType('buy')}
-                    className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${
-                      tradeType === 'buy'
-                        ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white'
-                        : 'bg-green-500/20 text-green-500 hover:bg-green-500/30'
-                    }`}
-                  >
+                  <Button size="lg" onClick={() => setTradeType('buy')} className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white' : 'bg-green-500/20 text-green-500 hover:bg-green-500/30'}`}>
                     <span className="truncate">BUY {token.symbol}</span>
                   </Button>
-                  <Button 
-                    size="lg"
-                    onClick={() => setTradeType('sell')}
-                    className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${
-                      tradeType === 'sell'
-                        ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white'
-                        : 'bg-red-500/20 text-red-500 hover:bg-red-500/30'
-                    }`}
-                  >
+                  <Button size="lg" onClick={() => setTradeType('sell')} className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${tradeType === 'sell' ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white' : 'bg-red-500/20 text-red-500 hover:bg-red-500/30'}`}>
                     <span className="truncate">SELL {token.symbol}</span>
                   </Button>
                 </div>
@@ -989,39 +777,15 @@ const MemeTokenDetailPage = () => {
                     {tradeType === 'buy' ? 'Buy Amount (SOL)' : 'Sell Amount (%)'}
                   </label>
                   
-                  {tradeType === 'buy' ? (
-                    <div className="grid grid-cols-2 gap-3">
-                      {[1, 5, 10, 25].map((amount) => (
-                        <Button 
-                          key={amount}
-                          variant={selectedAmount === amount ? "default" : "outline"}
-                          size="lg"
-                          onClick={() => handleAmountSelect(amount)}
-                          className={`h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${
-                            selectedAmount === amount
-                              ? 'bg-primary text-primary-foreground shadow-lg scale-105'
-                              : 'hover:bg-primary/10 hover:border-primary/50'
-                          }`}
-                        >
+                  {tradeType === 'buy' ? <div className="grid grid-cols-2 gap-3">
+                      {[1, 5, 10, 25].map(amount => <Button key={amount} variant={selectedAmount === amount ? "default" : "outline"} size="lg" onClick={() => handleAmountSelect(amount)} className={`h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${selectedAmount === amount ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'hover:bg-primary/10 hover:border-primary/50'}`}>
                           {amount} SOL
-                        </Button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-3">
-                      {[25, 50, 75, 100].map((percentage) => (
-                        <Button 
-                          key={percentage}
-                          variant="outline"
-                          size="lg"
-                          onClick={() => calculateSellPercentage(percentage)}
-                          className="h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-300"
-                        >
+                        </Button>)}
+                    </div> : <div className="grid grid-cols-2 gap-3">
+                      {[25, 50, 75, 100].map(percentage => <Button key={percentage} variant="outline" size="lg" onClick={() => calculateSellPercentage(percentage)} className="h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-300">
                           {percentage === 100 ? 'SELL ALL' : `${percentage}%`}
-                        </Button>
-                      ))}
-                    </div>
-                  )}
+                        </Button>)}
+                    </div>}
                   
                   {/* Custom Amount Input */}
                   <div className="space-y-3">
@@ -1029,46 +793,25 @@ const MemeTokenDetailPage = () => {
                       Custom {tradeType === 'buy' ? 'SOL Amount' : 'Token Amount'}
                     </label>
                     <div className="relative">
-                      <input 
-                        type="number" 
-                        value={customAmount}
-                        onChange={(e) => handleCustomAmountChange(e.target.value)}
-                        placeholder={tradeType === 'buy' ? "Enter SOL amount" : "Enter token amount"}
-                        className="w-full h-16 px-6 text-xl font-crypto font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300"
-                      />
+                      <input type="number" value={customAmount} onChange={e => handleCustomAmountChange(e.target.value)} placeholder={tradeType === 'buy' ? "Enter SOL amount" : "Enter token amount"} className="w-full h-16 px-6 text-xl font-crypto font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300" />
                       <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-xl font-crypto font-bold text-muted-foreground">
                         {tradeType === 'buy' ? 'SOL' : token.symbol}
                       </span>
                     </div>
-                    {tradeType === 'sell' && (
-                      <p className="text-sm font-oblivion text-muted-foreground">
+                    {tradeType === 'sell' && <p className="text-sm font-oblivion text-muted-foreground">
                         Available: {tokenBalance.toLocaleString()} {token.symbol}
-                      </p>
-                    )}
+                      </p>}
                   </div>
                 </div>
 
                 {/* Execute Trade Button - FIXED text overflow and removed icons */}
-                <Button 
-                  size="lg"
-                  onClick={handleTrade}
-                  disabled={!customAmount && !selectedAmount || isTrading}
-                  className={`w-full h-20 text-2xl font-crypto font-bold tracking-wider uppercase rounded-3xl shadow-xl transition-all duration-300 hover:scale-105 px-4 ${
-                    tradeType === 'buy'
-                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700'
-                      : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
-                  } text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
-                >
-                  {isTrading ? (
-                    <div className="flex items-center justify-center gap-3">
+                <Button size="lg" onClick={handleTrade} disabled={!customAmount && !selectedAmount || isTrading} className={`w-full h-20 text-2xl font-crypto font-bold tracking-wider uppercase rounded-3xl shadow-xl transition-all duration-300 hover:scale-105 px-4 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'} text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}>
+                  {isTrading ? <div className="flex items-center justify-center gap-3">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                       Processing...
-                    </div>
-                  ) : (
-                    <span className="truncate">
+                    </div> : <span className="truncate">
                       {tradeType === 'buy' ? 'BUY' : 'SELL'} {token.symbol}
-                    </span>
-                  )}
+                    </span>}
                 </Button>
 
                 {/* Wallet Balance Info */}
@@ -1111,11 +854,7 @@ const MemeTokenDetailPage = () => {
                       <span className="font-crypto font-bold tracking-wider uppercase text-purple-500">Token Address</span>
                     </div>
                     <div className="flex gap-2">
-                      <input 
-                        readOnly
-                        value="7xKXt..."
-                        className="flex-1 h-8 px-3 text-xs font-crypto bg-muted/20 border border-border/30 rounded-lg"
-                      />
+                      <input readOnly value="7xKXt..." className="flex-1 h-8 px-3 text-xs font-crypto bg-muted/20 border border-border/30 rounded-lg" />
                       <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
                         Copy
                       </Button>
@@ -1128,8 +867,6 @@ const MemeTokenDetailPage = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MemeTokenDetailPage;
