@@ -31,11 +31,11 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import MobileHeader from '@/components/mobile/MobileHeader';
 import OptimizedImage from '@/components/OptimizedImage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMemeTokens } from './hooks/useMemeTokens';
 import JupiterSwapWidget from '@/components/web3/JupiterSwapWidget';
+import TradingViewMobileChart from '@/components/mobile/TradingViewMobileChart';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -95,8 +95,7 @@ const MemeTokenDetailPage = () => {
   const coverImage = covers[Math.abs(token.symbol.charCodeAt(0)) % covers.length];
 
   return (
-    <div className="min-h-screen bg-background">
-      <MobileHeader title={token.symbol} />
+    <div className="min-h-screen bg-background">{/* Header managed by Layout component */}
 
       {/* Hero Section with Apple-style design */}
       <div className="relative overflow-hidden">
@@ -250,8 +249,40 @@ const MemeTokenDetailPage = () => {
             <TabsTrigger value="community" className="rounded-lg font-crypto font-semibold">Community</TabsTrigger>
           </TabsList>
 
-          {/* Overview Tab */}
+          {/* Overview Tab - Trading Chart */}
           <TabsContent value="overview" className="space-y-6">
+            <Card className="bg-card/90 backdrop-blur-sm border-border/50 shadow-xl overflow-hidden">
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <BarChart3 className="w-5 h-5 text-primary" />
+                  <h3 className="text-xl font-crypto font-bold">Live Chart - {token.symbol}</h3>
+                </div>
+                
+                {/* TradingView Chart Container */}
+                <div className="bg-[#0f0f23] rounded-xl overflow-hidden shadow-lg border border-border/20">
+                  <div className="h-[400px] relative">
+                    <TradingViewMobileChart 
+                      symbol={token.symbol} 
+                      coinGeckoId={token.symbol.toLowerCase()} 
+                    />
+                  </div>
+                </div>
+                
+                {/* Chart Info */}
+                <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
+                  <div className="flex items-center gap-2">
+                    <Info className="w-4 h-4 text-primary" />
+                    <span className="text-sm text-muted-foreground">
+                      Live prisdata från TradingView för {token.symbol}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          {/* Stats Tab */}
+          <TabsContent value="stats" className="space-y-6">
             {/* Token Description */}
             <Card className="bg-card/80 backdrop-blur-sm border-border/50">
               <div className="p-6">
@@ -316,10 +347,8 @@ const MemeTokenDetailPage = () => {
                 </div>
               </div>
             </Card>
-          </TabsContent>
 
-          {/* Stats Tab */}
-          <TabsContent value="stats" className="space-y-6">
+            {/* Detailed Statistics */}
             <Card className="bg-card/80 backdrop-blur-sm border-border/50">
               <div className="p-6">
                 <h3 className="text-xl font-crypto font-bold mb-6">Detaljerad Statistik</h3>

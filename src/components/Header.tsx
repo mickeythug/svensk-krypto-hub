@@ -24,7 +24,11 @@ import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 import MobileWalletConnect from './mobile/MobileWalletConnect';
 
 
-const Header = () => {
+interface HeaderProps {
+  showTicker?: boolean;
+}
+
+const Header = ({ showTicker = true }: HeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showWalletConnect, setShowWalletConnect] = useState(false);
@@ -84,10 +88,9 @@ const Header = () => {
     setIsOpen(false);
   };
 
-  // Check if we're on trading pages (no ticker on trading pages)
-  const isTradingPage = location.pathname.startsWith('/crypto/');
+  // Check if we're on meme pages for ticker selection
   const isMemeZone = location.pathname.startsWith('/meme');
-  const shouldShowTicker = !isTradingPage;
+  const shouldShowTicker = showTicker;
 
   return (
     <header 

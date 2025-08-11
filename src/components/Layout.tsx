@@ -43,6 +43,11 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
       default:
         if (location.pathname.startsWith('/artikel/')) return 'ARTIKEL';
         if (location.pathname.startsWith('/crypto/')) return 'TRADING';
+        if (location.pathname.startsWith('/meme/token/')) {
+          // Extract token symbol from URL for individual token pages
+          const symbol = location.pathname.split('/').pop()?.toUpperCase() || 'TOKEN';
+          return symbol;
+        }
         if (location.pathname.startsWith('/meme')) return 'MEME ZONE';
         return 'CRYPTO NETWORK';
     }
@@ -54,7 +59,7 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
       {isMobile ? (
         <MobileHeader title={getMobileTitle()} />
       ) : (
-        <Header />
+        <Header showTicker={shouldShowTicker} />
       )}
       
       {/* Main content with proper spacing for fixed header with integrated ticker */}
