@@ -725,258 +725,294 @@ const MarketOverviewPage = () => {
         </div>
       </div>
 
-      {/* Mobile Version - Exact Reference Match */}
-      <div className="block md:hidden min-h-screen bg-background">
-        <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-40 md:hidden">
+      {/* Mobile Version - Premium App Store Quality */}
+      <div className="block md:hidden min-h-screen bg-background flex flex-col">
+        {/* Sticky Header with Brand */}
+        <div className="sticky top-0 bg-background/98 backdrop-blur-xl border-b border-border/30 z-50">
           <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
-              >
+            <button 
+              onClick={() => navigate('/')}
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            >
+              <div className="relative">
                 <img 
                   src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
                   alt="Crypto Network Sweden"
-                  className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]"
+                  className="h-9 w-9 object-contain drop-shadow-[0_0_20px_rgba(0,255,204,0.4)]"
                 />
-                <div className="text-left">
-                  <h1 className="font-crypto text-sm font-bold leading-none">
-                    <span className="text-brand-turquoise">CRY</span>
-                    <span className="text-brand-white">PTO</span>
-                    <span className="text-brand-white">NET</span>
-                    <span className="text-brand-turquoise">WORK</span>
-                  </h1>
-                  <p className="font-crypto text-xs text-muted-foreground leading-none mt-0.5">
-                    SWEDEN
-                  </p>
-                </div>
-              </button>
-            </div>
+                <div className="absolute inset-0 rounded-full bg-brand-turquoise/20 animate-pulse"></div>
+              </div>
+              <div className="text-left">
+                <h1 className="font-crypto text-base font-bold leading-none tracking-wider">
+                  <span className="text-brand-turquoise">CRYPTO</span>
+                  <span className="text-brand-white">NETWORK</span>
+                </h1>
+                <p className="font-crypto text-xs text-brand-turquoise/70 leading-none mt-0.5 tracking-wide">
+                  SWEDEN
+                </p>
+              </div>
+            </button>
+            
+            {/* Hamburger Menu */}
+            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+              <div className="flex flex-col space-y-1">
+                <div className="w-5 h-0.5 bg-foreground rounded-full"></div>
+                <div className="w-5 h-0.5 bg-foreground rounded-full"></div>
+                <div className="w-5 h-0.5 bg-foreground rounded-full"></div>
+              </div>
+            </Button>
           </div>
         </div>
         
-        <div className="bg-background">
-          
-          {/* Mobile Header */}
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 border-b border-border/20">
-            <h1 className="font-crypto text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              MARKNAD
-            </h1>
-            <p className="text-muted-foreground">Live crypto data</p>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Hero Section */}
+          <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 p-6 border-b border-border/20">
+            <div className="text-center mb-6">
+              <h1 className="font-crypto text-4xl font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                MARKNAD
+              </h1>
+              <p className="text-muted-foreground font-medium">Live kryptodata och marknadsanalys</p>
+            </div>
           </div>
 
-          {/* Mobile Sentiment Dashboard */}
-          <div className="p-4 bg-secondary/5 border-b border-border/20">
+          {/* Premium Sentiment Dashboard */}
+          <div className="p-4 bg-gradient-to-b from-secondary/5 to-transparent border-b border-border/10">
             <div className="space-y-4">
               
-              {/* Market Cap & Volume Row */}
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="p-4 bg-gradient-to-br from-primary/10 to-accent/10 border-border/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <DollarSign className="h-4 w-4 text-primary" />
-                    <span className="text-xs text-muted-foreground font-medium">Market Cap</span>
+              {/* Market Overview Cards */}
+              <div className="grid grid-cols-2 gap-4">
+                <Card className="p-4 bg-gradient-to-br from-primary/15 to-accent/10 border-primary/20 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-primary/20 rounded-lg">
+                      <DollarSign className="h-4 w-4 text-primary" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-semibold">Market Cap</span>
                   </div>
-                  <div className="text-lg font-bold text-primary mb-1">
+                  <div className="text-xl font-bold text-primary mb-1">
                     {totalMarketCap}
                   </div>
-                  <div className="text-xs font-medium ${trend24 >= 0 ? 'text-success' : 'text-destructive'}">{trend24 >= 0 ? `+${trend24}%` : `${trend24}%`}</div>
+                  <div className={`text-xs font-semibold flex items-center ${trend24 >= 0 ? 'text-success' : 'text-destructive'}`}>
+                    <TrendingUp className={`h-3 w-3 mr-1 ${trend24 < 0 ? 'rotate-180' : ''}`} />
+                    {trend24 >= 0 ? `+${trend24}%` : `${trend24}%`}
+                  </div>
                 </Card>
 
-                <Card className="p-4 bg-gradient-to-br from-secondary/10 to-accent/10 border-border/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <BarChart3 className="h-4 w-4 text-secondary" />
-                    <span className="text-xs text-muted-foreground font-medium">24h Volume</span>
+                <Card className="p-4 bg-gradient-to-br from-secondary/15 to-accent/10 border-secondary/20 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-secondary/20 rounded-lg">
+                      <BarChart3 className="h-4 w-4 text-secondary" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-semibold">Volume 24h</span>
                   </div>
-                  <div className="text-lg font-bold text-secondary mb-1">
+                  <div className="text-xl font-bold text-secondary mb-1">
                     {totalVolume}
                   </div>
-                  <div className="text-xs text-muted-foreground font-medium">24h</div>
+                  <div className="text-xs text-muted-foreground font-semibold">Trading</div>
                 </Card>
               </div>
 
               {/* Fear & Greed Index */}
-              <Card className="p-4 bg-gradient-to-br from-success/10 to-warning/10 border-border/30">
-                <div className="flex items-center justify-between mb-3">
+              <Card className="p-5 bg-gradient-to-br from-success/15 to-warning/10 border-success/20 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-success" />
-                    <span className="text-xs text-muted-foreground font-medium">Fear & Greed Index</span>
+                    <div className="p-1.5 bg-success/20 rounded-lg">
+                      <Activity className="h-4 w-4 text-success" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-semibold">Fear & Greed Index</span>
                   </div>
-                   <div className="text-lg font-bold text-success">{fearGreed}</div>
-                 </div>
-                 <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
-                   <div 
-                     className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
-                     style={{ width: `${fearGreed}%` }}
-                   ></div>
-                 </div>
-                 <div className="text-xs text-success font-medium">{greedLabel}</div>
+                  <div className="text-2xl font-bold text-success">{fearGreed}</div>
+                </div>
+                <div className="w-full bg-secondary/20 rounded-full h-3 mb-3 overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-destructive via-warning to-success h-3 rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${fearGreed}%` }}
+                  ></div>
+                </div>
+                <div className="text-sm text-success font-bold text-center">{greedLabel}</div>
               </Card>
 
-              {/* Alt Season & BTC Dominance Row */}
-              <div className="grid grid-cols-2 gap-3">
-                <Card className="p-4 bg-gradient-to-br from-accent/10 to-secondary/10 border-border/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Coins className="h-4 w-4 text-accent" />
-                    <span className="text-xs text-muted-foreground font-medium">Alt Season</span>
+              {/* Market Indicators */}
+              <div className="grid grid-cols-2 gap-4">
+                <Card className="p-4 bg-gradient-to-br from-accent/15 to-secondary/10 border-accent/20 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-accent/20 rounded-lg">
+                      <Coins className="h-4 w-4 text-accent" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-semibold">Alt Season</span>
                   </div>
-                  <div className="text-lg font-bold text-accent mb-1">{altSeason}</div>
-                  <div className="w-full bg-secondary/30 rounded-full h-1.5 mb-1">
+                  <div className="text-xl font-bold text-accent mb-2">{altSeason}</div>
+                  <div className="w-full bg-secondary/20 rounded-full h-2 mb-2">
                     <div 
-                      className="bg-gradient-to-r from-primary to-accent h-1.5 rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
                       style={{ width: `${altSeason}%` }}
                     ></div>
                   </div>
-                  <div className="text-xs text-accent font-medium">{altSeasonLabel}</div>
+                  <div className="text-xs text-accent font-bold">{altSeasonLabel}</div>
                 </Card>
 
-                <Card className="p-4 bg-gradient-to-br from-warning/10 to-destructive/10 border-border/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Bitcoin className="h-4 w-4 text-warning" />
-                    <span className="text-xs text-muted-foreground font-medium">BTC Dom</span>
+                <Card className="p-4 bg-gradient-to-br from-warning/15 to-destructive/10 border-warning/20 backdrop-blur-sm">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 bg-warning/20 rounded-lg">
+                      <Bitcoin className="h-4 w-4 text-warning" />
+                    </div>
+                    <span className="text-xs text-muted-foreground font-semibold">BTC Dom</span>
                   </div>
-                  <div className="text-lg font-bold text-warning mb-1">{btcDom}%</div>
-                  <div className="w-full bg-secondary/30 rounded-full h-1.5 mb-1">
+                  <div className="text-xl font-bold text-warning mb-2">{btcDom}%</div>
+                  <div className="w-full bg-secondary/20 rounded-full h-2 mb-2">
                     <div 
-                      className="bg-gradient-to-r from-warning to-destructive h-1.5 rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-warning to-destructive h-2 rounded-full transition-all duration-500"
                       style={{ width: `${btcDom}%` }}
                     ></div>
                   </div>
-                  <div className="text-xs text-warning font-medium">BTC Season</div>
+                  <div className="text-xs text-warning font-bold">BTC Season</div>
                 </Card>
               </div>
             </div>
           </div>
 
-          {/* Mobile Search and Tabs */}
-          <div className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
-            <div className="p-3">
-              <div className="relative mb-3">
-                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          {/* Search and Filters Section */}
+          <div className="sticky top-[73px] z-40 bg-background/98 backdrop-blur-xl border-b border-border/30">
+            <div className="p-4">
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="Sök kryptovaluta..."
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
-                  className="pl-8 bg-background/50 border-border/50 h-9 text-sm"
+                  className="pl-10 bg-background/80 border-border/50 h-11 text-sm font-medium rounded-xl focus:border-primary/50 transition-colors"
                 />
               </div>
               
               <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                 <TabsList className="grid grid-cols-3 h-auto p-1 bg-card border border-border rounded-lg w-full">
-                  <TabsTrigger value="top10" className="text-xs py-2">TOP 10</TabsTrigger>
-                  <TabsTrigger value="trending" className="text-xs py-2">Trend</TabsTrigger>
-                  <TabsTrigger value="meme" className="text-xs py-2">Meme</TabsTrigger>
+                <TabsList className="grid grid-cols-3 h-11 p-1 bg-card/80 border border-border/30 rounded-xl w-full backdrop-blur-sm">
+                  <TabsTrigger value="top10" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">TOP 10</TabsTrigger>
+                  <TabsTrigger value="trending" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Trending</TabsTrigger>
+                  <TabsTrigger value="meme" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Meme</TabsTrigger>
                 </TabsList>
-                <TabsList className="grid grid-cols-3 h-auto p-1 bg-card border border-border rounded-lg w-full mt-1">
-                  <TabsTrigger value="gainers" className="text-xs py-2">Toppar</TabsTrigger>
-                  <TabsTrigger value="losers" className="text-xs py-2">Fallande</TabsTrigger>
-                  <TabsTrigger value="all" className="text-xs py-2">Alla</TabsTrigger>
+                <TabsList className="grid grid-cols-3 h-11 p-1 bg-card/80 border border-border/30 rounded-xl w-full mt-2 backdrop-blur-sm">
+                  <TabsTrigger value="gainers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Toppar</TabsTrigger>
+                  <TabsTrigger value="losers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Fallande</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Alla</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
             
-            <div className="flex items-center justify-between p-4 text-muted-foreground text-xs font-medium">
-              <div className="flex items-center space-x-1">
-                <span>#</span>
-              </div>
-              <div className="flex items-center space-x-1">
+            {/* Table Headers */}
+            <div className="flex items-center justify-between px-5 py-3 text-muted-foreground text-xs font-bold uppercase tracking-wide bg-secondary/5 border-t border-border/20">
+              <span className="w-8">#</span>
+              <div className="flex-1 flex items-center gap-1">
                 <span>Market Cap</span>
                 <ChevronUp className="h-3 w-3" />
               </div>
-              <span>Price</span>
-              <span>24h %</span>
+              <span className="w-20 text-center">Price</span>
+              <span className="w-16 text-center">24h %</span>
             </div>
           </div>
 
-          {/* Mobile List - NO SEPARATE SCROLL */}
-          <div className="divide-y divide-border/20 pb-24 overflow-visible">
+          {/* Crypto List */}
+          <div className="divide-y divide-border/10 pb-20">
             {currentData.map((crypto, index) => (
               <div
                 key={`${crypto.symbol}-${crypto.rank}`}
-                className="flex items-center justify-between p-4 hover:bg-secondary/10 cursor-pointer transition-colors"
+                className="flex items-center justify-between px-4 py-4 hover:bg-secondary/10 active:bg-secondary/20 cursor-pointer transition-all duration-200 border-l-4 border-transparent hover:border-primary/20"
                 onClick={() => navigate(`/crypto/${crypto.slug}`)}
               >
                 {/* Rank */}
-                <div className="w-8 text-muted-foreground text-sm font-medium">
+                <div className="w-8 text-muted-foreground text-sm font-bold">
                   {crypto.rank}
                 </div>
 
                 {/* Coin Info */}
                 <div className="flex-1 flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden bg-white">
-                    <img 
-                      src={getCryptoLogo(crypto)} 
-                      alt={crypto.name}
-                      className="w-full h-full object-contain"
-                    />
+                  <div className="relative">
+                    <div className="w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center overflow-hidden border border-border/20">
+                      <img 
+                        src={getCryptoLogo(crypto)} 
+                        alt={crypto.name}
+                        className="w-8 h-8 object-contain"
+                      />
+                    </div>
+                    {crypto.rank <= 3 && (
+                      <div className="absolute -top-1 -right-1">
+                        <div className="w-4 h-4 bg-gradient-to-r from-warning to-accent rounded-full flex items-center justify-center">
+                          <Trophy className="h-2.5 w-2.5 text-white" />
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-foreground text-sm">
+                    <div className="font-bold text-foreground text-sm tracking-wide">
                       {crypto.symbol}
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      ${crypto.marketCap}
+                    <div className="text-xs text-muted-foreground font-medium">
+                      {formatCurrencyCompact(parseFloat(crypto.marketCap))}
                     </div>
                   </div>
                 </div>
 
                 {/* Price */}
-                <div className="text-right mr-6">
-                  <div className="font-mono font-semibold text-foreground text-sm">
+                <div className="w-20 text-right">
+                  <div className="font-mono font-bold text-foreground text-sm">
                     {crypto.price >= 1000 
-                      ? `${(crypto.price / 1000).toFixed(0)} ${crypto.price >= 1000000 ? "M" : "K"} $`
+                      ? `$${(crypto.price / 1000).toFixed(1)}K`
                       : crypto.price < 0.01 
-                      ? `${crypto.price.toFixed(4)} $`
-                      : `${crypto.price.toFixed(2)} $`
+                      ? `$${crypto.price.toFixed(4)}`
+                      : `$${crypto.price.toFixed(2)}`
                     }
                   </div>
                 </div>
 
-                {/* 24h Change with Mini Chart */}
-                <div className="flex items-center space-x-2">
+                {/* 24h Change with Enhanced Sparkline */}
+                <div className="w-16 flex flex-col items-center space-y-1">
                   <MiniSparkline change={crypto.change24h} />
-                  <div className={`flex items-center text-xs font-medium ${
-                    crypto.change24h >= 0 ? 'text-success' : 'text-destructive'
+                  <div className={`flex items-center justify-center text-xs font-bold px-2 py-1 rounded-lg ${
+                    crypto.change24h >= 0 
+                      ? 'text-success bg-success/10' 
+                      : 'text-destructive bg-destructive/10'
                   }`}>
                     <TrendingUp className={`h-3 w-3 mr-1 ${crypto.change24h < 0 ? 'rotate-180' : ''}`} />
-                    {crypto.change24h.toFixed(2)}%
+                    {Math.abs(crypto.change24h).toFixed(1)}%
                   </div>
                 </div>
               </div>
             ))}
           </div>
+        </div>
 
-          {/* Mobile Pagination - Fixed at bottom only when scrolled to bottom */}
-          <div className="sticky bottom-16 left-0 right-0 bg-card border-t border-border py-3 px-4 z-30 mt-auto shadow-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
-                {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
-              </span>
+        {/* Fixed Pagination at Bottom */}
+        <div className="fixed bottom-16 left-0 right-0 bg-background/98 backdrop-blur-xl border-t border-border/30 py-3 px-4 z-40 shadow-lg">
+          <div className="flex items-center justify-between max-w-sm mx-auto">
+            <span className="text-xs text-muted-foreground font-medium">
+              {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
+            </span>
+            
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="h-9 w-9 p-0 rounded-xl border-border/50 hover:border-primary/50 disabled:opacity-30"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
               
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                
-                <span className="text-sm font-medium">
+              <div className="px-3 py-1 bg-primary/10 rounded-lg">
+                <span className="text-sm font-bold text-primary">
                   {currentPage} / {totalPages}
                 </span>
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="h-8 w-8 p-0"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
               </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="h-9 w-9 p-0 rounded-xl border-border/50 hover:border-primary/50 disabled:opacity-30"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
