@@ -27,21 +27,26 @@ async function fetchCoinGeckoPages(pages: number, perPage = 100, vs = 'usd', del
   return all;
 }
 
+// ENDAST dessa 16 tokens tillåts
+const ALLOWED_TOKENS = new Set(['BTC','ETH','HBAR','ALGO','SUI','XRP','DOGE','BONK','SOL','LINK','APT','BNB','ADA','HYPE','TRX','AVAX']);
+
 async function upsertLatestPrices(coins: any[]) {
-  // Transform to rows
-  const rows = coins.map((c) => ({
-    symbol: String(c.symbol || '').toUpperCase(),
-    name: c.name ?? null,
-    price: c.current_price ?? null,
-    change_1h: c.price_change_percentage_1h_in_currency ?? null,
-    change_24h: (c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h) ?? null,
-    change_7d: c.price_change_percentage_7d_in_currency ?? null,
-    market_cap: c.market_cap ?? null,
-    image: c.image ?? null,
-    coin_gecko_id: c.id ?? null,
-    updated_at: new Date().toISOString(),
-    data: c,
-  }));
+  // Transform to rows - FILTER to only allowed tokens
+  const rows = coins
+    .filter(c => ALLOWED_TOKENS.has(String(c.symbol || '').toUpperCase()))
+    .map((c) => ({
+      symbol: String(c.symbol || '').toUpperCase(),
+      name: c.name ?? null,
+      price: c.current_price ?? null,
+      change_1h: c.price_change_percentage_1h_in_currency ?? null,
+      change_24h: (c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h) ?? null,
+      change_7d: c.price_change_percentage_7d_in_currency ?? null,
+      market_cap: c.market_cap ?? null,
+      image: c.image ?? null,
+      coin_gecko_id: c.id ?? null,
+      updated_at: new Date().toISOString(),
+      data: c,
+    }));
 
   // Deduplicate by symbol to avoid ON CONFLICT multiple updates in one statement
   const dedupedMap = new Map<string, any>();
@@ -79,12 +84,13 @@ Deno.serve(async (req) => {
       })());
     }
 
-    // Return latest from DB; if missing 1h/7d or stale > 3min, refresh immediately
+    // Return latest from DB - FILTER to only allowed tokens
     let { data, error } = await supabase
       .from('latest_token_prices')
       .select('*')
+      .in('symbol', Array.from(ALLOWED_TOKENS))
       .order('market_cap', { ascending: false })
-      .limit(pages * 100);
+      .limit(16);
     if (error) throw error;
 
     const now = Date.now();
@@ -96,12 +102,13 @@ Deno.serve(async (req) => {
       try {
         const coins = await fetchCoinGeckoPages(pages);
         await upsertLatestPrices(coins);
-        // Re-read fresh data
+        // Re-read fresh data - FILTER to only allowed tokens
         const reread = await supabase
           .from('latest_token_prices')
           .select('*')
+          .in('symbol', Array.from(ALLOWED_TOKENS))
           .order('market_cap', { ascending: false })
-          .limit(pages * 100);
+          .limit(16);
         if (reread.error) throw reread.error;
         data = reread.data as any[];
       } catch (e) {
