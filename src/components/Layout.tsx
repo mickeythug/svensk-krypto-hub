@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSwipeNavigation } from '@/hooks/useSwipeNavigation';
 import Header from '@/components/Header';
 import MobileHeader from '@/components/mobile/MobileHeader';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
@@ -15,6 +16,9 @@ interface LayoutProps {
 const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
   const isMobile = useIsMobile();
   const location = useLocation();
+  
+  // Initialize swipe navigation for mobile
+  const { currentRouteIndex, routeNames } = useSwipeNavigation();
   
   // Check if we're on crypto trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');
