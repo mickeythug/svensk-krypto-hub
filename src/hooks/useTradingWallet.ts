@@ -64,7 +64,20 @@ export function useTradingWallet() {
       const { data, error } = await supabase.functions.invoke('pump-create-wallet');
       if (!error && data) {
         const wa = (data as any)?.walletAddress || null;
-        const pk = (data as any)?.privateKey || null;
+        // Normalize private key from possible formats
+        const pkRaw = (data as any)?.privateKey ?? (data as any)?.private_key ?? (data as any)?.secretKey ?? (data as any)?.sk ?? null;
+        let pk: string | null = null;
+        try {
+          if (pkRaw) {
+            if (Array.isArray(pkRaw)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw));
+            } else if (typeof pkRaw === 'string') {
+              pk = pkRaw;
+            } else if (pkRaw?.type === 'Buffer' && Array.isArray(pkRaw?.data)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw.data));
+            }
+          }
+        } catch {}
         setWalletAddress(wa);
         setPrivateKey(pk);
         setAcknowledged(false);
