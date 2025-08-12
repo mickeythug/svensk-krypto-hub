@@ -72,18 +72,19 @@ const HeroSection = () => {
                 Gå med i Communityn
               </Button>
             </a>
-            <button
+            <Button
               onClick={() => {
                 const element = document.querySelector('#market');
                 if (element) {
                   element.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
               }}
+              variant="outline"
+              size={isMobile ? "default" : "lg"}
+              className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}
             >
-              <Button variant="outline" size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}>
-                Lär dig mer
-              </Button>
-            </button>
+              Lär dig mer
+            </Button>
           </div>
 
           {/* Stats Cards */}
