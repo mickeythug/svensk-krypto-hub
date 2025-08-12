@@ -195,18 +195,10 @@ export default function ConnectWalletButton() {
           const ok = await signAndVerify(pubkeyStr, signFn);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
 
-          // Skapa trading wallet om saknas och visa onboarding-modal först när vi faktiskt har en private key
+          // Skapa trading wallet om saknas och visa onboarding-modal
           try {
-            const res = await createIfMissing();
-            if (res?.privateKey) {
-              setShowOnboarding(true);
-            } else {
-              // Prova hämta från servern om backup ej bekräftad
-              try {
-                const { data: getData } = await (await import('@/integrations/supabase/client')).supabase.functions.invoke('pump-get-wallet');
-                if ((getData as any)?.privateKey) setShowOnboarding(true);
-              } catch {}
-            }
+            await createIfMissing();
+            setShowOnboarding(true);
           } catch {}
           try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
