@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatUsd } from '@/lib/utils';
 import { ExternalLink, Globe, Info, TrendingUp, Users, BarChart3, Twitter, MessageCircle } from 'lucide-react';
-import { useEnhancedTokenData } from '@/hooks/useEnhancedTokenData';
+import { useCompleteMarketData } from '@/hooks/useCompleteMarketData';
 
 interface TokenInfoSectionProps {
   tokenAddress: string;
@@ -18,12 +18,9 @@ interface TokenInfoSectionProps {
 }
 
 export const TokenInfoSection = ({ tokenAddress, fallbackData }: TokenInfoSectionProps) => {
-  const { data: enhancedData, loading } = useEnhancedTokenData(tokenAddress);
+  const { data: marketData, loading } = useCompleteMarketData(tokenAddress);
   
-  // Use enhanced data or fallback
-  const tokenData = enhancedData || fallbackData;
-  
-  if (!tokenData) {
+  if (!marketData && !fallbackData) {
     return <div className="text-center text-muted-foreground">Loading token information...</div>;
   }
 
@@ -41,69 +38,69 @@ export const TokenInfoSection = ({ tokenAddress, fallbackData }: TokenInfoSectio
     return `${sign}${num.toFixed(2)}%`;
   };
 
-  // Real data from DEXTools
-  const price = enhancedData?.price || fallbackData?.price || 0;
-  const liquidity = enhancedData?.liquidity || 0;
-  const fdv = enhancedData?.fdv || enhancedData?.marketCap || fallbackData?.marketCap || 0;
-  const marketCap = enhancedData?.marketCap || fallbackData?.marketCap || 0;
-  const holders = enhancedData?.holders || fallbackData?.holders || 0;
+// Real data combined from DEXTools + Birdeye
+const price = marketData?.price.usd ?? fallbackData?.price ?? 0;
+const liquidity = marketData?.market.liquidity ?? 0;
+const fdv = marketData?.market.fdv ?? marketData?.market.marketCap ?? fallbackData?.marketCap ?? 0;
+const marketCap = marketData?.market.marketCap ?? fallbackData?.marketCap ?? 0;
+const holders = marketData?.participants.holders ?? fallbackData?.holders ?? 0;
 
-  const marketData = [
-    { label: 'LIQUIDITY', value: `$${formatLargeNumber(liquidity)}` },
-    { label: 'FDV', value: `$${formatLargeNumber(fdv)}` },
-    { label: 'MKT CAP', value: `$${formatLargeNumber(marketCap)}` },
-  ];
+const marketCards = [
+  { label: 'LIQUIDITY', value: `$${formatLargeNumber(liquidity)}` },
+  { label: 'FDV', value: `$${formatLargeNumber(fdv)}` },
+  { label: 'MKT CAP', value: `$${formatLargeNumber(marketCap)}` },
+];
 
-  // Real performance data from DEXTools price variations
-  const performanceData = [
-    { 
-      label: '5M', 
-      value: formatPercentage(enhancedData?.variation5m), 
-      isNegative: (enhancedData?.variation5m || 0) < 0 
-    },
-    { 
-      label: '1H', 
-      value: formatPercentage(enhancedData?.variation1h), 
-      isNegative: (enhancedData?.variation1h || 0) < 0 
-    },
-    { 
-      label: '6H', 
-      value: formatPercentage(enhancedData?.variation6h), 
-      isNegative: (enhancedData?.variation6h || 0) < 0 
-    },
-    { 
-      label: '24H', 
-      value: formatPercentage(enhancedData?.variation24h), 
-      isNegative: (enhancedData?.variation24h || 0) < 0 
-    },
-  ];
+// Performance data
+const performanceData = [
+  { 
+    label: '5M', 
+    value: formatPercentage(marketData?.performance.m5), 
+    isNegative: (marketData?.performance.m5 || 0) < 0 
+  },
+  { 
+    label: '1H', 
+    value: formatPercentage(marketData?.performance.h1), 
+    isNegative: (marketData?.performance.h1 || 0) < 0 
+  },
+  { 
+    label: '6H', 
+    value: formatPercentage(marketData?.performance.h6), 
+    isNegative: (marketData?.performance.h6 || 0) < 0 
+  },
+  { 
+    label: '24H', 
+    value: formatPercentage(marketData?.performance.h24), 
+    isNegative: (marketData?.performance.h24 || 0) < 0 
+  },
+];
 
-  // Real trading data from pool information
-  const poolData = enhancedData?.poolData;
-  const totalTxns24h = (poolData?.buys24h || 0) + (poolData?.sells24h || 0);
-  
-  const tradingData = [
-    { label: 'TXNS', value: formatLargeNumber(totalTxns24h) },
-    { label: 'BUYS', value: formatLargeNumber(poolData?.buys24h) },
-    { label: 'SELLS', value: formatLargeNumber(poolData?.sells24h) },
-  ];
+// Trading activity from Birdeye 24h
+const txBuys = marketData?.tradingActivity.buys24h || 0;
+const txSells = marketData?.tradingActivity.sells24h || 0;
+const totalTxns24h = (marketData?.tradingActivity.txns24h) || (txBuys + txSells);
 
-  // Calculate unique participants (estimated from trading data)
-  const estimatedMakers = Math.floor((poolData?.buys24h || 0) * 0.3); // Rough estimate
-  const estimatedBuyers = Math.floor((poolData?.buys24h || 0) * 0.6);
-  const estimatedSellers = Math.floor((poolData?.sells24h || 0) * 0.55);
+const tradingData = [
+  { label: 'TXNS', value: formatLargeNumber(totalTxns24h) },
+  { label: 'BUYS', value: formatLargeNumber(txBuys) },
+  { label: 'SELLS', value: formatLargeNumber(txSells) },
+];
 
-  const participantData = [
-    { label: 'HOLDERS', value: formatLargeNumber(holders) },
-    { label: 'BUYERS', value: formatLargeNumber(estimatedBuyers) },
-    { label: 'SELLERS', value: formatLargeNumber(estimatedSellers) },
-  ];
+// Participants
+const estimatedBuyers = txBuys;
+const estimatedSellers = txSells;
 
-  // Real social links from DEXTools
-  const socials = enhancedData?.socials || {};
-  const hasWebsite = socials?.website;
-  const hasTwitter = socials?.twitter;
-  const hasTelegram = socials?.telegram;
+const participantData = [
+  { label: 'HOLDERS', value: formatLargeNumber(holders) },
+  { label: 'BUYERS', value: formatLargeNumber(estimatedBuyers) },
+  { label: 'SELLERS', value: formatLargeNumber(estimatedSellers) },
+];
+
+// Social links
+const socials = marketData?.socials || {};
+const hasWebsite = (socials as any)?.website;
+const hasTwitter = (socials as any)?.twitter;
+const hasTelegram = (socials as any)?.telegram;
 
   return (
     <div className="space-y-6">
@@ -242,35 +239,35 @@ export const TokenInfoSection = ({ tokenAddress, fallbackData }: TokenInfoSectio
               <span className="text-lg font-bold">VOLUME DETAILS</span>
             </div>
             
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">VOLUME 24H</div>
-                <div className="text-3xl font-black text-foreground">
-                  ${formatLargeNumber(poolData?.volume24h || fallbackData?.volume24h)}
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-6">
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">BUY VOL</div>
-                  <div className="text-xl font-black text-success">
-                    ${formatLargeNumber(poolData?.buyVolume5m ? poolData.buyVolume5m * 288 : (poolData?.volume24h || 0) * 0.53)} 
-                  </div>
-                  <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
-                    <div className="bg-success h-2 rounded-full" style={{ width: '53%' }}></div>
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">SELL VOL</div>
-                  <div className="text-xl font-black text-destructive">
-                    ${formatLargeNumber(poolData?.sellVolume5m ? poolData.sellVolume5m * 288 : (poolData?.volume24h || 0) * 0.47)}
-                  </div>
-                  <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
-                    <div className="bg-destructive h-2 rounded-full" style={{ width: '47%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+<div className="space-y-6">
+  <div className="text-center">
+    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">VOLUME 24H</div>
+    <div className="text-3xl font-black text-foreground">
+      ${formatLargeNumber(marketData?.volume.volume24h || fallbackData?.volume24h)}
+    </div>
+  </div>
+  
+  <div className="grid grid-cols-2 gap-6">
+    <div className="text-center">
+      <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">BUY VOL</div>
+      <div className="text-xl font-black text-success">
+        ${formatLargeNumber(marketData?.volume.buyVolume24h || 0)} 
+      </div>
+      <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
+        <div className="bg-success h-2 rounded-full" style={{ width: `${Math.min(100, Math.max(0, ((marketData?.volume.buyVolume24h || 0) / Math.max(1, (marketData?.volume.volume24h || 0))) * 100))}%` }}></div>
+      </div>
+    </div>
+    <div className="text-center">
+      <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">SELL VOL</div>
+      <div className="text-xl font-black text-destructive">
+        ${formatLargeNumber(marketData?.volume.sellVolume24h || 0)}
+      </div>
+      <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
+        <div className="bg-destructive h-2 rounded-full" style={{ width: `${Math.min(100, Math.max(0, ((marketData?.volume.sellVolume24h || 0) / Math.max(1, (marketData?.volume.volume24h || 0))) * 100))}%` }}></div>
+      </div>
+    </div>
+  </div>
+</div>
           </div>
         </Card>
 

@@ -607,9 +607,10 @@ const MemeTokenDetailPage = () => {
                     }}
                   />
               ) : (
-                <TransactionsTable 
-                  tokenSymbol={token.symbol}
-                />
+<TransactionsTable 
+  tokenAddress={tokenAddress || (token as any)?.id}
+  tokenSymbol={token.symbol}
+/>
               )}
             </div>
 

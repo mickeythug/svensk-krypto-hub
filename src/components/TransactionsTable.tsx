@@ -3,147 +3,78 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 import { formatUsd } from '@/lib/utils';
+import { useEffect, useMemo, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
-interface Transaction {
-  id: string;
-  date: string;
-  type: 'Buy' | 'Sell';
-  usd: number;
-  tokenAmount: number;
-  solAmount: number;
-  price: number;
-  maker: string;
+interface BirdeyeTxItem {
   txHash: string;
+  blockUnixTime: number;
+  from?: { address?: string; owner?: string };
+  to?: { address?: string; owner?: string };
+  side?: 'buy' | 'sell';
+  amount?: number;
+  uiAmount?: number;
+  price?: number;
+  volumeUSD?: number;
+  solAmount?: number;
+  source?: string;
 }
 
 interface TransactionsTableProps {
+  tokenAddress: string | undefined;
   tokenSymbol: string;
 }
 
-export const TransactionsTable = ({ tokenSymbol }: TransactionsTableProps) => {
-  // Mock transaction data - in real app this would come from API
-  const transactions: Transaction[] = [
-    {
-      id: '1',
-      date: 'Aug 12 05:47:20 PM',
-      type: 'Buy',
-      usd: 394.32,
-      tokenAmount: 837746,
-      solAmount: 2.17,
-      price: 0.0004741,
-      maker: 'vTvBkZ',
-      txHash: '5x7g2h3j4k'
-    },
-    {
-      id: '2',
-      date: 'Aug 12 05:47:19 PM',
-      type: 'Sell',
-      usd: 195.94,
-      tokenAmount: 420416,
-      solAmount: 1.080,
-      price: 0.0004649,
-      maker: 'CrekIn',
-      txHash: '9x8d5f6g7h'
-    },
-    {
-      id: '3',
-      date: 'Aug 12 05:47:16 PM',
-      type: 'Buy',
-      usd: 26.88,
-      tokenAmount: 57157,
-      solAmount: 0.1485,
-      price: 0.0004695,
-      maker: 'tx09dB',
-      txHash: '3x2w4e5r6t'
-    },
-    {
-      id: '4',
-      date: 'Aug 12 05:47:10 PM',
-      type: 'Sell',
-      usd: 10.06,
-      tokenAmount: 21516,
-      solAmount: 0.05559,
-      price: 0.0004688,
-      maker: 'B1Et9f',
-      txHash: '7x5g8h9j0k'
-    },
-    {
-      id: '5',
-      date: 'Aug 12 05:47:10 PM',
-      type: 'Buy',
-      usd: 335.91,
-      tokenAmount: 720260,
-      solAmount: 1.85,
-      price: 0.0004691,
-      maker: 'HirL6D',
-      txHash: '1x4d7f8g9h'
-    },
-    {
-      id: '6',
-      date: 'Aug 12 05:47:00 PM',
-      type: 'Buy',
-      usd: 19.94,
-      tokenAmount: 43141,
-      solAmount: 0.1101,
-      price: 0.0004613,
-      maker: 'wtOLKr',
-      txHash: '8x6j9k0l1m'
-    },
-    {
-      id: '7',
-      date: 'Aug 12 05:46:58 PM',
-      type: 'Sell',
-      usd: 0.31,
-      tokenAmount: 686.24,
-      solAmount: 0.001742,
-      price: 0.0004605,
-      maker: 'L83vnA',
-      txHash: '2x5r8t9y0u'
-    },
-    {
-      id: '8',
-      date: 'Aug 12 05:46:56 PM',
-      type: 'Buy',
-      usd: 57.40,
-      tokenAmount: 124517,
-      solAmount: 0.3173,
-      price: 0.0004605,
-      maker: 'iDAeHp',
-      txHash: '6x3e8r9t0y'
-    },
-    {
-      id: '9',
-      date: 'Aug 12 05:46:54 PM',
-      type: 'Sell',
-      usd: 190.67,
-      tokenAmount: 414261,
-      solAmount: 1.050,
-      price: 0.0004592,
-      maker: 'iXi7CB',
-      txHash: '9x7u4i5o6p'
-    },
-    {
-      id: '10',
-      date: 'Aug 12 05:46:53 PM',
-      type: 'Sell',
-      usd: 18.99,
-      tokenAmount: 41044,
-      solAmount: 0.1049,
-      price: 0.0004636,
-      maker: 'kU3vbz',
-      txHash: '4x8i9o0p1a'
+export const TransactionsTable = ({ tokenAddress, tokenSymbol }: TransactionsTableProps) => {
+  const [transactions, setTransactions] = useState<BirdeyeTxItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const load = async () => {
+    if (!tokenAddress) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('birdeye-proxy', {
+        body: { action: 'transactions', address: tokenAddress, params: { offset: 0, limit: 50 } },
+      });
+      if (error) throw error;
+      const items: BirdeyeTxItem[] = (data?.data?.items ?? data?.data ?? []).filter(Boolean);
+      items.sort((a, b) => (b.blockUnixTime || 0) - (a.blockUnixTime || 0));
+      setTransactions(items);
+    } catch (e) {
+      // swallow
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  const formatLargeNumber = (num: number): string => {
-    if (num >= 1e6) return `${(num / 1e6).toFixed(0)}M`;
-    if (num >= 1e3) return `${(num / 1e3).toFixed(0)}K`;
-    return num.toLocaleString();
   };
 
-  const truncateAddress = (address: string): string => {
-    return `${address.slice(0, 6)}...`;
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await load();
+      const id = setInterval(() => { if (!cancelled) load(); }, 5000);
+      return () => clearInterval(id);
+    })();
+    return () => { cancelled = true; };
+  }, [tokenAddress]);
+
+  const formatLargeNumber = (num?: number): string => {
+    const n = Number(num || 0);
+    if (n >= 1e6) return `${(n / 1e6).toFixed(0)}M`;
+    if (n >= 1e3) return `${(n / 1e3).toFixed(0)}K`;
+    return n.toLocaleString();
   };
+
+  const rows = useMemo(() => transactions.map((tx) => ({
+    key: tx.txHash,
+    date: tx.blockUnixTime ? new Date(tx.blockUnixTime * 1000).toLocaleString() : '-',
+    type: (tx.side === 'buy' ? 'Buy' : tx.side === 'sell' ? 'Sell' : '—') as 'Buy' | 'Sell' | '—',
+    usd: tx.volumeUSD ?? 0,
+    tokenAmount: tx.uiAmount ?? tx.amount ?? 0,
+    solAmount: tx.solAmount ?? 0,
+    price: tx.price ?? 0,
+    maker: tx.from?.owner || tx.from?.address || '-',
+    txHash: tx.txHash,
+  })), [transactions]);
 
   return (
     <Card className="bg-background/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl">
@@ -168,8 +99,8 @@ export const TransactionsTable = ({ tokenSymbol }: TransactionsTableProps) => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((tx) => (
-                <tr key={tx.id} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
+              {rows.map((tx) => (
+                <tr key={tx.key} className="border-b border-border/20 hover:bg-muted/20 transition-colors">
                   <td className="py-3 px-2 text-muted-foreground text-xs">{tx.date}</td>
                   <td className="py-3 px-2">
                     <Badge 
@@ -190,7 +121,7 @@ export const TransactionsTable = ({ tokenSymbol }: TransactionsTableProps) => {
                     {formatLargeNumber(tx.tokenAmount)}
                   </td>
                   <td className="py-3 px-2 text-right font-mono text-foreground">
-                    {tx.solAmount.toFixed(4)}
+                    {Number(tx.solAmount || 0).toFixed(4)}
                   </td>
                   <td className="py-3 px-2 text-right font-mono text-foreground">
                     {formatUsd(tx.price)}
@@ -199,7 +130,7 @@ export const TransactionsTable = ({ tokenSymbol }: TransactionsTableProps) => {
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 rounded-full bg-gradient-to-r from-primary to-primary-foreground"></div>
                       <span className="font-mono text-xs text-muted-foreground">
-                        {truncateAddress(tx.maker)}
+                        {tx.maker ? `${tx.maker.slice(0, 6)}...` : '-'}
                       </span>
                     </div>
                   </td>
@@ -215,13 +146,18 @@ export const TransactionsTable = ({ tokenSymbol }: TransactionsTableProps) => {
                   </td>
                 </tr>
               ))}
+              {(!rows || rows.length === 0) && (
+                <tr>
+                  <td colSpan={8} className="py-6 text-center text-muted-foreground">{loading ? 'Loading transactions...' : 'No recent transactions'}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
         <div className="mt-4 text-center">
-          <Button variant="outline" size="sm" className="text-xs">
-            Load More Transactions
+          <Button variant="outline" size="sm" className="text-xs" onClick={() => load()} disabled={loading}>
+            Refresh
           </Button>
         </div>
       </div>

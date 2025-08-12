@@ -62,6 +62,12 @@ serve(async (req) => {
       case "history_price":
         url = `${base}/defi/history_price?${toQuery({ address, ...params })}`;
         break;
+      case "token_trades_24h":
+        url = `${base}/defi/token_trades_24h?${toQuery({ address, ...params })}`;
+        break;
+      case "transactions":
+        url = `${base}/defi/txs/token?${toQuery({ address, ...params })}`;
+        break;
       default:
         return new Response(JSON.stringify({ error: "Unsupported action" }), {
           status: 400,
