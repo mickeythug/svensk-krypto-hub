@@ -189,23 +189,10 @@ const Header = ({ showTicker = true }: HeaderProps) => {
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-6 scrollbar-thin scrollbar-track-background scrollbar-thumb-primary/30 hover:scrollbar-thumb-primary/50 scrollbar-thumb-rounded-full">
                     {/* Wallet Connect Section */}
-                    {!showWalletConnect ? (
-                      <div className="p-4 rounded-xl border border-border bg-muted/30">
-                        <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Plånbok</div>
-                        <Button 
-                          onClick={() => setShowWalletConnect(true)}
-                          className="w-full justify-center bg-gradient-primary hover:opacity-90"
-                        >
-                          <Wallet className="h-4 w-4 mr-2" />
-                          Connect Wallet
-                        </Button>
-                      </div>
-                    ) : (
-                      <div>
-                        <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
-                      </div>
-                    )}
-
+                    <div className="p-4 rounded-xl border border-border bg-muted/30">
+                      <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                      <ConnectWalletButton />
+                    </div>
                     {/* Complete Navigation Menu */}
                     <div>
                       <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>

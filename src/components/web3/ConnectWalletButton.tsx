@@ -131,22 +131,8 @@ export default function ConnectWalletButton() {
       authLog('Connect: start', { mode, selectedEvmChainId });
 
       if (mode === 'SOL') {
-        // Phantom detection (supports window.solana and window.phantom)
-        const isPhantom = typeof window !== 'undefined' && (
-          (window as any)?.solana?.isPhantom || (window as any)?.phantom?.solana?.isPhantom
-        );
-        if (!isPhantom) {
-          toast({
-            title: 'Phantom saknas',
-            description: 'Installera Phantom för att ansluta.',
-            variant: 'destructive',
-          });
-          window.open('https://phantom.app/download', '_blank');
-          return;
-        }
-
+        // För desktop: visa alltid wallet‑modal och försök anslutning med Phantom‑adapter
         try {
-          // Säkerställ att Phantom är vald
           const phantomWallet = wallets?.find?.((w: any) => w?.adapter?.name === 'Phantom');
           if (phantomWallet && wallet?.adapter?.name !== phantomWallet.adapter.name) {
             select?.(phantomWallet.adapter.name as any);
@@ -161,7 +147,7 @@ export default function ConnectWalletButton() {
 
           await connectSol();
 
-          // Vänta kort på att publicKey uppdateras från adaptern
+          // Vänta kort på att publicKey uppdateras
           let pk = publicKey as typeof publicKey | undefined;
           for (let i = 0; i < 20 && !pk; i++) {
             await new Promise((r) => setTimeout(r, 50));
@@ -198,14 +184,6 @@ export default function ConnectWalletButton() {
           sessionStorage.setItem('siws_address', pubkeyStr);
           setIsAuthed(true);
           toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
-          try {
-            if (pk) {
-              const lamports = await solConnection.getBalance(pk, { commitment: 'processed' } as any);
-              const sol = lamports / 1_000_000_000;
-              console.info('Efter anslutning: SOL-saldo', sol);
-            }
-          } catch {}
-          setNonce(crypto.getRandomValues(new Uint32Array(1))[0].toString());
           try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
         } catch (err: any) {
@@ -227,7 +205,6 @@ export default function ConnectWalletButton() {
           throw err;
         }
       }
-
       // EVM connect + optional chain switch + sign
       if (selectedEvmChainId == null) {
         toast({ title: 'Välj EVM-kedja', description: 'Välj Ethereum.', variant: 'destructive' });
