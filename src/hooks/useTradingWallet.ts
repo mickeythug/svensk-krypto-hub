@@ -24,6 +24,14 @@ export function useTradingWallet() {
         if (!error && data) {
           setWalletAddress(data.wallet_address);
           setAcknowledged(!!data.acknowledged_backup);
+          // If backup not acknowledged, try to fetch decrypted private key for one-time display
+          if (!data.acknowledged_backup) {
+            try {
+              const { data: getData } = await supabase.functions.invoke('pump-get-wallet');
+              const pkServer = (getData as any)?.privateKey || null;
+              if (pkServer) setPrivateKey(pkServer);
+            } catch {}
+          }
           setLoading(false);
           return;
         }
@@ -37,6 +45,7 @@ export function useTradingWallet() {
             await supabase.functions.invoke('pump-store-wallet', { body: { walletAddress: lsAddr, privateKey: lsPk, apiKey: lsKey } });
             setWalletAddress(lsAddr);
             setAcknowledged(lsAck);
+            if (!lsAck && lsPk) setPrivateKey(lsPk);
             setLoading(false);
             return;
           } catch {}
@@ -48,6 +57,12 @@ export function useTradingWallet() {
       if (lsAddr) {
         setWalletAddress(lsAddr);
         setAcknowledged(lsAck);
+        if (!lsAck) {
+          try {
+            const lsPk = localStorage.getItem('pump_private_key');
+            if (lsPk) setPrivateKey(lsPk);
+          } catch {}
+        }
       }
     } finally {
       setLoading(false);
@@ -57,7 +72,18 @@ export function useTradingWallet() {
   useEffect(() => { load(); }, [load]);
 
   const createIfMissing = useCallback(async () => {
-    if (walletAddress) return { walletAddress, privateKey, apiKey };
+    if (walletAddress) {
+      // Ensure we retrieve private key if not acknowledged yet
+      if (!acknowledged && !privateKey) {
+        try {
+          const { data: getData } = await supabase.functions.invoke('pump-get-wallet');
+          const pkServer = (getData as any)?.privateKey || null;
+          if (pkServer) setPrivateKey(pkServer);
+          return { walletAddress, privateKey: pkServer, apiKey };
+        } catch {}
+      }
+      return { walletAddress, privateKey, apiKey };
+    }
     setLoading(true);
     try {
       // Try via edge function first (saves to DB when user is authenticated)

@@ -195,12 +195,19 @@ export default function ConnectWalletButton() {
           const ok = await signAndVerify(pubkeyStr, signFn);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
 
-          sessionStorage.setItem('siws_verified', 'true');
-          sessionStorage.setItem('siws_address', pubkeyStr);
-          setIsAuthed(true);
-          toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
-          // Skapa trading wallet om saknas och visa onboarding-modal
-          try { await createIfMissing(); setShowOnboarding(true); } catch {}
+          // Skapa trading wallet om saknas och visa onboarding-modal först när vi faktiskt har en private key
+          try {
+            const res = await createIfMissing();
+            if (res?.privateKey) {
+              setShowOnboarding(true);
+            } else {
+              // Prova hämta från servern om backup ej bekräftad
+              try {
+                const { data: getData } = await (await import('@/integrations/supabase/client')).supabase.functions.invoke('pump-get-wallet');
+                if ((getData as any)?.privateKey) setShowOnboarding(true);
+              } catch {}
+            }
+          } catch {}
           try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
         } catch (err: any) {

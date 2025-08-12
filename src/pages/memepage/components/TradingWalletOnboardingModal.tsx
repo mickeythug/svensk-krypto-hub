@@ -50,7 +50,7 @@ export default function TradingWalletOnboardingModal({ open, walletAddress, priv
           <div>
             <label className="text-sm text-muted-foreground">Private Key (spara säkert)</label>
             <div className="flex gap-2 mt-1">
-              <Input readOnly type="password" value={privateKey || ''} />
+              <Input readOnly type="text" value={privateKey || ''} />
               <Button onClick={() => copy(privateKey)} className="bg-warning text-warning-foreground">
                 Kopiera Private Key
               </Button>
