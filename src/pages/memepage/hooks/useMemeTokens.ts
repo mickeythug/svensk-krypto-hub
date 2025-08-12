@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
 
@@ -241,6 +241,37 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
       mounted = false;
     };
   }, [category, limit]);
+
+  // Background monitor: keep enriching tokens that still miss data (no filtering)
+  const enrichAttempts = useRef<Record<string, number>>({});
+  useEffect(() => {
+    const toNum = (v: any): number => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\,\s]/g, '')) : 0);
+    const pending = tokens.filter(t => (t.marketCap <= 0 || t.holders <= 0 || t.volume24h <= 0) && (enrichAttempts.current[t.id] ?? 0) < 5);
+    if (!pending.length) return;
+    let cancelled = false;
+    const run = async () => {
+      const batch = pending.slice(0, 5);
+      const res = await Promise.all(batch.map(async (t) => {
+        try {
+          enrichAttempts.current[t.id] = (enrichAttempts.current[t.id] ?? 0) + 1;
+          const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: t.id } });
+          const infoD = (full?.info?.data ?? full?.info) as any || {};
+          const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
+          return { id: t.id, marketCap: toNum(infoD.mcap), holders: toNum(infoD.holders), volume24h: toNum(poolD.volume24h) };
+        } catch { return { id: t.id }; }
+      }));
+      if (cancelled) return;
+      setTokens(prev => prev.map(p => {
+        const u = res.find(r => r.id === p.id);
+        if (!u) return p;
+        return { ...p, marketCap: u.marketCap ?? p.marketCap, holders: u.holders ?? p.holders, volume24h: u.volume24h ?? p.volume24h };
+      }));
+    };
+    // run once immediately and then every 20s
+    run();
+    const id = setInterval(run, 20000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [tokens]);
 
   const sorted = useMemo(() => tokens, [tokens]);
 
