@@ -234,9 +234,8 @@ export default function ConnectWalletButton() {
         return;
       }
       const injectedConnector = connectors.find((c) => c.id === 'injected');
-      const wcConnector = connectors.find((c) => c.id === 'walletConnect');
-      const chosen = injectedConnector || wcConnector || connectors[0];
-      authLog('EVM: choosing connector', { chosen: chosen?.id, haveInjected: Boolean(injectedConnector), haveWalletConnect: Boolean(wcConnector) });
+      const chosen = injectedConnector || connectors[0];
+      authLog('EVM: choosing connector', { chosen: chosen?.id, haveInjected: Boolean(injectedConnector) });
       await connect({ connector: chosen });
       try {
         authLog('EVM: switchChain attempt', { chainId: selectedEvmChainId });

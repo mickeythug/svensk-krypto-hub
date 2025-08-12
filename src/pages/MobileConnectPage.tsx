@@ -110,9 +110,7 @@ export default function MobileConnectPage() {
           setStatus("Ansluter till EVM‑wallet...");
           // Välj connector
           const injected = connectors.find((c) => c.id === "injected");
-          const wc = connectors.find((c) => c.id === "walletConnect");
-          let chosen = injected || wc || connectors[0];
-          if (walletPref === "trust") chosen = wc || injected || connectors[0];
+          const chosen = injected || connectors[0];
           await connect({ connector: chosen });
           if (ethMainnet) {
             try { await switchChainAsync({ chainId: ethMainnet.id }); } catch {}

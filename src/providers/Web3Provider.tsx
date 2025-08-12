@@ -1,51 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { WagmiProvider, createConfig, http, createStorage } from 'wagmi';
 import { mainnet } from 'viem/chains';
-import { walletConnect } from 'wagmi/connectors';
 import { injected } from 'wagmi/connectors';
-import { supabase } from '@/integrations/supabase/client';
-import { authLog } from '@/lib/authDebug';
 
 
 // Chains we support initially
 const chains = [mainnet] as const;
 
-function useWalletConnectProjectId() {
-  const [projectId, setProjectId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    supabase.functions
-      .invoke('wc-project')
-      .then(({ data, error }) => {
-        if (!mounted) return;
-        if (error) {
-          authLog('WC project id error', error.message || error, 'error');
-          setError(error.message || 'Kunde inte hämta WalletConnect Project ID');
-        } else if (data?.projectId) {
-          authLog('WC project id loaded', data.projectId);
-          setProjectId(data.projectId);
-        } else {
-          authLog('WC project id missing in response', data, 'warn');
-          setError('Ogiltigt svar från wc-project');
-        }
-      })
-      .catch((e) => {
-        if (!mounted) return;
-        authLog('WC project id fetch failed', String(e), 'error');
-        setError(String(e));
-      });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  return { projectId, error };
-}
-
 export default function Web3Provider({ children }: { children: React.ReactNode }) {
-  const { projectId } = useWalletConnectProjectId();
+  
 
   const config = useMemo(() => {
     const transports: Record<number, ReturnType<typeof http>> = {};
@@ -59,9 +22,6 @@ export default function Web3Provider({ children }: { children: React.ReactNode }
     }
     const connectors = [
       injected({ shimDisconnect: true }),
-      ...(projectId
-        ? [walletConnect({ projectId, showQrModal: true })]
-        : []),
     ];
 
     return createConfig({
@@ -72,7 +32,7 @@ export default function Web3Provider({ children }: { children: React.ReactNode }
       ssr: false,
       storage: createStorage({ storage: typeof window !== 'undefined' ? window.localStorage : undefined }) as any,
     });
-  }, [projectId]);
+  }, []);
 
   return <WagmiProvider config={config}>{children}</WagmiProvider>;
 }
