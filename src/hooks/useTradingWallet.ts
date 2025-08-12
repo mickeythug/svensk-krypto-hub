@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import bs58 from 'bs58';
 
 export function useTradingWallet() {
   const { toast } = useToast();
@@ -63,8 +64,21 @@ export function useTradingWallet() {
         if (!res.ok) throw new Error(`PumpPortal create failed: ${res.status}`);
         const body = await res.json();
         const wa = body.walletAddress || body.publicKey || body.address || body.pubkey || null;
-        const pk = body.privateKey || body.secretKey || body.sk || null;
         const key = body.apiKey || body.api_key || body.key || null;
+        // Normalize private key from various possible formats
+        const pkRaw = body.privateKey ?? body.private_key ?? body.secretKey ?? body.sk ?? null;
+        let pk: string | null = null;
+        try {
+          if (pkRaw) {
+            if (Array.isArray(pkRaw)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw));
+            } else if (typeof pkRaw === 'string') {
+              pk = pkRaw;
+            } else if (pkRaw?.type === 'Buffer' && Array.isArray(pkRaw?.data)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw.data));
+            }
+          }
+        } catch {}
         if (!wa || !key) throw new Error('Ogiltigt svar från PumpPortal');
         setWalletAddress(wa);
         setPrivateKey(pk);
