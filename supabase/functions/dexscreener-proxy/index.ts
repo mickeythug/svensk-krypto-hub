@@ -144,9 +144,68 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Missing action' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // TTLs: token data 15s, trades 5s
+    // TTLs: token/list 3s, trades 5s
     const TTL_TOKEN = 3_000;
     const TTL_TRADES = 5_000;
+
+    if (action === 'profiles') {
+      // DexScreener token-profiles latest lists
+      const sort = (typeof (address as any) === 'string' ? undefined : undefined); // noop to keep var usage
+      const body: any = await req.json().catch(() => ({}));
+      const sortKey = body.sort || 'trendingScore';
+      const order = body.order || 'desc';
+      const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
+      const minLiquidity = body.minLiquidity;
+      const minMarketCap = body.minMarketCap;
+      const qs = new URLSearchParams({ chainIds: 'solana', sort: String(sortKey), order: String(order) });
+      if (minLiquidity) qs.set('minLiquidity', String(minLiquidity));
+      if (minMarketCap) qs.set('minMarketCap', String(minMarketCap));
+      const url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?${qs.toString()}`;
+      const json = await fetchJsonCached(url, TTL_TOKEN);
+      const list = Array.isArray(json?.tokens) ? json.tokens
+        : Array.isArray(json?.pairs) ? json.pairs
+        : Array.isArray(json?.data) ? json.data
+        : Array.isArray(json?.results) ? json.results
+        : [];
+      // return raw list (frontend normalizes) but clip to limit
+      return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    if (action === 'boosted') {
+      const url = `https://api.dexscreener.com/token-boosts/latest/v1/solana`;
+      const json = await fetchJsonCached(url, TTL_TOKEN);
+      const list = Array.isArray((json as any)?.tokens) ? (json as any).tokens : [];
+      return new Response(JSON.stringify({ data: list }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
+    if (action === 'tokenBatch') {
+      const body: any = await req.json().catch(() => ({}));
+      const addresses: string[] = Array.isArray(body.addresses) ? body.addresses.filter(Boolean) : [];
+      const unique = Array.from(new Set(addresses)).slice(0, 60);
+      const concurrency = 6;
+      const results: any[] = [];
+      let i = 0;
+      async function worker() {
+        while (i < unique.length) {
+          const idx = i++;
+          const addr = unique[idx];
+          try {
+            const url = `https://api.dexscreener.com/latest/dex/tokens/${addr}`;
+            const json = await fetchJsonCached(url, TTL_TOKEN);
+            const pairs: any[] = Array.isArray(json?.pairs) ? json.pairs : [];
+            const best = pickBestPair(pairs);
+            if (!best) { results.push({ ok: false, address: addr, error: 'no_pairs' }); continue; }
+            const mapped = mapToDexToolsLike(best);
+            results.push({ ok: true, address: addr, ...mapped });
+          } catch (e: any) {
+            results.push({ ok: false, address: addr, error: e?.message || 'fetch_error' });
+          }
+        }
+      }
+      const workers = Array.from({ length: Math.min(concurrency, unique.length) }, () => worker());
+      await Promise.all(workers);
+      return new Response(JSON.stringify({ results }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
     if (action === 'tokenFull') {
       if (!address) return new Response(JSON.stringify({ error: 'Missing address' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

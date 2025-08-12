@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
-import { pumpOnMessage, pumpSubscribe } from '@/hooks/usePumpPortalWS';
+
 
 export interface MemeToken {
   id: string; // mint address
@@ -20,7 +20,7 @@ export interface MemeToken {
   description?: string;
 }
 
-export type MemeCategory = 'newest' | 'trending' | 'potential' | 'all' | 'under1m';
+export type MemeCategory = 'newest' | 'trending' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'volume' | 'liquidity' | 'marketcap' | 'txns' | 'boosted';
 
 const preloadImage = (src?: string) =>
   new Promise<boolean>((resolve) => {
@@ -106,68 +106,67 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
 
         // 1) Get base list (addresses)
         let addresses: string[] = [];
-        if (category === 'trending') {
-          const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'trendingCombined', limit: Math.max(limit * 2, 60) },
+        const take = Math.max(limit * 2, 60);
+
+        const addrFrom = (arr: any[]): string[] => (arr || [])
+          .map((r: any) => r?.address || r?.baseToken?.address || r?.mainToken?.address || r?.token?.address)
+          .filter((a: any) => typeof a === 'string' && a.length > 0);
+
+        const fetchDexscreenerProfiles = async (sort: string, order: 'asc' | 'desc' = 'desc') => {
+          const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
+            body: { action: 'profiles', sort, order }
           });
           if (error) throw error;
-          const list: string[] = Array.isArray(data?.addresses) ? data.addresses : [];
-          addresses = list.filter(Boolean).slice(0, Math.max(limit * 2, 60));
-        } else {
-          // newest och potential hämtar senaste listningar (24h), faller tillbaka till gainers vid fel
-          const to = new Date().toISOString();
-          const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-          try {
-            const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-              body: { action: 'newest', page: 0, pageSize: 50, from, to },
-            });
-            if (error) throw error;
-            const results: any[] = normalize(data);
-            const arr = Array.isArray(results) ? results : [];
-            addresses = arr
-              .map((r: any) => r?.address || r?.mainToken?.address)
-              .filter(Boolean)
-              .slice(0, limit);
-          } catch (_) {
-            // Fallback: gainers
-            const { data: gain, error: gErr } = await supabase.functions.invoke('dextools-proxy', {
-              body: { action: 'gainers' },
-            });
-            if (gErr) throw gErr;
-            const list: any[] = normalize(gain);
-            addresses = list
-              .map((i: any) => i?.mainToken?.address || i?.address || i?.token?.address)
-              .filter(Boolean)
-              .slice(0, limit);
-          }
+          return normalize(data);
+        };
+
+        if (category === 'trending') {
+          // Combine DexScreener trending + boosted + DEXTools hotpools/gainers (no pumpportal)
+          const [dsTrending, dsBoosted, dtHot, dtGain] = await Promise.all([
+            fetchDexscreenerProfiles('trendingScore', 'desc').catch(() => []),
+            supabase.functions.invoke('dexscreener-proxy', { body: { action: 'boosted' } }).then(r => normalize(r.data)).catch(() => []),
+            supabase.functions.invoke('dextools-proxy', { body: { action: 'hotpools' } }).then(r => normalize(r.data)).catch(() => []),
+            supabase.functions.invoke('dextools-proxy', { body: { action: 'gainers' } }).then(r => normalize(r.data)).catch(() => []),
+          ]);
+          const set = new Set<string>([
+            ...addrFrom(dsTrending),
+            ...addrFrom(dsBoosted),
+            ...addrFrom(dtHot),
+            ...addrFrom(dtGain),
+          ]);
+          addresses = Array.from(set).slice(0, take);
+        } else if (category === 'gainers') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('priceChange', 'desc')).slice(0, take);
+        } else if (category === 'losers') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('priceChange', 'asc')).slice(0, take);
+        } else if (category === 'volume') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('volume', 'desc')).slice(0, take);
+        } else if (category === 'liquidity') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('liquidity', 'desc')).slice(0, take);
+        } else if (category === 'marketcap') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('marketCap', 'desc')).slice(0, take);
+        } else if (category === 'txns') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('txns', 'desc')).slice(0, take);
+        } else if (category === 'boosted') {
+          const { data } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'boosted' } });
+          addresses = addrFrom(normalize(data)).slice(0, take);
+        } else if (category === 'newest' || category === 'potential') {
+          addresses = addrFrom(await fetchDexscreenerProfiles('createdAt', 'desc')).slice(0, take);
         }
 
-        // If no addresses and not trending, don't call batch
-        if (category !== 'trending' && !addresses.length) {
+        if (!addresses.length) {
           if (mounted) {
             setTokens([]);
           }
           return;
         }
 
-        // Safety cap
-        addresses = addresses.slice(0, Math.max(limit * 2, 60));
-
-        // 2) Fetch full details in batch
-        let items: any[] = [];
-        if (category === 'trending') {
-          const { data: batch, error: batchErr } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'trendingCombinedBatch', limit: Math.max(limit * 2, 60) },
-          });
-          if (batchErr) throw batchErr;
-          items = batch?.results || [];
-        } else {
-          const { data: batch, error: batchErr } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'tokenBatch', addresses },
-          });
-          if (batchErr) throw batchErr;
-          items = batch?.results || [];
-        }
+        // 2) Fetch full details in batch via DexScreener proxy
+        const { data: batch, error: batchErr } = await supabase.functions.invoke('dexscreener-proxy', {
+          body: { action: 'tokenBatch', addresses }
+        });
+        if (batchErr) throw batchErr;
+        const items: any[] = batch?.results || [];
         // 3) Map, filter and prepare tokens
         let mapped: MemeToken[] = items
           .filter((x: any) => {
@@ -242,7 +241,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
             for (const grp of chunks) {
               const res = await Promise.all(grp.map(async (t) => {
                 try {
-                  const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: t.id } });
+                  const { data: full } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'tokenFull', address: t.id } });
                   const infoD = (full?.info?.data ?? full?.info) as any || {};
                   const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
                   return {
@@ -333,7 +332,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
       const res = await Promise.all(batch.map(async (t) => {
         try {
           enrichAttempts.current[t.id] = (enrichAttempts.current[t.id] ?? 0) + 1;
-          const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: t.id } });
+          const { data: full } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'tokenFull', address: t.id } });
           const infoD = (full?.info?.data ?? full?.info) as any || {};
           const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
           return { id: t.id, marketCap: toNum(infoD.mcap), holders: toNum(infoD.holders), volume24h: toNum(poolD.volume24h) };
@@ -352,73 +351,8 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     return () => { cancelled = true; clearInterval(id); };
   }, [tokens]);
 
-  const sorted = useMemo(() => tokens, [tokens]);
-
-  // Live PumpPortal feed: subscribe to migrations and enrich them in real time (no extra hooks)
-  useEffect(() => {
-    if (category !== 'trending') return;
-    let off: (() => void) | null = null;
-
-    // Subscribe once on mount for this instance
-    (async () => {
-      try {
-        await pumpSubscribe('subscribeMigration');
-        // If needed later, we can also subscribe to new token creations:
-        // await pumpSubscribe('subscribeNewToken');
-      } catch {}
-    })();
-
-    off = pumpOnMessage(async (msg) => {
-      const t = msg?.type || msg?.method;
-      if (t !== 'migration' && t !== 'subscribeMigration') return;
-      const mint = msg?.mint;
-      if (!mint || typeof mint !== 'string') return;
-      // Do not add if already present
-      setTokens((prev) => {
-        if (prev.some((p) => p.id === mint)) return prev;
-        const base: MemeToken = {
-          id: mint,
-          symbol: (msg?.symbol || 'TOKEN').toString().slice(0,12).toUpperCase(),
-          name: msg?.name || msg?.symbol || 'Token',
-          image: undefined,
-          price: 0,
-          change24h: 0,
-          volume24h: 0,
-          marketCap: 0,
-          holders: 0,
-          views: '—',
-          emoji: undefined,
-          tags: ['trending'],
-          isHot: false,
-          description: undefined,
-        };
-        return [base, ...prev].slice(0, Math.max(limit * 2, 60));
-      });
-      try {
-        const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: mint } });
-        const metaD = (full?.meta?.data ?? full?.meta) as any || {};
-        const priceD = (full?.price?.data ?? full?.price) as any || {};
-        const infoD = (full?.info?.data ?? full?.info) as any || {};
-        const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
-        const toNum = (v: any) => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\,\s]/g, '')) : 0);
-        setTokens((prev) => prev.map((p) => p.id !== mint ? p : ({
-          ...p,
-          symbol: p.symbol || (metaD.symbol || 'TOKEN').toString().slice(0,12).toUpperCase(),
-          name: p.name || metaD.name || metaD.symbol || 'Token',
-          image: metaD.logo || p.image,
-          price: toNum(priceD.price) || p.price,
-          change24h: toNum(priceD.variation24h) || p.change24h,
-          volume24h: toNum(poolD.volume24h) || p.volume24h,
-          marketCap: toNum(infoD.mcap) || p.marketCap,
-          holders: toNum(infoD.holders) || p.holders,
-          description: metaD.description || p.description,
-        })));
-      } catch (_) {}
-    });
-
-    return () => { off?.(); };
-  }, [category, limit]);
-
-
+  // Removed PumpPortal real-time feed per requirements
+  // Future: could poll DexScreener lists periodically if needed
+  
   return { tokens: sorted, loading, error };
 };
