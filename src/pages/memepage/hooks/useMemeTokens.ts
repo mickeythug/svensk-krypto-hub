@@ -113,11 +113,43 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
           .filter((a: any) => typeof a === 'string' && a.length > 0);
 
         const fetchDexscreenerProfiles = async (sort: string, order: 'asc' | 'desc' = 'desc') => {
-          const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
-            body: { action: 'profiles', sort, order }
-          });
-          if (error) throw error;
-          return normalize(data);
+          try {
+            const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
+              body: { action: 'profiles', sort, order }
+            });
+            if (error) throw error;
+            const arr = normalize(data);
+            if (arr.length) return arr;
+            // If empty, fall back below
+          } catch (_) {
+            // fallback below
+          }
+          // Fallback: use pairsList and sort locally to emulate profiles
+          const { data: pairsRes } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'pairsList' } });
+          const arr = normalize(pairsRes);
+          const asNum = (v: any) => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\s,]/g, '')) : 0);
+          const val = (p: any): number => {
+            switch (String(sort)) {
+              case 'priceChange': return asNum(p?.priceChange?.h24);
+              case 'priceChange5m': return asNum(p?.priceChange?.m5);
+              case 'priceChange1h': return asNum(p?.priceChange?.h1);
+              case 'priceChange6h': return asNum(p?.priceChange?.h6);
+              case 'volume': return asNum(p?.volume?.h24);
+              case 'liquidity': return asNum(p?.liquidity?.usd);
+              case 'marketCap': return asNum(p?.marketCap);
+              case 'txns': { const b = asNum(p?.txns?.h24?.buys); const s = asNum(p?.txns?.h24?.sells); return b + s; }
+              case 'createdAt': return asNum(p?.pairCreatedAt ?? p?.createdAt);
+              case 'trendingScore':
+              default: {
+                const t1 = ((asNum(p?.txns?.h1?.buys) || 0) + (asNum(p?.txns?.h1?.sells) || 0)) * 1000;
+                const pc = (asNum(p?.priceChange?.h1) || 0) * 100;
+                const liq = (asNum(p?.liquidity?.usd) || 0);
+                return t1 + pc + liq * 0.001;
+              }
+            }
+          };
+          const sorted = [...arr].sort((a, b) => val(b) - val(a));
+          return order === 'asc' ? sorted.reverse() : sorted;
         };
 
         if (category === 'trending') {

@@ -149,26 +149,76 @@ serve(async (req) => {
     const TTL_TRADES = 5_000;
 
     if (action === 'profiles') {
-      // DexScreener token-profiles latest lists
-      const sort = (typeof (address as any) === 'string' ? undefined : undefined); // noop to keep var usage
+      // DexScreener token-profiles latest lists with robust fallback to pairs when endpoint is unavailable
       const body: any = await req.json().catch(() => ({}));
       const sortKey = body.sort || 'trendingScore';
-      const order = body.order || 'desc';
+      const order: 'asc' | 'desc' = (body.order === 'asc' ? 'asc' : 'desc');
       const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
       const minLiquidity = body.minLiquidity;
       const minMarketCap = body.minMarketCap;
-      const qs = new URLSearchParams({ chainIds: 'solana', sort: String(sortKey), order: String(order) });
-      if (minLiquidity) qs.set('minLiquidity', String(minLiquidity));
-      if (minMarketCap) qs.set('minMarketCap', String(minMarketCap));
-      const url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?${qs.toString()}`;
-      const json = await fetchJsonCached(url, TTL_TOKEN);
-      const list = Array.isArray(json?.tokens) ? json.tokens
-        : Array.isArray(json?.pairs) ? json.pairs
-        : Array.isArray(json?.data) ? json.data
-        : Array.isArray(json?.results) ? json.results
-        : [];
-      // return raw list (frontend normalizes) but clip to limit
-      return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+
+      // Helper: sort pairs locally to emulate token profile sorts
+      const sortPairs = (pairs: any[]) => {
+        const val = (p: any): number => {
+          switch (String(sortKey)) {
+            case 'priceChange': return asNum(p?.priceChange?.h24) ?? 0;
+            case 'priceChange5m': return asNum(p?.priceChange?.m5) ?? 0;
+            case 'priceChange1h': return asNum(p?.priceChange?.h1) ?? 0;
+            case 'priceChange6h': return asNum(p?.priceChange?.h6) ?? 0;
+            case 'volume': return asNum(p?.volume?.h24) ?? 0;
+            case 'liquidity': return asNum(p?.liquidity?.usd) ?? 0;
+            case 'marketCap': return asNum(p?.marketCap) ?? 0;
+            case 'txns': {
+              const b = asNum(p?.txns?.h24?.buys) ?? 0; const s = asNum(p?.txns?.h24?.sells) ?? 0; return b + s;
+            }
+            case 'createdAt': return asNum((p as any)?.pairCreatedAt ?? (p as any)?.createdAt) ?? 0;
+            case 'trendingScore':
+            default: {
+              // Approximate trending by 1h txns, then 1h price change, then liquidity
+              const t1 = ((asNum(p?.txns?.h1?.buys) ?? 0) + (asNum(p?.txns?.h1?.sells) ?? 0)) * 1000;
+              const pc = (asNum(p?.priceChange?.h1) ?? 0) * 100;
+              const liq = (asNum(p?.liquidity?.usd) ?? 0);
+              return t1 + pc + liq * 0.001; // scaled
+            }
+          }
+        };
+        const sorted = [...pairs].sort((a, b) => (val(b) - val(a)));
+        return order === 'asc' ? sorted.reverse() : sorted;
+      };
+
+      try {
+        // Primary: use token-profiles endpoint
+        const qs = new URLSearchParams({ chainIds: 'solana', sort: String(sortKey), order: String(order) });
+        if (minLiquidity) qs.set('minLiquidity', String(minLiquidity));
+        if (minMarketCap) qs.set('minMarketCap', String(minMarketCap));
+        const url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?${qs.toString()}`;
+        const json = await fetchJsonCached(url, TTL_TOKEN);
+        const list = Array.isArray(json?.tokens) ? json.tokens
+          : Array.isArray(json?.pairs) ? json.pairs
+          : Array.isArray(json?.data) ? json.data
+          : Array.isArray(json?.results) ? json.results
+          : [];
+        if (Array.isArray(list) && list.length) {
+          return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        // Fallback to pairs endpoint if list empty
+      } catch (_) {
+        // swallow and fallback
+      }
+
+      // Fallback: use pairs list and sort locally
+      try {
+        const base = `https://api.dexscreener.com/latest/dex/pairs/solana`;
+        const json = await fetchJsonCached(base, TTL_TOKEN);
+        let list: any[] = Array.isArray(json?.pairs) ? json.pairs : [];
+        if (minLiquidity) list = list.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
+        if (minMarketCap) list = list.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
+        const sorted = sortPairs(list).slice(0, limit);
+        return new Response(JSON.stringify({ data: sorted }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      } catch (e) {
+        console.error('[dexscreener-profiles-fallback-error]', e);
+        return new Response(JSON.stringify({ data: [], notice: 'profiles_fallback_failed' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
     }
 
     if (action === 'pairsList') {
