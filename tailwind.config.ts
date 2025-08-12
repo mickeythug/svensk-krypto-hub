@@ -85,8 +85,9 @@ export default {
 				'glow-secondary': 'var(--glow-secondary)',
 			},
 			fontFamily: {
-				sans: ["system-ui", "sans-serif"],
-				mono: ["ui-monospace", "SFMono-Regular", "Monaco", "Consolas", "Liberation Mono", "Menlo", "monospace"],
+				sans: ['Orbitron', 'sans-serif'],
+				mono: ['Roboto Mono', 'monospace'],
+				orbitron: ['Orbitron', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
