@@ -115,24 +115,24 @@ export const AdvancedTradingSettings = ({
             key: 'market',
             label: 'Market',
             desc: 'Instant execution',
-            icon: '⚡'
+            icon: <Target className="h-5 w-5" />
           }, {
             key: 'limit',
             label: 'Limit',
             desc: 'Set price target',
-            icon: '🎯'
+            icon: <Target className="h-5 w-5" />
           }, {
             key: 'stop',
             label: 'Stop',
             desc: 'Stop loss order',
-            icon: '🛡️'
+            icon: <Shield className="h-5 w-5" />
           }].map(({
             key,
             label,
             desc,
             icon
           }) => <Button key={key} variant={orderType === key ? 'default' : 'outline'} size="sm" onClick={() => setOrderType(key as any)} className={`h-auto py-6 px-4 flex flex-col items-center gap-2 min-h-[100px] rounded-2xl transition-all duration-300 ${orderType === key ? 'bg-primary text-primary-foreground border-0 shadow-lg shadow-primary/30 hover:scale-[1.02]' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary hover:shadow-md'}`}>
-                <span className="text-2xl">{icon}</span>
+                {icon}
                 <span className="font-bold text-lg">{label}</span>
                 <span className="text-sm opacity-80">{desc}</span>
               </Button>)}
@@ -205,7 +205,7 @@ export const AdvancedTradingSettings = ({
           {isTrading ? <div className="flex items-center gap-4">
               <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent"></div>
               Processing Transaction...
-            </div> : `${tradeType === 'buy' ? '🚀 Buy' : '💎 Sell'} Now`}
+            </div> : `${tradeType === 'buy' ? 'Buy' : 'Sell'} Now`}
         </Button>
 
         <Separator className="my-6" />

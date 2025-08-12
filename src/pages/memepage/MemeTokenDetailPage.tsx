@@ -24,6 +24,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { TokenHeader } from '@/components/TokenHeader';
 import { EnhancedMarketStats } from '@/components/EnhancedMarketStats';
 import { AdvancedTradingSettings } from '@/components/AdvancedTradingSettings';
+import { MemeTokenSidebar } from '@/components/MemeTokenSidebar';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -567,11 +568,22 @@ const MemeTokenDetailPage = () => {
         {/* Modern Token Header */}
         <TokenHeader token={token} />
 
-        {/* Main Content Grid - Chart on left, Trading on right - Enhanced */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-12 mt-12">
-          {/* Main Chart Area - Enhanced */}
-          <div className="xl:col-span-3 space-y-12">
-            {/* Chart - Enhanced */}
+        {/* Main Content Grid - Left sidebar, Chart in center, Trading on right */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mt-12">
+          {/* Left Sidebar */}
+          <div className="xl:col-span-3">
+            <div className="sticky top-8">
+              <MemeTokenSidebar 
+                token={token}
+                volumes={volumes}
+                beMarket={beMarket}
+              />
+            </div>
+          </div>
+
+          {/* Main Chart Area */}
+          <div className="xl:col-span-6 space-y-12">
+            {/* Chart */}
             <Card className="p-8 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -601,8 +613,8 @@ const MemeTokenDetailPage = () => {
             </div>
           </div>
 
-          {/* Right Sidebar - Advanced Trading Settings - Enhanced */}
-          <div className="xl:col-span-1">
+          {/* Right Sidebar - Advanced Trading Settings */}
+          <div className="xl:col-span-3">
             <div className="sticky top-8">
             <AdvancedTradingSettings
               tradeType={tradeType}

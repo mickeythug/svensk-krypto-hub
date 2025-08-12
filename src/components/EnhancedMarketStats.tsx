@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatUsd } from '@/lib/utils';
+import { DollarSign, Users, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface EnhancedMarketStatsProps {
   token: {
@@ -49,15 +50,15 @@ export const EnhancedMarketStats = ({ token, volumes, beMarket }: EnhancedMarket
   ];
 
   const tradingStats = [
-    { label: 'Transactions', value: '11,243', icon: '📊' },
-    { label: '24h Volume', value: `$${formatLargeNumber(token.volume24h)}`, icon: '💰' },
-    { label: 'Makers', value: '3,804', icon: '👥' },
-    { label: 'Buy Orders', value: '6,543', icon: '📈' },
-    { label: 'Sell Orders', value: '4,700', icon: '📉' },
-    { label: 'Buy Volume', value: `$${formatLargeNumber(token.volume24h * 0.53)}`, icon: '🟢' },
-    { label: 'Sell Volume', value: `$${formatLargeNumber(token.volume24h * 0.47)}`, icon: '🔴' },
-    { label: 'Unique Buyers', value: '3,636', icon: '👤' },
-    { label: 'Unique Sellers', value: '3,104', icon: '👤' },
+    { label: 'Transactions', value: '11,243', icon: <DollarSign className="h-4 w-4" /> },
+    { label: '24h Volume', value: `$${formatLargeNumber(token.volume24h)}`, icon: <DollarSign className="h-4 w-4" /> },
+    { label: 'Makers', value: '3,804', icon: <Users className="h-4 w-4" /> },
+    { label: 'Buy Orders', value: '6,543', icon: <TrendingUp className="h-4 w-4" /> },
+    { label: 'Sell Orders', value: '4,700', icon: <TrendingDown className="h-4 w-4" /> },
+    { label: 'Buy Volume', value: `$${formatLargeNumber(token.volume24h * 0.53)}`, icon: <TrendingUp className="h-4 w-4" /> },
+    { label: 'Sell Volume', value: `$${formatLargeNumber(token.volume24h * 0.47)}`, icon: <TrendingDown className="h-4 w-4" /> },
+    { label: 'Unique Buyers', value: '3,636', icon: <Users className="h-4 w-4" /> },
+    { label: 'Unique Sellers', value: '3,104', icon: <Users className="h-4 w-4" /> },
   ];
 
   return (
@@ -119,7 +120,7 @@ export const EnhancedMarketStats = ({ token, volumes, beMarket }: EnhancedMarket
             {tradingStats.map((stat, index) => (
               <div key={index} className="flex justify-between items-center p-4 rounded-xl bg-gradient-to-r from-muted/10 to-transparent hover:from-primary/5 hover:to-accent/5 transition-all duration-300 group">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl group-hover:scale-110 transition-transform duration-300">{stat.icon}</span>
+                  <span className="group-hover:scale-110 transition-transform duration-300">{stat.icon}</span>
                   <span className="text-foreground/80 font-medium text-base">{stat.label}</span>
                 </div>
                 <span className="text-lg font-bold text-foreground">{stat.value}</span>
@@ -132,7 +133,7 @@ export const EnhancedMarketStats = ({ token, volumes, beMarket }: EnhancedMarket
         <div className="pt-6 border-t-2 border-gradient-to-r from-primary/20 to-accent/20">
           <div className="flex justify-between items-center p-6 rounded-xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">👥</span>
+              <Users className="h-6 w-6 text-primary" />
               <span className="text-foreground font-medium text-xl">Token Holders</span>
             </div>
             <span className="text-2xl font-bold text-primary">
