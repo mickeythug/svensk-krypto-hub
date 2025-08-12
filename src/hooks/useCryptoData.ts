@@ -408,29 +408,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       coinGeckoId: r.coin_gecko_id ?? r.id,
     }));
 
-    // If DB hasn't populated all pages yet, supplement directly from CoinGecko (up to top 500)
-    let finalData: CryptoPrice[] = transformed;
-    if (finalData.length < 450) {
-      try {
-        await apiRateLimiter.acquire();
-        const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=1h,24h,7d';
-        const pages = [1, 2];
-        const results: any[] = [];
-        for (const p of pages) {
-          const c = new AbortController();
-          const t = setTimeout(() => c.abort(), 10000);
-          const r = await fetch(`${base}&page=${p}`, { headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' }, signal: c.signal });
-          clearTimeout(t);
-          if (!r.ok) throw new Error(`CG error: ${r.status} ${r.statusText}`);
-          const j = await r.json();
-          results.push(...j);
-          if (p !== pages[pages.length - 1]) await new Promise(res => setTimeout(res, 1200));
-        }
-        finalData = this.transformCoinGeckoResponse(results);
-      } catch (e) {
-        // keep transformed if fallback fails
-      }
-    }
+    const finalData: CryptoPrice[] = transformed;
 
     // Persist to localStorage as 1h fallback
     try {
@@ -457,30 +435,8 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       }
     } catch {}
 
-    // Fallback 2: Direct CoinGecko (batched, sequential to respect limits)
-    try {
-      await apiRateLimiter.acquire();
-      const base = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false&price_change_percentage=1h,24h,7d';
-      const pages = [1, 2];
-      const results: any[] = [];
-      for (const p of pages) {
-        const c = new AbortController();
-        const t = setTimeout(() => c.abort(), 10000);
-        const r = await fetch(`${base}&page=${p}`, { headers: { Accept: 'application/json', 'Cache-Control': 'no-cache' }, signal: c.signal });
-        clearTimeout(t);
-        if (!r.ok) throw new Error(`CG error: ${r.status} ${r.statusText}`);
-        const j = await r.json();
-        results.push(...j);
-        if (p !== pages[pages.length - 1]) await new Promise(res => setTimeout(res, 1200));
-      }
-      const transformed = this.transformCoinGeckoResponse(results);
-      try { localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: transformed })); } catch {}
-      this.failureCount = 0;
-      return this.filterAllowed(transformed);
-    } catch (e2: any) {
-      // Do NOT fabricate data
-      throw (e2 instanceof Error ? e2 : new Error(String(e2)));
-    }
+    // Fallback 2 removed: avoid direct CoinGecko requests due to CORS; surface error instead
+    throw (error instanceof Error ? error : new Error(String(error)));
   }
 }
 

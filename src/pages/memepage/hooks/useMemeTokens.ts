@@ -121,8 +121,8 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
           }
         }
 
-        // If no addresses, don't call batch
-        if (!addresses.length) {
+        // If no addresses and not trending, don't call batch
+        if (category !== 'trending' && !addresses.length) {
           if (mounted) {
             setTokens([]);
           }
