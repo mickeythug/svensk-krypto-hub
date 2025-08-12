@@ -20,7 +20,7 @@ export interface MemeToken {
   description?: string;
 }
 
-export type MemeCategory = 'newest' | 'trending' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'volume' | 'liquidity' | 'marketcap' | 'txns' | 'boosted';
+export type MemeCategory = 'newest' | 'trending' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'volume' | 'liquidity' | 'liquidity_high' | 'liquidity_low' | 'marketcap' | 'marketcap_high' | 'marketcap_low' | 'txns' | 'boosted';
 
 const preloadImage = (src?: string) =>
   new Promise<boolean>((resolve) => {
@@ -31,18 +31,20 @@ const preloadImage = (src?: string) =>
     img.src = src;
   });
 
-export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
+export const useMemeTokens = (category: MemeCategory, limit: number = 30, page?: number) => {
+  const pageKey = typeof page === 'number' && page > 0 ? `:p${page}` : '';
   const [tokens, setTokens] = useState<MemeToken[]>(() => {
-    const k = `memeTokens:${category}:v2`;
+    const k = `memeTokens:${category}:v2${pageKey}`;
     const boot = getCacheStaleOk<MemeToken[]>(k);
     return Array.isArray(boot) ? boot.slice(0, limit) : [];
   });
   const [loading, setLoading] = useState(() => {
-    const k = `memeTokens:${category}:v2`;
+    const k = `memeTokens:${category}:v2${pageKey}`;
     const boot = getCacheStaleOk<MemeToken[]>(k);
     return !(Array.isArray(boot) && boot.length);
   });
   const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -50,7 +52,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     setError(null);
     console.log('[useMemeTokens] start', { category, limit });
 
-    const cacheKey = `memeTokens:${category}:v2`;
+    const cacheKey = `memeTokens:${category}:v2${pageKey}`;
 
     // Prefer fresh cache (no network, instant paint)
     const freshEntry = getCache<MemeToken[]>(cacheKey);
@@ -104,97 +106,41 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
           }
         } catch {}
 
-        // 1) Get base list (addresses)
-        let addresses: string[] = [];
-        const take = Math.max(limit * 2, 60);
+        // 1) Backend aggregated catalog with pagination (meme-catalog)
+        try {
+          const backendCategory = (
+            category === 'marketcap' ? 'marketcap_high' :
+            category === 'liquidity' ? 'liquidity_high' :
+            category === 'marketcap_high' ? 'marketcap_high' :
+            category === 'marketcap_low' ? 'marketcap_low' :
+            category === 'liquidity_high' ? 'liquidity_high' :
+            category === 'liquidity_low' ? 'liquidity_low' :
+            category === 'potential' ? 'newest' :
+            category
+          ) as any;
 
-        const addrFrom = (arr: any[]): string[] => (arr || [])
-          .map((r: any) => r?.address || r?.baseToken?.address || r?.mainToken?.address || r?.token?.address)
-          .filter((a: any) => typeof a === 'string' && a.length > 0);
-
-        const fetchDexscreenerProfiles = async (sort: string, order: 'asc' | 'desc' = 'desc') => {
-          try {
-            const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
-              body: { action: 'profiles', sort, order }
-            });
-            if (error) throw error;
-            const arr = normalize(data);
-            if (arr.length) return arr;
-            // If empty, fall back below
-          } catch (_) {
-            // fallback below
-          }
-          // Fallback: use pairsList and sort locally to emulate profiles
-          const { data: pairsRes } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'pairsList' } });
-          const arr = normalize(pairsRes);
-          const asNum = (v: any) => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\s,]/g, '')) : 0);
-          const val = (p: any): number => {
-            switch (String(sort)) {
-              case 'priceChange': return asNum(p?.priceChange?.h24);
-              case 'priceChange5m': return asNum(p?.priceChange?.m5);
-              case 'priceChange1h': return asNum(p?.priceChange?.h1);
-              case 'priceChange6h': return asNum(p?.priceChange?.h6);
-              case 'volume': return asNum(p?.volume?.h24);
-              case 'liquidity': return asNum(p?.liquidity?.usd);
-              case 'marketCap': return asNum(p?.marketCap);
-              case 'txns': { const b = asNum(p?.txns?.h24?.buys); const s = asNum(p?.txns?.h24?.sells); return b + s; }
-              case 'createdAt': return asNum(p?.pairCreatedAt ?? p?.createdAt);
-              case 'trendingScore':
-              default: {
-                const t1 = ((asNum(p?.txns?.h1?.buys) || 0) + (asNum(p?.txns?.h1?.sells) || 0)) * 1000;
-                const pc = (asNum(p?.priceChange?.h1) || 0) * 100;
-                const liq = (asNum(p?.liquidity?.usd) || 0);
-                return t1 + pc + liq * 0.001;
-              }
-            }
-          };
-          const sorted = [...arr].sort((a, b) => val(b) - val(a));
-          return order === 'asc' ? sorted.reverse() : sorted;
-        };
-
-        if (category === 'trending') {
-          // Combine DexScreener trending + boosted + DEXTools hotpools/gainers (no pumpportal)
-          const [dsTrending, dsBoosted, dtHot, dtGain] = await Promise.all([
-            fetchDexscreenerProfiles('trendingScore', 'desc').catch(() => []),
-            supabase.functions.invoke('dexscreener-proxy', { body: { action: 'boosted' } }).then(r => normalize(r.data)).catch(() => []),
-            supabase.functions.invoke('dextools-proxy', { body: { action: 'hotpools' } }).then(r => normalize(r.data)).catch(() => []),
-            supabase.functions.invoke('dextools-proxy', { body: { action: 'gainers' } }).then(r => normalize(r.data)).catch(() => []),
-          ]);
-          const set = new Set<string>([
-            ...addrFrom(dsTrending),
-            ...addrFrom(dsBoosted),
-            ...addrFrom(dtHot),
-            ...addrFrom(dtGain),
-          ]);
-          addresses = Array.from(set).slice(0, take);
-        } else if (category === 'gainers') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('priceChange', 'desc')).slice(0, take);
-        } else if (category === 'losers') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('priceChange', 'asc')).slice(0, take);
-        } else if (category === 'volume') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('volume', 'desc')).slice(0, take);
-        } else if (category === 'liquidity') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('liquidity', 'desc')).slice(0, take);
-        } else if (category === 'marketcap') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('marketCap', 'desc')).slice(0, take);
-        } else if (category === 'txns') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('txns', 'desc')).slice(0, take);
-        } else if (category === 'boosted') {
-          const { data } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'boosted' } });
-          addresses = addrFrom(normalize(data)).slice(0, take);
-        } else if (category === 'newest' || category === 'potential') {
-          const { data: pairsRes } = await supabase.functions.invoke('dexscreener-proxy', {
-            body: { action: 'pairsList', sort: 'createdAt', order: 'desc' }
+          const { data: res } = await supabase.functions.invoke('meme-catalog', {
+            body: { category: backendCategory, page: page ?? 1, pageSize: limit }
           });
-          addresses = addrFrom(normalize(pairsRes)).slice(0, take);
-        }
 
-        if (!addresses.length) {
-          console.warn('[useMemeTokens] No addresses resolved; preserving existing tokens');
-          return;
-        }
+          const items = Array.isArray(res?.items) ? (res.items as MemeToken[]) : [];
+          const total = Number(res?.total ?? 0);
+          const pg = Number(res?.page ?? (page ?? 1));
+          const sz = Number(res?.pageSize ?? limit);
+          if (mounted) setHasMore(pg * sz < total);
 
-        // 2) Fetch full details in batch via DexScreener proxy
+          if (items.length) {
+            await Promise.all(items.map((t) => preloadImage(t.image)));
+            if (!mounted) return;
+            setCache(cacheKey, items, { ttlMs: 2 * 60 * 1000 });
+            setTokens(items);
+            return; // success path
+          }
+        } catch (_) {}
+
+        // 2) Legacy fallback is disabled to reduce rate limits and avoid 502s.
+        // Preserve existing tokens on failure.
+        return;
         const { data: batch, error: batchErr } = await supabase.functions.invoke('dexscreener-proxy', {
           body: { action: 'tokenBatch', addresses }
         });
