@@ -299,29 +299,7 @@ const MemeTokenDetailPage = () => {
   const isPositive = token.change24h > 0;
   const coverImage = covers[Math.abs(token.symbol.charCodeAt(0)) % covers.length];
 
-  // Enhanced statistics for desktop
-  const getEnhancedStats = () => ({
-    volume1h: typeof (volumes.v1h ?? volume1h) === 'number' ? `$${Number(volumes.v1h ?? volume1h).toLocaleString()}` : '—',
-    volume6h: typeof (volumes.v6h ?? volume6h) === 'number' ? `$${Number(volumes.v6h ?? volume6h).toLocaleString()}` : '—',
-    volume24h: typeof (volumes.v24h ?? volume24hDerived ?? token.volume24h) === 'number' ? `$${Number((volumes.v24h ?? volume24hDerived ?? token.volume24h)).toLocaleString()}` : '—',
-    marketCapRank: '—',
-    holders: token.holders,
-    maxSupply: token?.description ? undefined : '—',
-    circulatingSupply: token?.description ? undefined : '—',
-    ath: formatPrice(token.price * 2.5),
-    atl: formatPrice(token.price * 0.1),
-    athDate: '—',
-    atlDate: '—',
-    priceChange1h: '—',
-    priceChange7d: '—',
-    priceChange30d: '—',
-    volatility: '—',
-    liquidityScore: '—',
-    riskScore: '—',
-    sentiment: '—'
-  });
-
-  const stats = getEnhancedStats();
+  // Use real enhanced token data instead of mockup stats
 
   if (isMobile) {
     return (
@@ -457,7 +435,11 @@ const MemeTokenDetailPage = () => {
                         <Volume2 className="w-4 h-4 text-green-500" />
                         <span className="text-sm text-muted-foreground">24h Volume</span>
                       </div>
-                      <div className="text-lg font-bold">{stats.volume24h}</div>
+                      <div className="text-lg font-bold">
+                        ${typeof (volumes.v24h ?? volume24hDerived ?? token.volume24h) === 'number' 
+                          ? Number((volumes.v24h ?? volume24hDerived ?? token.volume24h)).toLocaleString() 
+                          : '—'}
+                      </div>
                     </div>
                     <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-indigo-500/10">
                       <div className="flex items-center gap-2 mb-2">
@@ -612,11 +594,18 @@ const MemeTokenDetailPage = () => {
             {/* Conditional Content Based on Toggle */}
             <div className="animate-fade-in">
               {marketDataTab === 'market' ? (
-                <TokenInfoSection 
-                  token={token}
-                  volumes={volumes}
-                  beMarket={beMarket}
-                />
+                  <TokenInfoSection
+                    tokenAddress={tokenAddress}
+                    fallbackData={{
+                      price: token.price,
+                      marketCap: token.marketCap,
+                      holders: token.holders,
+                      volume24h: token.volume24h,
+                      symbol: token.symbol,
+                      name: token.name,
+                      description: token.description,
+                    }}
+                  />
               ) : (
                 <TransactionsTable 
                   tokenSymbol={token.symbol}

@@ -52,56 +52,12 @@ export const EnhancedMarketStats = ({
     value: `$${formatLargeNumber(token.marketCap)}`,
     highlight: true
   }];
-  const timeStats = [{
-    label: '5M',
-    value: '3.13%',
-    positive: true
-  }, {
-    label: '1H',
-    value: volumes?.v1h ? `$${formatLargeNumber(volumes.v1h)}` : '—'
-  }, {
-    label: '6H',
-    value: volumes?.v6h ? `$${formatLargeNumber(volumes.v6h)}` : '—'
-  }, {
-    label: '24H',
-    value: volumes?.v24h ? `$${formatLargeNumber(volumes.v24h)}` : '—'
-  }];
-  const tradingStats = [{
-    label: 'Transactions',
-    value: '11,243',
-    icon: <DollarSign className="h-4 w-4" />
-  }, {
-    label: '24h Volume',
-    value: `$${formatLargeNumber(token.volume24h)}`,
-    icon: <DollarSign className="h-4 w-4" />
-  }, {
-    label: 'Makers',
-    value: '3,804',
-    icon: <Users className="h-4 w-4" />
-  }, {
-    label: 'Buy Orders',
-    value: '6,543',
-    icon: <TrendingUp className="h-4 w-4" />
-  }, {
-    label: 'Sell Orders',
-    value: '4,700',
-    icon: <TrendingDown className="h-4 w-4" />
-  }, {
-    label: 'Buy Volume',
-    value: `$${formatLargeNumber(token.volume24h * 0.53)}`,
-    icon: <TrendingUp className="h-4 w-4" />
-  }, {
-    label: 'Sell Volume',
-    value: `$${formatLargeNumber(token.volume24h * 0.47)}`,
-    icon: <TrendingDown className="h-4 w-4" />
-  }, {
-    label: 'Unique Buyers',
-    value: '3,636',
-    icon: <Users className="h-4 w-4" />
-  }, {
-    label: 'Unique Sellers',
-    value: '3,104',
-    icon: <Users className="h-4 w-4" />
-  }];
-  return;
+  // Note: This component appears to be incomplete (ends with return;)
+  // and may need to be removed or completed. Commenting out for now.
+  
+  return (
+    <div className="text-center text-muted-foreground">
+      <p>Market stats component needs to be implemented</p>
+    </div>
+  );
 };
