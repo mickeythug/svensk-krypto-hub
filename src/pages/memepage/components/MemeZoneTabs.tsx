@@ -29,6 +29,8 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
   const [page, setPage] = useState(1);
   const { tokens, loading, error, hasMore } = useMemeTokens(category, 50, page);
 
+  console.log('[MemeZoneTabs] Grid rendering:', { category, loading, error, tokensCount: tokens.length });
+
   // Reset to first page on category change
   useEffect(() => { setPage(1); }, [category]);
 
