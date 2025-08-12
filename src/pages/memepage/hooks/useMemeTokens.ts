@@ -49,8 +49,9 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
             body: { action: 'gainers' },
           });
           if (error) throw error;
-          const list: any[] = Array.isArray(data) ? data : data?.results || [];
-          addresses = list.map((i: any) => i?.mainToken?.address).filter(Boolean).slice(0, limit);
+          const toArray = (d: any): any[] => Array.isArray(d) ? d : (d?.results ?? d?.data?.results ?? d?.data ?? []);
+          const list: any[] = toArray(data);
+          addresses = list.map((i: any) => i?.mainToken?.address || i?.address || i?.token?.address).filter(Boolean).slice(0, limit);
         } else {
           // newest and potential start from newest token listing (last 24h)
           const to = new Date().toISOString();
@@ -59,8 +60,9 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
             body: { action: 'newest', page: 0, pageSize: 50, from, to },
           });
           if (error) throw error;
-          const results: any[] = data?.results || [];
-          addresses = results.map((r: any) => r?.address).filter(Boolean).slice(0, limit);
+          const toArray = (d: any): any[] => Array.isArray(d) ? d : (d?.results ?? d?.data?.results ?? d?.data ?? []);
+          const results: any[] = toArray(data);
+          addresses = results.map((r: any) => r?.address || r?.mainToken?.address).filter(Boolean).slice(0, limit);
         }
 
         // If no addresses, don't call batch
