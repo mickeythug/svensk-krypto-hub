@@ -25,6 +25,8 @@ import { TokenHeader } from '@/components/TokenHeader';
 import { EnhancedMarketStats } from '@/components/EnhancedMarketStats';
 import { AdvancedTradingSettings } from '@/components/AdvancedTradingSettings';
 import { TokenInfoSection } from '@/components/TokenInfoSection';
+import { TransactionsTable } from '@/components/TransactionsTable';
+import { MarketDataToggle } from '@/components/MarketDataToggle';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -50,6 +52,7 @@ const MemeTokenDetailPage = () => {
   const [orderType, setOrderType] = useState<'market' | 'limit' | 'stop'>('market');
   const [customAmount, setCustomAmount] = useState('');
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [marketDataTab, setMarketDataTab] = useState<'market' | 'transactions'>('market');
   const [slippage, setSlippage] = useState(1);
   const [customSlippage, setCustomSlippage] = useState('');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
@@ -598,13 +601,27 @@ const MemeTokenDetailPage = () => {
               </div>
             </Card>
 
-            {/* Token Information Section - Below Chart */}
+            {/* Market Data Toggle */}
             <div className="animate-fade-in">
-              <TokenInfoSection 
-                token={token}
-                volumes={volumes}
-                beMarket={beMarket}
+              <MarketDataToggle 
+                activeTab={marketDataTab}
+                onToggle={setMarketDataTab}
               />
+            </div>
+
+            {/* Conditional Content Based on Toggle */}
+            <div className="animate-fade-in">
+              {marketDataTab === 'market' ? (
+                <TokenInfoSection 
+                  token={token}
+                  volumes={volumes}
+                  beMarket={beMarket}
+                />
+              ) : (
+                <TransactionsTable 
+                  tokenSymbol={token.symbol}
+                />
+              )}
             </div>
 
           </div>
