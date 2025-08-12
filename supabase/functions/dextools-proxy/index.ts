@@ -55,12 +55,22 @@ Deno.serve(async (req) => {
 
     switch (action) {
       case 'gainers': {
-        const data = await fetchJSON('/v2/ranking/solana/gainers');
-        return json(data);
+        try {
+          const data = await fetchJSON('/v2/ranking/solana/gainers');
+          return json(data);
+        } catch (e: any) {
+          console.error('dextools-proxy gainers fallback (empty list)', e?.message ?? e);
+          return json({ statusCode: 200, data: [] });
+        }
       }
       case 'hotpools': {
-        const data = await fetchJSON('/v2/ranking/solana/hotpools');
-        return json(data);
+        try {
+          const data = await fetchJSON('/v2/ranking/solana/hotpools');
+          return json(data);
+        } catch (e: any) {
+          console.error('dextools-proxy hotpools fallback (empty list)', e?.message ?? e);
+          return json({ statusCode: 200, data: [] });
+        }
       }
       case 'newest': {
         const page = Math.max(0, Number(payload.page ?? 0));
