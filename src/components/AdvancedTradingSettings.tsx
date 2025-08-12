@@ -110,69 +110,69 @@ export const AdvancedTradingSettings = ({
             <span className="h-2 w-2 rounded-full bg-accent"></span>
             Order Type
           </Label>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3">
             {[{
             key: 'market',
             label: 'Market',
-            desc: 'Instant execution',
-            icon: <Target className="h-5 w-5" />
+            desc: 'Instant',
+            icon: <Target className="h-4 w-4" />
           }, {
             key: 'limit',
             label: 'Limit',
-            desc: 'Set price target',
-            icon: <Target className="h-5 w-5" />
+            desc: 'Target',
+            icon: <Target className="h-4 w-4" />
           }, {
             key: 'stop',
             label: 'Stop',
-            desc: 'Stop loss order',
-            icon: <Shield className="h-5 w-5" />
+            desc: 'Loss',
+            icon: <Shield className="h-4 w-4" />
           }].map(({
             key,
             label,
             desc,
             icon
-          }) => <Button key={key} variant={orderType === key ? 'default' : 'outline'} size="sm" onClick={() => setOrderType(key as any)} className={`h-auto py-6 px-4 flex flex-col items-center gap-2 min-h-[100px] rounded-2xl transition-all duration-300 ${orderType === key ? 'bg-primary text-primary-foreground border-0 shadow-lg shadow-primary/30 hover:scale-[1.02]' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary hover:shadow-md'}`}>
+          }) => <Button key={key} variant={orderType === key ? 'default' : 'outline'} size="sm" onClick={() => setOrderType(key as any)} className={`h-auto py-4 px-2 flex flex-col items-center gap-1 min-h-[80px] rounded-xl transition-all duration-300 ${orderType === key ? 'bg-primary text-primary-foreground border-0 shadow-lg shadow-primary/30 hover:scale-[1.02]' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary hover:shadow-md'}`}>
                 {icon}
-                <span className="font-bold text-lg">{label}</span>
-                <span className="text-sm opacity-80">{desc}</span>
+                <span className="font-bold text-sm">{label}</span>
+                <span className="text-xs opacity-80 truncate">{desc}</span>
               </Button>)}
           </div>
         </div>
 
-        {/* Amount Selection */}
+        {/* Amount Selection - Fixed Layout */}
         <div className="mb-8">
-          <Label className="text-base font-bold text-foreground mb-4 block">
+          <Label className="text-lg font-bold text-foreground mb-4 block">
             {tradeType === 'buy' ? 'Amount (SOL)' : 'Percentage (%)'}
           </Label>
           
-          <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-3 gap-2 mb-4">
             {quickAmounts.slice(0, 3).map(amount => <Button key={amount} variant={selectedAmount === amount ? 'default' : 'outline'} size="sm" onClick={() => {
             if (tradeType === 'sell' && amount <= 100) {
               calculateSellPercentage(amount);
             } else {
               handleAmountSelect(amount);
             }
-          }} className={`text-base font-bold h-12 ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
-                {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount} SOL`}
+          }} className={`text-sm font-bold h-10 rounded-lg ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
+                {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount}`}
               </Button>)}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-2 mb-4">
             {quickAmounts.slice(3).map(amount => <Button key={amount} variant={selectedAmount === amount ? 'default' : 'outline'} size="sm" onClick={() => {
             if (tradeType === 'sell' && amount <= 100) {
               calculateSellPercentage(amount);
             } else {
               handleAmountSelect(amount);
             }
-          }} className={`text-base font-bold h-12 ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
-                {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount} SOL`}
+          }} className={`text-sm font-bold h-10 rounded-lg ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
+                {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount}`}
               </Button>)}
           </div>
 
           <div className="relative">
-            <Input type="number" placeholder={tradeType === 'buy' ? 'Custom SOL amount' : 'Custom token amount'} value={customAmount} onChange={e => setCustomAmount(e.target.value)} className="text-lg font-bold pr-20 h-14 bg-background border-2 border-border focus:border-primary" />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-base font-bold text-muted-foreground">
-              {tradeType === 'buy' ? 'SOL' : 'TOKENS'}
+            <Input type="number" placeholder={tradeType === 'buy' ? 'Custom amount' : 'Custom amount'} value={customAmount} onChange={e => setCustomAmount(e.target.value)} className="text-base font-bold pr-16 h-12 bg-background border-2 border-border focus:border-primary rounded-lg" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-muted-foreground">
+              {tradeType === 'buy' ? 'SOL' : 'TOK'}
             </div>
           </div>
         </div>
@@ -279,42 +279,42 @@ export const AdvancedTradingSettings = ({
             <Zap className="h-4 w-4 text-yellow-500" />
             <Label className="text-sm font-semibold text-foreground">Transaction Priority</Label>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {[{
             key: 'low',
-            label: 'Economy',
-            fee: '0.0001 SOL',
-            desc: 'Slower execution'
+            label: 'Low',
+            fee: '0.0001',
+            desc: 'Slow'
           }, {
             key: 'medium',
-            label: 'Standard',
-            fee: '0.0005 SOL',
-            desc: 'Balanced speed'
+            label: 'Med',
+            fee: '0.0005',
+            desc: 'Normal'
           }, {
             key: 'high',
-            label: 'Fast',
-            fee: '0.001 SOL',
-            desc: 'Quick execution'
+            label: 'High',
+            fee: '0.001',
+            desc: 'Fast'
           }].map(({
             key,
             label,
             fee,
             desc
-          }) => <Button key={key} variant={priority === key ? 'default' : 'outline'} size="sm" onClick={() => setPriority(key as typeof priority)} className="h-auto py-3 px-2 flex flex-col items-center text-xs">
-                <span className="font-semibold">{label}</span>
-                <span className="text-xs opacity-70 mt-1">{fee}</span>
+          }) => <Button key={key} variant={priority === key ? 'default' : 'outline'} size="sm" onClick={() => setPriority(key as typeof priority)} className={`h-auto py-3 px-2 flex flex-col items-center text-xs rounded-lg ${priority === key ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
+                <span className="font-semibold text-sm">{label}</span>
+                <span className="text-xs opacity-70 mt-1 truncate">{fee}</span>
               </Button>)}
           </div>
         </div>
 
-        {/* MEV Protection */}
+        {/* MEV Protection - Compact */}
         <div className="mb-6">
-          <div className="flex items-center justify-between p-4 rounded-lg border border-border/50 bg-muted/20">
-            <div className="flex items-center gap-3">
-              <Shield className="h-5 w-5 text-green-500" />
+          <div className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-muted/10">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4 text-green-500" />
               <div>
                 <span className="text-sm font-semibold text-foreground">MEV Protection</span>
-                <p className="text-xs text-muted-foreground">Protects against front-running attacks</p>
+                <p className="text-xs text-muted-foreground">Anti front-running</p>
               </div>
             </div>
             <Switch checked={mevProtection} onCheckedChange={setMevProtection} />

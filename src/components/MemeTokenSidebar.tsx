@@ -67,47 +67,47 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
   return (
     <Card className="w-full bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl">
       <div className="p-6 space-y-6">
-        {/* Social Links */}
-        <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="flex items-center gap-2 text-xs">
-            <Globe className="h-3 w-3" />
-            Website
+        {/* Social Links - Fixed Overflow */}
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="outline" className="flex items-center gap-1 text-xs px-2 py-1 h-8 rounded-lg flex-shrink-0">
+            <Globe className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">Web</span>
           </Button>
-          <Button size="sm" variant="outline" className="flex items-center gap-2 text-xs">
-            <ExternalLink className="h-3 w-3" />
-            Twitter
+          <Button size="sm" variant="outline" className="flex items-center gap-1 text-xs px-2 py-1 h-8 rounded-lg flex-shrink-0">
+            <ExternalLink className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">Twitter</span>
           </Button>
-          <Button size="sm" variant="outline" className="flex items-center gap-2 text-xs">
-            <ExternalLink className="h-3 w-3" />
-            Telegram
+          <Button size="sm" variant="outline" className="flex items-center gap-1 text-xs px-2 py-1 h-8 rounded-lg flex-shrink-0">
+            <ExternalLink className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">Telegram</span>
           </Button>
         </div>
 
-        {/* Price Section */}
-        <div className="space-y-3">
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">PRICE USD</div>
-            <div className="text-xl font-bold">{formatUsd(token.price)}</div>
+        {/* Price Section - Fixed Text Overflow */}
+        <div className="space-y-4">
+          <div className="bg-muted/10 rounded-lg p-3">
+            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">PRICE USD</div>
+            <div className="text-lg font-bold truncate">{formatUsd(token.price)}</div>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">PRICE</div>
-            <div className="text-xl font-bold">{formatSolPrice(token.price)}</div>
+          <div className="bg-muted/10 rounded-lg p-3">
+            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">PRICE SOL</div>
+            <div className="text-lg font-bold truncate">{formatSolPrice(token.price)}</div>
           </div>
         </div>
 
-        {/* Market Data Row */}
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">LIQUIDITY</div>
-            <div className="text-sm font-bold">${formatLargeNumber(liquidity)}</div>
+        {/* Market Data Row - Fixed Spacing */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">LIQUIDITY</div>
+            <div className="text-sm font-bold truncate">${formatLargeNumber(liquidity)}</div>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">FDV</div>
-            <div className="text-sm font-bold">${formatLargeNumber(fdv)}</div>
+          <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">FDV</div>
+            <div className="text-sm font-bold truncate">${formatLargeNumber(fdv)}</div>
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">MKT CAP</div>
-            <div className="text-sm font-bold">${formatLargeNumber(token.marketCap)}</div>
+          <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">MKT CAP</div>
+            <div className="text-sm font-bold truncate">${formatLargeNumber(token.marketCap)}</div>
           </div>
         </div>
 
@@ -119,73 +119,73 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
           </div>
         )}
 
-        {/* Performance Grid */}
-        <div className="grid grid-cols-4 gap-3">
+        {/* Performance Grid - Fixed Layout */}
+        <div className="grid grid-cols-4 gap-2">
           {performanceData.map((item, index) => (
-            <div key={index} className="text-center">
-              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">{item.label}</div>
-              <div className={`text-sm font-bold ${item.isNegative ? 'text-destructive' : 'text-success'}`}>
+            <div key={index} className="text-center bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">{item.label}</div>
+              <div className={`text-sm font-bold truncate ${item.isNegative ? 'text-destructive' : 'text-success'}`}>
                 {item.value}
               </div>
             </div>
           ))}
         </div>
 
-        {/* Trading Stats */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Trading Stats - Fixed Layout */}
+        <div className="grid grid-cols-3 gap-2">
           {tradingData.map((item, index) => (
-            <div key={index}>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">{item.label}</div>
-              <div className="text-sm font-bold">{item.value}</div>
+            <div key={index} className="bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">{item.label}</div>
+              <div className="text-sm font-bold truncate">{item.value}</div>
             </div>
           ))}
         </div>
 
-        {/* Volume Section */}
-        <div className="space-y-3">
-          <div>
-            <div className="text-xs text-muted-foreground uppercase tracking-wide">VOLUME</div>
-            <div className="text-sm font-bold">${formatLargeNumber(token.volume24h)}</div>
+        {/* Volume Section - Fixed Layout */}
+        <div className="space-y-4">
+          <div className="bg-muted/10 rounded-lg p-3">
+            <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1">VOLUME</div>
+            <div className="text-sm font-bold truncate">${formatLargeNumber(token.volume24h)}</div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">BUY VOL</div>
-              <div className="text-sm font-bold text-success">$835K</div>
-              <div className="w-full bg-muted rounded-full h-1 mt-1">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">BUY VOL</div>
+              <div className="text-sm font-bold text-success truncate">$835K</div>
+              <div className="w-full bg-muted rounded-full h-1 mt-2">
                 <div className="bg-success h-1 rounded-full" style={{ width: '51%' }}></div>
               </div>
             </div>
-            <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">SELL VOL</div>
-              <div className="text-sm font-bold text-destructive">$809K</div>
-              <div className="w-full bg-muted rounded-full h-1 mt-1">
+            <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">SELL VOL</div>
+              <div className="text-sm font-bold text-destructive truncate">$809K</div>
+              <div className="w-full bg-muted rounded-full h-1 mt-2">
                 <div className="bg-destructive h-1 rounded-full" style={{ width: '49%' }}></div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Participants */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Participants - Fixed Layout */}
+        <div className="grid grid-cols-3 gap-2">
           {participantData.map((item, index) => (
-            <div key={index}>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">{item.label}</div>
-              <div className="text-sm font-bold">{item.value}</div>
+            <div key={index} className="bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">{item.label}</div>
+              <div className="text-sm font-bold truncate">{item.value}</div>
             </div>
           ))}
         </div>
 
-        {/* Buy/Sell Ratio Visualization */}
-        <div className="space-y-2">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">BUYERS</div>
-              <div className="text-sm font-bold text-success">3,941</div>
+        {/* Buy/Sell Ratio - Fixed Layout */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">BUYERS</div>
+              <div className="text-sm font-bold text-success truncate">3,941</div>
             </div>
-            <div>
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">SELLERS</div>
-              <div className="text-sm font-bold text-destructive">2,496</div>
+            <div className="bg-muted/10 rounded-lg p-2 min-w-0">
+              <div className="text-xs text-muted-foreground uppercase tracking-wide mb-1 truncate">SELLERS</div>
+              <div className="text-sm font-bold text-destructive truncate">2,496</div>
             </div>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
