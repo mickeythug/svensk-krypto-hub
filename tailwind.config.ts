@@ -83,11 +83,10 @@ export default {
 				'gradient-casino-rainbow': 'var(--gradient-casino-rainbow)',
 			},
 			boxShadow: {
-				'glow-primary': 'var(--glow-primary)',
+				'glow-primary': 'var(--shadow-glow-primary)',
 				'glow-secondary': 'var(--glow-secondary)',
 				'glow-gold': 'var(--shadow-glow-gold)',
 				'glow-rainbow': 'var(--shadow-glow-rainbow)',
-				'glow-primary': 'var(--shadow-glow-primary)',
 			},
 			fontFamily: {
 				sans: ['Orbitron', 'sans-serif'],
