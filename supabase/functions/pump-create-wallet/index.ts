@@ -74,15 +74,34 @@ serve(async (req) => {
     const encryptedApiKey = await encryptString(String(pumpApiKey));
     const encryptedPriv = privateKey ? await encryptString(String(privateKey)) : null;
 
-    // Upsert into trading_wallets (unique per user) with encrypted keys (no plaintext persisted)
+    // Use the new secure storage system
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Store keys securely in private schema
+    const { error: secureStoreError } = await supabaseAdmin.rpc('store_encrypted_key', {
+      p_user_id: authData.user.id,
+      p_wallet_address: String(walletAddress),
+      p_private_key_encrypted: encryptedPriv,
+      p_pump_api_key_encrypted: encryptedApiKey,
+    });
+
+    if (secureStoreError) {
+      return new Response(JSON.stringify({ error: "Failed to save wallet securely", details: secureStoreError.message }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Update the public trading_wallets table with non-sensitive data only
     const { error: upsertErr } = await supabase
       .from("trading_wallets")
       .upsert(
         {
           user_id: authData.user.id,
           wallet_address: String(walletAddress),
-          pump_api_key_encrypted: encryptedApiKey,
-          private_key_encrypted: encryptedPriv,
           acknowledged_backup: false,
         },
         { onConflict: "user_id" }

@@ -55,7 +55,7 @@ serve(async (req) => {
 
     const { data, error } = await supabase
       .from("trading_wallets")
-      .select("wallet_address, acknowledged_backup, private_key_encrypted")
+      .select("wallet_address, acknowledged_backup")
       .eq("user_id", authData.user.id)
       .maybeSingle();
 
@@ -74,14 +74,36 @@ serve(async (req) => {
       );
     }
 
-    if (!data.private_key_encrypted) {
+    
+    // Use secure storage to retrieve private key
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    const { data: encryptedKeyBytea, error: retrieveError } = await supabaseAdmin.rpc('get_encrypted_key', {
+      p_user_id: authData.user.id,
+      p_wallet_address: data.wallet_address,
+      p_key_type: 'private_key',
+    });
+
+    if (retrieveError || !encryptedKeyBytea) {
       return new Response(
         JSON.stringify({ walletAddress: data.wallet_address, privateKey: null, acknowledged: false }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const decrypted = await decryptToString(String(data.private_key_encrypted));
+    // Convert bytea to hex string for decryption
+    let hexString: string;
+    if (typeof encryptedKeyBytea === 'string' && encryptedKeyBytea.startsWith('\\x')) {
+      hexString = encryptedKeyBytea;
+    } else {
+      // Convert buffer to hex if needed
+      hexString = "\\x" + Buffer.from(encryptedKeyBytea).toString('hex');
+    }
+
+    const decrypted = await decryptToString(hexString);
 
     return new Response(
       JSON.stringify({ walletAddress: data.wallet_address, privateKey: decrypted, acknowledged: false }),
