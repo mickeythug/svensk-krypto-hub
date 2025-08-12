@@ -1,8 +1,8 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { formatUsd } from '@/lib/utils';
-import { ExternalLink, Globe, ChevronDown, ChevronUp, Info, TrendingUp, Users, BarChart3 } from 'lucide-react';
-import { useState } from 'react';
+import { ExternalLink, Globe, Info, TrendingUp, Users, BarChart3 } from 'lucide-react';
+
 
 interface TokenInfoSectionProps {
   token: {
@@ -23,10 +23,6 @@ interface TokenInfoSectionProps {
 }
 
 export const TokenInfoSection = ({ token, volumes, beMarket }: TokenInfoSectionProps) => {
-  const [showPerformance, setShowPerformance] = useState(true);
-  const [showTrading, setShowTrading] = useState(true);
-  const [showVolume, setShowVolume] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(false);
 
   const formatLargeNumber = (num: number): string => {
     if (num >= 1e9) return `${(num / 1e9).toFixed(1)}B`;
@@ -128,64 +124,46 @@ export const TokenInfoSection = ({ token, volumes, beMarket }: TokenInfoSectionP
         {/* Performance Section */}
         <Card className="bg-background/70 border-2 border-border/70">
           <div className="p-6">
-            <Button
-              variant="ghost"
-              onClick={() => setShowPerformance(!showPerformance)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
-            >
-              <div className="flex items-center gap-3">
-                <TrendingUp className="h-5 w-5" />
-                <span className="text-lg font-bold">PERFORMANCE</span>
-              </div>
-              {showPerformance ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-            </Button>
+            <div className="flex items-center gap-3 mb-4">
+              <TrendingUp className="h-5 w-5" />
+              <span className="text-lg font-bold">PERFORMANCE</span>
+            </div>
             
-            {showPerformance && (
-              <div className="grid grid-cols-4 gap-4">
-                {performanceData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold mb-2">
-                      {item.label}
-                    </div>
-                    <div className={`text-xl font-black ${item.isNegative ? 'text-destructive' : 'text-success'}`}>
-                      {item.value}
-                    </div>
+            <div className="grid grid-cols-4 gap-4">
+              {performanceData.map((item, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-sm text-muted-foreground font-semibold mb-2">
+                    {item.label}
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className={`text-xl font-black ${item.isNegative ? 'text-destructive' : 'text-success'}`}>
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
 
         {/* Trading Activity */}
         <Card className="bg-background/70 border-2 border-border/70">
           <div className="p-6">
-            <Button
-              variant="ghost"
-              onClick={() => setShowTrading(!showTrading)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
-            >
-              <div className="flex items-center gap-3">
-                <BarChart3 className="h-5 w-5" />
-                <span className="text-lg font-bold">TRADING ACTIVITY</span>
-              </div>
-              {showTrading ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-            </Button>
+            <div className="flex items-center gap-3 mb-4">
+              <BarChart3 className="h-5 w-5" />
+              <span className="text-lg font-bold">TRADING ACTIVITY</span>
+            </div>
             
-            {showTrading && (
-              <div className="grid grid-cols-3 gap-6">
-                {tradingData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
-                      {item.label}
-                    </div>
-                    <div className="text-2xl font-black text-foreground">
-                      {item.value}
-                    </div>
+            <div className="grid grid-cols-3 gap-6">
+              {tradingData.map((item, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
+                    {item.label}
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="text-2xl font-black text-foreground">
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
       </div>
@@ -195,77 +173,59 @@ export const TokenInfoSection = ({ token, volumes, beMarket }: TokenInfoSectionP
         {/* Volume Section */}
         <Card className="bg-background/70 border-2 border-border/70">
           <div className="p-6">
-            <Button
-              variant="ghost"
-              onClick={() => setShowVolume(!showVolume)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
-            >
-              <div className="flex items-center gap-3">
-                <Info className="h-5 w-5" />
-                <span className="text-lg font-bold">VOLUME DETAILS</span>
-              </div>
-              {showVolume ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-            </Button>
+            <div className="flex items-center gap-3 mb-4">
+              <Info className="h-5 w-5" />
+              <span className="text-lg font-bold">VOLUME DETAILS</span>
+            </div>
             
-            {showVolume && (
-              <div className="space-y-6">
+            <div className="space-y-6">
+              <div className="text-center">
+                <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">TOTAL</div>
+                <div className="text-3xl font-black text-foreground">
+                  $1.7M
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
-                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">TOTAL</div>
-                  <div className="text-3xl font-black text-foreground">
-                    $1.7M
+                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">BUY VOL</div>
+                  <div className="text-xl font-black text-success">$882K</div>
+                  <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
+                    <div className="bg-success h-2 rounded-full" style={{ width: '51%' }}></div>
                   </div>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">BUY VOL</div>
-                    <div className="text-xl font-black text-success">$882K</div>
-                    <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
-                      <div className="bg-success h-2 rounded-full" style={{ width: '51%' }}></div>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">SELL VOL</div>
-                    <div className="text-xl font-black text-destructive">$854K</div>
-                    <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
-                      <div className="bg-destructive h-2 rounded-full" style={{ width: '49%' }}></div>
-                    </div>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">SELL VOL</div>
+                  <div className="text-xl font-black text-destructive">$854K</div>
+                  <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
+                    <div className="bg-destructive h-2 rounded-full" style={{ width: '49%' }}></div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </Card>
 
         {/* Participants Section */}
         <Card className="bg-background/70 border-2 border-border/70">
           <div className="p-6">
-            <Button
-              variant="ghost"
-              onClick={() => setShowParticipants(!showParticipants)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
-            >
-              <div className="flex items-center gap-3">
-                <Users className="h-5 w-5" />
-                <span className="text-lg font-bold">PARTICIPANTS</span>
-              </div>
-              {showParticipants ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-            </Button>
+            <div className="flex items-center gap-3 mb-4">
+              <Users className="h-5 w-5" />
+              <span className="text-lg font-bold">PARTICIPANTS</span>
+            </div>
             
-            {showParticipants && (
-              <div className="grid grid-cols-3 gap-6">
-                {participantData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
-                      {item.label}
-                    </div>
-                    <div className="text-2xl font-black text-foreground">
-                      {item.value}
-                    </div>
+            <div className="grid grid-cols-3 gap-6">
+              {participantData.map((item, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
+                    {item.label}
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="text-2xl font-black text-foreground">
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
       </div>

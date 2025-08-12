@@ -607,14 +607,6 @@ const MemeTokenDetailPage = () => {
               />
             </div>
 
-            {/* Enhanced Market Stats - Full Width */}
-            <div className="animate-fade-in">
-              <EnhancedMarketStats 
-                token={token}
-                volumes={volumes}
-                beMarket={beMarket}
-              />
-            </div>
           </div>
         </div>
 
