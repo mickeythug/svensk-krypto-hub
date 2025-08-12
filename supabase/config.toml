@@ -78,6 +78,12 @@ verify_jwt = true
 [functions.dextools-proxy]
 verify_jwt = true
 
+[functions.birdeye-proxy]
+verify_jwt = false
+
+[functions.meme-birdeye-enrich]
+verify_jwt = false
+
 # Cron jobs to keep DB cache fresh
 [[cron.jobs]]
 name = "market-prefetch-hourly"
@@ -92,4 +98,4 @@ endpoint = "/functions/v1/token-prices-refresh?refresh=true&pages=2"
 [[cron.jobs]]
 name = "limit-order-executor-1min"
 schedule = "*/1 * * * *"
-endpoint = "/functions/v1/limit-order-executor"
+endpoint = "/functions/v1/limit-order-executor"}
