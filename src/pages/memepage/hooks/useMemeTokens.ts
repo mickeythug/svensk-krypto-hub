@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
-import { usePumpPortalWS } from '@/hooks/usePumpPortalWS';
+import { pumpOnMessage, pumpSubscribe } from '@/hooks/usePumpPortalWS';
 
 export interface MemeToken {
   id: string; // mint address
@@ -276,13 +276,21 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
 
   const sorted = useMemo(() => tokens, [tokens]);
 
-  // Live PumpPortal feed: subscribe to migrations and enrich them in real time
-  const { subscribe, onMessage, connected } = usePumpPortalWS();
+  // Live PumpPortal feed: subscribe to migrations and enrich them in real time (no extra hooks)
   useEffect(() => {
     if (category !== 'trending') return;
-    let unsub: (() => void) | null = null;
-    subscribe('subscribeMigration');
-    unsub = onMessage(async (msg) => {
+    let off: (() => void) | null = null;
+
+    // Subscribe once on mount for this instance
+    (async () => {
+      try {
+        await pumpSubscribe('subscribeMigration');
+        // If needed later, we can also subscribe to new token creations:
+        // await pumpSubscribe('subscribeNewToken');
+      } catch {}
+    })();
+
+    off = pumpOnMessage(async (msg) => {
       const t = msg?.type || msg?.method;
       if (t !== 'migration' && t !== 'subscribeMigration') return;
       const mint = msg?.mint;
@@ -329,8 +337,10 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         })));
       } catch (_) {}
     });
-    return () => { unsub?.(); };
-  }, [category, subscribe, onMessage, limit]);
+
+    return () => { off?.(); };
+  }, [category, limit]);
+
 
   return { tokens: sorted, loading, error };
 };

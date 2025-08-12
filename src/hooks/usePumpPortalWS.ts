@@ -30,6 +30,36 @@ function ensureConnection() {
 
 export type PumpSubscribeMethod = 'subscribeNewToken' | 'subscribeTokenTrade' | 'subscribeAccountTrade' | 'subscribeMigration';
 
+// Non-hook API for modules that can't add hooks safely (e.g., libraries/hooks files)
+export async function pumpSubscribe(method: PumpSubscribeMethod, keys?: string[]) {
+  await ensureConnection();
+  if (ws?.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(keys ? { method, keys } : { method }));
+  }
+}
+
+export function pumpOnMessage(cb: (msg: any) => void) {
+  subscribers.add(cb);
+  return () => {
+    subscribers.delete(cb);
+  };
+}
+
+export async function pumpUnsubscribe(method: Exclude<PumpSubscribeMethod, 'subscribeMigration'>, keys?: string[]) {
+  const map: Record<string, string> = {
+    subscribeNewToken: 'unsubscribeNewToken',
+    subscribeTokenTrade: 'unsubscribeTokenTrade',
+    subscribeAccountTrade: 'unsubscribeAccountTrade',
+    subscribeMigration: 'unsubscribeMigration',
+  };
+  await ensureConnection();
+  if (ws?.readyState === WebSocket.OPEN) {
+    const payload = keys ? { method: map[method], keys } : { method: map[method] };
+    ws.send(JSON.stringify(payload));
+  }
+}
+
+
 export function usePumpPortalWS() {
   const [connected, setConnected] = useState(false);
   const localHandlers = useRef<((msg: any) => void)[]>([]);
