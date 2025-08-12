@@ -165,16 +165,14 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
               isHot: category === 'trending' ? idx < 10 : false,
               description: metaD.description,
             } as MemeToken;
-          })
-          // Ensure we never show cards without required data
-          .filter((t) => t.marketCap > 0 && t.holders > 0 && t.volume24h > 0);
+          });
 
         if (category === 'potential') {
-          // nyaste med minst 40k marketcap
-          mapped = mapped.filter((t) => t.marketCap >= 40000);
+          // nyaste med minst 40k marketcap (vi visar ändå alla, men markerar under gränsen sist)
+          mapped = mapped.sort((a,b) => Number(b.marketCap>=40000) - Number(a.marketCap>=40000));
         }
 
-        // Only take up to limit
+        // Only take up to limit for initial render
         mapped = mapped.slice(0, limit);
 
         // 4) Preload all logos before rendering
@@ -184,6 +182,46 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         // Update cache (fresh for 2 minutes)
         setCache(cacheKey, mapped, { ttlMs: 2 * 60 * 1000 });
         setTokens(mapped);
+
+        // 5) Enrich missing data (no filtering, we fill it in)
+        const needsEnrichment = mapped.filter(t => !(t.marketCap > 0 && t.holders > 0 && t.volume24h > 0));
+        if (needsEnrichment.length) {
+          const concurrency = 3;
+          const toNum = (v: any): number => {
+            if (typeof v === 'number') return v;
+            if (typeof v === 'string') { const n = Number(v.replace(/[,\s]/g, '')); return isNaN(n) ? 0 : n; }
+            return 0;
+          };
+          const chunks: typeof needsEnrichment[] = [];
+          for (let i = 0; i < needsEnrichment.length; i += concurrency) chunks.push(needsEnrichment.slice(i, i + concurrency));
+          for (const grp of chunks) {
+            const res = await Promise.all(grp.map(async (t) => {
+              try {
+                const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: t.id } });
+                const infoD = (full?.info?.data ?? full?.info) as any || {};
+                const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
+                return {
+                  id: t.id,
+                  marketCap: toNum(infoD.mcap),
+                  holders: toNum(infoD.holders),
+                  volume24h: toNum(poolD.volume24h)
+                };
+              } catch { return { id: t.id }; }
+            }));
+            if (!mounted) break;
+            setTokens(prev => prev.map(p => {
+              const u = res.find(r => r.id === p.id);
+              if (!u) return p;
+              return {
+                ...p,
+                marketCap: u.marketCap ?? p.marketCap,
+                holders: u.holders ?? p.holders,
+                volume24h: u.volume24h ?? p.volume24h,
+              };
+            }));
+            await new Promise(r => setTimeout(r, 350));
+          }
+        }
       } catch (e: any) {
         // On error, try serve stale cache as graceful fallback
         const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
