@@ -40,6 +40,16 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     setError(null);
     console.log('[useMemeTokens] start', { category, limit });
 
+    const normalize = (d: any): any[] => {
+      if (!d) return [];
+      if (Array.isArray(d)) return d;
+      const r = Array.isArray(d?.results) ? d.results
+        : Array.isArray(d?.data?.results) ? d.data.results
+        : Array.isArray(d?.data) ? d.data
+        : [];
+      return Array.isArray(r) ? r : [];
+    };
+
     const load = async () => {
       try {
         // 1) Get base list (addresses)
@@ -49,20 +59,38 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
             body: { action: 'gainers' },
           });
           if (error) throw error;
-          const toArray = (d: any): any[] => Array.isArray(d) ? d : (d?.results ?? d?.data?.results ?? d?.data ?? []);
-          const list: any[] = toArray(data);
-          addresses = list.map((i: any) => i?.mainToken?.address || i?.address || i?.token?.address).filter(Boolean).slice(0, limit);
+          const list: any[] = normalize(data);
+          addresses = list
+            .map((i: any) => i?.mainToken?.address || i?.address || i?.token?.address)
+            .filter(Boolean)
+            .slice(0, limit);
         } else {
-          // newest and potential start from newest token listing (last 24h)
+          // newest och potential hämtar senaste listningar (24h), faller tillbaka till gainers vid fel
           const to = new Date().toISOString();
           const from = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-          const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'newest', page: 0, pageSize: 50, from, to },
-          });
-          if (error) throw error;
-          const toArray = (d: any): any[] => Array.isArray(d) ? d : (d?.results ?? d?.data?.results ?? d?.data ?? []);
-          const results: any[] = toArray(data);
-          addresses = results.map((r: any) => r?.address || r?.mainToken?.address).filter(Boolean).slice(0, limit);
+          try {
+            const { data, error } = await supabase.functions.invoke('dextools-proxy', {
+              body: { action: 'newest', page: 0, pageSize: 50, from, to },
+            });
+            if (error) throw error;
+            const results: any[] = normalize(data);
+            const arr = Array.isArray(results) ? results : [];
+            addresses = arr
+              .map((r: any) => r?.address || r?.mainToken?.address)
+              .filter(Boolean)
+              .slice(0, limit);
+          } catch (_) {
+            // Fallback: gainers
+            const { data: gain, error: gErr } = await supabase.functions.invoke('dextools-proxy', {
+              body: { action: 'gainers' },
+            });
+            if (gErr) throw gErr;
+            const list: any[] = normalize(gain);
+            addresses = list
+              .map((i: any) => i?.mainToken?.address || i?.address || i?.token?.address)
+              .filter(Boolean)
+              .slice(0, limit);
+          }
         }
 
         // If no addresses, don't call batch

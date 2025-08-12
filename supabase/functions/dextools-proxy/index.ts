@@ -76,8 +76,14 @@ Deno.serve(async (req) => {
         });
         if (from) qs.set('from', from);
         if (to) qs.set('to', to);
-        const data = await fetchJSON(`/v2/token/solana?${qs.toString()}`);
-        return json(data);
+        try {
+          const data = await fetchJSON(`/v2/token/solana?${qs.toString()}`);
+          return json(data);
+        } catch (e: any) {
+          console.error('dextools-proxy newest fallback (empty list)', e?.message ?? e);
+          // Graceful fallback to avoid 500 → return empty list
+          return json({ statusCode: 200, data: { results: [] } });
+        }
       }
       case 'tokenFull': {
         if (!address) return json({ error: 'address required' }, 400);
