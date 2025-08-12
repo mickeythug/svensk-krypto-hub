@@ -43,10 +43,23 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     console.log('[useMemeTokens] start', { category, limit });
 
     const cacheKey = `memeTokens:${category}:v2`;
-    // Immediate bootstrap from cache (stale OK) to avoid empty UI
+
+    // Prefer fresh cache (no network, instant paint)
+    const freshEntry = getCache<MemeToken[]>(cacheKey);
+    if (freshEntry?.data?.length && mounted) {
+      setTokens(freshEntry.data.slice(0, limit));
+      if (freshEntry.fresh) {
+        // If cache is fresh, skip loading state to avoid skeletons
+        setLoading(false);
+      }
+    }
+
+    // Immediate bootstrap from stale cache as fallback (SWR)
     const bootstrap = getCacheStaleOk<MemeToken[]>(cacheKey);
-    if (bootstrap && bootstrap.length && mounted) {
+    if (!freshEntry?.data?.length && bootstrap && bootstrap.length && mounted) {
       setTokens(bootstrap.slice(0, limit));
+      // Show cached data immediately while background refresh happens
+      setLoading(false);
     }
 
     const normalize = (d: any): any[] => {
@@ -311,11 +324,23 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
       }
     };
 
-    load();
+    if (!freshEntry?.fresh) {
+      load();
+    } else {
+      // Fresh cache present; skip heavy fetch to respect rate limits
+    }
     return () => {
       mounted = false;
     };
   }, [category, limit]);
+
+  // Persist the latest tokens to localStorage so refresh/navigation is instant
+  useEffect(() => {
+    const cacheKey = `memeTokens:${category}:v2`;
+    if (tokens && tokens.length) {
+      setCache(cacheKey, tokens, { ttlMs: 2 * 60 * 1000 });
+    }
+  }, [category, tokens]);
 
   // Background monitor: keep enriching tokens that still miss data (no filtering)
   const enrichAttempts = useRef<Record<string, number>>({});
