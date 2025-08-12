@@ -90,6 +90,9 @@ verify_jwt = false
 [functions.meme-catalog]
 verify_jwt = false
 
+[functions.meme-cache-refresh]
+verify_jwt = false
+
 # Cron jobs to keep DB cache fresh
 [[cron.jobs]]
 name = "market-prefetch-hourly"
