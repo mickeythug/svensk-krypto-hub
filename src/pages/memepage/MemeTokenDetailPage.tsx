@@ -21,6 +21,9 @@ import type { PumpTradeParams } from '@/hooks/usePumpTrade';
 import { usePumpTrade } from '@/hooks/usePumpTrade';
 import { useTradingWallet } from '@/hooks/useTradingWallet';
 import { supabase } from '@/integrations/supabase/client';
+import { TokenHeader } from '@/components/TokenHeader';
+import { EnhancedMarketStats } from '@/components/EnhancedMarketStats';
+import { AdvancedTradingSettings } from '@/components/AdvancedTradingSettings';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -600,17 +603,85 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
       </div>;
   }
 
-  // DESKTOP VERSION - Modern Meme Trading Platform (Axiom/BullX inspired)
-  return <div className="min-h-screen bg-gradient-to-br from-background via-background/98 to-muted/30">
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-xl border-b border-border/20 shadow-sm">
-        <div className="max-w-[1800px] mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="lg" onClick={() => navigate(-1)} className="h-12 px-6 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30 transition-all duration-300">
-                <ArrowLeft className="h-5 w-5 mr-3" />
-                <span className="text-lg font-semibold">Tillbaka</span>
-              </Button>
+  // Desktop Layout
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="container mx-auto px-4 py-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(-1)} 
+          className="mb-6 h-10 px-3 bg-card/50 backdrop-blur-sm hover:bg-card border border-border/50"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+        
+        {/* Modern Token Header */}
+        <TokenHeader token={token} />
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left Sidebar - Advanced Trading Settings */}
+          <div className="col-span-3">
+            <AdvancedTradingSettings
+              tradeType={tradeType}
+              setTradeType={setTradeType}
+              orderType={orderType}
+              setOrderType={setOrderType}
+              customAmount={customAmount}
+              setCustomAmount={setCustomAmount}
+              selectedAmount={selectedAmount}
+              setSelectedAmount={setSelectedAmount}
+              slippage={slippage}
+              setSlippage={setSlippage}
+              customSlippage={customSlippage}
+              setCustomSlippage={setCustomSlippage}
+              priority={priority}
+              setPriority={setPriority}
+              mevProtection={mevProtection}
+              setMevProtection={setMevProtection}
+              autoSlippage={autoSlippage}
+              setAutoSlippage={setAutoSlippage}
+              limitPrice={limitPrice}
+              setLimitPrice={setLimitPrice}
+              stopPrice={stopPrice}
+              setStopPrice={setStopPrice}
+              priceAlert={priceAlert}
+              setPriceAlert={setPriceAlert}
+              solBalance={solBalance}
+              tokenBalance={tokenBalance}
+              handleAmountSelect={handleAmountSelect}
+              calculateSellPercentage={calculateSellPercentage}
+              handleTrade={handleTrade}
+              isTrading={isTrading}
+              getPriorityFee={getPriorityFee}
+              getEstimatedGas={getEstimatedGas}
+            />
+          </div>
+
+          {/* Main Chart Area */}
+          <div className="col-span-9">
+            {/* Chart */}
+            <Card className="mb-6 bg-card/50 backdrop-blur-sm border border-border/50">
+              <TradingViewChart 
+                symbol={tokenAddress || token.symbol}
+                currentPrice={token.price}
+                coinGeckoId={token.symbol.toLowerCase()}
+              />
+            </Card>
+
+            {/* Enhanced Market Stats Below Chart */}
+            <EnhancedMarketStats 
+              token={token}
+              volumes={volumes}
+              beMarket={beMarket}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30">
                   <OptimizedImage src={coverImage} alt={token.symbol} className="w-full h-full object-cover" />

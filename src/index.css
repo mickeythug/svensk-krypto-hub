@@ -147,9 +147,10 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     overflow-x: hidden; /* Only hide horizontal scroll */
     overflow-y: auto; /* Ensure vertical scroll is enabled */
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   .text-shadow-lg {

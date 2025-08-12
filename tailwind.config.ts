@@ -89,12 +89,9 @@ export default {
 				'glow-secondary': 'var(--glow-secondary)',
 			},
 			fontFamily: {
-				'mono': ['Roboto Mono', 'monospace'],
-				'sans': ['Inter', 'sans-serif'],
-				'crypto': ['Orbitron', 'monospace'],
-				'display': ['Exo 2', 'sans-serif'],
-				'orbitron': ['Orbitron', 'monospace'],
-				'oblivion': ['Cinzel', 'serif'], // Using Cinzel as close alternative to Oblivion
+				'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'Monaco', 'Consolas', 'monospace'],
+				'display': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
