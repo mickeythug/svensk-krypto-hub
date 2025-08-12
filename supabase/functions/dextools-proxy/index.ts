@@ -120,6 +120,24 @@ Deno.serve(async (req) => {
       }
     };
 
+    // In-memory soft cache per function runtime for hot endpoints
+    const ttlByPath = (path: string) => {
+      if (path.includes('/price')) return 15_000; // token/pool price
+      if (path.includes('/liquidity')) return 60_000; // pool liquidity is slow-changing
+      if (path.includes('/info')) return 60_000; // token info
+      if (path.includes('/pools')) return 60_000; // pool discovery
+      return 30_000;
+    };
+    const fetchCachedWithRetry = async (path: string) => {
+      const now = Date.now();
+      const ttl = ttlByPath(path);
+      const hit = memCache.get(path);
+      if (hit && now - hit.ts < ttl) return hit.data;
+      const data = await fetchWithRetry(path);
+      memCache.set(path, { ts: now, data });
+      return data;
+    };
+
     // Admin client + persistence helpers
     const getAdmin = () => createClient(
       Deno.env.get('SUPABASE_URL')!,
@@ -196,26 +214,26 @@ Deno.serve(async (req) => {
         if (!address) return json({ error: 'address required' }, 400);
         try {
           const [meta, price, info, audit] = await Promise.all([
-            fetchWithRetry(`/v2/token/solana/${address}`),
-            fetchWithRetry(`/v2/token/solana/${address}/price`).catch(() => null),
-            fetchWithRetry(`/v2/token/solana/${address}/info`).catch(() => null),
-            fetchWithRetry(`/v2/token/solana/${address}/audit`).catch(() => null),
+            fetchCachedWithRetry(`/v2/token/solana/${address}`),
+            fetchCachedWithRetry(`/v2/token/solana/${address}/price`).catch(() => null),
+            fetchCachedWithRetry(`/v2/token/solana/${address}/info`).catch(() => null),
+            fetchCachedWithRetry(`/v2/token/solana/${address}/audit`).catch(() => null),
           ]);
 
           // Try to get a primary pool and its price/volume (prefer oldest pool first)
           let poolPrice: any = null;
           let poolLiquidity: any = null;
           try {
-            let poolsResp = await fetchWithRetry(`/v2/token/solana/${address}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
+            let poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${address}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
             let firstPool = poolsResp?.results?.[0]?.address;
             if (!firstPool) {
               // Fallback to newest if no result
-              poolsResp = await fetchWithRetry(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
+              poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
               firstPool = poolsResp?.results?.[0]?.address;
             }
             if (firstPool) {
-              poolPrice = await fetchWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
-              poolLiquidity = await fetchWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
+              poolPrice = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+              poolLiquidity = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
             }
           } catch (_) {
             // ignore pool errors
@@ -251,23 +269,23 @@ Deno.serve(async (req) => {
             const part = await Promise.all(group.map(async (addr) => {
               try {
                 const [meta, price, info, audit] = await Promise.all([
-                  fetchWithRetry(`/v2/token/solana/${addr}`),
-                  fetchWithRetry(`/v2/token/solana/${addr}/price`).catch(() => null),
-                  fetchWithRetry(`/v2/token/solana/${addr}/info`).catch(() => null),
-                  fetchWithRetry(`/v2/token/solana/${addr}/audit`).catch(() => null),
+                  fetchCachedWithRetry(`/v2/token/solana/${addr}`),
+                  fetchCachedWithRetry(`/v2/token/solana/${addr}/price`).catch(() => null),
+                  fetchCachedWithRetry(`/v2/token/solana/${addr}/info`).catch(() => null),
+                  fetchCachedWithRetry(`/v2/token/solana/${addr}/audit`).catch(() => null),
                 ]);
                 let poolPrice: any = null;
                 let poolLiquidity: any = null;
                 try {
-                  let poolsResp = await fetchWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
+                  let poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
                   let firstPool = poolsResp?.results?.[0]?.address;
                   if (!firstPool) {
-                    poolsResp = await fetchWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
+                    poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
                     firstPool = poolsResp?.results?.[0]?.address;
                   }
                   if (firstPool) {
-                    poolPrice = await fetchWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
-                    poolLiquidity = await fetchWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
+                    poolPrice = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+                    poolLiquidity = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
                   }
                 } catch (_) {}
                 return { ok: true, address: addr, meta, price, info, audit, poolPrice, poolLiquidity };
@@ -348,23 +366,23 @@ Deno.serve(async (req) => {
           const part = await Promise.all(group.map(async (addr) => {
             try {
               const [meta, price, info, audit] = await Promise.all([
-                fetchWithRetry(`/v2/token/solana/${addr}`),
-                fetchWithRetry(`/v2/token/solana/${addr}/price`).catch(() => null),
-                fetchWithRetry(`/v2/token/solana/${addr}/info`).catch(() => null),
-                fetchWithRetry(`/v2/token/solana/${addr}/audit`).catch(() => null),
+                fetchCachedWithRetry(`/v2/token/solana/${addr}`),
+                fetchCachedWithRetry(`/v2/token/solana/${addr}/price`).catch(() => null),
+                fetchCachedWithRetry(`/v2/token/solana/${addr}/info`).catch(() => null),
+                fetchCachedWithRetry(`/v2/token/solana/${addr}/audit`).catch(() => null),
               ]);
               let poolPrice: any = null;
               let poolLiquidity: any = null;
               try {
-                let poolsResp = await fetchWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
+                let poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
                 let firstPool = poolsResp?.results?.[0]?.address;
                 if (!firstPool) {
-                  poolsResp = await fetchWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
+                  poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
                   firstPool = poolsResp?.results?.[0]?.address;
                 }
                 if (firstPool) {
-                  poolPrice = await fetchWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
-                  poolLiquidity = await fetchWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
+                  poolPrice = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+                  poolLiquidity = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
                 }
               } catch (_) {}
               return { ok: true, address: addr, meta, price, info, audit, poolPrice, poolLiquidity };
