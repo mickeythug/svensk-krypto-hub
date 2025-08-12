@@ -373,7 +373,7 @@ export default function ConnectWalletButton() {
             <Wallet className="w-4 h-4 mr-2" /> Connect Wallet
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="min-w-[220px] z-50 bg-background/95 backdrop-blur border">
+        <DropdownMenuContent align="end" className="min-w-[220px] z-[1000] bg-background/95 backdrop-blur border shadow-2xl">
           <DropdownMenuItem onClick={() => { setChainMode('SOL'); void handleConnect('SOL'); }}>
             Solana (Phantom)
           </DropdownMenuItem>
