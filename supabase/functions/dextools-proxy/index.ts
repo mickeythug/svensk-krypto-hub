@@ -1,5 +1,6 @@
 // Supabase Edge Function: dextools-proxy
 // Proxies DEXTools API v2 for Solana using project secret, aggregates trending, and adds CORS
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
     const memCache = new Map<string, { ts: number; data: any }>();
     const CACHE_MS = 30_000;
@@ -119,6 +120,36 @@ Deno.serve(async (req) => {
       }
     };
 
+    // Admin client + persistence helpers
+    const getAdmin = () => createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      { auth: { persistSession: false } }
+    );
+
+    const upsertCatalog = async (rows: Array<{ address: string; symbol?: string; name?: string; image?: string; meta?: any; price?: any }>) => {
+      if (!rows.length) return;
+      const admin = getAdmin();
+      const upserts = rows.map(r => ({
+        address: r.address,
+        chain: 'SOL',
+        symbol: r.symbol ?? null,
+        name: r.name ?? null,
+        image: r.image ?? null,
+        last_seen_at: new Date().toISOString(),
+        last_meta: r.meta ?? null,
+        last_price: r.price ?? null,
+      }));
+      await admin.from('tokens_catalog').upsert(upserts, { onConflict: 'address' });
+    };
+
+    const updateTrendingCache = async (tokens: any[]) => {
+      const admin = getAdmin();
+      await admin.from('meme_tokens_cache').upsert([
+        { category: 'trending', data: tokens, updated_at: new Date().toISOString() }
+      ], { onConflict: 'category' });
+    };
+
     switch (action) {
       case 'gainers': {
         try {
@@ -190,6 +221,12 @@ Deno.serve(async (req) => {
             // ignore pool errors
           }
 
+          // Persist to catalog (best-effort)
+          try {
+            const metaD: any = meta?.data ?? meta ?? {};
+            await upsertCatalog([{ address, symbol: metaD.symbol, name: metaD.name, image: metaD.logo, meta, price }]);
+          } catch (_) {}
+
           return json({ meta, price, info, audit, poolPrice, poolLiquidity });
         } catch (e: any) {
           console.error('dextools-proxy tokenFull fallback (nulls)', e?.message ?? e);
@@ -240,6 +277,14 @@ Deno.serve(async (req) => {
             }));
             results.push(...part);
           }
+          // Persist catalog (best-effort)
+          try {
+            const rows = results.filter(r => r?.ok && r?.meta).map((r: any) => {
+              const md = r.meta?.data ?? r.meta ?? {};
+              return { address: r.address, symbol: md.symbol, name: md.name, image: md.logo, meta: r.meta, price: r.price };
+            });
+            await upsertCatalog(rows);
+          } catch (_) {}
           return json({ results });
         } catch (e: any) {
           console.error('dextools-proxy tokenBatch fallback (empty results)', e?.message ?? e);
@@ -329,6 +374,59 @@ Deno.serve(async (req) => {
           }));
           results.push(...part);
         }
+        // Persist catalog
+        try {
+          const rows = results.filter(r => r?.ok && r?.meta).map((r: any, idx: number) => {
+            const md = r.meta?.data ?? r.meta ?? {};
+            return { address: r.address, symbol: md.symbol, name: md.name, image: md.logo, meta: r.meta, price: r.price };
+          });
+          await upsertCatalog(rows);
+        } catch (_) {}
+
+        // Build trending cache payload (reduce to MemeToken shape)
+        const toNum = (v: any) => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\,\s]/g, '')) : 0);
+        const mapped = results.filter((x: any) => x?.ok && (x?.meta?.data ?? x?.meta)?.address).slice(0, limit).map((x: any, i: number) => {
+          const metaD = (x?.meta?.data ?? x?.meta) as any || {};
+          const priceD = (x?.price?.data ?? x?.price) as any || {};
+          const infoD = (x?.info?.data ?? x?.info) as any || {};
+          const poolD = (x?.poolPrice?.data ?? x?.poolPrice) as any || {};
+          return {
+            id: metaD.address,
+            symbol: (metaD.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
+            name: metaD.name || metaD.symbol || 'Token',
+            image: metaD.logo || '/placeholder.svg',
+            price: toNum(priceD.price),
+            change24h: toNum(priceD.variation24h),
+            volume24h: toNum(poolD.volume24h),
+            marketCap: toNum(infoD.mcap),
+            holders: toNum(infoD.holders),
+            views: '—',
+            emoji: undefined,
+            tags: ['trending'],
+            isHot: i < 10,
+            description: metaD.description,
+          };
+        });
+        try { await updateTrendingCache(mapped); } catch (_) {}
+
+        // Fallback fill from catalog if not enough ok results
+        if (mapped.length < limit) {
+          try {
+            const admin = getAdmin();
+            const existing = new Set(mapped.map((m: any) => m.id));
+            const { data: extras } = await admin
+              .from('tokens_catalog')
+              .select('address, symbol, name, image')
+              .order('last_seen_at', { ascending: false })
+              .limit(limit * 2);
+            const add = (extras || []).filter((r: any) => !existing.has(r.address)).slice(0, limit - mapped.length);
+            for (const e of add) {
+              // Append a minimal ok result for client-side mapping
+              results.push({ ok: true, address: e.address, meta: { data: { address: e.address, symbol: e.symbol, name: e.name, logo: e.image } }, price: null, info: null, audit: null, poolPrice: null, poolLiquidity: null });
+            }
+          } catch (_) {}
+        }
+
         return json({ results });
       }
       default:
