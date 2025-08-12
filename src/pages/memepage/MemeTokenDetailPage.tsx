@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { PumpTradeParams } from '@/hooks/usePumpTrade';
 import { usePumpTrade } from '@/hooks/usePumpTrade';
 import { useTradingWallet } from '@/hooks/useTradingWallet';
+import { supabase } from '@/integrations/supabase/client';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -73,30 +74,50 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
   // Find fallback token by symbol
   const found = tokens.find(t => t.symbol.toLowerCase() === (symbol ?? '').toLowerCase());
 
-  // Prefer full details when available
+  // Prefer full details when available (with Birdeye fallback from local state)
+  const [beMarket, setBeMarket] = useState<any>(null);
+  
+  // Resolve derived token object with Birdeye merge
   const token = details ? {
     id: details.address,
     symbol: details.symbol,
     name: details.name,
     image: details.logo || found?.image,
-    price: details.price ?? found?.price ?? 0,
+    price: details.price ?? (beMarket?.price ?? beMarket?.priceUsd ?? beMarket?.value) ?? found?.price ?? 0,
     change24h: details.variation24h ?? found?.change24h ?? 0,
-    volume24h: details.pool?.volume24h ?? found?.volume24h ?? 0,
-    marketCap: details.marketCap ?? found?.marketCap ?? 0,
+    volume24h: details.pool?.volume24h ?? (beMarket?.volume24h ?? beMarket?.volume_24h ?? beMarket?.volume) ?? found?.volume24h ?? 0,
+    marketCap: details.marketCap ?? (beMarket?.marketCap ?? beMarket?.marketcap ?? beMarket?.mc) ?? found?.marketCap ?? 0,
     holders: details.holders ?? found?.holders ?? 0,
     views: found?.views ?? '—',
     emoji: found?.emoji,
     tags: found?.tags ?? [],
     isHot: found?.isHot ?? false,
     description: details.description || found?.description,
-} : found;
+  } : found;
 
   // Derived data from DEXTools pool price for volumes and token address
   const poolPrice = (details as any)?.raw?.poolPrice?.data ?? (details as any)?.raw?.poolPrice ?? null;
   const volume1h = typeof poolPrice?.volume1h === 'number' ? poolPrice.volume1h : undefined;
   const volume6h = typeof poolPrice?.volume6h === 'number' ? poolPrice.volume6h : undefined;
-  const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : undefined;
+  const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : (beMarket?.volume24h ?? beMarket?.volume_24h ?? undefined);
   const tokenAddress = details?.address || address || (token as any)?.id || '';
+
+  // Fetch Birdeye market data (public plan 1 req/s handled by edge function throttle)
+  useEffect(() => {
+    if (!tokenAddress) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await supabase.functions.invoke('birdeye-proxy', {
+          body: { action: 'market-data', address: tokenAddress },
+        });
+        if (!cancelled) {
+          setBeMarket(data?.data?.data ?? data?.data ?? null);
+        }
+      } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, [tokenAddress]);
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   useEffect(() => {

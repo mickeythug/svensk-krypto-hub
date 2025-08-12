@@ -206,43 +206,74 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         setCache(cacheKey, mapped, { ttlMs: 2 * 60 * 1000 });
         setTokens(mapped);
 
-        // 5) Enrich missing data (no filtering, we fill it in)
-        const needsEnrichment = mapped.filter(t => !(t.marketCap > 0 && t.holders > 0 && t.volume24h > 0));
+        // 5) Enrich missing data (prefer Birdeye for reliable market metrics, then fallback to DEXTools for holders)
+        const needsEnrichment = mapped.filter(t => !(t.marketCap > 0 && t.volume24h > 0));
         if (needsEnrichment.length) {
-          const concurrency = 3;
-          const toNum = (v: any): number => {
-            if (typeof v === 'number') return v;
-            if (typeof v === 'string') { const n = Number(v.replace(/[,\s]/g, '')); return isNaN(n) ? 0 : n; }
-            return 0;
-          };
-          const chunks: typeof needsEnrichment[] = [];
-          for (let i = 0; i < needsEnrichment.length; i += concurrency) chunks.push(needsEnrichment.slice(i, i + concurrency));
-          for (const grp of chunks) {
-            const res = await Promise.all(grp.map(async (t) => {
-              try {
-                const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: t.id } });
-                const infoD = (full?.info?.data ?? full?.info) as any || {};
-                const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
+          try {
+            const birdeyeBatch = needsEnrichment.slice(0, 20).map(t => t.id);
+            if (birdeyeBatch.length) {
+              const { data: enr } = await supabase.functions.invoke('meme-birdeye-enrich', {
+                body: { addresses: birdeyeBatch, limit: 20, delayMs: 1100 },
+              });
+              const results = (enr?.results || {}) as Record<string, any>;
+              if (mounted && results && Object.keys(results).length) {
+                setTokens(prev => prev.map(p => {
+                  const r = results[p.id];
+                  if (!r) return p;
+                  const toNum = (v: any): number => {
+                    if (typeof v === 'number') return v;
+                    if (typeof v === 'string') { const n = Number(v.replace(/[\,\s]/g, '')); return isNaN(n) ? 0 : n; }
+                    return 0;
+                  };
+                  return {
+                    ...p,
+                    price: toNum(r.price) || p.price,
+                    marketCap: toNum(r.marketCap) || p.marketCap,
+                    volume24h: toNum(r.volume24h) || p.volume24h,
+                  };
+                }));
+              }
+            }
+          } catch (_) {}
+
+          // Fallback: fill remaining gaps via DEXTools tokenFull (faster for holders)
+          const stillNeeds = tokens.filter(t => !(t.marketCap > 0 && t.holders > 0 && t.volume24h > 0));
+          if (stillNeeds.length) {
+            const concurrency = 3;
+            const toNum = (v: any): number => {
+              if (typeof v === 'number') return v;
+              if (typeof v === 'string') { const n = Number(v.replace(/[\,\s]/g, '')); return isNaN(n) ? 0 : n; }
+              return 0;
+            };
+            const chunks: typeof stillNeeds[] = [];
+            for (let i = 0; i < stillNeeds.length; i += concurrency) chunks.push(stillNeeds.slice(i, i + concurrency));
+            for (const grp of chunks) {
+              const res = await Promise.all(grp.map(async (t) => {
+                try {
+                  const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: t.id } });
+                  const infoD = (full?.info?.data ?? full?.info) as any || {};
+                  const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
+                  return {
+                    id: t.id,
+                    marketCap: toNum(infoD.mcap),
+                    holders: toNum(infoD.holders),
+                    volume24h: toNum(poolD.volume24h)
+                  };
+                } catch { return { id: t.id }; }
+              }));
+              if (!mounted) break;
+              setTokens(prev => prev.map(p => {
+                const u = res.find(r => r.id === p.id);
+                if (!u) return p;
                 return {
-                  id: t.id,
-                  marketCap: toNum(infoD.mcap),
-                  holders: toNum(infoD.holders),
-                  volume24h: toNum(poolD.volume24h)
+                  ...p,
+                  marketCap: u.marketCap ?? p.marketCap,
+                  holders: u.holders ?? p.holders,
+                  volume24h: u.volume24h ?? p.volume24h,
                 };
-              } catch { return { id: t.id }; }
-            }));
-            if (!mounted) break;
-            setTokens(prev => prev.map(p => {
-              const u = res.find(r => r.id === p.id);
-              if (!u) return p;
-              return {
-                ...p,
-                marketCap: u.marketCap ?? p.marketCap,
-                holders: u.holders ?? p.holders,
-                volume24h: u.volume24h ?? p.volume24h,
-              };
-            }));
-            await new Promise(r => setTimeout(r, 350));
+              }));
+              await new Promise(r => setTimeout(r, 350));
+            }
           }
         }
       } catch (e: any) {
