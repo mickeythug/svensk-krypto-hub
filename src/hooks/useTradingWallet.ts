@@ -42,27 +42,57 @@ export function useTradingWallet() {
   useEffect(() => { load(); }, [load]);
 
   const createIfMissing = useCallback(async () => {
-    if (walletAddress) return { walletAddress, privateKey: null };
+    if (walletAddress) return { walletAddress, privateKey, apiKey };
     setLoading(true);
     try {
+      // Try via edge function first (saves to DB when user is authenticated)
       const { data, error } = await supabase.functions.invoke('pump-create-wallet');
-      if (error) throw error;
-      setWalletAddress((data as any)?.walletAddress || null);
-      setPrivateKey((data as any)?.privateKey || null);
-      setAcknowledged(false);
-      toast({ title: 'Ny Trading Wallet skapad', description: 'Spara din private key säkert innan du fortsätter.' });
-      return { walletAddress: (data as any)?.walletAddress, privateKey: (data as any)?.privateKey };
-    } catch (e: any) {
-      toast({ title: 'Kunde inte skapa wallet', description: String(e?.message || e), variant: 'destructive' });
-      return { walletAddress: null, privateKey: null };
+      if (!error && data) {
+        const wa = (data as any)?.walletAddress || null;
+        const pk = (data as any)?.privateKey || null;
+        setWalletAddress(wa);
+        setPrivateKey(pk);
+        setAcknowledged(false);
+        return { walletAddress: wa, privateKey: pk, apiKey: null };
+      }
+      throw error || new Error('Edge function failed');
+    } catch (_) {
+      // Public fallback: create directly on client and persist locally
+      try {
+        const res = await fetch('https://pumpportal.fun/api/create-wallet', { method: 'GET' });
+        if (!res.ok) throw new Error(`PumpPortal create failed: ${res.status}`);
+        const body = await res.json();
+        const wa = body.walletAddress || body.publicKey || body.address || body.pubkey || null;
+        const pk = body.privateKey || body.secretKey || body.sk || null;
+        const key = body.apiKey || body.api_key || body.key || null;
+        if (!wa || !key) throw new Error('Ogiltigt svar från PumpPortal');
+        setWalletAddress(wa);
+        setPrivateKey(pk);
+        setAcknowledged(false);
+        setApiKey(key);
+        try {
+          localStorage.setItem('pump_wallet_address', wa);
+          if (pk) localStorage.setItem('pump_private_key', pk);
+          localStorage.setItem('pump_api_key', key);
+          localStorage.setItem('pump_ack', 'false');
+        } catch {}
+        return { walletAddress: wa, privateKey: pk, apiKey: key };
+      } catch (e) {
+        return { walletAddress: null, privateKey: null, apiKey: null };
+      }
     } finally {
       setLoading(false);
     }
-  }, [walletAddress, toast]);
+  }, [walletAddress]);
 
   const confirmBackup = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+    if (!user) {
+      try { localStorage.setItem('pump_ack', 'true'); } catch {}
+      setAcknowledged(true);
+      setPrivateKey(null);
+      return true;
+    }
     const { error } = await supabase
       .from('trading_wallets')
       .update({ acknowledged_backup: true })
@@ -73,5 +103,5 @@ export function useTradingWallet() {
     return true;
   }, []);
 
-  return { loading, walletAddress, privateKey, acknowledged, createIfMissing, confirmBackup, reload: load } as const;
+  return { loading, walletAddress, privateKey, apiKey, acknowledged, createIfMissing, confirmBackup, reload: load } as const;
 }
