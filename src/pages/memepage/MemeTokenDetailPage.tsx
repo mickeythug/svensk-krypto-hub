@@ -554,47 +554,53 @@ const MemeTokenDetailPage = () => {
   // Desktop Layout
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-6">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(-1)} 
-          className="mb-6 h-10 px-3 bg-card/50 backdrop-blur-sm hover:bg-card border border-border/50"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
+      {/* Header - Full Width */}
+      <div className="w-full px-8 py-6 border-b border-border/20">
+        <div className="flex items-center justify-between">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate(-1)} 
+            className="h-12 px-6 bg-card/50 backdrop-blur-sm hover:bg-card border border-border/50 rounded-xl"
+          >
+            <ArrowLeft className="mr-3 h-5 w-5" />
+            <span className="text-lg font-semibold">Back to Market</span>
+          </Button>
+        </div>
         
         {/* Modern Token Header */}
-        <TokenHeader token={token} />
+        <div className="mt-8">
+          <TokenHeader token={token} />
+        </div>
+      </div>
 
-        {/* Main Content Grid - Left sidebar, Chart in center, Trading on right */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mt-12">
-          {/* Left Sidebar */}
-          <div className="xl:col-span-3">
-            <div className="sticky top-8">
-              <MemeTokenSidebar 
-                token={token}
-                volumes={volumes}
-                beMarket={beMarket}
-              />
-            </div>
+      {/* Main Content Layout - Full Width with Edge-to-Edge Sidebars */}
+      <div className="w-full flex">
+        {/* Left Sidebar - Fixed to Left Edge */}
+        <div className="w-80 flex-shrink-0 bg-card/30 backdrop-blur-sm border-r border-border/20">
+          <div className="sticky top-0 h-screen overflow-y-auto p-6">
+            <MemeTokenSidebar 
+              token={token}
+              volumes={volumes}
+              beMarket={beMarket}
+            />
           </div>
+        </div>
 
-          {/* Main Chart Area */}
-          <div className="xl:col-span-6 space-y-12">
-            {/* Chart */}
+        {/* Center Chart Area - Expanded */}
+        <div className="flex-1 min-h-screen">
+          <div className="p-8 space-y-8">
+            {/* Expanded Chart */}
             <Card className="p-8 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Price Chart
+                <h3 className="text-4xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Live Price Chart
                 </h3>
                 <div className="flex items-center gap-4">
-                  <div className="h-3 w-3 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
-                  <span className="text-lg font-medium text-muted-foreground">Live</span>
+                  <div className="h-4 w-4 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
+                  <span className="text-xl font-medium text-muted-foreground">Live Trading</span>
                 </div>
               </div>
-              <div className="h-[700px] rounded-2xl overflow-hidden border border-border/20">
+              <div className="h-[800px] rounded-3xl overflow-hidden border-2 border-border/20 shadow-inner">
                 <TradingViewChart 
                   symbol={tokenAddress || token.symbol}
                   currentPrice={token.price}
@@ -603,7 +609,7 @@ const MemeTokenDetailPage = () => {
               </div>
             </Card>
 
-            {/* Enhanced Market Stats Below Chart */}
+            {/* Enhanced Market Stats - Full Width */}
             <div className="animate-fade-in">
               <EnhancedMarketStats 
                 token={token}
@@ -612,10 +618,11 @@ const MemeTokenDetailPage = () => {
               />
             </div>
           </div>
+        </div>
 
-          {/* Right Sidebar - Advanced Trading Settings */}
-          <div className="xl:col-span-3">
-            <div className="sticky top-8">
+        {/* Right Sidebar - Fixed to Right Edge */}
+        <div className="w-96 flex-shrink-0 bg-card/30 backdrop-blur-sm border-l border-border/20">
+          <div className="sticky top-0 h-screen overflow-y-auto p-6">
             <AdvancedTradingSettings
               tradeType={tradeType}
               setTradeType={setTradeType}
@@ -650,7 +657,6 @@ const MemeTokenDetailPage = () => {
               getPriorityFee={getPriorityFee}
               getEstimatedGas={getEstimatedGas}
             />
-            </div>
           </div>
         </div>
       </div>

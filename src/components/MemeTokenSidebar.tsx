@@ -65,7 +65,7 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
   ];
 
   return (
-    <Card className="w-80 bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden">
+    <Card className="w-full bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl">
       <div className="p-6 space-y-6">
         {/* Social Links */}
         <div className="flex gap-2">

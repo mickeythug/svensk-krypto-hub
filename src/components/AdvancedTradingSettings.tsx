@@ -76,9 +76,9 @@ export const AdvancedTradingSettings = ({
   getEstimatedGas
 }: AdvancedTradingSettingsProps) => {
   const quickAmounts = tradeType === 'buy' ? [0.1, 0.5, 1, 2, 5] : [10, 25, 50, 75, 100];
-  return <div className="space-y-8 sticky top-8">
-      {/* Main Trading Card - World-Class Enhanced */}
-      <Card className="p-8 bg-gradient-to-br from-card/95 to-card/85 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
+  return <div className="space-y-8">
+      {/* Main Trading Card - World-Class Enhanced - Full Width */}
+      <Card className="w-full p-8 bg-gradient-to-br from-card/95 to-card/85 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
         <div className="flex items-center gap-4 mb-10">
           <div className="p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg">
             <Settings2 className="h-7 w-7 text-primary" />
@@ -229,16 +229,19 @@ export const AdvancedTradingSettings = ({
         </div>
       </Card>
 
-      {/* Advanced Settings Card */}
-      <Card className="p-6 bg-card/95 backdrop-blur-sm border border-border/50 shadow-lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-xl bg-orange-500/10">
-            <Zap className="h-5 w-5 text-orange-500" />
+      {/* Advanced Settings Card - Full Width */}
+      <Card className="w-full p-8 bg-gradient-to-br from-card/95 to-card/85 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-orange-500/20 to-yellow-500/20 shadow-lg">
+            <Zap className="h-7 w-7 text-orange-500" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Advanced Settings</h3>
-            <p className="text-sm text-muted-foreground">Fine-tune your trading parameters</p>
+            <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
+              Advanced Settings
+            </h3>
+            <p className="text-lg text-muted-foreground font-medium">Fine-tune your trading parameters</p>
           </div>
+          <div className="ml-auto h-4 w-4 rounded-full bg-orange-500 animate-pulse shadow-lg shadow-orange-500/50"></div>
         </div>
 
         {/* Slippage Tolerance */}

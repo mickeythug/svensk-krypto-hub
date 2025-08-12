@@ -62,7 +62,7 @@ export const EnhancedMarketStats = ({ token, volumes, beMarket }: EnhancedMarket
   ];
 
   return (
-    <Card className="p-8 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500">
+    <Card className="w-full p-10 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           Market Statistics
