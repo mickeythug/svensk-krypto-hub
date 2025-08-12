@@ -165,16 +165,16 @@ const hasTelegram = (socials as any)?.telegram;
         <Card className="bg-background/70 border-2 border-border/70 lg:col-span-3">
           <div className="p-6">
             <div className="grid grid-cols-3 gap-6">
-              {marketData.map((item, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
-                    {item.label}
-                  </div>
-                  <div className="text-2xl font-black text-foreground">
-                    {item.value}
-                  </div>
-                </div>
-              ))}
+{marketCards.map((item, index) => (
+  <div key={index} className="text-center">
+    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
+      {item.label}
+    </div>
+    <div className="text-2xl font-black text-foreground">
+      {item.value}
+    </div>
+  </div>
+))}
             </div>
           </div>
         </Card>
