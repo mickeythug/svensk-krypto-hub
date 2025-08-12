@@ -1,6 +1,7 @@
 // Jupiter Limit Order create proxy + order history logging
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,30 +36,37 @@ serve(async (req) => {
     const status = resp.status;
     if (!resp.ok) return new Response(JSON.stringify({ ok: false, status, error: data?.error || 'Create failed', details: data }), { status, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
 
-    // Best-effort history log
+    // Best-effort history log (only if maker address belongs to authenticated user)
     try {
-      const mk = Number(effectiveParams?.makingAmount ?? makingAmount ?? 0);
-      const tk = Number(effectiveParams?.takingAmount ?? takingAmount ?? 0);
-      const side = inputMint === SOL_MINT && outputMint !== SOL_MINT ? 'buy' : (outputMint === SOL_MINT ? 'sell' : null);
-      const price_quote = (mk > 0 && tk > 0)
-        ? (inputMint === SOL_MINT ? (mk / tk) : (outputMint === SOL_MINT ? (tk / mk) : (mk / tk)))
-        : null;
-      const supabase = getClient();
-      await supabase.from('order_history').insert({
-        user_address: maker,
-        chain: 'SOL',
-        symbol: symbol || null,
-        base_mint: side === 'buy' ? outputMint : inputMint,
-        quote_mint: side === 'buy' ? inputMint : outputMint,
-        side: side as any,
-        event_type: 'limit_create',
-        source: 'JUP',
-        base_amount: side === 'buy' ? tk : mk,
-        quote_amount: side === 'buy' ? mk : tk,
-        price_quote,
-        tx_hash: data?.txSignature || null,
-        meta: { jupiter: data, params: effectiveParams },
-      });
+      const url = Deno.env.get('SUPABASE_URL')!;
+      const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const supabaseAuth = createClient(url, anon, { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } });
+      const { data: authData } = await supabaseAuth.auth.getUser();
+      if (authData?.user) {
+        const { data: owned } = await supabaseAuth
+          .from('user_wallets')
+          .select('id')
+          .eq('wallet_address', maker)
+          .maybeSingle();
+        if (owned) {
+          const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
+          await admin.from('order_history').insert({
+            user_address: maker,
+            chain: 'SOL',
+            symbol: symbol || null,
+            base_mint: side === 'buy' ? outputMint : inputMint,
+            quote_mint: side === 'buy' ? inputMint : outputMint,
+            side: side as any,
+            event_type: 'limit_create',
+            source: 'JUP',
+            base_amount: side === 'buy' ? tk : mk,
+            quote_amount: side === 'buy' ? mk : tk,
+            price_quote,
+            tx_hash: data?.txSignature || null,
+            meta: { jupiter: data, params: effectiveParams },
+          });
+        }
+      }
     } catch (e) {
       console.warn('order_history log failed (create)', e);
     }

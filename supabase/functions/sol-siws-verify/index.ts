@@ -1,10 +1,10 @@
 // Supabase Edge Function: sol-siws-verify
-// Purpose: Verify Phantom SIWS signature (public, CORS enabled)
-// Notes: Time-bound verification (5min). No DB persistence.
+// Purpose: Verify Phantom SIWS signature and record a short-lived proof for the authenticated user
 
 import bs58 from 'npm:bs58';
 import * as ed from 'npm:@noble/ed25519';
 import { sha512 } from 'npm:@noble/hashes/sha512';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // Configure noble-ed25519 to use a sync sha512 implementation (required in Deno edge runtime)
 function concatBytes(...arrays: Uint8Array[]) {
@@ -53,6 +53,10 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
   try {
+    if (req.method !== 'POST') {
+      return new Response(JSON.stringify({ ok: false, error: 'Use POST' }), { status: 405, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
     const body = (await req.json()) as VerifyBody;
     const { address, signatureHex, message, nonce, issuedAt } = body;
 
@@ -63,7 +67,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Basic validation against replay
     if (!withinFiveMinutes(issuedAt)) {
       return new Response(JSON.stringify({ ok: false, error: 'Expired message' }), {
         status: 400,
@@ -71,7 +74,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Ensure the message contains expected fields
     if (!message.includes(address) || !message.includes(nonce)) {
       return new Response(JSON.stringify({ ok: false, error: 'Invalid message' }), {
         status: 400,
@@ -84,6 +86,19 @@ Deno.serve(async (req) => {
     const msgBytes = new TextEncoder().encode(message);
 
     const ok = await ed.verify(sigBytes, msgBytes, pubkeyBytes);
+
+    // If authenticated and ok, record a short-lived proof
+    const url = Deno.env.get('SUPABASE_URL')!;
+    const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(url, anon, { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } });
+    const { data: authData } = await supabase.auth.getUser();
+    if (ok && authData?.user) {
+      await supabase.from('wallet_verification_proofs').insert({
+        user_id: authData.user.id,
+        address,
+        chain: 'SOL',
+      });
+    }
 
     return new Response(JSON.stringify({ ok, address }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders },

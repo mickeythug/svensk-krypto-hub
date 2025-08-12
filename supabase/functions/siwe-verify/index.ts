@@ -2,6 +2,7 @@ import "https://deno.land/x/xhr@0.3.0/mod.ts";
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import * as secp from "npm:@noble/secp256k1";
 import { keccak256 } from "npm:ethereum-cryptography/keccak";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,7 +31,6 @@ function personalHash(message: string): Uint8Array {
 }
 
 function pubkeyToAddress(pubKey: Uint8Array): string {
-  // remove 0x04 prefix if uncompressed
   const uncompressed = pubKey.length === 65 && pubKey[0] === 0x04 ? pubKey.slice(1) : pubKey;
   const hash = keccak256(uncompressed);
   const addr = hash.slice(-20);
@@ -55,7 +55,7 @@ serve(async (req) => {
     }
     const sig64 = sig.slice(0, 64);
     let v = sig[64];
-    if (v >= 27) v -= 27; // normalize 27/28 to 0/1
+    if (v >= 27) v -= 27;
     if (v !== 0 && v !== 1) {
       return new Response(JSON.stringify({ ok: false, error: "Invalid recovery id" }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
@@ -67,6 +67,19 @@ serve(async (req) => {
     const recovered = pubkeyToAddress(pub).toLowerCase();
     const claimed = String(address).toLowerCase();
     const ok = recovered === claimed;
+
+    // If authenticated and verified, insert a short-lived proof
+    const url = Deno.env.get('SUPABASE_URL')!;
+    const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(url, anon, { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } });
+    const { data: authData } = await supabase.auth.getUser();
+    if (ok && authData?.user) {
+      await supabase.from('wallet_verification_proofs').insert({
+        user_id: authData.user.id,
+        address,
+        chain: 'EVM',
+      });
+    }
 
     return new Response(JSON.stringify({ ok, recovered }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {

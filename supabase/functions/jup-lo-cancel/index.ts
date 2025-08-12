@@ -1,6 +1,7 @@
 // Jupiter Limit Order cancel proxy + order history logging
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -29,17 +30,30 @@ serve(async (req) => {
     const data = await resp.json();
     if (!resp.ok) return new Response(JSON.stringify({ ok: false, status: resp.status, error: data?.error || 'Cancel failed', details: data }), { status: resp.status, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
 
-    // Log cancel event best-effort
+    // Log cancel event best-effort (only if maker belongs to authenticated user)
     try {
-      const supabase = getClient();
-      await supabase.from('order_history').insert({
-        user_address: maker,
-        chain: 'SOL',
-        symbol: symbol || null,
-        event_type: 'limit_cancel',
-        source: 'JUP',
-        meta: { jupiter: data, order },
-      });
+      const url = Deno.env.get('SUPABASE_URL')!;
+      const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const supabaseAuth = createClient(url, anon, { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } });
+      const { data: authData } = await supabaseAuth.auth.getUser();
+      if (authData?.user) {
+        const { data: owned } = await supabaseAuth
+          .from('user_wallets')
+          .select('id')
+          .eq('wallet_address', maker)
+          .maybeSingle();
+        if (owned) {
+          const admin = getClient();
+          await admin.from('order_history').insert({
+            user_address: maker,
+            chain: 'SOL',
+            symbol: symbol || null,
+            event_type: 'limit_cancel',
+            source: 'JUP',
+            meta: { jupiter: data, order },
+          });
+        }
+      }
     } catch (e) {
       console.warn('order_history log failed (cancel)', e);
     }

@@ -81,7 +81,6 @@ serve(async (req) => {
           user_id: authData.user.id,
           wallet_address: String(walletAddress),
           pump_api_key_encrypted: encryptedHex,
-          pump_api_key: null,
           acknowledged_backup: false,
         },
         { onConflict: "user_id" }

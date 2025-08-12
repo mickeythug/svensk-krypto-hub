@@ -92,7 +92,7 @@ serve(async (req) => {
     // Read wallet row with admin to bypass column grants
     const { data: walletRow, error: wErr } = await supabaseAdmin
       .from("trading_wallets")
-      .select("pump_api_key_encrypted, pump_api_key, wallet_address, acknowledged_backup")
+      .select("pump_api_key_encrypted, wallet_address, acknowledged_backup")
       .eq("user_id", authData.user.id)
       .maybeSingle();
 
@@ -110,18 +110,10 @@ serve(async (req) => {
       });
     }
 
-    // Decrypt (and lazy-migrate if needed)
+    // Decrypt
     let pumpApiKey: string | null = null;
     if (walletRow.pump_api_key_encrypted) {
       pumpApiKey = await decryptApiKey(String(walletRow.pump_api_key_encrypted));
-    } else if (walletRow.pump_api_key) {
-      // Migrate plaintext → encrypted
-      const encHex = await encryptApiKey(String(walletRow.pump_api_key));
-      await supabaseAdmin
-        .from("trading_wallets")
-        .update({ pump_api_key_encrypted: encHex, pump_api_key: null })
-        .eq("user_id", authData.user.id);
-      pumpApiKey = String(walletRow.pump_api_key);
     }
 
     if (!pumpApiKey) {

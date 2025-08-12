@@ -1,4 +1,4 @@
-// Order History Logger - Inserts trade/order events into public.order_history using service role
+// Order History Logger - Inserts trade/order events into public.order_history securely
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -7,7 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Types for clarity (not enforced)
 type LogEvent = {
   user_address: string;
   chain?: string; // 'SOL' | 'EVM'
@@ -26,12 +25,6 @@ type LogEvent = {
   meta?: Record<string, unknown>;
 };
 
-function getClient() {
-  const url = Deno.env.get('SUPABASE_URL')!;
-  const key = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  return createClient(url, key, { auth: { persistSession: false } });
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
@@ -39,10 +32,19 @@ serve(async (req) => {
       return new Response(JSON.stringify({ ok: false, error: 'Use POST' }), { status: 405, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
     }
 
+    // Authenticate caller
+    const url = Deno.env.get('SUPABASE_URL')!;
+    const anon = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseAuth = createClient(url, anon, { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } });
+    const { data: authData, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !authData?.user) {
+      return new Response(JSON.stringify({ ok: false, error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
     const body = (await req.json()) as Partial<LogEvent> | { events: LogEvent[] };
     const events = Array.isArray((body as any)?.events) ? (body as any).events as LogEvent[] : [body as LogEvent];
 
-    // Basic validation and normalization
+    // Validate and normalize rows
     const rows = events.map((e) => {
       if (!e?.user_address || !e?.event_type) throw new Error('Missing user_address or event_type');
       return {
@@ -64,8 +66,17 @@ serve(async (req) => {
       };
     });
 
-    const supabase = getClient();
-    const { data, error } = await supabase.from('order_history').insert(rows).select('id, created_at');
+    // Ensure all addresses belong to the authenticated user
+    const { data: wallets } = await supabaseAuth.from('user_wallets').select('wallet_address, chain');
+    const owned = new Set((wallets || []).map((w: any) => `${(w.chain || 'SOL').toUpperCase()}:${String(w.wallet_address).toLowerCase()}`));
+    const allOwned = rows.every((r) => owned.has(`${(r.chain || 'SOL').toUpperCase()}:${String(r.user_address).toLowerCase()}`));
+    if (!allOwned) {
+      return new Response(JSON.stringify({ ok: false, error: 'Forbidden: address not owned by user' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    // Insert using service role (RLS on order_history restricts user inserts)
+    const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
+    const { data, error } = await admin.from('order_history').insert(rows).select('id, created_at');
     if (error) {
       console.error('order-history-log insert error', error);
       return new Response(JSON.stringify({ ok: false, error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
