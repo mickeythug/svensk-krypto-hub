@@ -37,6 +37,10 @@ export const TransactionsTable = ({ tokenAddress, tokenSymbol }: TransactionsTab
         body: { action: 'transactions', address: tokenAddress, params: { offset: 0, limit: 50 } },
       });
       if (error) throw error;
+      if (data?.ok === false) {
+        // rate-limited or not found → keep previous data
+        return;
+      }
       const items: BirdeyeTxItem[] = (data?.data?.items ?? data?.data ?? []).filter(Boolean);
       items.sort((a, b) => (b.blockUnixTime || 0) - (a.blockUnixTime || 0));
       setTransactions(items);

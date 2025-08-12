@@ -62,12 +62,18 @@ export function useCompleteMarketData(address?: string) {
         const [dtRes, beOverviewRes, beTradesRes] = await Promise.all([
           supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address } }),
           supabase.functions.invoke('birdeye-proxy', { body: { action: 'token_overview', address } }),
-          supabase.functions.invoke('birdeye-proxy', { body: { action: 'token_trades_24h', address } }),
+          supabase.functions.invoke('birdeye-proxy', { body: { action: 'trade-data', address } }),
         ]);
 
+        const extract = (res: any) => {
+          const payload = (res as any)?.data;
+          if (payload && payload.ok === false) return null;
+          return payload?.data?.data ?? payload?.data ?? payload;
+        };
         const tokenResponse = (dtRes as any)?.data;
-        const beOverview = (beOverviewRes as any)?.data?.data ?? (beOverviewRes as any)?.data;
-        const beTrades = (beTradesRes as any)?.data?.items ?? (beTradesRes as any)?.data?.data?.items ?? (beTradesRes as any)?.data;
+        const beOverview = extract(beOverviewRes);
+        const beTradesRaw = extract(beTradesRes);
+        const beTrades = beTradesRaw?.items ?? beTradesRaw ?? {};
 
         const meta = tokenResponse?.meta?.data ?? tokenResponse?.meta ?? {};
         const price = tokenResponse?.price?.data ?? tokenResponse?.price ?? {};
