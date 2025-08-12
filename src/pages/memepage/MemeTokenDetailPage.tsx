@@ -185,23 +185,23 @@ const MemeTokenDetailPage = () => {
 
   // Enhanced statistics for desktop
   const getEnhancedStats = () => ({
-    volume24h: '$2.4M',
-    volume7d: '$18.7M',
-    marketCapRank: '#42',
+    volume24h: token.volume24h ? `$${(token.volume24h).toLocaleString()}` : '—',
+    volume7d: '—',
+    marketCapRank: '—',
     holders: token.holders,
-    maxSupply: '1,000,000,000',
-    circulatingSupply: '856,420,000',
+    maxSupply: token?.description ? undefined : '—',
+    circulatingSupply: token?.description ? undefined : '—',
     ath: formatPrice(token.price * 2.5),
     atl: formatPrice(token.price * 0.1),
-    athDate: '2024-03-15',
-    atlDate: '2024-01-08',
-    priceChange1h: '+2.34%',
-    priceChange7d: '+15.67%',
-    priceChange30d: '+89.12%',
-    volatility: 'Hög',
-    liquidityScore: '8.5/10',
-    riskScore: 'Medel-Hög',
-    sentiment: 'Positiv'
+    athDate: '—',
+    atlDate: '—',
+    priceChange1h: '—',
+    priceChange7d: '—',
+    priceChange30d: '—',
+    volatility: '—',
+    liquidityScore: '—',
+    riskScore: '—',
+    sentiment: '—'
   });
   const stats = getEnhancedStats();
   if (isMobile) {

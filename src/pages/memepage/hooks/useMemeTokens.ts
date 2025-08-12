@@ -110,12 +110,20 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         addresses = addresses.slice(0, Math.max(limit * 2, 60));
 
         // 2) Fetch full details in batch
-        const { data: batch, error: batchErr } = await supabase.functions.invoke('dextools-proxy', {
-          body: { action: 'tokenBatch', addresses },
-        });
-        if (batchErr) throw batchErr;
-        const items: any[] = batch?.results || [];
-
+        let items: any[] = [];
+        if (category === 'trending') {
+          const { data: batch, error: batchErr } = await supabase.functions.invoke('dextools-proxy', {
+            body: { action: 'trendingCombinedBatch', limit: Math.max(limit * 2, 60) },
+          });
+          if (batchErr) throw batchErr;
+          items = batch?.results || [];
+        } else {
+          const { data: batch, error: batchErr } = await supabase.functions.invoke('dextools-proxy', {
+            body: { action: 'tokenBatch', addresses },
+          });
+          if (batchErr) throw batchErr;
+          items = batch?.results || [];
+        }
         // 3) Map, filter and prepare tokens
         let mapped: MemeToken[] = items
           .filter((x: any) => {

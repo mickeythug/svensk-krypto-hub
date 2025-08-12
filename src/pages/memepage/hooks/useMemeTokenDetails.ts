@@ -15,7 +15,7 @@ export interface MemeTokenDetails {
   circulatingSupply?: number;
   totalSupply?: number;
   socials?: Record<string, string>;
-  pool?: { volume24h?: number } | null;
+  pool?: { volume24h?: number; liquidity?: number } | null;
   raw?: any;
 }
 
@@ -46,6 +46,7 @@ export function useMemeTokenDetails(address?: string) {
         const price = data?.price?.data ?? data?.price ?? {};
         const info = data?.info?.data ?? data?.info ?? {};
         const pool = data?.poolPrice?.data ?? data?.poolPrice ?? null;
+        const poolLiquidity = data?.poolLiquidity?.data ?? data?.poolLiquidity ?? null;
 
         const details: MemeTokenDetails = {
           address,
@@ -60,7 +61,7 @@ export function useMemeTokenDetails(address?: string) {
           circulatingSupply: typeof info?.circulatingSupply === 'number' ? info.circulatingSupply : undefined,
           totalSupply: typeof info?.totalSupply === 'number' ? info.totalSupply : undefined,
           socials: meta?.socialInfo || {},
-          pool: pool ? { volume24h: pool.volume24h } : null,
+          pool: pool ? { volume24h: pool.volume24h, liquidity: poolLiquidity?.liquidity } : null,
           raw: data,
         };
 

@@ -1,6 +1,16 @@
 // Supabase Edge Function: dextools-proxy
 // Proxies DEXTools API v2 for Solana using project secret, aggregates trending, and adds CORS
 
+    const memCache = new Map<string, { ts: number; data: any }>();
+    const CACHE_MS = 30_000;
+    const fetchCached = async (path: string) => {
+      const now = Date.now();
+      const hit = memCache.get(path);
+      if (hit && now - hit.ts < CACHE_MS) return hit.data;
+      const data = await fetchJSON(path);
+      memCache.set(path, { ts: now, data });
+      return data;
+    };
 
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
