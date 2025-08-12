@@ -144,17 +144,19 @@ Deno.serve(async (req) => {
 
           // Try to get a primary pool and its price/volume
           let poolPrice: any = null;
+          let poolLiquidity: any = null;
           try {
             const poolsResp = await fetchJSON(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
             const firstPool = poolsResp?.results?.[0]?.address;
             if (firstPool) {
               poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+              poolLiquidity = await fetchJSON(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
             }
           } catch (_) {
             // ignore pool errors
           }
 
-          return json({ meta, price, info, audit, poolPrice });
+          return json({ meta, price, info, audit, poolPrice, poolLiquidity });
         } catch (e: any) {
           console.error('dextools-proxy tokenFull fallback (nulls)', e?.message ?? e);
           return json({ meta: null, price: null, info: null, audit: null, poolPrice: null });
@@ -184,14 +186,16 @@ Deno.serve(async (req) => {
                   fetchJSON(`/v2/token/solana/${addr}/audit`).catch(() => null),
                 ]);
                 let poolPrice: any = null;
+                let poolLiquidity: any = null;
                 try {
                   const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
                   const firstPool = poolsResp?.results?.[0]?.address;
                   if (firstPool) {
                     poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+                    poolLiquidity = await fetchJSON(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
                   }
                 } catch (_) {}
-                return { ok: true, address: addr, meta, price, info, audit, poolPrice };
+                return { ok: true, address: addr, meta, price, info, audit, poolPrice, poolLiquidity };
               } catch (e: any) {
                 return { ok: false, address: addr, error: e?.message ?? String(e) };
               }
@@ -267,14 +271,16 @@ Deno.serve(async (req) => {
                 fetchJSON(`/v2/token/solana/${addr}/audit`).catch(() => null),
               ]);
               let poolPrice: any = null;
+              let poolLiquidity: any = null;
               try {
                 const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
                 const firstPool = poolsResp?.results?.[0]?.address;
                 if (firstPool) {
                   poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+                  poolLiquidity = await fetchJSON(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
                 }
               } catch (_) {}
-              return { ok: true, address: addr, meta, price, info, audit, poolPrice };
+              return { ok: true, address: addr, meta, price, info, audit, poolPrice, poolLiquidity };
             } catch (e: any) {
               return { ok: false, address: addr, error: e?.message ?? String(e) };
             }
