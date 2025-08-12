@@ -37,13 +37,18 @@ export const TransactionsTable = ({ tokenAddress, tokenSymbol }: TransactionsTab
         body: { action: 'transactions', address: tokenAddress, params: { offset: 0, limit: 50 } },
       });
       if (error) throw error;
+      
+      // Check if response is from cache or if API returned error
       if (data?.ok === false) {
-        // rate-limited or not found → keep previous data
-        return;
+        console.log('Birdeye transactions unavailable:', data?.status, data?.data?.message);
+        return; // Keep previous data if API is unavailable
       }
+      
       const items: BirdeyeTxItem[] = (data?.data?.items ?? data?.data ?? []).filter(Boolean);
-      items.sort((a, b) => (b.blockUnixTime || 0) - (a.blockUnixTime || 0));
-      setTransactions(items);
+      if (items.length > 0) {
+        items.sort((a, b) => (b.blockUnixTime || 0) - (a.blockUnixTime || 0));
+        setTransactions(items);
+      }
     } catch (e) {
       // swallow
     } finally {

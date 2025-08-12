@@ -59,26 +59,17 @@ export function useCompleteMarketData(address?: string) {
 
     const fetchAll = async () => {
       try {
-        const [dtRes, beOverviewRes, beTradesRes] = await Promise.all([
-          supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address } }),
-          supabase.functions.invoke('birdeye-proxy', { body: { action: 'token_overview', address } }),
-          supabase.functions.invoke('birdeye-proxy', { body: { action: 'trade-data', address } }),
-        ]);
+        // Only use DEXTools for comprehensive data since Birdeye free tier is limited
+        const dtRes = await supabase.functions.invoke('dextools-proxy', { 
+          body: { action: 'tokenFull', address } 
+        });
 
-        const extract = (res: any) => {
-          const payload = (res as any)?.data;
-          if (payload && payload.ok === false) return null;
-          return payload?.data?.data ?? payload?.data ?? payload;
-        };
         const tokenResponse = (dtRes as any)?.data;
-        const beOverview = extract(beOverviewRes);
-        const beTradesRaw = extract(beTradesRes);
-        const beTrades = beTradesRaw?.items ?? beTradesRaw ?? {};
-
         const meta = tokenResponse?.meta?.data ?? tokenResponse?.meta ?? {};
         const price = tokenResponse?.price?.data ?? tokenResponse?.price ?? {};
         const info = tokenResponse?.info?.data ?? tokenResponse?.info ?? {};
         const poolLiquidity = tokenResponse?.poolLiquidity?.data ?? tokenResponse?.poolLiquidity ?? null;
+        const poolPrice = tokenResponse?.poolPrice?.data ?? tokenResponse?.poolPrice ?? null;
 
         const parseNum = (val: any) => {
           if (typeof val === 'number') return val;
@@ -90,48 +81,43 @@ export function useCompleteMarketData(address?: string) {
           return undefined;
         };
 
-        const h24 = beTrades?.h24 || {};
-        const h1 = beTrades?.h1 || {};
-        const h6 = beTrades?.h6 || {};
-        const m5 = beTrades?.m5 || {};
-
         const combined: CompleteMarketData = {
           price: {
-            usd: beOverview?.price ?? beOverview?.value ?? parseNum(price?.price),
+            usd: parseNum(price?.price),
             sol: parseNum(price?.priceChain),
-            logoURI: meta?.logo || beOverview?.logoURI,
+            logoURI: meta?.logo,
           },
           market: {
-            marketCap: beOverview?.realMc ?? beOverview?.marketCap ?? parseNum(info?.mcap),
-            fdv: beOverview?.fdv ?? parseNum(info?.fdv),
-            liquidity: beOverview?.liquidity ?? parseNum(poolLiquidity?.liquidity),
-            supply: beOverview?.supply ?? parseNum(info?.totalSupply),
-            circulatingSupply: beOverview?.circulatingSupply ?? parseNum(info?.circulatingSupply),
+            marketCap: parseNum(info?.mcap),
+            fdv: parseNum(info?.fdv),
+            liquidity: parseNum(poolLiquidity?.liquidity),
+            supply: parseNum(info?.totalSupply),
+            circulatingSupply: parseNum(info?.circulatingSupply),
           },
           performance: {
             m5: parseNum(price?.variation5m),
             h1: parseNum(price?.variation1h),
             h6: parseNum(price?.variation6h),
-            h24: beOverview?.priceChange24h ?? parseNum(price?.variation24h),
+            h24: parseNum(price?.variation24h),
           },
           tradingActivity: {
-            txns24h: (h24?.buy || 0) + (h24?.sell || 0),
-            buys24h: h24?.buy,
-            sells24h: h24?.sell,
-            uniqueTraders24h: h24?.traders,
+            txns24h: (poolPrice?.buys24h || 0) + (poolPrice?.sells24h || 0),
+            buys24h: poolPrice?.buys24h,
+            sells24h: poolPrice?.sells24h,
+            uniqueTraders24h: undefined, // Not available in DEXTools
           },
           volume: {
-            volume24h: h24?.volume,
-            buyVolume24h: h24?.buyVolume,
-            sellVolume24h: h24?.sellVolume,
-            volume1h: h1?.volume,
-            volume6h: h6?.volume,
+            volume24h: poolPrice?.volume24h,
+            buyVolume24h: poolPrice?.buyVolume5m ? poolPrice.buyVolume5m * 288 : undefined, // Estimate 24h from 5m
+            sellVolume24h: poolPrice?.sellVolume5m ? poolPrice.sellVolume5m * 288 : undefined,
+            volume1h: poolPrice?.volume1h,
+            volume6h: poolPrice?.volume6h,
           },
           participants: {
-            holders: beOverview?.holder ?? parseNum(info?.holders),
+            holders: parseNum(info?.holders),
           },
           socials: meta?.socialInfo || {},
-          raw: { tokenResponse, beOverview, beTrades },
+          raw: { tokenResponse, poolPrice, poolLiquidity },
         };
 
         if (!mounted) return;

@@ -60,20 +60,11 @@ serve(async (req) => {
       case "market-data":
         url = `${base}/defi/v3/token/market-data?${toQuery({ address })}`;
         break;
-      case "trade-data":
-        url = `${base}/defi/v3/token/trade-data/single?${toQuery({ address })}`;
-        break;
-      case "ohlcv":
-        url = `${base}/defi/v3/ohlcv?${toQuery({ address, ...params })}`;
-        break;
       case "token_overview":
         url = `${base}/defi/token_overview?${toQuery({ address, ...params })}`;
         break;
       case "history_price":
         url = `${base}/defi/history_price?${toQuery({ address, ...params })}`;
-        break;
-      case "token_trades_24h":
-        url = `${base}/defi/token_trades_24h?${toQuery({ address, ...params })}`;
         break;
       case "transactions":
         url = `${base}/defi/txs/token?${toQuery({ address, ...params })}`;
