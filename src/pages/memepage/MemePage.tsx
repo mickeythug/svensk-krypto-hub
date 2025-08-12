@@ -51,7 +51,7 @@ const MemePage: React.FC = () => {
     document.head.appendChild(ld);
   }, []);
   return (
-    <div className="meme-page">
+    <div className="meme-page font-inter">
       <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
         {/* Animated background elements */}
         <div className="fixed inset-0 opacity-10 pointer-events-none">

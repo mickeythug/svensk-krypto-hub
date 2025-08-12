@@ -322,7 +322,7 @@ const MemeTokenDetailPage = () => {
 
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background font-inter">
         {/* Mobile Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 z-0">
@@ -553,7 +553,7 @@ const MemeTokenDetailPage = () => {
 
   // Desktop Layout
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-inter">
       {/* Header - Full Width */}
       <div className="w-full px-8 py-6 border-b border-border/20">
         <div className="flex items-center justify-between">

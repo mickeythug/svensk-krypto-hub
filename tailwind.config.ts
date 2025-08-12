@@ -88,6 +88,7 @@ export default {
 				sans: ['Orbitron', 'sans-serif'],
 				mono: ['Roboto Mono', 'monospace'],
 				orbitron: ['Orbitron', 'sans-serif'],
+				inter: ['Inter', 'system-ui', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

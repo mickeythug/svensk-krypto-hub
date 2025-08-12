@@ -55,7 +55,7 @@ const CreateTokenPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/10 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/10 relative overflow-hidden font-inter">
       {/* Animated background elements */}
       <div className="fixed inset-0 opacity-5 pointer-events-none z-0">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
