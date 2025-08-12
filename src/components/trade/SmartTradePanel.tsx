@@ -20,6 +20,9 @@ import { useErc20Balance } from '@/hooks/useErc20Balance';
 import { recordTrade } from '@/lib/tradeHistory';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
+import { usePumpTrade } from '@/hooks/usePumpTrade';
+import type { PumpTradeParams } from '@/hooks/usePumpTrade';
+import { useTradingWallet } from '@/hooks/useTradingWallet';
 
 const CHAIN_BY_ID: Record<number, any> = { 1: mainnet };
 
@@ -105,6 +108,10 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
   const { amount: usdtBal } = useErc20Balance(CHAIN_BY_ID[evmChainId], USDT_BY_CHAIN[evmChainId] as Address, evmAddress as Address);
   const { sendTransactionAsync } = useSendTransaction();
 
+  // PumpPortal trading hooks
+  const { trade: pumpTrade } = usePumpTrade();
+  const { createIfMissing: createTwIfMissing } = useTradingWallet();
+
   // Auto-detect chain from connected wallet to ensure balances show correctly
   useEffect(() => {
     if (isSolConnected) setChainMode('SOL');
@@ -170,43 +177,37 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
     try {
       setSubmitting(true);
       if (!solAddress) throw new Error('Solana wallet saknas');
-      if (!isSolToken) throw new Error('Denna token är inte tillgänglig på Solana. Välj EVM eller en Solana-token (t.ex. BONK/USDC).');
-      const inputMint = side === 'buy' ? SOL_MINT : (solTokenInfo?.mint || SOL_MINT);
-      const outputMint = side === 'buy' ? (solTokenInfo?.mint || SOL_MINT) : SOL_MINT;
-      if (!inputMint || !outputMint) throw new Error('Okänd token');
+      if (!isSolToken) throw new Error('Denna token är inte tillgänglig på Solana. Välj EVM eller en Solana‑token (t.ex. BONK/USDC).');
+      const tokenMint = solTokenInfo?.mint || SOL_MINT;
+      if (!tokenMint) throw new Error('Okänd token');
 
-      const decimals = side === 'buy' ? 9 : (solTokenInfo?.decimals || 9);
-      const amountBase = Math.floor(parseFloat(amountInput) * Math.pow(10, decimals));
-      if (!Number.isFinite(amountBase) || amountBase <= 0) throw new Error('Ogiltigt belopp');
-      if (amountBase < 1000) throw new Error('Beloppet är för litet för Jupiter');
+      const amt = parseFloat(amountInput || '0');
+      if (!Number.isFinite(amt) || amt <= 0) throw new Error('Ogiltigt belopp');
 
-      console.info('Jupiter swap params', { inputMint, outputMint, decimals, amountBase, side, symbol: symbolUpper });
+      // Säkerställ trading wallet med API‑nyckel
+      const { createIfMissing: createTwIfMissing } = useTradingWallet();
+      await createTwIfMissing();
 
-      const { data, error } = await invokeWithRetry<any>('jupiter-swap', {
-        userPublicKey: solAddress, inputMint, outputMint, amount: String(amountBase), slippageBps: slippage,
-      }, 1);
-      if (error) {
-        let detailsText = '';
-        try {
-          const ctxResp = (error as any)?.context?.response;
-          if (ctxResp && typeof ctxResp.json === 'function') {
-            const j = await ctxResp.json();
-            detailsText = j?.error ? `${j.error}${j?.details ? `: ${typeof j.details === 'string' ? j.details : JSON.stringify(j.details)}` : ''}` : '';
-          }
-        } catch {}
-        throw new Error(detailsText || (error as any)?.message || 'Okänt fel från jupiter-swap');
-      }
-      const swapTxB64 = (data as any)?.swapTransaction as string;
-      if (!swapTxB64) throw new Error('Saknar swapTransaction');
+      const isBuy = side === 'buy';
+      const params = {
+        action: isBuy ? 'buy' : 'sell',
+        mint: tokenMint,
+        amount: amt,
+        denominatedInSol: isBuy ? 'true' : 'false',
+        slippage: Math.max(0, slippage / 100),
+        priorityFee: 0.00005,
+        pool: 'auto' as const,
+        jitoOnly: 'false' as const,
+      };
 
-      const txBytes = Uint8Array.from(atob(swapTxB64), (c) => c.charCodeAt(0));
-      const vtx = VersionedTransaction.deserialize(txBytes);
-      const sig = await sendTransaction(vtx, connection);
+      const { trade: pumpTrade } = usePumpTrade();
+      const res = await pumpTrade(params);
+      const sig = (res?.result as any)?.signature || (res?.result as any)?.txSig || '';
+      if (!sig) throw new Error('Ingen transaktionssignatur returnerades');
       const explorer = `https://solscan.io/tx/${sig}`;
-      // Approximate base amount (token) from SOL spent
-      const solSpent = parseFloat(amountInput || '0');
-      const baseAmt = side === 'buy' && currentPrice > 0 ? (solSpent * (solUsd || 0)) / currentPrice : parseFloat(amountInput || '0');
-      const priceQuote = side === 'buy' && baseAmt > 0 ? solSpent / baseAmt : (baseAmt > 0 ? (solSpent * (solUsd || 0)) / (baseAmt * (solUsd || 0)) : null);
+
+      // Grov uppskattning av basbelopp för historik
+      const baseAmt = isBuy ? (amt * (solUsd || 0)) / Math.max(currentPrice, 1e-9) : amt;
       recordTrade(solAddress || 'sol', {
         chain: 'SOL',
         symbol: symbolUpper,
@@ -216,24 +217,6 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
         txHash: sig,
         address: solAddress,
       });
-      // Persist to Supabase history
-      try {
-        await supabase.functions.invoke('order-history-log', {
-          body: {
-            user_address: solAddress,
-            chain: 'SOL',
-            symbol: symbolUpper,
-            side,
-            event_type: 'market_trade',
-            source: 'JUP',
-            base_amount: baseAmt,
-            quote_amount: solSpent,
-            price_quote: priceQuote,
-            price_usd: currentPrice,
-            tx_hash: sig,
-          }
-        });
-      } catch {}
       toast({ title: 'Order skickad', description: (<a href={explorer} target="_blank" rel="noreferrer" className="underline">Visa på Solscan</a>) });
       setAmountInput('');
     } catch (e: any) {

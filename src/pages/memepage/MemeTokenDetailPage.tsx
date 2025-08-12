@@ -17,6 +17,9 @@ import JupiterSwapWidget from '@/components/web3/JupiterSwapWidget';
 import TradingViewMobileChart from '@/components/mobile/TradingViewMobileChart';
 import TradingViewChart from '@/components/TradingViewChart';
 import { useToast } from '@/hooks/use-toast';
+import type { PumpTradeParams } from '@/hooks/usePumpTrade';
+import { usePumpTrade } from '@/hooks/usePumpTrade';
+import { useTradingWallet } from '@/hooks/useTradingWallet';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -126,10 +129,6 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
     setSelectedAmount(null);
   }, [tokenBalance]);
   
-  // PumpPortal trading backend
-  import type { PumpTradeParams } from '@/hooks/usePumpTrade';
-  import { usePumpTrade } from '@/hooks/usePumpTrade';
-  import { useTradingWallet } from '@/hooks/useTradingWallet';
   const { trade, loading: tradeLoading } = usePumpTrade();
   const { createIfMissing } = useTradingWallet();
   
