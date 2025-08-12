@@ -125,31 +125,55 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
     setCustomAmount(amount.toString());
     setSelectedAmount(null);
   }, [tokenBalance]);
+  
+  // PumpPortal trading backend
+  import type { PumpTradeParams } from '@/hooks/usePumpTrade';
+  import { usePumpTrade } from '@/hooks/usePumpTrade';
+  import { useTradingWallet } from '@/hooks/useTradingWallet';
+  const { trade, loading: tradeLoading } = usePumpTrade();
+  const { createIfMissing } = useTradingWallet();
+  
   const handleTrade = useCallback(async () => {
     if (!token) return;
     setIsTrading(true);
     try {
-      // Simulate trading delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      const amount = selectedAmount || parseFloat(customAmount) || 0;
-      console.log(`${tradeType.toUpperCase()} ${amount} ${tradeType === 'buy' ? 'SOL' : token.symbol}`, {
-        orderType,
-        slippage: autoSlippage ? 'auto' : slippage,
-        priority,
-        mevProtection,
-        limitPrice: orderType === 'limit' ? limitPrice : null,
-        stopPrice: orderType === 'stop' ? stopPrice : null
-      });
+      // Ensure trading wallet exists (saved with API key)
+      await createIfMissing();
 
-      // Reset form after successful trade
+      const isBuy = tradeType === 'buy';
+      const amountNum = (selectedAmount || parseFloat(customAmount) || 0);
+      if (!Number.isFinite(amountNum) || amountNum <= 0) {
+        throw new Error('Ogiltigt belopp');
+      }
+
+      // Map UI -> PumpPortal params
+      const prioMap: Record<typeof priority, number> = { low: 0.0001, medium: 0.0005, high: 0.001 } as const;
+      const prio = prioMap[priority];
+      const slip = autoSlippage ? 10 : Math.max(0, Number(slippage) || 10);
+
+      const params: PumpTradeParams = {
+        action: isBuy ? 'buy' : 'sell',
+        mint: tokenAddress,
+        amount: amountNum,
+        denominatedInSol: isBuy ? 'true' : 'false',
+        slippage: slip,
+        priorityFee: prio,
+        pool: 'auto',
+        jitoOnly: mevProtection ? 'true' : 'false',
+      };
+
+      const res = await trade(params);
+      if (res?.status !== 200) throw new Error('Trade misslyckades');
+
+      // Reset UI on success
       setCustomAmount('');
       setSelectedAmount(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Trade failed:', error);
     } finally {
       setIsTrading(false);
     }
-  }, [tradeType, selectedAmount, customAmount, orderType, slippage, autoSlippage, priority, mevProtection, limitPrice, stopPrice, token]);
+  }, [token, tradeType, selectedAmount, customAmount, priority, autoSlippage, slippage, mevProtection, tokenAddress, createIfMissing, trade]);
   const getPriorityFee = useCallback(() => {
     switch (priority) {
       case 'low':
