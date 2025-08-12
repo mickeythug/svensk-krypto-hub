@@ -50,7 +50,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30, page?:
     let mounted = true;
     setLoading(true);
     setError(null);
-    console.log('[useMemeTokens] start', { category, limit });
+    console.log('[useMemeTokens] start', { category, limit, page });
 
     const cacheKey = `memeTokens:${category}:v2${pageKey}`;
 
@@ -141,115 +141,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30, page?:
         // 2) Legacy fallback is disabled to reduce rate limits and avoid 502s.
         // Preserve existing tokens on failure.
         return;
-        const { data: batch, error: batchErr } = await supabase.functions.invoke('dexscreener-proxy', {
-          body: { action: 'tokenBatch', addresses }
-        });
-        if (batchErr) throw batchErr;
-        const items: any[] = batch?.results || [];
-        if (!Array.isArray(items) || items.length === 0) {
-          console.warn('[useMemeTokens] tokenBatch returned empty; skip override and keep cached tokens');
-          return;
-        }
-        // 3) Map, filter and prepare tokens
-        let mapped: MemeToken[] = items
-          .filter((x: any) => {
-            const metaD = (x?.meta?.data ?? x?.meta) as any;
-            return x?.ok && metaD?.address;
-          })
-          .map((x: any, idx: number) => {
-            const metaD = (x?.meta?.data ?? x?.meta) as any || {};
-            const priceD = (x?.price?.data ?? x?.price) as any || {};
-            const infoD = (x?.info?.data ?? x?.info) as any || {};
-            const poolD = (x?.poolPrice?.data ?? x?.poolPrice) as any || {};
 
-            const toNum = (v: any): number => {
-              if (typeof v === 'number') return v;
-              if (typeof v === 'string') {
-                const n = Number(v.replace(/[,\s]/g, ''));
-                return isNaN(n) ? 0 : n;
-              }
-              return 0;
-            };
-
-            const marketCap = toNum(infoD.mcap);
-            const holders = toNum(infoD.holders);
-            const volume24h = toNum(poolD.volume24h);
-
-            return {
-              id: metaD.address,
-              symbol: (metaD.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
-              name: metaD.name || metaD.symbol || 'Token',
-              image: metaD.logo || '/placeholder.svg',
-              price: toNum(priceD.price),
-              change24h: toNum(priceD.variation24h),
-              volume24h,
-              marketCap,
-              holders,
-              views: '—',
-              emoji: undefined,
-              tags: [category],
-              isHot: category === 'trending' ? idx < 10 : false,
-              description: metaD.description,
-            } as MemeToken;
-          });
-
-        if (category === 'potential') {
-          // nyaste med minst 40k marketcap (vi visar ändå alla, men markerar under gränsen sist)
-          mapped = mapped.sort((a,b) => Number(b.marketCap>=40000) - Number(a.marketCap>=40000));
-        }
-
-        // Only take up to limit for initial render
-        mapped = mapped.slice(0, limit);
-
-        // 4) Preload all logos before rendering
-        await Promise.all(mapped.map((t) => preloadImage(t.image)));
-
-        if (!mounted) return;
-        // Update cache (fresh for 2 minutes)
-        setCache(cacheKey, mapped, { ttlMs: 2 * 60 * 1000 });
-        setTokens(mapped);
-
-        // 5) Enrich missing data via DEXTools tokenFull for gaps (holders/volume/mcap)
-        const stillNeedsBase = mapped.filter(t => !(t.marketCap > 0 && t.holders > 0 && t.volume24h > 0));
-        if (stillNeedsBase.length) {
-          try {
-            const concurrency = 3;
-            const toNum = (v: any): number => {
-              if (typeof v === 'number') return v;
-              if (typeof v === 'string') { const n = Number(v.replace(/[\,\s]/g, '')); return isNaN(n) ? 0 : n; }
-              return 0;
-            };
-            const chunks: typeof stillNeedsBase[] = [];
-            for (let i = 0; i < stillNeedsBase.length; i += concurrency) chunks.push(stillNeedsBase.slice(i, i + concurrency));
-            for (const grp of chunks) {
-              const res = await Promise.all(grp.map(async (t) => {
-                try {
-                  const { data: full } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'tokenFull', address: t.id } });
-                  const infoD = (full?.info?.data ?? full?.info) as any || {};
-                  const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
-                  return {
-                    id: t.id,
-                    marketCap: toNum(infoD.mcap),
-                    holders: toNum(infoD.holders),
-                    volume24h: toNum(poolD.volume24h)
-                  };
-                } catch { return { id: t.id }; }
-              }));
-              if (!mounted) break;
-              setTokens(prev => prev.map(p => {
-                const u = res.find(r => r.id === p.id);
-                if (!u) return p;
-                return {
-                  ...p,
-                  marketCap: u.marketCap ?? p.marketCap,
-                  holders: u.holders ?? p.holders,
-                  volume24h: u.volume24h ?? p.volume24h,
-                };
-              }));
-              await new Promise(r => setTimeout(r, 350));
-            }
-          } catch (_) {}
-        }
       } catch (e: any) {
         // On error, try centralized cache, then local stale cache
         try {
@@ -293,15 +185,15 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30, page?:
     return () => {
       mounted = false;
     };
-  }, [category, limit]);
+  }, [category, limit, page]);
 
   // Persist the latest tokens to localStorage so refresh/navigation is instant
   useEffect(() => {
-    const cacheKey = `memeTokens:${category}:v2`;
+    const cacheKey = `memeTokens:${category}:v2${pageKey}`;
     if (tokens && tokens.length) {
       setCache(cacheKey, tokens, { ttlMs: 2 * 60 * 1000 });
     }
-  }, [category, tokens]);
+  }, [category, tokens, page]);
 
   // Background monitor: keep enriching tokens that still miss data (no filtering)
   const enrichAttempts = useRef<Record<string, number>>({});
@@ -338,5 +230,5 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30, page?:
   // Future: could poll DexScreener lists periodically if needed
   const sorted = useMemo(() => tokens, [tokens]);
   
-  return { tokens: sorted, loading, error };
+  return { tokens: sorted, loading, error, hasMore };
 };

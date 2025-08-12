@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import OptimizedImage from '@/components/OptimizedImage';
@@ -23,7 +23,11 @@ function formatCompact(n: number) {
 
 const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
   const navigate = useNavigate();
-  const { tokens, loading, error } = useMemeTokens(category, 50);
+  const [page, setPage] = useState(1);
+  const { tokens, loading, error, hasMore } = useMemeTokens(category, 50, page);
+
+  // Reset to first page on category change
+  useEffect(() => { setPage(1); }, [category]);
 
   if (loading && tokens.length === 0) {
     return (
@@ -45,48 +49,59 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
   if (error) return <p className="text-destructive text-sm">{error}</p>;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      {tokens.map((t) => (
-        <Card 
-          key={t.id} 
-          className="p-4 bg-card/60 hover:shadow-lg transition-all cursor-pointer"
-          onClick={() => navigate(`/meme/token/${t.symbol.toLowerCase()}?address=${encodeURIComponent(t.id)}`)}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full overflow-hidden ring-1 ring-border/50">
-              <OptimizedImage src={t.image || '/placeholder.svg'} alt={`${t.name} logo`} className="w-full h-full object-cover" />
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {tokens.map((t) => (
+          <Card 
+            key={t.id} 
+            className="p-4 bg-card/60 hover:shadow-lg transition-all cursor-pointer"
+            onClick={() => navigate(`/meme/token/${t.symbol.toLowerCase()}?address=${encodeURIComponent(t.id)}`)}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full overflow-hidden ring-1 ring-border/50">
+                <OptimizedImage src={t.image || '/placeholder.svg'} alt={`${t.name} logo`} className="w-full h-full object-cover" />
+              </div>
+              <div className="min-w-0">
+                <div className="font-semibold truncate">{t.symbol}</div>
+                <div className="text-muted-foreground text-xs truncate">{t.name}</div>
+              </div>
             </div>
-            <div className="min-w-0">
-              <div className="font-semibold truncate">{t.symbol}</div>
-              <div className="text-muted-foreground text-xs truncate">{t.name}</div>
+            <div className="mt-4 flex items-center justify-between">
+              <div>
+                <div className="text-xs text-muted-foreground">Pris</div>
+                <div className="font-medium">{formatPrice(t.price)}</div>
+              </div>
+              <div className={`text-right font-medium ${t.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
+                {t.change24h >= 0 ? '+' : ''}{t.change24h.toFixed(2)}%
+                <div className="text-xs text-muted-foreground">24h</div>
+              </div>
             </div>
-          </div>
-          <div className="mt-4 flex items-center justify-between">
-            <div>
-              <div className="text-xs text-muted-foreground">Pris</div>
-              <div className="font-medium">{formatPrice(t.price)}</div>
+            <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+              <div>
+                <div className="text-muted-foreground">MCap</div>
+                <div className="font-medium">{formatCompact(t.marketCap)}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Vol 24h</div>
+                <div className="font-medium">{formatCompact(t.volume24h)}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Holders</div>
+                <div className="font-medium">{formatCompact(t.holders)}</div>
+              </div>
             </div>
-            <div className={`text-right font-medium ${t.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
-              {t.change24h >= 0 ? '+' : ''}{t.change24h.toFixed(2)}%
-              <div className="text-xs text-muted-foreground">24h</div>
-            </div>
-          </div>
-          <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-            <div>
-              <div className="text-muted-foreground">MCap</div>
-              <div className="font-medium">{formatCompact(t.marketCap)}</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">Vol 24h</div>
-              <div className="font-medium">{formatCompact(t.volume24h)}</div>
-            </div>
-            <div>
-              <div className="text-muted-foreground">Holders</div>
-              <div className="font-medium">{formatCompact(t.holders)}</div>
-            </div>
-          </div>
-        </Card>
-      ))}
+          </Card>
+        ))}
+      </div>
+      <div className="flex items-center justify-center gap-3">
+        <Button variant="outline" disabled={loading || page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+          Föregående
+        </Button>
+        <span className="text-sm text-muted-foreground">Sida {page}</span>
+        <Button disabled={loading || !hasMore} onClick={() => setPage((p) => p + 1)}>
+          Nästa
+        </Button>
+      </div>
     </div>
   );
 };
@@ -97,8 +112,10 @@ const MemeZoneTabs: React.FC = () => {
   const options: Array<{ label: string; value: MemeCategory }> = [
     { label: 'Trending', value: 'trending' },
     { label: 'Gainers', value: 'gainers' },
-    { label: 'Market Cap', value: 'marketcap' },
-    { label: 'Liquidity', value: 'liquidity' },
+    { label: 'Market Cap High', value: 'marketcap_high' },
+    { label: 'Market Cap Low', value: 'marketcap_low' },
+    { label: 'Liquidity High', value: 'liquidity_high' },
+    { label: 'Liquidity Low', value: 'liquidity_low' },
     { label: 'Volume', value: 'volume' },
     { label: 'Txns', value: 'txns' },
     { label: 'Boosted', value: 'boosted' },
