@@ -24,7 +24,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { TokenHeader } from '@/components/TokenHeader';
 import { EnhancedMarketStats } from '@/components/EnhancedMarketStats';
 import { AdvancedTradingSettings } from '@/components/AdvancedTradingSettings';
-import { MemeTokenSidebar } from '@/components/MemeTokenSidebar';
+import { TokenInfoSection } from '@/components/TokenInfoSection';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -573,19 +573,8 @@ const MemeTokenDetailPage = () => {
         </div>
       </div>
 
-      {/* Main Content Layout - Full Width with Edge-to-Edge Sidebars */}
+      {/* Main Content Layout - Center Chart with Right Sidebar */}
       <div className="w-full flex">
-        {/* Left Sidebar - Fixed to Left Edge */}
-        <div className="w-80 flex-shrink-0 bg-card/30 backdrop-blur-sm border-r border-border/20">
-          <div className="sticky top-0 h-screen overflow-y-auto p-6">
-            <MemeTokenSidebar 
-              token={token}
-              volumes={volumes}
-              beMarket={beMarket}
-            />
-          </div>
-        </div>
-
         {/* Center Chart Area - Expanded */}
         <div className="flex-1 min-h-screen">
           <div className="p-8 space-y-8">
@@ -608,6 +597,15 @@ const MemeTokenDetailPage = () => {
                 />
               </div>
             </Card>
+
+            {/* Token Information Section - Below Chart */}
+            <div className="animate-fade-in">
+              <TokenInfoSection 
+                token={token}
+                volumes={volumes}
+                beMarket={beMarket}
+              />
+            </div>
 
             {/* Enhanced Market Stats - Full Width */}
             <div className="animate-fade-in">
