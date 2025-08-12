@@ -1,5 +1,6 @@
 // Supabase Edge Function: dextools-proxy
-// Proxies DEXTools API v2 for Solana using project secret and adds CORS
+// Proxies DEXTools API v2 for Solana using project secret, aggregates trending, and adds CORS
+
 
 const corsHeaders: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +14,42 @@ function json(body: unknown, status = 200) {
     headers: { 'Content-Type': 'application/json', ...corsHeaders },
   });
 }
+
+// PumpPortal WebSocket lightweight aggregator (hot globals)
+const PUMP_WS_URL = 'wss://pumpportal.fun/api/data';
+let pumpSocket: WebSocket | null = null;
+let recentMigrations: any[] = [];
+function ensurePumpConnection() {
+  try {
+    if (pumpSocket && (pumpSocket.readyState === WebSocket.OPEN || pumpSocket.readyState === WebSocket.CONNECTING)) return;
+    pumpSocket = new WebSocket(PUMP_WS_URL);
+    pumpSocket.onopen = () => {
+      try { pumpSocket?.send(JSON.stringify({ method: 'subscribeMigration' })); } catch {}
+    };
+    pumpSocket.onmessage = (evt) => {
+      try {
+        const msg = JSON.parse(typeof evt.data === 'string' ? evt.data : new TextDecoder().decode(evt.data));
+        if (msg && (msg.type === 'migration' || msg.method === 'migration')) {
+          const ev = {
+            mint: msg.mint,
+            name: msg.name,
+            symbol: msg.symbol,
+            uri: msg.uri,
+            pool: msg.pool,
+            bondingCurveComplete: msg.bondingCurveComplete,
+            timestamp: new Date().toISOString(),
+            source: msg.source || 'pumpfun',
+          };
+          recentMigrations.push(ev);
+          if (recentMigrations.length > 200) recentMigrations = recentMigrations.slice(-200);
+        }
+      } catch (_) {}
+    };
+    pumpSocket.onclose = () => { pumpSocket = null; setTimeout(ensurePumpConnection, 3000); };
+    pumpSocket.onerror = () => { try { pumpSocket?.close(); } catch {}; pumpSocket = null; };
+  } catch (_) {}
+}
+ensurePumpConnection();
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -166,6 +203,85 @@ Deno.serve(async (req) => {
           console.error('dextools-proxy tokenBatch fallback (empty results)', e?.message ?? e);
           return json({ results: [] });
         }
+      }
+      case 'pumpMigrations': {
+        const limit = Math.max(1, Math.min(200, Number(payload.limit ?? 50)));
+        const list = recentMigrations.slice(-limit).reverse();
+        return json({ results: list });
+      }
+      case 'trendingCombined': {
+        const limit = Math.max(1, Math.min(60, Number(payload.limit ?? 50)));
+        const norm = (d: any): any[] => Array.isArray(d?.results) ? d.results : (Array.isArray(d?.data) ? d.data : []);
+        let hot: any[] = [];
+        let gain: any[] = [];
+        try { hot = norm(await fetchJSON('/v2/ranking/solana/hotpools')); } catch { hot = []; }
+        try { gain = norm(await fetchJSON('/v2/ranking/solana/gainers')); } catch { gain = []; }
+        const addrs = new Set<string>();
+        for (const i of hot) {
+          const a = i?.mainToken?.address || i?.address || i?.token?.address; if (a) addrs.add(a);
+        }
+        for (const i of gain) {
+          const a = i?.mainToken?.address || i?.address || i?.token?.address; if (a) addrs.add(a);
+        }
+        // Fill with pump migrations (most recent first)
+        for (const m of [...recentMigrations].reverse()) {
+          if (addrs.size >= limit) break;
+          if (m?.mint) addrs.add(m.mint);
+        }
+        return json({ addresses: Array.from(addrs).slice(0, limit) });
+      }
+      case 'trendingCombinedBatch': {
+        const limit = Math.max(1, Math.min(60, Number(payload.limit ?? 50)));
+        const norm = (d: any): any[] => Array.isArray(d?.results) ? d.results : (Array.isArray(d?.data) ? d.data : []);
+        let hot: any[] = [];
+        let gain: any[] = [];
+        try { hot = norm(await fetchJSON('/v2/ranking/solana/hotpools')); } catch { hot = []; }
+        try { gain = norm(await fetchJSON('/v2/ranking/solana/gainers')); } catch { gain = []; }
+        const addrs = new Set<string>();
+        for (const i of hot) {
+          const a = i?.mainToken?.address || i?.address || i?.token?.address; if (a) addrs.add(a);
+        }
+        for (const i of gain) {
+          const a = i?.mainToken?.address || i?.address || i?.token?.address; if (a) addrs.add(a);
+        }
+        for (const m of [...recentMigrations].reverse()) {
+          if (addrs.size >= limit) break;
+          if (m?.mint) addrs.add(m.mint);
+        }
+        const addresses = Array.from(addrs).slice(0, limit);
+        // reuse tokenBatch logic by calling internal code inline
+        const chunk = async <T,>(arr: T[], size: number) => {
+          const out: T[][] = [];
+          for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+          return out;
+        };
+        const chunks = await chunk(addresses, 8);
+        const results: any[] = [];
+        for (const group of chunks) {
+          const part = await Promise.all(group.map(async (addr) => {
+            try {
+              const [meta, price, info, audit] = await Promise.all([
+                fetchJSON(`/v2/token/solana/${addr}`),
+                fetchJSON(`/v2/token/solana/${addr}/price`).catch(() => null),
+                fetchJSON(`/v2/token/solana/${addr}/info`).catch(() => null),
+                fetchJSON(`/v2/token/solana/${addr}/audit`).catch(() => null),
+              ]);
+              let poolPrice: any = null;
+              try {
+                const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
+                const firstPool = poolsResp?.results?.[0]?.address;
+                if (firstPool) {
+                  poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+                }
+              } catch (_) {}
+              return { ok: true, address: addr, meta, price, info, audit, poolPrice };
+            } catch (e: any) {
+              return { ok: false, address: addr, error: e?.message ?? String(e) };
+            }
+          }));
+          results.push(...part);
+        }
+        return json({ results });
       }
       default:
         return json({ error: 'Unknown action' }, 400);

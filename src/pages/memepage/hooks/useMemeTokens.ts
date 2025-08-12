@@ -64,14 +64,11 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         let addresses: string[] = [];
         if (category === 'trending') {
           const { data, error } = await supabase.functions.invoke('dextools-proxy', {
-            body: { action: 'gainers' },
+            body: { action: 'trendingCombined', limit: Math.max(limit * 2, 60) },
           });
           if (error) throw error;
-          const list: any[] = normalize(data);
-          addresses = list
-            .map((i: any) => i?.mainToken?.address || i?.address || i?.token?.address)
-            .filter(Boolean)
-            .slice(0, limit);
+          const list: string[] = Array.isArray(data?.addresses) ? data.addresses : [];
+          addresses = list.filter(Boolean).slice(0, Math.max(limit * 2, 60));
         } else {
           // newest och potential hämtar senaste listningar (24h), faller tillbaka till gainers vid fel
           const to = new Date().toISOString();
