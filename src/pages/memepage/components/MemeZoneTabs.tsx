@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import OptimizedImage from '@/components/OptimizedImage';
-import { useMemeTokens } from '../hooks/useMemeTokens';
+import { useMemeTokens, type MemeCategory } from '../hooks/useMemeTokens';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 function formatPrice(n: number) {
   if (!isFinite(n)) return '—';
@@ -19,7 +21,7 @@ function formatCompact(n: number) {
   return new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 2 }).format(n);
 }
 
-const Grid: React.FC<{ category: 'newest' | 'trending' | 'potential' }> = ({ category }) => {
+const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
   const navigate = useNavigate();
   const { tokens, loading, error } = useMemeTokens(category, 50);
 
@@ -91,6 +93,17 @@ const Grid: React.FC<{ category: 'newest' | 'trending' | 'potential' }> = ({ cat
 
 const MemeZoneTabs: React.FC = () => {
   const isMobile = useIsMobile();
+  const [trendingCat, setTrendingCat] = useState<MemeCategory>('trending');
+  const options: Array<{ label: string; value: MemeCategory }> = [
+    { label: 'Trending', value: 'trending' },
+    { label: 'Gainers', value: 'gainers' },
+    { label: 'Market Cap', value: 'marketcap' },
+    { label: 'Liquidity', value: 'liquidity' },
+    { label: 'Volume', value: 'volume' },
+    { label: 'Txns', value: 'txns' },
+    { label: 'Boosted', value: 'boosted' },
+    { label: 'Newest', value: 'newest' },
+  ];
   return (
     <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'} bg-meme-grid-bg/50`}>
       <div className="container mx-auto">
@@ -106,7 +119,22 @@ const MemeZoneTabs: React.FC = () => {
             </TabsList>
           </div>
           <TabsContent value="newest" forceMount><Grid category="newest" /></TabsContent>
-          <TabsContent value="trending" forceMount><Grid category="trending" /></TabsContent>
+          <TabsContent value="trending" forceMount>
+            {/* Sorteringsheader */}
+            <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
+              {options.map((opt) => (
+                <Button
+                  key={opt.value}
+                  size={isMobile ? 'sm' : 'default'}
+                  variant={trendingCat === opt.value ? 'default' : 'outline'}
+                  onClick={() => setTrendingCat(opt.value)}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+            <Grid category={trendingCat} />
+          </TabsContent>
           <TabsContent value="potential" forceMount><Grid category="potential" /></TabsContent>
         </Tabs>
       </div>

@@ -353,6 +353,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
 
   // Removed PumpPortal real-time feed per requirements
   // Future: could poll DexScreener lists periodically if needed
+  const sorted = useMemo(() => tokens, [tokens]);
   
   return { tokens: sorted, loading, error };
 };
