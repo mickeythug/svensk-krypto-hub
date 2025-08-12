@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { TrendingUp, TrendingDown, Zap, Shield, Target, DollarSign, Settings2, AlertTriangle, Info, Clock } from 'lucide-react';
-
 interface AdvancedTradingSettingsProps {
   tradeType: 'buy' | 'sell';
   setTradeType: (type: 'buy' | 'sell') => void;
@@ -43,7 +42,6 @@ interface AdvancedTradingSettingsProps {
   getPriorityFee: () => string;
   getEstimatedGas: () => string;
 }
-
 export const AdvancedTradingSettings = ({
   tradeType,
   setTradeType,
@@ -75,14 +73,10 @@ export const AdvancedTradingSettings = ({
   handleTrade,
   isTrading,
   getPriorityFee,
-  getEstimatedGas,
+  getEstimatedGas
 }: AdvancedTradingSettingsProps) => {
-  const quickAmounts = tradeType === 'buy' 
-    ? [0.1, 0.5, 1, 2, 5] 
-    : [10, 25, 50, 75, 100];
-
-  return (
-    <div className="space-y-6 sticky top-6">
+  const quickAmounts = tradeType === 'buy' ? [0.1, 0.5, 1, 2, 5] : [10, 25, 50, 75, 100];
+  return <div className="space-y-6 sticky top-6">
       {/* Main Trading Card */}
       <Card className="p-6 bg-card/95 backdrop-blur-sm border border-border/50 shadow-lg">
         <div className="flex items-center gap-3 mb-6">
@@ -97,29 +91,11 @@ export const AdvancedTradingSettings = ({
 
         {/* Buy/Sell Toggle */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <Button
-            size="lg"
-            variant={tradeType === 'buy' ? 'default' : 'outline'}
-            onClick={() => setTradeType('buy')}
-            className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
-              tradeType === 'buy'
-                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg border-0'
-                : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-green-500 hover:text-green-600'
-            }`}
-          >
+          <Button size="lg" variant={tradeType === 'buy' ? 'default' : 'outline'} onClick={() => setTradeType('buy')} className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg border-0' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-green-500 hover:text-green-600'}`}>
             <TrendingUp className="h-6 w-6" />
             <span className="font-bold text-lg">BUY</span>
           </Button>
-          <Button
-            size="lg"
-            variant={tradeType === 'sell' ? 'default' : 'outline'}
-            onClick={() => setTradeType('sell')}
-            className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
-              tradeType === 'sell'
-                ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg border-0'
-                : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-red-500 hover:text-red-600'
-            }`}
-          >
+          <Button size="lg" variant={tradeType === 'sell' ? 'default' : 'outline'} onClick={() => setTradeType('sell')} className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${tradeType === 'sell' ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg border-0' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-red-500 hover:text-red-600'}`}>
             <TrendingDown className="h-6 w-6" />
             <span className="font-bold text-lg">SELL</span>
           </Button>
@@ -129,26 +105,26 @@ export const AdvancedTradingSettings = ({
         <div className="mb-8">
           <Label className="text-base font-bold text-foreground mb-4 block">Order Type</Label>
           <div className="grid grid-cols-3 gap-3">
-            {[
-              { key: 'market', label: 'Market', desc: 'Instant execution' },
-              { key: 'limit', label: 'Limit', desc: 'Set price target' },
-              { key: 'stop', label: 'Stop', desc: 'Stop loss order' }
-            ].map(({ key, label, desc }) => (
-              <Button
-                key={key}
-                variant={orderType === key ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setOrderType(key as any)}
-                className={`h-auto py-4 px-3 flex flex-col items-center gap-1 min-h-[80px] ${
-                  orderType === key
-                    ? 'bg-primary text-primary-foreground border-0 shadow-md'
-                    : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'
-                }`}
-              >
+            {[{
+            key: 'market',
+            label: 'Market',
+            desc: 'Instant execution'
+          }, {
+            key: 'limit',
+            label: 'Limit',
+            desc: 'Set price target'
+          }, {
+            key: 'stop',
+            label: 'Stop',
+            desc: 'Stop loss order'
+          }].map(({
+            key,
+            label,
+            desc
+          }) => <Button key={key} variant={orderType === key ? 'default' : 'outline'} size="sm" onClick={() => setOrderType(key as any)} className={`h-auto py-4 px-3 flex flex-col items-center gap-1 min-h-[80px] ${orderType === key ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
                 <span className="font-bold text-sm">{label}</span>
-                <span className="text-xs text-muted-foreground leading-tight text-center">{desc}</span>
-              </Button>
-            ))}
+                
+              </Button>)}
           </div>
         </div>
 
@@ -159,61 +135,31 @@ export const AdvancedTradingSettings = ({
           </Label>
           
           <div className="grid grid-cols-3 gap-3 mb-4">
-            {quickAmounts.slice(0, 3).map((amount) => (
-              <Button
-                key={amount}
-                variant={selectedAmount === amount ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => {
-                  if (tradeType === 'sell' && amount <= 100) {
-                    calculateSellPercentage(amount);
-                  } else {
-                    handleAmountSelect(amount);
-                  }
-                }}
-                className={`text-base font-bold h-12 ${
-                  selectedAmount === amount
-                    ? 'bg-primary text-primary-foreground border-0 shadow-md'
-                    : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'
-                }`}
-              >
+            {quickAmounts.slice(0, 3).map(amount => <Button key={amount} variant={selectedAmount === amount ? 'default' : 'outline'} size="sm" onClick={() => {
+            if (tradeType === 'sell' && amount <= 100) {
+              calculateSellPercentage(amount);
+            } else {
+              handleAmountSelect(amount);
+            }
+          }} className={`text-base font-bold h-12 ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
                 {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount} SOL`}
-              </Button>
-            ))}
+              </Button>)}
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-4">
-            {quickAmounts.slice(3).map((amount) => (
-              <Button
-                key={amount}
-                variant={selectedAmount === amount ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => {
-                  if (tradeType === 'sell' && amount <= 100) {
-                    calculateSellPercentage(amount);
-                  } else {
-                    handleAmountSelect(amount);
-                  }
-                }}
-                className={`text-base font-bold h-12 ${
-                  selectedAmount === amount
-                    ? 'bg-primary text-primary-foreground border-0 shadow-md'
-                    : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'
-                }`}
-              >
+            {quickAmounts.slice(3).map(amount => <Button key={amount} variant={selectedAmount === amount ? 'default' : 'outline'} size="sm" onClick={() => {
+            if (tradeType === 'sell' && amount <= 100) {
+              calculateSellPercentage(amount);
+            } else {
+              handleAmountSelect(amount);
+            }
+          }} className={`text-base font-bold h-12 ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
                 {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount} SOL`}
-              </Button>
-            ))}
+              </Button>)}
           </div>
 
           <div className="relative">
-            <Input
-              type="number"
-              placeholder={tradeType === 'buy' ? 'Custom SOL amount' : 'Custom token amount'}
-              value={customAmount}
-              onChange={(e) => setCustomAmount(e.target.value)}
-              className="text-lg font-bold pr-20 h-14 bg-background border-2 border-border focus:border-primary"
-            />
+            <Input type="number" placeholder={tradeType === 'buy' ? 'Custom SOL amount' : 'Custom token amount'} value={customAmount} onChange={e => setCustomAmount(e.target.value)} className="text-lg font-bold pr-20 h-14 bg-background border-2 border-border focus:border-primary" />
             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-base font-bold text-muted-foreground">
               {tradeType === 'buy' ? 'SOL' : 'TOKENS'}
             </div>
@@ -221,63 +167,34 @@ export const AdvancedTradingSettings = ({
         </div>
 
         {/* Price Inputs for Limit/Stop Orders */}
-        {orderType === 'limit' && (
-          <div className="mb-6">
+        {orderType === 'limit' && <div className="mb-6">
             <Label className="text-sm font-semibold text-foreground mb-3 block flex items-center gap-2">
               <Target className="h-4 w-4" />
               Limit Price
             </Label>
-            <Input
-              type="number"
-              placeholder="Set your target price"
-              value={limitPrice}
-              onChange={(e) => setLimitPrice(e.target.value)}
-              className="text-base font-semibold"
-            />
+            <Input type="number" placeholder="Set your target price" value={limitPrice} onChange={e => setLimitPrice(e.target.value)} className="text-base font-semibold" />
             <p className="text-xs text-muted-foreground mt-2">
               Order will execute when price reaches this level
             </p>
-          </div>
-        )}
+          </div>}
 
-        {orderType === 'stop' && (
-          <div className="mb-6">
+        {orderType === 'stop' && <div className="mb-6">
             <Label className="text-sm font-semibold text-foreground mb-3 block flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               Stop Price
             </Label>
-            <Input
-              type="number"
-              placeholder="Set your stop loss price"
-              value={stopPrice}
-              onChange={(e) => setStopPrice(e.target.value)}
-              className="text-base font-semibold"
-            />
+            <Input type="number" placeholder="Set your stop loss price" value={stopPrice} onChange={e => setStopPrice(e.target.value)} className="text-base font-semibold" />
             <p className="text-xs text-muted-foreground mt-2">
               Order will trigger when price hits this level
             </p>
-          </div>
-        )}
+          </div>}
 
         {/* Execute Trade Button */}
-        <Button
-          onClick={handleTrade}
-          disabled={isTrading || !customAmount}
-          size="lg"
-          className={`w-full h-16 text-lg font-bold transition-all duration-200 ${
-            tradeType === 'buy'
-              ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg'
-              : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg'
-          } text-white disabled:opacity-50 disabled:cursor-not-allowed`}
-        >
-          {isTrading ? (
-            <div className="flex items-center gap-3">
+        <Button onClick={handleTrade} disabled={isTrading || !customAmount} size="lg" className={`w-full h-16 text-lg font-bold transition-all duration-200 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg' : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg'} text-white disabled:opacity-50 disabled:cursor-not-allowed`}>
+          {isTrading ? <div className="flex items-center gap-3">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               Processing...
-            </div>
-          ) : (
-            `${tradeType === 'buy' ? 'Buy' : 'Sell'} Now`
-          )}
+            </div> : `${tradeType === 'buy' ? 'Buy' : 'Sell'} Now`}
         </Button>
 
         <Separator className="my-6" />
@@ -320,48 +237,26 @@ export const AdvancedTradingSettings = ({
               <Clock className="h-4 w-4 text-blue-500" />
               <Label className="text-sm font-semibold text-foreground">Slippage Tolerance</Label>
             </div>
-            <Switch
-              checked={autoSlippage}
-              onCheckedChange={setAutoSlippage}
-            />
+            <Switch checked={autoSlippage} onCheckedChange={setAutoSlippage} />
           </div>
           
-          {!autoSlippage && (
-            <div className="space-y-4">
+          {!autoSlippage && <div className="space-y-4">
               <div className="grid grid-cols-4 gap-2">
-                {[0.5, 1, 2, 5].map((slip) => (
-                  <Button
-                    key={slip}
-                    variant={slippage === slip ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setSlippage(slip)}
-                    className="text-sm font-semibold"
-                  >
+                {[0.5, 1, 2, 5].map(slip => <Button key={slip} variant={slippage === slip ? 'default' : 'outline'} size="sm" onClick={() => setSlippage(slip)} className="text-sm font-semibold">
                     {slip}%
-                  </Button>
-                ))}
+                  </Button>)}
               </div>
               <div className="space-y-2">
-                <Slider
-                  value={[slippage]}
-                  onValueChange={(value) => setSlippage(value[0])}
-                  max={20}
-                  min={0.1}
-                  step={0.1}
-                  className="w-full"
-                />
+                <Slider value={[slippage]} onValueChange={value => setSlippage(value[0])} max={20} min={0.1} step={0.1} className="w-full" />
                 <div className="text-center text-sm text-muted-foreground">
                   Current: {slippage}%
                 </div>
               </div>
-            </div>
-          )}
-          {autoSlippage && (
-            <div className="text-sm text-muted-foreground bg-blue-50 rounded-lg p-3">
+            </div>}
+          {autoSlippage && <div className="text-sm text-muted-foreground bg-blue-50 rounded-lg p-3">
               <Info className="h-4 w-4 inline mr-2" />
               Auto slippage will adjust based on market conditions
-            </div>
-          )}
+            </div>}
         </div>
 
         {/* Priority Fee */}
@@ -371,22 +266,30 @@ export const AdvancedTradingSettings = ({
             <Label className="text-sm font-semibold text-foreground">Transaction Priority</Label>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            {[
-              { key: 'low', label: 'Economy', fee: '0.0001 SOL', desc: 'Slower execution' },
-              { key: 'medium', label: 'Standard', fee: '0.0005 SOL', desc: 'Balanced speed' },
-              { key: 'high', label: 'Fast', fee: '0.001 SOL', desc: 'Quick execution' }
-            ].map(({ key, label, fee, desc }) => (
-              <Button
-                key={key}
-                variant={priority === key ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setPriority(key as typeof priority)}
-                className="h-auto py-3 px-2 flex flex-col items-center text-xs"
-              >
+            {[{
+            key: 'low',
+            label: 'Economy',
+            fee: '0.0001 SOL',
+            desc: 'Slower execution'
+          }, {
+            key: 'medium',
+            label: 'Standard',
+            fee: '0.0005 SOL',
+            desc: 'Balanced speed'
+          }, {
+            key: 'high',
+            label: 'Fast',
+            fee: '0.001 SOL',
+            desc: 'Quick execution'
+          }].map(({
+            key,
+            label,
+            fee,
+            desc
+          }) => <Button key={key} variant={priority === key ? 'default' : 'outline'} size="sm" onClick={() => setPriority(key as typeof priority)} className="h-auto py-3 px-2 flex flex-col items-center text-xs">
                 <span className="font-semibold">{label}</span>
                 <span className="text-xs opacity-70 mt-1">{fee}</span>
-              </Button>
-            ))}
+              </Button>)}
           </div>
         </div>
 
@@ -400,10 +303,7 @@ export const AdvancedTradingSettings = ({
                 <p className="text-xs text-muted-foreground">Protects against front-running attacks</p>
               </div>
             </div>
-            <Switch
-              checked={mevProtection}
-              onCheckedChange={setMevProtection}
-            />
+            <Switch checked={mevProtection} onCheckedChange={setMevProtection} />
           </div>
         </div>
 
@@ -413,13 +313,7 @@ export const AdvancedTradingSettings = ({
             <AlertTriangle className="h-4 w-4" />
             Price Alert
           </Label>
-          <Input
-            type="number"
-            placeholder="Set price notification"
-            value={priceAlert}
-            onChange={(e) => setPriceAlert(e.target.value)}
-            className="text-base font-semibold"
-          />
+          <Input type="number" placeholder="Set price notification" value={priceAlert} onChange={e => setPriceAlert(e.target.value)} className="text-base font-semibold" />
           <p className="text-xs text-muted-foreground mt-2">
             Get notified when price reaches this level
           </p>
@@ -451,6 +345,5 @@ export const AdvancedTradingSettings = ({
           </div>
         </div>
       </Card>
-    </div>
-  );
+    </div>;
 };
