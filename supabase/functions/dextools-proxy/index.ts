@@ -152,12 +152,17 @@ Deno.serve(async (req) => {
             fetchJSON(`/v2/token/solana/${address}/audit`).catch(() => null),
           ]);
 
-          // Try to get a primary pool and its price/volume
+          // Try to get a primary pool and its price/volume (prefer oldest pool first)
           let poolPrice: any = null;
           let poolLiquidity: any = null;
           try {
-            const poolsResp = await fetchJSON(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
-            const firstPool = poolsResp?.results?.[0]?.address;
+            let poolsResp = await fetchJSON(`/v2/token/solana/${address}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
+            let firstPool = poolsResp?.results?.[0]?.address;
+            if (!firstPool) {
+              // Fallback to newest if no result
+              poolsResp = await fetchJSON(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
+              firstPool = poolsResp?.results?.[0]?.address;
+            }
             if (firstPool) {
               poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
               poolLiquidity = await fetchJSON(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);

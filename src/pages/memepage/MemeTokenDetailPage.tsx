@@ -766,7 +766,7 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
                   </div>
                   <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
                     <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">Holders</span>
-                    <span className="text-xl font-crypto font-black">{token.holders.toLocaleString()}</span>
+                    <span className="text-xl font-crypto font-black">{Number(token.holders || 0).toLocaleString()}</span>
                   </div>
                 </div>
               </Card>

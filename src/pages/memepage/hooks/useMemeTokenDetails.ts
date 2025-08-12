@@ -48,6 +48,12 @@ export function useMemeTokenDetails(address?: string) {
         const pool = data?.poolPrice?.data ?? data?.poolPrice ?? null;
         const poolLiquidity = data?.poolLiquidity?.data ?? data?.poolLiquidity ?? null;
 
+        const holdersParsed = typeof info?.holders === 'number'
+          ? info.holders
+          : (typeof info?.holders === 'string'
+            ? Number(String(info.holders).replace(/[,\s]/g, ''))
+            : undefined);
+
         const details: MemeTokenDetails = {
           address,
           symbol: String(meta?.symbol || 'TOKEN').toUpperCase(),
@@ -56,10 +62,10 @@ export function useMemeTokenDetails(address?: string) {
           description: meta?.description,
           price: typeof price?.price === 'number' ? price.price : undefined,
           variation24h: typeof price?.variation24h === 'number' ? price.variation24h : undefined,
-          marketCap: typeof info?.mcap === 'number' ? info.mcap : undefined,
-          holders: typeof info?.holders === 'number' ? info.holders : undefined,
-          circulatingSupply: typeof info?.circulatingSupply === 'number' ? info.circulatingSupply : undefined,
-          totalSupply: typeof info?.totalSupply === 'number' ? info.totalSupply : undefined,
+          marketCap: typeof info?.mcap === 'number' ? info.mcap : (typeof info?.mcap === 'string' ? Number(String(info.mcap).replace(/[,\s]/g, '')) : undefined),
+          holders: holdersParsed,
+          circulatingSupply: typeof info?.circulatingSupply === 'number' ? info.circulatingSupply : (typeof info?.circulatingSupply === 'string' ? Number(String(info.circulatingSupply).replace(/[,\s]/g, '')) : undefined),
+          totalSupply: typeof info?.totalSupply === 'number' ? info.totalSupply : (typeof info?.totalSupply === 'string' ? Number(String(info.totalSupply).replace(/[,\s]/g, '')) : undefined),
           socials: meta?.socialInfo || {},
           pool: pool ? { volume24h: pool.volume24h, liquidity: poolLiquidity?.liquidity } : null,
           raw: data,
