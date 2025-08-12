@@ -316,8 +316,6 @@ export type Database = {
           acknowledged_backup: boolean
           created_at: string
           id: string
-          private_key_encrypted: string | null
-          pump_api_key_encrypted: string | null
           user_id: string
           wallet_address: string
         }
@@ -325,8 +323,6 @@ export type Database = {
           acknowledged_backup?: boolean
           created_at?: string
           id?: string
-          private_key_encrypted?: string | null
-          pump_api_key_encrypted?: string | null
           user_id: string
           wallet_address: string
         }
@@ -334,8 +330,6 @@ export type Database = {
           acknowledged_backup?: boolean
           created_at?: string
           id?: string
-          private_key_encrypted?: string | null
-          pump_api_key_encrypted?: string | null
           user_id?: string
           wallet_address?: string
         }
