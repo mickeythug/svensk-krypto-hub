@@ -567,9 +567,28 @@ const MemeTokenDetailPage = () => {
         {/* Modern Token Header */}
         <TokenHeader token={token} />
 
-        {/* Main Content Grid */}
+        {/* Main Content Grid - Chart on left, Trading on right */}
         <div className="grid grid-cols-12 gap-6">
-          {/* Left Sidebar - Advanced Trading Settings */}
+          {/* Main Chart Area */}
+          <div className="col-span-9">
+            {/* Chart */}
+            <Card className="mb-6 bg-card/50 backdrop-blur-sm border border-border/50">
+              <TradingViewChart 
+                symbol={tokenAddress || token.symbol}
+                currentPrice={token.price}
+                coinGeckoId={token.symbol.toLowerCase()}
+              />
+            </Card>
+
+            {/* Enhanced Market Stats Below Chart */}
+            <EnhancedMarketStats 
+              token={token}
+              volumes={volumes}
+              beMarket={beMarket}
+            />
+          </div>
+
+          {/* Right Sidebar - Advanced Trading Settings */}
           <div className="col-span-3">
             <AdvancedTradingSettings
               tradeType={tradeType}
@@ -604,25 +623,6 @@ const MemeTokenDetailPage = () => {
               isTrading={isTrading}
               getPriorityFee={getPriorityFee}
               getEstimatedGas={getEstimatedGas}
-            />
-          </div>
-
-          {/* Main Chart Area */}
-          <div className="col-span-9">
-            {/* Chart */}
-            <Card className="mb-6 bg-card/50 backdrop-blur-sm border border-border/50">
-              <TradingViewChart 
-                symbol={tokenAddress || token.symbol}
-                currentPrice={token.price}
-                coinGeckoId={token.symbol.toLowerCase()}
-              />
-            </Card>
-
-            {/* Enhanced Market Stats Below Chart */}
-            <EnhancedMarketStats 
-              token={token}
-              volumes={volumes}
-              beMarket={beMarket}
             />
           </div>
         </div>
