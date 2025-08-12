@@ -13,7 +13,8 @@ import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSiwsSolana } from '@/hooks/useSiwsSolana';
 import type { Address } from 'viem';
 import { authLog } from '@/lib/authDebug';
-
+import TradingWalletOnboardingModal from '@/pages/memepage/components/TradingWalletOnboardingModal';
+import { useTradingWallet } from '@/hooks/useTradingWallet';
 function formatAddress(addr?: string) {
   if (!addr) return '';
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -41,6 +42,8 @@ export default function ConnectWalletButton() {
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
+  const { walletAddress: twAddress, privateKey: twPk, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
   const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(1);
@@ -196,6 +199,8 @@ export default function ConnectWalletButton() {
           sessionStorage.setItem('siws_address', pubkeyStr);
           setIsAuthed(true);
           toast({ title: 'Wallet ansluten', description: 'Solana ansluten och verifierad.' });
+          // Skapa trading wallet om saknas och visa onboarding-modal
+          try { await createIfMissing(); setShowOnboarding(true); } catch {}
           try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
         } catch (err: any) {
@@ -381,24 +386,32 @@ export default function ConnectWalletButton() {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <Badge variant="secondary">
-        {activeMode === 'SOL' ? 'Solana' : 'Ethereum'}
-      </Badge>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => navigator.clipboard.writeText(activeMode === 'SOL' ? (solAddress || '') : (address || ''))}
-      >
-        <CopyCheck className="w-4 h-4 mr-2" />
-        {activeMode === 'SOL'
-          ? `${formatAddress(solAddress)}`
-          : `${formatAddress(address)}`}
+    <>
+      <div className="flex items-center gap-2">
+        <Badge variant="secondary">
+          {activeMode === 'SOL' ? 'Solana' : 'Ethereum'}
+        </Badge>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => navigator.clipboard.writeText(activeMode === 'SOL' ? (solAddress || '') : (address || ''))}
+        >
+          <CopyCheck className="w-4 h-4 mr-2" />
+          {activeMode === 'SOL'
+            ? `${formatAddress(solAddress)}`
+            : `${formatAddress(address)}`}
 
-      </Button>
-      <Button variant="ghost" size="sm" onClick={handleDisconnect}>
-        <LogOut className="w-4 h-4" />
-      </Button>
-    </div>
+        </Button>
+        <Button variant="ghost" size="sm" onClick={handleDisconnect}>
+          <LogOut className="w-4 h-4" />
+        </Button>
+      </div>
+      <TradingWalletOnboardingModal
+        open={showOnboarding || (!!twPk && !acknowledged)}
+        walletAddress={twAddress || solAddress}
+        privateKey={twPk}
+        onConfirm={async () => { await confirmBackup(); setShowOnboarding(false); }}
+      />
+    </>
   );
 }

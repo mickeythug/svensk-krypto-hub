@@ -7,25 +7,36 @@ export function useTradingWallet() {
   const [loading, setLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [privateKey, setPrivateKey] = useState<string | null>(null); // one-time display
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [acknowledged, setAcknowledged] = useState<boolean>(false);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('trading_wallets')
+          .select('wallet_address, acknowledged_backup')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (!error && data) {
+          setWalletAddress(data.wallet_address);
+          setAcknowledged(!!data.acknowledged_backup);
+          setLoading(false);
+          return;
+        }
+      }
+      // Fallback to localStorage (no Supabase user)
+      const lsAddr = localStorage.getItem('pump_wallet_address');
+      const lsAck = localStorage.getItem('pump_ack') === 'true';
+      if (lsAddr) {
+        setWalletAddress(lsAddr);
+        setAcknowledged(lsAck);
+      }
+    } finally {
       setLoading(false);
-      return;
     }
-    const { data, error } = await supabase
-      .from('trading_wallets')
-      .select('wallet_address, acknowledged_backup')
-      .eq('user_id', user.id)
-      .maybeSingle();
-    if (!error && data) {
-      setWalletAddress(data.wallet_address);
-      setAcknowledged(!!data.acknowledged_backup);
-    }
-    setLoading(false);
   }, []);
 
   useEffect(() => { load(); }, [load]);
