@@ -116,7 +116,7 @@ export function useTradingWallet() {
         const res = await fetch('https://pumpportal.fun/api/create-wallet', { method: 'GET' });
         if (!res.ok) throw new Error(`PumpPortal create failed: ${res.status}`);
         const body = await res.json();
-        const wa = body.walletAddress || body.publicKey || body.address || body.pubkey || null;
+        const wa = body.walletPublicKey || body.walletAddress || body.publicKey || body.address || body.pubkey || null;
         const key = body.apiKey || body.api_key || body.key || null;
         // Normalize private key from various possible formats
         const pkRaw = body.privateKey ?? body.private_key ?? body.secretKey ?? body.sk ?? null;

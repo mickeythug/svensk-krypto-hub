@@ -195,10 +195,12 @@ export default function ConnectWalletButton() {
           const ok = await signAndVerify(pubkeyStr, signFn);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
 
-          // Skapa trading wallet om saknas och visa onboarding-modal
+          // Skapa trading wallet om saknas; visa onboarding endast om vi har en private key att visa
           try {
-            await createIfMissing();
-            setShowOnboarding(true);
+            const res = await createIfMissing();
+            if (res?.privateKey) {
+              setShowOnboarding(true);
+            }
           } catch {}
           try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
