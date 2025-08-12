@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
+import { usePumpPortalWS } from '@/hooks/usePumpPortalWS';
 
 export interface MemeToken {
   id: string; // mint address
@@ -274,6 +275,62 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
   }, [tokens]);
 
   const sorted = useMemo(() => tokens, [tokens]);
+
+  // Live PumpPortal feed: subscribe to migrations and enrich them in real time
+  const { subscribe, onMessage, connected } = usePumpPortalWS();
+  useEffect(() => {
+    if (category !== 'trending') return;
+    let unsub: (() => void) | null = null;
+    subscribe('subscribeMigration');
+    unsub = onMessage(async (msg) => {
+      const t = msg?.type || msg?.method;
+      if (t !== 'migration' && t !== 'subscribeMigration') return;
+      const mint = msg?.mint;
+      if (!mint || typeof mint !== 'string') return;
+      // Do not add if already present
+      setTokens((prev) => {
+        if (prev.some((p) => p.id === mint)) return prev;
+        const base: MemeToken = {
+          id: mint,
+          symbol: (msg?.symbol || 'TOKEN').toString().slice(0,12).toUpperCase(),
+          name: msg?.name || msg?.symbol || 'Token',
+          image: undefined,
+          price: 0,
+          change24h: 0,
+          volume24h: 0,
+          marketCap: 0,
+          holders: 0,
+          views: '—',
+          emoji: undefined,
+          tags: ['trending'],
+          isHot: false,
+          description: undefined,
+        };
+        return [base, ...prev].slice(0, Math.max(limit * 2, 60));
+      });
+      try {
+        const { data: full } = await supabase.functions.invoke('dextools-proxy', { body: { action: 'tokenFull', address: mint } });
+        const metaD = (full?.meta?.data ?? full?.meta) as any || {};
+        const priceD = (full?.price?.data ?? full?.price) as any || {};
+        const infoD = (full?.info?.data ?? full?.info) as any || {};
+        const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
+        const toNum = (v: any) => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\,\s]/g, '')) : 0);
+        setTokens((prev) => prev.map((p) => p.id !== mint ? p : ({
+          ...p,
+          symbol: p.symbol || (metaD.symbol || 'TOKEN').toString().slice(0,12).toUpperCase(),
+          name: p.name || metaD.name || metaD.symbol || 'Token',
+          image: metaD.logo || p.image,
+          price: toNum(priceD.price) || p.price,
+          change24h: toNum(priceD.variation24h) || p.change24h,
+          volume24h: toNum(poolD.volume24h) || p.volume24h,
+          marketCap: toNum(infoD.mcap) || p.marketCap,
+          holders: toNum(infoD.holders) || p.holders,
+          description: metaD.description || p.description,
+        })));
+      } catch (_) {}
+    });
+    return () => { unsub?.(); };
+  }, [category, subscribe, onMessage, limit]);
 
   return { tokens: sorted, loading, error };
 };
