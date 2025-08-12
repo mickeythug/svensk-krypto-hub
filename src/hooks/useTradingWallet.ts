@@ -27,6 +27,20 @@ export function useTradingWallet() {
           setLoading(false);
           return;
         }
+        // No DB record yet: try to import from localStorage if present
+        const lsAddr = localStorage.getItem('pump_wallet_address');
+        const lsPk = localStorage.getItem('pump_private_key');
+        const lsKey = localStorage.getItem('pump_api_key');
+        const lsAck = localStorage.getItem('pump_ack') === 'true';
+        if (lsAddr && lsKey) {
+          try {
+            await supabase.functions.invoke('pump-store-wallet', { body: { walletAddress: lsAddr, privateKey: lsPk, apiKey: lsKey } });
+            setWalletAddress(lsAddr);
+            setAcknowledged(lsAck);
+            setLoading(false);
+            return;
+          } catch {}
+        }
       }
       // Fallback to localStorage (no Supabase user)
       const lsAddr = localStorage.getItem('pump_wallet_address');
@@ -89,6 +103,13 @@ export function useTradingWallet() {
           if (pk) localStorage.setItem('pump_private_key', pk);
           localStorage.setItem('pump_api_key', key);
           localStorage.setItem('pump_ack', 'false');
+        } catch {}
+        // If user is authenticated, persist securely to DB as well
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase.functions.invoke('pump-store-wallet', { body: { walletAddress: wa, privateKey: pk, apiKey: key } });
+          }
         } catch {}
         return { walletAddress: wa, privateKey: pk, apiKey: key };
       } catch (e) {

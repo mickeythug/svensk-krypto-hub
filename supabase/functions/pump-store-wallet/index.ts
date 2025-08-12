@@ -15,9 +15,7 @@ serve(async (req) => {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
-      {
-        global: { headers: { Authorization: req.headers.get("Authorization")! } },
-      }
+      { global: { headers: { Authorization: req.headers.get("Authorization")! } } }
     );
 
     const { data: authData, error: authError } = await supabase.auth.getUser();
@@ -28,30 +26,15 @@ serve(async (req) => {
       });
     }
 
-    // Call PumpPortal to create wallet
-    const res = await fetch("https://pumpportal.fun/api/create-wallet", { method: "GET" });
-    if (!res.ok) {
-      const txt = await res.text();
-      return new Response(JSON.stringify({ error: "PumpPortal wallet creation failed", details: txt }), {
-        status: 502,
+    const { walletAddress, apiKey, privateKey } = await req.json().catch(() => ({}));
+    if (!walletAddress || !apiKey) {
+      return new Response(JSON.stringify({ error: "walletAddress and apiKey are required" }), {
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const body = await res.json();
-    // Try common field names
-    const walletAddress = body.walletAddress || body.publicKey || body.address || body.pubkey;
-    const privateKey = body.privateKey || body.secretKey || body.sk;
-    const pumpApiKey = body.apiKey || body.api_key || body.key;
-
-    if (!walletAddress || !pumpApiKey) {
-      return new Response(JSON.stringify({ error: "Malformed response from PumpPortal", body }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Encrypt strings (API key and optionally private key) before saving
+    // Encryption helpers
     const b64ToBytes = (b64: string) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
     const bytesToHex = (bytes: Uint8Array) => "\\x" + Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
     const getAesKey = async () => {
@@ -71,10 +54,9 @@ serve(async (req) => {
       return bytesToHex(packed);
     };
 
-    const encryptedApiKey = await encryptString(String(pumpApiKey));
+    const encryptedApiKey = await encryptString(String(apiKey));
     const encryptedPriv = privateKey ? await encryptString(String(privateKey)) : null;
 
-    // Upsert into trading_wallets (unique per user) with encrypted keys (no plaintext persisted)
     const { error: upsertErr } = await supabase
       .from("trading_wallets")
       .upsert(
@@ -95,11 +77,10 @@ serve(async (req) => {
       });
     }
 
-    // Return keys for one-time display (do NOT persist private key server-side in plaintext)
-    return new Response(
-      JSON.stringify({ walletAddress, privateKey }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (e) {
     return new Response(JSON.stringify({ error: "Unexpected error", details: String(e) }), {
       status: 500,

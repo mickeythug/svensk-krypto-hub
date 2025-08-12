@@ -72,6 +72,9 @@ verify_jwt = true
 [functions.pump-trade]
 verify_jwt = true
 
+[functions.pump-store-wallet]
+verify_jwt = true
+
 [functions.dextools-proxy]
 verify_jwt = true
 

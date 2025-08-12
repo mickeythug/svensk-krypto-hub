@@ -275,12 +275,48 @@ export type Database = {
         }
         Relationships: []
       }
+      tokens_catalog: {
+        Row: {
+          address: string
+          chain: string
+          first_seen_at: string
+          image: string | null
+          last_meta: Json | null
+          last_price: Json | null
+          last_seen_at: string
+          name: string | null
+          symbol: string | null
+        }
+        Insert: {
+          address: string
+          chain?: string
+          first_seen_at?: string
+          image?: string | null
+          last_meta?: Json | null
+          last_price?: Json | null
+          last_seen_at?: string
+          name?: string | null
+          symbol?: string | null
+        }
+        Update: {
+          address?: string
+          chain?: string
+          first_seen_at?: string
+          image?: string | null
+          last_meta?: Json | null
+          last_price?: Json | null
+          last_seen_at?: string
+          name?: string | null
+          symbol?: string | null
+        }
+        Relationships: []
+      }
       trading_wallets: {
         Row: {
           acknowledged_backup: boolean
           created_at: string
           id: string
-          pump_api_key: string | null
+          private_key_encrypted: string | null
           pump_api_key_encrypted: string | null
           user_id: string
           wallet_address: string
@@ -289,7 +325,7 @@ export type Database = {
           acknowledged_backup?: boolean
           created_at?: string
           id?: string
-          pump_api_key?: string | null
+          private_key_encrypted?: string | null
           pump_api_key_encrypted?: string | null
           user_id: string
           wallet_address: string
@@ -298,7 +334,7 @@ export type Database = {
           acknowledged_backup?: boolean
           created_at?: string
           id?: string
-          pump_api_key?: string | null
+          private_key_encrypted?: string | null
           pump_api_key_encrypted?: string | null
           user_id?: string
           wallet_address?: string
@@ -332,6 +368,33 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_verification_proofs: {
+        Row: {
+          address: string
+          chain: string
+          created_at: string
+          expires_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          chain: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          chain?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -339,6 +402,10 @@ export type Database = {
     Functions: {
       user_owns_wallet: {
         Args: { wallet_addr: string }
+        Returns: boolean
+      }
+      verified_by_recent_proof: {
+        Args: { p_user_id: string; p_address: string; p_chain: string }
         Returns: boolean
       }
     }
