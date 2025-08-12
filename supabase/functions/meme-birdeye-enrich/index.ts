@@ -22,7 +22,7 @@ serve(async (req) => {
       });
     }
 
-    const { addresses, limit = 20, delayMs = 1100 } = await req.json();
+    const { addresses, limit = 20, delayMs = 1200 } = await req.json();
     if (!Array.isArray(addresses) || addresses.length === 0) {
       return new Response(JSON.stringify({ error: "addresses array required" }), {
         status: 400,
@@ -43,35 +43,51 @@ serve(async (req) => {
     for (let i = 0; i < toProcess.length; i++) {
       const addr = toProcess[i];
       const url = `${base}/defi/v3/token/market-data?address=${encodeURIComponent(addr)}`;
-      const res = await fetch(url, { headers });
-      const json = await res.json();
 
-      const md = json?.data ?? json ?? {};
+      const doFetch = async () => {
+        const res = await fetch(url, { headers });
+        const json = await res.json();
+        const md = json?.data ?? json ?? {};
+        let mc = md.marketCap ?? md.marketcap ?? md.mc ?? md.market_cap ?? undefined;
+        let vol24 = md.volume24h ?? md.volume_24h ?? md.v24h ?? md.volume ?? md.volume_usd_24h ?? undefined;
+        const liq = md.liquidity ?? md.liq ?? md.liquidity_usd ?? undefined;
+        const circ = md.circulatingSupply ?? md.circulating_supply ?? undefined;
+        const total = md.totalSupply ?? md.total_supply ?? undefined;
+        const price = md.price ?? md.priceUsd ?? md.value ?? md.price_usd ?? undefined;
 
-      // Flexible extraction for possible field names
-      const mc = md.marketCap ?? md.marketcap ?? md.mc ?? undefined;
-      const vol24 = md.volume24h ?? md.volume_24h ?? md.v24h ?? md.volume ?? undefined;
-      const liq = md.liquidity ?? md.liq ?? undefined;
-      const circ = md.circulatingSupply ?? md.circulating_supply ?? undefined;
-      const total = md.totalSupply ?? md.total_supply ?? undefined;
-      const price = md.price ?? md.priceUsd ?? md.value ?? undefined;
+        return { res, md, mc, vol24, liq, circ, total, price };
+      };
+
+      let attempt = 0;
+      let fetched: any;
+      while (attempt < 2) {
+        fetched = await doFetch();
+        if (fetched.res.status !== 429) break;
+        // backoff + jitter then retry once
+        await sleep((Number(delayMs) || 1200) + 600 + Math.floor(Math.random() * 400));
+        attempt++;
+      }
+
+      const { res, md, mc, vol24, liq, circ, total, price } = fetched;
 
       results[addr] = {
         ok: res.ok,
         status: res.status,
         address: addr,
         price,
-        marketCap: typeof mc === "string" ? Number(mc.replace(/[,\s]/g, "")) : mc,
-        volume24h: typeof vol24 === "string" ? Number(vol24.replace(/[,\s]/g, "")) : vol24,
-        liquidity: typeof liq === "string" ? Number(liq.replace(/[,\s]/g, "")) : liq,
-        circulatingSupply: typeof circ === "string" ? Number(circ.replace(/[,\s]/g, "")) : circ,
-        totalSupply: typeof total === "string" ? Number(total.replace(/[,\s]/g, "")) : total,
+        marketCap: typeof mc === "string" ? Number(mc.replace(/[\,\s]/g, "")) : mc,
+        volume24h: typeof vol24 === "string" ? Number(vol24.replace(/[\,\s]/g, "")) : vol24,
+        liquidity: typeof liq === "string" ? Number(liq.replace(/[\,\s]/g, "")) : liq,
+        circulatingSupply: typeof circ === "string" ? Number(circ.replace(/[\,\s]/g, "")) : circ,
+        totalSupply: typeof total === "string" ? Number(total.replace(/[\,\s]/g, "")) : total,
         raw: md,
       };
 
-      // Respect free plan: 1 req/sec per key
+      // Respect free plan: 1 req/sec per key (add jitter)
       if (i < toProcess.length - 1) {
-        await sleep(Math.max(1000, Number(delayMs) || 1100));
+        const baseDelay = Math.max(1200, Number(delayMs) || 1200);
+        const jitter = 150 + Math.floor(Math.random() * 250);
+        await sleep(baseDelay + jitter);
       }
     }
 

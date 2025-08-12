@@ -210,6 +210,32 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
     return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
   }, [orderType]);
 
+  // Birdeye OHLCV volumes
+  const [volumes, setVolumes] = useState<{ v1h?: number; v6h?: number; v24h?: number }>({});
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (!tokenAddress) return;
+      try {
+        const { data } = await supabase.functions.invoke('birdeye-proxy', {
+          body: { action: 'ohlcv', address: tokenAddress, params: { type: '1H' } },
+        });
+        const items: any[] = (data?.data?.data?.items ?? data?.data?.items ?? data?.data ?? data?.items ?? []) as any[];
+        if (Array.isArray(items) && items.length) {
+          // items oldest->newest or vice versa; take last N safely
+          const last = (n: number) => items.slice(-n);
+          const sumV = (arr: any[]) => arr.reduce((s, c) => s + (typeof c?.v === 'number' ? c.v : (typeof c?.volume === 'number' ? c.volume : 0)), 0);
+          const v1 = sumV(last(1));
+          const v6 = sumV(last(6));
+          const v24 = sumV(last(24));
+          if (!cancelled) setVolumes({ v1h: v1, v6h: v6, v24h: v24 });
+        }
+      } catch {}
+    };
+    run();
+    return () => { cancelled = true; };
+  }, [tokenAddress]);
+
   // Helper functions (non-hooks)
   const formatPrice = (price: number): string => {
     if (price < 0.000001) return `$${price.toExponential(2)}`;
@@ -238,9 +264,9 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
 
   // Enhanced statistics for desktop
   const getEnhancedStats = () => ({
-    volume1h: typeof volume1h === 'number' ? `$${volume1h.toLocaleString()}` : '—',
-    volume6h: typeof volume6h === 'number' ? `$${volume6h.toLocaleString()}` : '—',
-    volume24h: typeof volume24hDerived === 'number' ? `$${volume24hDerived.toLocaleString()}` : (token.volume24h ? `$${token.volume24h.toLocaleString()}` : '—'),
+    volume1h: typeof (volumes.v1h ?? volume1h) === 'number' ? `$${Number(volumes.v1h ?? volume1h).toLocaleString()}` : '—',
+    volume6h: typeof (volumes.v6h ?? volume6h) === 'number' ? `$${Number(volumes.v6h ?? volume6h).toLocaleString()}` : '—',
+    volume24h: typeof (volumes.v24h ?? volume24hDerived ?? token.volume24h) === 'number' ? `$${Number((volumes.v24h ?? volume24hDerived ?? token.volume24h)).toLocaleString()}` : '—',
     marketCapRank: '—',
     holders: token.holders,
     maxSupply: token?.description ? undefined : '—',
