@@ -567,29 +567,43 @@ const MemeTokenDetailPage = () => {
         {/* Modern Token Header */}
         <TokenHeader token={token} />
 
-        {/* Main Content Grid - Chart on left, Trading on right */}
-        <div className="grid grid-cols-12 gap-6">
-          {/* Main Chart Area */}
-          <div className="col-span-9">
-            {/* Chart */}
-            <Card className="mb-6 bg-card/50 backdrop-blur-sm border border-border/50">
-              <TradingViewChart 
-                symbol={tokenAddress || token.symbol}
-                currentPrice={token.price}
-                coinGeckoId={token.symbol.toLowerCase()}
-              />
+        {/* Main Content Grid - Chart on left, Trading on right - Enhanced */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-12 mt-12">
+          {/* Main Chart Area - Enhanced */}
+          <div className="xl:col-span-3 space-y-12">
+            {/* Chart - Enhanced */}
+            <Card className="p-8 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Price Chart
+                </h3>
+                <div className="flex items-center gap-4">
+                  <div className="h-3 w-3 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
+                  <span className="text-lg font-medium text-muted-foreground">Live</span>
+                </div>
+              </div>
+              <div className="h-[700px] rounded-2xl overflow-hidden border border-border/20">
+                <TradingViewChart 
+                  symbol={tokenAddress || token.symbol}
+                  currentPrice={token.price}
+                  coinGeckoId={token.symbol.toLowerCase()}
+                />
+              </div>
             </Card>
 
             {/* Enhanced Market Stats Below Chart */}
-            <EnhancedMarketStats 
-              token={token}
-              volumes={volumes}
-              beMarket={beMarket}
-            />
+            <div className="animate-fade-in">
+              <EnhancedMarketStats 
+                token={token}
+                volumes={volumes}
+                beMarket={beMarket}
+              />
+            </div>
           </div>
 
-          {/* Right Sidebar - Advanced Trading Settings */}
-          <div className="col-span-3">
+          {/* Right Sidebar - Advanced Trading Settings - Enhanced */}
+          <div className="xl:col-span-1">
+            <div className="sticky top-8">
             <AdvancedTradingSettings
               tradeType={tradeType}
               setTradeType={setTradeType}
@@ -624,6 +638,7 @@ const MemeTokenDetailPage = () => {
               getPriorityFee={getPriorityFee}
               getEstimatedGas={getEstimatedGas}
             />
+            </div>
           </div>
         </div>
       </div>

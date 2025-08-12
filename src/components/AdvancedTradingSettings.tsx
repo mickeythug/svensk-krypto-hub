@@ -76,54 +76,65 @@ export const AdvancedTradingSettings = ({
   getEstimatedGas
 }: AdvancedTradingSettingsProps) => {
   const quickAmounts = tradeType === 'buy' ? [0.1, 0.5, 1, 2, 5] : [10, 25, 50, 75, 100];
-  return <div className="space-y-6 sticky top-6">
-      {/* Main Trading Card */}
-      <Card className="p-6 bg-card/95 backdrop-blur-sm border border-border/50 shadow-lg">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <Settings2 className="h-5 w-5 text-primary" />
+  return <div className="space-y-8 sticky top-8">
+      {/* Main Trading Card - World-Class Enhanced */}
+      <Card className="p-8 bg-gradient-to-br from-card/95 to-card/85 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg">
+            <Settings2 className="h-7 w-7 text-primary" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-foreground">Smart Trading</h3>
-            <p className="text-sm text-muted-foreground">Professional trading tools</p>
+            <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Smart Trading
+            </h3>
+            <p className="text-lg text-muted-foreground font-medium">Professional trading tools</p>
           </div>
+          <div className="ml-auto h-4 w-4 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
         </div>
 
-        {/* Buy/Sell Toggle */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <Button size="lg" variant={tradeType === 'buy' ? 'default' : 'outline'} onClick={() => setTradeType('buy')} className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg border-0' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-green-500 hover:text-green-600'}`}>
-            <TrendingUp className="h-6 w-6" />
-            <span className="font-bold text-lg">BUY</span>
+        {/* Buy/Sell Toggle - Enhanced */}
+        <div className="grid grid-cols-2 gap-6 mb-10">
+          <Button size="lg" variant={tradeType === 'buy' ? 'default' : 'outline'} onClick={() => setTradeType('buy')} className={`h-20 font-bold text-xl transition-all duration-300 flex items-center justify-center gap-4 rounded-2xl ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg shadow-green-500/30 border-0 hover:scale-[1.02]' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-green-500 hover:text-green-600 hover:shadow-md'}`}>
+            <TrendingUp className="h-7 w-7" />
+            <span className="font-bold text-xl">BUY</span>
           </Button>
-          <Button size="lg" variant={tradeType === 'sell' ? 'default' : 'outline'} onClick={() => setTradeType('sell')} className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${tradeType === 'sell' ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg border-0' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-red-500 hover:text-red-600'}`}>
-            <TrendingDown className="h-6 w-6" />
-            <span className="font-bold text-lg">SELL</span>
+          <Button size="lg" variant={tradeType === 'sell' ? 'default' : 'outline'} onClick={() => setTradeType('sell')} className={`h-20 font-bold text-xl transition-all duration-300 flex items-center justify-center gap-4 rounded-2xl ${tradeType === 'sell' ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-500/30 border-0 hover:scale-[1.02]' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-red-500 hover:text-red-600 hover:shadow-md'}`}>
+            <TrendingDown className="h-7 w-7" />
+            <span className="font-bold text-xl">SELL</span>
           </Button>
         </div>
 
-        {/* Order Type */}
-        <div className="mb-8">
-          <Label className="text-base font-bold text-foreground mb-4 block">Order Type</Label>
-          <div className="grid grid-cols-3 gap-3">
+        {/* Order Type - Enhanced */}
+        <div className="mb-10">
+          <Label className="text-xl font-bold text-foreground mb-6 block flex items-center gap-3">
+            <span className="h-2 w-2 rounded-full bg-accent"></span>
+            Order Type
+          </Label>
+          <div className="grid grid-cols-3 gap-4">
             {[{
             key: 'market',
             label: 'Market',
-            desc: 'Instant execution'
+            desc: 'Instant execution',
+            icon: '⚡'
           }, {
             key: 'limit',
             label: 'Limit',
-            desc: 'Set price target'
+            desc: 'Set price target',
+            icon: '🎯'
           }, {
             key: 'stop',
             label: 'Stop',
-            desc: 'Stop loss order'
+            desc: 'Stop loss order',
+            icon: '🛡️'
           }].map(({
             key,
             label,
-            desc
-          }) => <Button key={key} variant={orderType === key ? 'default' : 'outline'} size="sm" onClick={() => setOrderType(key as any)} className={`h-auto py-4 px-3 flex flex-col items-center gap-1 min-h-[80px] ${orderType === key ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
-                <span className="font-bold text-sm">{label}</span>
-                
+            desc,
+            icon
+          }) => <Button key={key} variant={orderType === key ? 'default' : 'outline'} size="sm" onClick={() => setOrderType(key as any)} className={`h-auto py-6 px-4 flex flex-col items-center gap-2 min-h-[100px] rounded-2xl transition-all duration-300 ${orderType === key ? 'bg-primary text-primary-foreground border-0 shadow-lg shadow-primary/30 hover:scale-[1.02]' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary hover:shadow-md'}`}>
+                <span className="text-2xl">{icon}</span>
+                <span className="font-bold text-lg">{label}</span>
+                <span className="text-sm opacity-80">{desc}</span>
               </Button>)}
           </div>
         </div>
@@ -189,12 +200,12 @@ export const AdvancedTradingSettings = ({
             </p>
           </div>}
 
-        {/* Execute Trade Button */}
-        <Button onClick={handleTrade} disabled={isTrading || !customAmount} size="lg" className={`w-full h-16 text-lg font-bold transition-all duration-200 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg' : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg'} text-white disabled:opacity-50 disabled:cursor-not-allowed`}>
-          {isTrading ? <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              Processing...
-            </div> : `${tradeType === 'buy' ? 'Buy' : 'Sell'} Now`}
+        {/* Execute Trade Button - Enhanced */}
+        <Button onClick={handleTrade} disabled={isTrading || !customAmount} size="lg" className={`w-full h-20 text-2xl font-bold transition-all duration-300 rounded-2xl ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-lg shadow-green-500/30' : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30'} text-white disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]`}>
+          {isTrading ? <div className="flex items-center gap-4">
+              <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent"></div>
+              Processing Transaction...
+            </div> : `${tradeType === 'buy' ? '🚀 Buy' : '💎 Sell'} Now`}
         </Button>
 
         <Separator className="my-6" />
