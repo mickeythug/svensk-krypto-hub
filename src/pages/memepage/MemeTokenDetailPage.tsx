@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, TrendingUp, TrendingDown, Users, Eye, Share2, Heart, Copy, ExternalLink, Shield, Zap, Target, BarChart3, Clock, DollarSign, ShoppingCart, Bookmark, AlertCircle, CheckCircle, Info, Download, Globe, MessageCircle, Award, Activity, Layers, Volume2, Calendar, PieChart, LineChart, BarChart, Maximize2, Settings, RefreshCw, Filter, Search, Bell, Flag, Lock, Unlock, Play, Pause, RotateCcw, Database, Network, Cpu, HardDrive, Wifi, Signal, Battery, CloudLightning } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import OptimizedImage from '@/components/OptimizedImage';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMemeTokens } from './hooks/useMemeTokens';
+import { useMemeTokenDetails } from './hooks/useMemeTokenDetails';
 import JupiterSwapWidget from '@/components/web3/JupiterSwapWidget';
 import TradingViewMobileChart from '@/components/mobile/TradingViewMobileChart';
 import TradingViewChart from '@/components/TradingViewChart';
@@ -59,15 +60,38 @@ const MemeTokenDetailPage = () => {
   const [solBalance] = useState(2.45);
   const [tokenBalance] = useState(1234567);
 
-  // Find the token based on symbol
-  const token = tokens.find(t => t.symbol.toLowerCase() === symbol?.toLowerCase());
+  // Resolve address from query and fetch full details
+  const [searchParams] = useSearchParams();
+  const address = searchParams.get('address') || undefined;
+  const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
+
+  // Find fallback token by symbol
+  const found = tokens.find(t => t.symbol.toLowerCase() === (symbol ?? '').toLowerCase());
+
+  // Prefer full details when available
+  const token = details ? {
+    id: details.address,
+    symbol: details.symbol,
+    name: details.name,
+    image: details.logo || found?.image,
+    price: details.price ?? found?.price ?? 0,
+    change24h: details.variation24h ?? found?.change24h ?? 0,
+    volume24h: details.pool?.volume24h ?? found?.volume24h ?? 0,
+    marketCap: details.marketCap ?? found?.marketCap ?? 0,
+    holders: details.holders ?? found?.holders ?? 0,
+    views: found?.views ?? '—',
+    emoji: found?.emoji,
+    tags: found?.tags ?? [],
+    isHot: found?.isHot ?? false,
+    description: details.description || found?.description,
+  } : found;
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   useEffect(() => {
-    if (!token && tokens.length > 0) {
+    if (!token && tokens.length > 0 && !address) {
       navigate('/meme');
     }
-  }, [token, tokens, navigate]);
+  }, [token, tokens, navigate, address]);
 
   // Enhanced Trading Functions - ALL useCallback hooks must be before early returns
   const handleAmountSelect = useCallback((amount: number) => {
@@ -200,7 +224,7 @@ const MemeTokenDetailPage = () => {
                   <div className="flex items-start gap-4">
                     <div className="relative">
                       <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg">
-                        <OptimizedImage src={coverImage} alt={`${token.name} logo`} className="w-full h-full object-cover" />
+...
                       </div>
                       {token.isHot && <div className="absolute -top-1 -right-1">
                           <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 animate-pulse">
