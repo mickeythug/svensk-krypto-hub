@@ -151,7 +151,10 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
           const { data } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'boosted' } });
           addresses = addrFrom(normalize(data)).slice(0, take);
         } else if (category === 'newest' || category === 'potential') {
-          addresses = addrFrom(await fetchDexscreenerProfiles('createdAt', 'desc')).slice(0, take);
+          const { data: pairsRes } = await supabase.functions.invoke('dexscreener-proxy', {
+            body: { action: 'pairsList', sort: 'createdAt', order: 'desc' }
+          });
+          addresses = addrFrom(normalize(pairsRes)).slice(0, take);
         }
 
         if (!addresses.length) {

@@ -171,6 +171,22 @@ serve(async (req) => {
       return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
+    if (action === 'pairsList') {
+      // DexScreener latest pairs list for Solana (e.g., sort=createdAt)
+      const body: any = await req.json().catch(() => ({}));
+      const sortKey = body.sort || undefined; // e.g., 'createdAt'
+      const order = body.order || 'desc';
+      const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
+      const qs = new URLSearchParams();
+      if (sortKey) qs.set('sort', String(sortKey));
+      if (order) qs.set('order', String(order));
+      const base = `https://api.dexscreener.com/latest/dex/pairs/solana`;
+      const url = qs.toString() ? `${base}?${qs.toString()}` : base;
+      const json = await fetchJsonCached(url, TTL_TOKEN);
+      const list = Array.isArray(json?.pairs) ? json.pairs : [];
+      return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
     if (action === 'boosted') {
       const url = `https://api.dexscreener.com/token-boosts/latest/v1/solana`;
       const json = await fetchJsonCached(url, TTL_TOKEN);
