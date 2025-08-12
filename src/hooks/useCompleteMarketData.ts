@@ -59,8 +59,8 @@ export function useCompleteMarketData(address?: string) {
 
     const fetchAll = async () => {
       try {
-        // Only use DEXTools for comprehensive data since Birdeye free tier is limited
-        const dtRes = await supabase.functions.invoke('dextools-proxy', { 
+        // Use Dexscreener for comprehensive, free token data
+        const dtRes = await supabase.functions.invoke('dexscreener-proxy', { 
           body: { action: 'tokenFull', address } 
         });
 

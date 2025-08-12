@@ -32,7 +32,7 @@ export const TransactionsTable = ({ tokenAddress, tokenSymbol }: TransactionsTab
     if (!tokenAddress) return;
     setLoading(true);
     try {
-      const { data } = await supabase.functions.invoke('dextools-proxy', {
+      const { data } = await supabase.functions.invoke('dexscreener-proxy', {
         body: { action: 'tokenFull', address: tokenAddress },
       });
       const priceD = (data?.price?.data ?? data?.price) as any || {};

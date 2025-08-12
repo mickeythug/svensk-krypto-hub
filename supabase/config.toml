@@ -81,6 +81,9 @@ verify_jwt = true
 [functions.birdeye-proxy]
 verify_jwt = false
 
+[functions.dexscreener-proxy]
+verify_jwt = false
+
 [functions.meme-birdeye-enrich]
 verify_jwt = false
 

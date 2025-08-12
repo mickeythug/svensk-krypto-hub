@@ -38,7 +38,7 @@ export function useMemeTokenDetails(address?: string) {
 
     const load = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('dextools-proxy', {
+        const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
           body: { action: 'tokenFull', address },
         });
         if (error) throw error;
