@@ -239,7 +239,7 @@ export const AdvancedTradingSettings = ({
             <h3 className="text-3xl font-bold text-foreground bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
               Advanced Settings
             </h3>
-            <p className="text-lg text-muted-foreground font-medium">Fine-tune your trading parameters</p>
+            <p className="text-lg text-muted-foreground font-medium">Professional configuration options</p>
           </div>
           <div className="ml-auto h-4 w-4 rounded-full bg-orange-500 animate-pulse shadow-lg shadow-orange-500/50"></div>
         </div>
@@ -267,7 +267,7 @@ export const AdvancedTradingSettings = ({
                 </div>
               </div>
             </div>}
-          {autoSlippage && <div className="text-sm text-muted-foreground bg-blue-50 rounded-lg p-3">
+          {autoSlippage && <div className="text-sm text-muted-foreground bg-card/50 border border-border/30 rounded-lg p-3">
               <Info className="h-4 w-4 inline mr-2" />
               Auto slippage will adjust based on market conditions
             </div>}
@@ -283,26 +283,27 @@ export const AdvancedTradingSettings = ({
             {[{
             key: 'low',
             label: 'Low',
-            fee: '0.0001',
+            fee: '0.001',
             desc: 'Slow'
           }, {
             key: 'medium',
-            label: 'Med',
-            fee: '0.0005',
+            label: 'Medium',
+            fee: '0.007',
             desc: 'Normal'
           }, {
             key: 'high',
             label: 'High',
-            fee: '0.001',
+            fee: '0.01',
             desc: 'Fast'
           }].map(({
             key,
             label,
             fee,
             desc
-          }) => <Button key={key} variant={priority === key ? 'default' : 'outline'} size="sm" onClick={() => setPriority(key as typeof priority)} className={`h-auto py-3 px-2 flex flex-col items-center text-xs rounded-lg ${priority === key ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
-                <span className="font-semibold text-sm">{label}</span>
-                <span className="text-xs opacity-70 mt-1 truncate">{fee}</span>
+          }) => <Button key={key} variant={priority === key ? 'default' : 'outline'} size="sm" onClick={() => setPriority(key as typeof priority)} className={`h-auto py-4 px-3 flex flex-col items-center rounded-lg ${priority === key ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
+                <span className="font-bold text-base">{label}</span>
+                <span className="text-sm font-semibold mt-1">{fee}</span>
+                <span className="text-xs opacity-70">{desc}</span>
               </Button>)}
           </div>
         </div>
@@ -321,17 +322,6 @@ export const AdvancedTradingSettings = ({
           </div>
         </div>
 
-        {/* Price Alert */}
-        <div className="mb-6">
-          <Label className="text-sm font-semibold text-foreground mb-3 block flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            Price Alert
-          </Label>
-          <Input type="number" placeholder="Set price notification" value={priceAlert} onChange={e => setPriceAlert(e.target.value)} className="text-base font-semibold" />
-          <p className="text-xs text-muted-foreground mt-2">
-            Get notified when price reaches this level
-          </p>
-        </div>
 
         {/* Transaction Summary */}
         <div className="bg-muted/30 rounded-lg p-4">
