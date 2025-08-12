@@ -96,39 +96,39 @@ export const AdvancedTradingSettings = ({
         </div>
 
         {/* Buy/Sell Toggle */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-4 mb-8">
           <Button
             size="lg"
             variant={tradeType === 'buy' ? 'default' : 'outline'}
             onClick={() => setTradeType('buy')}
-            className={`h-14 font-semibold text-base transition-all duration-200 ${
+            className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
               tradeType === 'buy'
-                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
-                : 'hover:bg-green-50 hover:text-green-600 hover:border-green-300'
+                ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg border-0'
+                : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-green-500 hover:text-green-600'
             }`}
           >
-            <TrendingUp className="mr-2 h-5 w-5" />
-            Buy
+            <TrendingUp className="h-6 w-6" />
+            <span className="font-bold text-lg">BUY</span>
           </Button>
           <Button
             size="lg"
             variant={tradeType === 'sell' ? 'default' : 'outline'}
             onClick={() => setTradeType('sell')}
-            className={`h-14 font-semibold text-base transition-all duration-200 ${
+            className={`h-16 font-bold text-lg transition-all duration-200 flex items-center justify-center gap-3 ${
               tradeType === 'sell'
-                ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg'
-                : 'hover:bg-red-50 hover:text-red-600 hover:border-red-300'
+                ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg border-0'
+                : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-red-500 hover:text-red-600'
             }`}
           >
-            <TrendingDown className="mr-2 h-5 w-5" />
-            Sell
+            <TrendingDown className="h-6 w-6" />
+            <span className="font-bold text-lg">SELL</span>
           </Button>
         </div>
 
         {/* Order Type */}
-        <div className="mb-6">
-          <Label className="text-sm font-semibold text-foreground mb-3 block">Order Type</Label>
-          <div className="grid grid-cols-3 gap-2">
+        <div className="mb-8">
+          <Label className="text-base font-bold text-foreground mb-4 block">Order Type</Label>
+          <div className="grid grid-cols-3 gap-3">
             {[
               { key: 'market', label: 'Market', desc: 'Instant execution' },
               { key: 'limit', label: 'Limit', desc: 'Set price target' },
@@ -139,22 +139,26 @@ export const AdvancedTradingSettings = ({
                 variant={orderType === key ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setOrderType(key as any)}
-                className="h-auto py-3 px-2 flex flex-col items-center text-xs"
+                className={`h-auto py-4 px-3 flex flex-col items-center gap-1 min-h-[80px] ${
+                  orderType === key
+                    ? 'bg-primary text-primary-foreground border-0 shadow-md'
+                    : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'
+                }`}
               >
-                <span className="font-semibold">{label}</span>
-                <span className="text-xs opacity-70 mt-1">{desc}</span>
+                <span className="font-bold text-sm">{label}</span>
+                <span className="text-xs text-muted-foreground leading-tight text-center">{desc}</span>
               </Button>
             ))}
           </div>
         </div>
 
         {/* Amount Selection */}
-        <div className="mb-6">
-          <Label className="text-sm font-semibold text-foreground mb-3 block">
+        <div className="mb-8">
+          <Label className="text-base font-bold text-foreground mb-4 block">
             {tradeType === 'buy' ? 'Amount (SOL)' : 'Percentage (%)'}
           </Label>
           
-          <div className="grid grid-cols-3 gap-2 mb-3">
+          <div className="grid grid-cols-3 gap-3 mb-4">
             {quickAmounts.slice(0, 3).map((amount) => (
               <Button
                 key={amount}
@@ -167,14 +171,18 @@ export const AdvancedTradingSettings = ({
                     handleAmountSelect(amount);
                   }
                 }}
-                className="text-sm font-semibold h-10"
+                className={`text-base font-bold h-12 ${
+                  selectedAmount === amount
+                    ? 'bg-primary text-primary-foreground border-0 shadow-md'
+                    : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'
+                }`}
               >
                 {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount} SOL`}
               </Button>
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             {quickAmounts.slice(3).map((amount) => (
               <Button
                 key={amount}
@@ -187,7 +195,11 @@ export const AdvancedTradingSettings = ({
                     handleAmountSelect(amount);
                   }
                 }}
-                className="text-sm font-semibold h-10"
+                className={`text-base font-bold h-12 ${
+                  selectedAmount === amount
+                    ? 'bg-primary text-primary-foreground border-0 shadow-md'
+                    : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'
+                }`}
               >
                 {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount} SOL`}
               </Button>
@@ -200,9 +212,9 @@ export const AdvancedTradingSettings = ({
               placeholder={tradeType === 'buy' ? 'Custom SOL amount' : 'Custom token amount'}
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
-              className="text-base font-semibold pr-16"
+              className="text-lg font-bold pr-20 h-14 bg-background border-2 border-border focus:border-primary"
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-base font-bold text-muted-foreground">
               {tradeType === 'buy' ? 'SOL' : 'TOKENS'}
             </div>
           </div>
