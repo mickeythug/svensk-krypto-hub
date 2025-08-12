@@ -18,10 +18,6 @@ export default {
 			}
 		},
     extend: {
-      fontFamily: {
-        'mono': ['Roboto Mono', 'monospace'],
-        'sans': ['Inter', 'sans-serif'],
-      },
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -89,9 +85,8 @@ export default {
 				'glow-secondary': 'var(--glow-secondary)',
 			},
 			fontFamily: {
-				'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-				'mono': ['JetBrains Mono', 'Monaco', 'Consolas', 'monospace'],
-				'display': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				sans: ["system-ui", "sans-serif"],
+				mono: ["ui-monospace", "SFMono-Regular", "Monaco", "Consolas", "Liberation Mono", "Menlo", "monospace"],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
