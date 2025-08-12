@@ -170,6 +170,27 @@ export type Database = {
         }
         Relationships: []
       }
+      meme_tokens_cache: {
+        Row: {
+          category: string
+          created_at: string
+          data: Json
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          data: Json
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          data?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       news_cache: {
         Row: {
           created_at: string

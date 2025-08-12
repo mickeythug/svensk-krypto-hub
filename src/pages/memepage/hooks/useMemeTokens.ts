@@ -61,6 +61,28 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
 
     const load = async () => {
       try {
+        // 0) Centralized cache bootstrap and refresh trigger
+        try {
+          const { data: row } = await supabase
+            .from('meme_tokens_cache')
+            .select('data, updated_at')
+            .eq('category', category)
+            .maybeSingle();
+          if (row?.data && mounted) {
+            const freshEnough = row.updated_at
+              ? Date.now() - new Date(row.updated_at as any).getTime() <= 30 * 60 * 1000
+              : false;
+            const arr = Array.isArray(row.data) ? (row.data as unknown as MemeToken[]) : [];
+            if (arr.length) {
+              setTokens(arr.slice(0, limit));
+            }
+            if (!freshEnough) {
+              // Trigger refresh in background (non-blocking)
+              supabase.functions.invoke('meme-cache-refresh', { body: { categories: [category] } }).catch(() => {});
+            }
+          }
+        } catch {}
+
         // 1) Get base list (addresses)
         let addresses: string[] = [];
         if (category === 'trending') {
@@ -224,13 +246,34 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
           }
         }
       } catch (e: any) {
-        // On error, try serve stale cache as graceful fallback
-        const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
-        if (mounted && cached && cached.length) {
-          setTokens(cached.slice(0, limit));
-          setError(null);
-        } else if (mounted) {
-          setError(e?.message || 'Kunde inte hämta data från DEXTools');
+        // On error, try centralized cache, then local stale cache
+        try {
+          const { data: row } = await supabase
+            .from('meme_tokens_cache')
+            .select('data')
+            .eq('category', category)
+            .maybeSingle();
+          const arr = Array.isArray(row?.data) ? (row!.data as unknown as MemeToken[]) : [];
+          if (mounted && arr.length) {
+            setTokens(arr.slice(0, limit));
+            setError(null);
+          } else {
+            const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
+            if (mounted && cached && cached.length) {
+              setTokens(cached.slice(0, limit));
+              setError(null);
+            } else if (mounted) {
+              setError(e?.message || 'Kunde inte hämta data från DEXTools');
+            }
+          }
+        } catch {
+          const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
+          if (mounted && cached && cached.length) {
+            setTokens(cached.slice(0, limit));
+            setError(null);
+          } else if (mounted) {
+            setError(e?.message || 'Kunde inte hämta data från DEXTools');
+          }
         }
       } finally {
         if (mounted) setLoading(false);
