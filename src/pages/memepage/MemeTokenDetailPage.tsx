@@ -32,16 +32,14 @@ import c3 from '@/assets/meme-covers/meme-cover-3.jpg';
 import c4 from '@/assets/meme-covers/meme-cover-4.jpg';
 import c5 from '@/assets/meme-covers/meme-cover-5.jpg';
 import c6 from '@/assets/meme-covers/meme-cover-6.jpg';
+
 const covers = [c1, c2, c3, c4, c5, c6];
+
 const MemeTokenDetailPage = () => {
-  const {
-    symbol
-  } = useParams();
+  const { symbol } = useParams();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const {
-    tokens
-  } = useMemeTokens('all');
+  const { tokens } = useMemeTokens('all');
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
@@ -71,7 +69,7 @@ const MemeTokenDetailPage = () => {
   // Resolve address from query and fetch full details
   const [searchParams] = useSearchParams();
   const address = searchParams.get('address') || undefined;
-const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
+  const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
   const { toast } = useToast();
 
   // Find fallback token by symbol
@@ -157,10 +155,12 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
     setSelectedAmount(amount);
     setCustomAmount(amount.toString());
   }, []);
+
   const handleCustomAmountChange = useCallback((value: string) => {
     setCustomAmount(value);
     setSelectedAmount(null);
   }, []);
+
   const calculateTradeValue = useCallback(() => {
     if (!token) return 0;
     const amount = selectedAmount || parseFloat(customAmount) || 0;
@@ -170,6 +170,7 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
       return amount; // For sell, amount is in tokens
     }
   }, [selectedAmount, customAmount, tradeType, token]);
+
   const calculateSellPercentage = useCallback((percentage: number) => {
     const amount = tokenBalance * percentage / 100;
     setCustomAmount(amount.toString());
@@ -220,6 +221,7 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
       setIsTrading(false);
     }
   }, [token, tradeType, selectedAmount, customAmount, priority, autoSlippage, slippage, mevProtection, tokenAddress, createIfMissing, trade]);
+
   const getPriorityFee = useCallback(() => {
     switch (priority) {
       case 'low':
@@ -232,6 +234,7 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
         return '0.0005 SOL';
     }
   }, [priority]);
+
   const getEstimatedGas = useCallback(() => {
     return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
   }, [orderType]);
@@ -269,6 +272,7 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
     if (price < 1) return `$${price.toFixed(4)}`;
     return `$${price.toFixed(2)}`;
   };
+
   const formatMarketCap = (marketCap: number): string => {
     if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
     if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
@@ -278,13 +282,16 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
 
   // EARLY RETURN AFTER ALL HOOKS
   if (!token) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Laddar token...</p>
+          <p className="text-muted-foreground">Loading token...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
+
   const isPositive = token.change24h > 0;
   const coverImage = covers[Math.abs(token.symbol.charCodeAt(0)) % covers.length];
 
@@ -309,9 +316,12 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
     riskScore: '—',
     sentiment: '—'
   });
+
   const stats = getEnhancedStats();
+
   if (isMobile) {
-    return <div className="min-h-screen bg-background">
+    return (
+      <div className="min-h-screen bg-background">
         {/* Mobile Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 z-0">
@@ -330,18 +340,26 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
                   <div className="flex items-start gap-4">
                     <div className="relative">
                       <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg">
-...
+                        {token.image ? (
+                          <OptimizedImage src={token.image} alt={token.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-primary">
+                            {token.symbol.charAt(0)}
+                          </div>
+                        )}
                       </div>
-                      {token.isHot && <div className="absolute -top-1 -right-1">
+                      {token.isHot && (
+                        <div className="absolute -top-1 -right-1">
                           <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 animate-pulse">
                             🔥
                           </Badge>
-                        </div>}
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h1 className="text-3xl font-crypto font-black">
+                        <h1 className="text-3xl font-bold">
                           {token.emoji} {token.symbol}
                         </h1>
                         <Button variant="ghost" size="sm" onClick={() => setIsLiked(!isLiked)} className="h-8 w-8 rounded-full p-0">
@@ -349,12 +367,12 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
                         </Button>
                       </div>
                       
-                      <p className="text-lg text-muted-foreground font-crypto font-medium mb-3">
+                      <p className="text-lg text-muted-foreground font-medium mb-3">
                         {token.name}
                       </p>
 
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl font-crypto font-black">
+                        <span className="text-2xl font-bold">
                           {formatPrice(token.price)}
                         </span>
                         <Badge variant={isPositive ? "default" : "destructive"} className={`${isPositive ? 'bg-success text-success-foreground' : ''} font-bold text-sm px-3 py-1`}>
@@ -377,28 +395,28 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
                   <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border/50">
                     <div className="text-center">
                       <div className="text-xs text-muted-foreground mb-1">Market Cap</div>
-                      <div className="font-crypto font-bold text-sm">{formatMarketCap(token.marketCap)}</div>
+                      <div className="font-bold text-sm">{formatMarketCap(token.marketCap)}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-muted-foreground mb-1">Holders</div>
-                      <div className="font-crypto font-bold text-sm">
+                      <div className="font-bold text-sm">
                         {token.holders > 1000 ? `${Math.floor(token.holders / 1000)}K` : token.holders}
                       </div>
                     </div>
                     <div className="text-center">
                       <div className="text-xs text-muted-foreground mb-1">Views</div>
-                      <div className="font-crypto font-bold text-sm">{token.views}</div>
+                      <div className="font-bold text-sm">{token.views}</div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 mt-6">
-                    <Button className="bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary text-white font-crypto font-bold h-11 rounded-xl shadow-lg" onClick={() => setActiveTab('trade')}>
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      KÖP TOKEN
+                    <Button size="lg" className="h-14 bg-success hover:bg-success/90 text-success-foreground font-bold text-lg">
+                      <TrendingUp className="mr-2 h-5 w-5" />
+                      Buy
                     </Button>
-                    <Button variant="outline" className="font-crypto font-bold h-11 rounded-xl border-2">
-                      <BarChart3 className="w-4 h-4 mr-2" />
-                      ANALYS
+                    <Button size="lg" variant="destructive" className="h-14 font-bold text-lg">
+                      <TrendingDown className="mr-2 h-5 w-5" />
+                      Sell
                     </Button>
                   </div>
                 </div>
@@ -407,89 +425,49 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
           </div>
         </div>
 
-        {/* Mobile Tabs */}
-        <div className="container mx-auto px-4 pb-20">
+        {/* Mobile Content Tabs */}
+        <div className="container mx-auto px-4 pb-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6 bg-card/80 backdrop-blur-sm rounded-xl">
-              <TabsTrigger value="overview" className="rounded-lg font-crypto font-semibold">Översikt</TabsTrigger>
-              <TabsTrigger value="stats" className="rounded-lg font-crypto font-semibold">Stats</TabsTrigger>
-              <TabsTrigger value="trade" className="rounded-lg font-crypto font-semibold">Handel</TabsTrigger>
-              <TabsTrigger value="community" className="rounded-lg font-crypto font-semibold">Community</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 mb-6">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="chart">Chart</TabsTrigger>
+              <TabsTrigger value="trade">Trade</TabsTrigger>
+              <TabsTrigger value="info">Info</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
-              <Card className="bg-card/90 backdrop-blur-sm border-border/50 shadow-xl overflow-hidden">
-                <div className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <BarChart3 className="w-5 h-5 text-primary" />
-                    <h3 className="text-xl font-crypto font-bold">Live Chart - {token.symbol}</h3>
-                  </div>
-                  
-                  <div className="bg-[#0f0f23] rounded-xl overflow-hidden shadow-lg border border-border/20">
-                    <div className="h-[400px] relative">
-                      <TradingViewMobileChart symbol={token.symbol} coinGeckoId={token.symbol.toLowerCase()} />
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
-                    <div className="flex items-center gap-2">
-                      <Info className="w-4 h-4 text-primary" />
-                      <span className="text-sm text-muted-foreground">
-                        Live prisdata från TradingView för {token.symbol}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="stats" className="space-y-6">
-              {/* Token Description */}
+              {/* Quick Stats */}
               <Card className="bg-card/80 backdrop-blur-sm border-border/50">
                 <div className="p-6">
-                  <h3 className="text-xl font-crypto font-bold mb-4">Om {token.name}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {token.name} ({token.symbol}) är en meme-token som har tagit krypto-communityn med storm. 
-                    Med sitt unika koncept och starka community-support, representerar denna token en ny våg av 
-                    decentraliserad innovation inom meme-ekonomin.
-                  </p>
-                </div>
-              </Card>
-
-              {/* Key Metrics */}
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-crypto font-bold mb-4">Nyckelstatistik</h3>
+                  <h3 className="text-xl font-bold mb-4">Quick Stats</h3>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10">
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10">
                       <div className="flex items-center gap-2 mb-2">
-                        <DollarSign className="w-4 h-4 text-primary" />
-                        <span className="text-sm text-muted-foreground">Pris</span>
+                        <DollarSign className="w-4 h-4 text-blue-500" />
+                        <span className="text-sm text-muted-foreground">Market Cap</span>
                       </div>
-                      <div className="text-lg font-crypto font-bold">{formatPrice(token.price)}</div>
+                      <div className="text-lg font-bold">{formatMarketCap(token.marketCap)}</div>
                     </div>
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-success/10 to-emerald-500/10">
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-green-600/10">
                       <div className="flex items-center gap-2 mb-2">
-                        <TrendingUp className="w-4 h-4 text-success" />
-                        <span className="text-sm text-muted-foreground">24h Förändring</span>
+                        <Volume2 className="w-4 h-4 text-green-500" />
+                        <span className="text-sm text-muted-foreground">24h Volume</span>
                       </div>
-                      <div className={`text-lg font-crypto font-bold ${isPositive ? 'text-success' : 'text-destructive'}`}>
-                        {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
-                      </div>
+                      <div className="text-lg font-bold">{stats.volume24h}</div>
                     </div>
                     <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-indigo-500/10">
                       <div className="flex items-center gap-2 mb-2">
                         <Users className="w-4 h-4 text-purple-500" />
                         <span className="text-sm text-muted-foreground">Holders</span>
                       </div>
-                      <div className="text-lg font-crypto font-bold">{token.holders.toLocaleString()}</div>
+                      <div className="text-lg font-bold">{token.holders.toLocaleString()}</div>
                     </div>
                     <div className="p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10">
                       <div className="flex items-center gap-2 mb-2">
                         <Eye className="w-4 h-4 text-orange-500" />
-                        <span className="text-sm text-muted-foreground">Visningar</span>
+                        <span className="text-sm text-muted-foreground">Views</span>
                       </div>
-                      <div className="text-lg font-crypto font-bold">{token.views.toLocaleString()}</div>
+                      <div className="text-lg font-bold">{token.views}</div>
                     </div>
                   </div>
                 </div>
@@ -498,49 +476,25 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
               {/* Tags */}
               <Card className="bg-card/80 backdrop-blur-sm border-border/50">
                 <div className="p-6">
-                  <h3 className="text-xl font-crypto font-bold mb-4">Kategorier</h3>
+                  <h3 className="text-xl font-bold mb-4">Categories</h3>
                   <div className="flex flex-wrap gap-2">
-                    {token.tags.map((tag, index) => <Badge key={index} variant="secondary" className="bg-primary/10 text-primary border border-primary/20 font-crypto font-semibold">
+                    {token.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="bg-primary/10 text-primary border border-primary/20 font-semibold">
                         {tag}
-                      </Badge>)}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               </Card>
+            </TabsContent>
 
-              {/* Detailed Statistics */}
+            <TabsContent value="chart" className="space-y-6">
               <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-crypto font-bold mb-6">Detaljerad Statistik</h3>
-                  
-                  {/* Market Cap Progress */}
-                  <div className="mb-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-muted-foreground">Market Cap Progress</span>
-                      <span className="text-sm font-crypto font-bold">{formatMarketCap(token.marketCap)}</span>
-                    </div>
-                    <Progress value={Math.min(token.marketCap / 10000000 * 100, 100)} className="h-2" />
-                    <div className="text-xs text-muted-foreground mt-1">Till $10M market cap</div>
-                  </div>
-
-                  {/* Detailed Metrics */}
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
-                      <span className="text-muted-foreground">Ranking</span>
-                      <span className="font-crypto font-bold">#42</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
-                      <span className="text-muted-foreground">Volym 24h</span>
-                      <span className="font-crypto font-bold">$2.4M</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
-                      <span className="text-muted-foreground">ATH</span>
-                      <span className="font-crypto font-bold">{formatPrice(token.price * 2.5)}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 rounded-lg bg-muted/30">
-                      <span className="text-muted-foreground">ATL</span>
-                      <span className="font-crypto font-bold">{formatPrice(token.price * 0.1)}</span>
-                    </div>
-                  </div>
+                <div className="h-[400px]">
+                  <TradingViewMobileChart 
+                    symbol={tokenAddress || token.symbol}
+                    coinGeckoId={token.symbol.toLowerCase()}
+                  />
                 </div>
               </Card>
             </TabsContent>
@@ -548,59 +502,52 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
             <TabsContent value="trade" className="space-y-6">
               <Card className="bg-card/80 backdrop-blur-sm border-border/50">
                 <div className="p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <ShoppingCart className="w-5 h-5 text-primary" />
-                    <h3 className="text-xl font-crypto font-bold">Handla {token.symbol}</h3>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl p-4">
-                    <JupiterSwapWidget height={500} />
-                  </div>
+                  <h3 className="text-xl font-bold mb-6">Trade {token.symbol}</h3>
+                  <JupiterSwapWidget />
+                </div>
+              </Card>
+            </TabsContent>
 
-                  <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
-                      <div>
-                        <h4 className="font-crypto font-bold text-amber-500 mb-1">Säkerhetsvarning</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Kom ihåg att alltid DYOR (Do Your Own Research) innan du investerar i meme-tokens. 
-                          Dessa investeringar är högrisk och kan resultera i total förlust.
-                        </p>
+            <TabsContent value="info" className="space-y-6">
+              {/* Description */}
+              {token.description && (
+                <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-4">About</h3>
+                    <p className="text-muted-foreground leading-relaxed">{token.description}</p>
+                  </div>
+                </Card>
+              )}
+
+              {/* Contract Info */}
+              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-4">Contract Info</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Address</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm">{tokenAddress.slice(0, 6)}...{tokenAddress.slice(-4)}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            navigator.clipboard.writeText(tokenAddress);
+                            toast({ title: 'Copied!', description: 'Token address copied to clipboard' });
+                          }}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
                       </div>
                     </div>
                   </div>
                 </div>
               </Card>
             </TabsContent>
-
-            <TabsContent value="community" className="space-y-6">
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-crypto font-bold mb-4">Community</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button variant="outline" className="h-12 font-crypto font-semibold">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Telegram
-                    </Button>
-                    <Button variant="outline" className="h-12 font-crypto font-semibold">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Twitter
-                    </Button>
-                    <Button variant="outline" className="h-12 font-crypto font-semibold">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Discord
-                    </Button>
-                    <Button variant="outline" className="h-12 font-crypto font-semibold">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Website
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
           </Tabs>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   // Desktop Layout
@@ -682,396 +629,6 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
       </div>
     </div>
   );
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 border-2 border-primary/30">
-                  <OptimizedImage src={coverImage} alt={token.symbol} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-black">{token.emoji} {token.symbol}</h1>
-                  <p className="text-lg text-muted-foreground font-medium">{token.name}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-card/60 border border-border/30">
-                <span className="text-3xl font-black">{formatPrice(token.price)}</span>
-                <Badge variant={isPositive ? "default" : "destructive"} className={`${isPositive ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'} text-white font-bold text-lg px-4 py-2 rounded-xl`}>
-                  {isPositive ? <TrendingUp className="w-5 h-5 mr-2" /> : <TrendingDown className="w-5 h-5 mr-2" />}
-                  {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="lg" onClick={() => setIsLiked(!isLiked)} className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30">
-                  <Heart className={`h-6 w-6 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-                </Button>
-                
-                <Button variant="ghost" size="lg" className="h-12 w-12 rounded-2xl bg-card/60 hover:bg-card/80 border border-border/30">
-                  <Share2 className="h-6 w-6" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Trading Interface */}
-      <div className="max-w-[1800px] mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-120px)]">
-          
-          {/* Left Panel - Chart (Takes 3/4 width) */}
-          <div className="lg:col-span-3">
-            <Card className="h-full bg-card/40 backdrop-blur-xl border-border/30 shadow-2xl rounded-3xl overflow-hidden">
-              {/* Chart Header */}
-              <div className="flex items-center justify-between p-8 border-b border-border/20 bg-gradient-to-r from-card/60 to-card/40 backdrop-blur-sm">
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center border-2 border-primary/40">
-                      <LineChart className="w-8 h-8 text-primary" />
-                    </div>
-                    <div>
-                      <h2 className="text-3xl font-crypto font-bold tracking-wider uppercase mb-1">Live Trading Chart</h2>
-                      <p className="text-xl text-muted-foreground font-crypto font-medium tracking-wider uppercase">Professional {token.symbol} Analysis</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
-                    Fullscreen
-                  </Button>
-                  
-                  <Button variant="outline" size="lg" className="h-14 px-6 rounded-2xl text-lg font-crypto font-bold tracking-wider uppercase border-2">
-                    Refresh
-                  </Button>
-                </div>
-              </div>
-
-              {/* Chart Container with NO padding - only chart visible */}
-              <div className="flex-1 bg-[#0f0f23]">
-                <div className="h-[600px] w-full">
-                  <TradingViewChart symbol={token.symbol} currentPrice={token.price} coinGeckoId={token.symbol.toLowerCase()} />
-                </div>
-              </div>
-
-              {/* Modern Trading Settings Panel - Moved from analytics section */}
-              <div className="p-8 border-t border-border/20 bg-gradient-to-r from-card/60 to-card/40">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  
-                  {/* Left Column - Advanced Settings */}
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase text-primary mb-6">Advanced Trading Settings</h3>
-                    
-                    {/* Slippage Tolerance */}
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20">
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-lg font-crypto font-bold tracking-wider uppercase text-blue-500">Slippage Tolerance</span>
-                        <Button variant="ghost" size="sm" onClick={() => setAutoSlippage(!autoSlippage)} className={`h-8 px-3 text-sm rounded-lg font-crypto font-bold tracking-wider uppercase ${autoSlippage ? 'bg-primary text-primary-foreground' : ''}`}>
-                          Auto
-                        </Button>
-                      </div>
-                      
-                      {!autoSlippage && <div className="flex gap-2">
-                          {[1, 2, 5].map(percentage => <Button key={percentage} variant={slippage === percentage ? "default" : "outline"} size="sm" onClick={() => setSlippage(percentage)} className="h-10 px-4 text-sm font-crypto font-bold tracking-wider uppercase rounded-xl">
-                              {percentage}%
-                            </Button>)}
-                          <div className="relative flex-1">
-                            <input type="text" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" value={customSlippage} onChange={e => setCustomSlippage(e.target.value)} placeholder="Custom" className="w-full h-10 px-3 text-sm font-crypto font-semibold bg-muted/20 border border-border/30 rounded-xl focus:border-primary/50 transition-all duration-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">%</span>
-                          </div>
-                        </div>}
-                    </div>
-
-                    {/* Priority Fee */}
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-green-600/10 border border-green-500/20">
-                      <span className="text-lg font-crypto font-bold tracking-wider uppercase text-green-500 mb-4 block">Priority Fee</span>
-                      <div className="grid grid-cols-3 gap-2">
-                        {[{
-                        key: 'low',
-                        label: 'Low',
-                        desc: '0.0001 SOL'
-                      }, {
-                        key: 'medium',
-                        label: 'Medium',
-                        desc: '0.0005 SOL'
-                      }, {
-                        key: 'high',
-                        label: 'High',
-                        desc: '0.001 SOL'
-                      }].map(({
-                        key,
-                        label,
-                        desc
-                      }) => <Button key={key} variant={priority === key ? "default" : "outline"} size="sm" onClick={() => setPriority(key as typeof priority)} className={`h-12 flex flex-col items-center justify-center text-xs font-crypto font-bold tracking-wider uppercase rounded-xl transition-all duration-300 ${priority === key ? 'bg-primary text-primary-foreground' : ''}`}>
-                            <span>{label}</span>
-                            <span className="text-xs opacity-70">{desc}</span>
-                          </Button>)}
-                      </div>
-                    </div>
-
-                    {/* MEV Protection */}
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <Shield className="w-5 h-5 text-purple-500" />
-                          <div>
-                            <span className="text-lg font-crypto font-bold tracking-wider uppercase text-purple-500">MEV Protection</span>
-                            <p className="text-sm font-crypto text-muted-foreground">Protect against frontrunning</p>
-                          </div>
-                        </div>
-                        <Button variant="ghost" size="sm" onClick={() => setMevProtection(!mevProtection)} className={`h-8 w-16 rounded-full font-crypto font-bold tracking-wider uppercase ${mevProtection ? 'bg-green-500 text-white' : 'bg-muted border border-border'}`}>
-                          {mevProtection ? 'ON' : 'OFF'}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right Column - Trade Summary & Tools */}
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase text-primary mb-6">Trade Summary & Tools</h3>
-                    
-                    {/* Trade Summary */}
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
-                      <h4 className="text-xl font-crypto font-bold tracking-wider uppercase mb-4">Trade Summary</h4>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">
-                            {tradeType === 'buy' ? 'You Pay' : 'You Sell'}
-                          </span>
-                          <span className="font-crypto font-bold text-lg">
-                            {customAmount || selectedAmount || 0} {tradeType === 'buy' ? 'SOL' : token.symbol}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">
-                            {tradeType === 'buy' ? 'You Receive' : 'You Receive'}
-                          </span>
-                          <span className="font-crypto font-bold text-lg">
-                            {tradeType === 'buy' ? `~${((parseFloat(customAmount) || selectedAmount || 0) / token.price).toLocaleString()} ${token.symbol}` : `~${((parseFloat(customAmount) || 0) * token.price).toFixed(4)} SOL`}
-                          </span>
-                        </div>
-                        <Separator />
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">Priority Fee</span>
-                          <span className="font-crypto">{getPriorityFee()}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">Est. Gas</span>
-                          <span className="font-crypto">{getEstimatedGas()}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-sm">
-                          <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">Slippage</span>
-                          <span className="font-crypto">{autoSlippage ? 'Auto' : `${customSlippage || slippage}%`}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Trading Tools */}
-                    <div className="space-y-4">
-                      {/* Price Alerts */}
-                      
-
-                      {/* Performance Metrics */}
-                      <div className="p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20">
-                        <div className="flex items-center gap-3 mb-3">
-                          <Award className="w-5 h-5 text-green-500" />
-                          <span className="font-crypto font-bold tracking-wider uppercase text-green-500">Performance</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">1h:</span>
-                            <span className="text-green-500 font-crypto font-bold">+2.34%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">7d:</span>
-                            <span className="text-green-500 font-crypto font-bold">+15.67%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">30d:</span>
-                            <span className="text-green-500 font-crypto font-bold">+89.12%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground font-crypto font-bold tracking-wider uppercase">ATH:</span>
-                            <span className="font-crypto font-bold">{formatPrice(token.price * 2.5)}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Right Panel - Trading Interface (Takes 1/4 width) */}
-          <div className="lg:col-span-1">
-            <div className="space-y-6">
-              
-              {/* Quick Stats Card */}
-              <Card className="p-6 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
-                <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase mb-6 flex items-center gap-3">
-                  <Activity className="w-6 h-6 text-primary" />
-                  Market Stats
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">Market Cap</span>
-                    <span className="text-xl font-crypto font-black">{formatMarketCap(token.marketCap)}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">1h Volume</span>
-                    <span className="text-xl font-crypto font-black">{typeof volume1h === 'number' ? `$${volume1h.toLocaleString()}` : '—'}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">6h Volume</span>
-                    <span className="text-xl font-crypto font-black">{typeof volume6h === 'number' ? `$${volume6h.toLocaleString()}` : '—'}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">24h Volume</span>
-                    <span className="text-xl font-crypto font-black">{typeof volume24hDerived === 'number' ? `$${volume24hDerived.toLocaleString()}` : stats.volume24h}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">Holders</span>
-                    <span className="text-xl font-crypto font-black">{Number(token.holders || 0).toLocaleString()}</span>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Advanced Trading Panel */}
-              <Card className="p-8 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
-                <div className="flex items-center justify-between mb-8">
-                  <h3 className="text-3xl font-crypto font-bold tracking-wider uppercase flex items-center gap-4">
-                    
-                    Professional Trading
-                  </h3>
-                  
-                </div>
-                
-                {/* Order Type Selection */}
-                <div className="mb-8">
-                  <label className="text-xl font-crypto font-bold tracking-wider uppercase text-muted-foreground mb-4 block">Order Type</label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {['market', 'limit', 'stop'].map(type => <Button key={type} variant={orderType === type ? "default" : "outline"} size="lg" onClick={() => setOrderType(type as typeof orderType)} className={`h-14 text-lg font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${orderType === type ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'hover:bg-primary/10 hover:border-primary/50'}`}>
-                        {type.toUpperCase()}
-                      </Button>)}
-                  </div>
-                </div>
-
-                {/* Buy/Sell Toggle - FIXED text overflow and removed icons */}
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <Button size="lg" onClick={() => setTradeType('buy')} className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white' : 'bg-green-500/20 text-green-500 hover:bg-green-500/30'}`}>
-                    <span className="truncate">BUY {token.symbol}</span>
-                  </Button>
-                  <Button size="lg" onClick={() => setTradeType('sell')} className={`h-20 font-crypto font-bold tracking-wider uppercase text-xl rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 px-4 ${tradeType === 'sell' ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white' : 'bg-red-500/20 text-red-500 hover:bg-red-500/30'}`}>
-                    <span className="truncate">SELL {token.symbol}</span>
-                  </Button>
-                </div>
-
-                {/* Dynamic Amount Selection based on Buy/Sell */}
-                <div className="space-y-6 mb-8">
-                  <label className="text-xl font-crypto font-bold tracking-wider uppercase text-muted-foreground">
-                    {tradeType === 'buy' ? 'Buy Amount (SOL)' : 'Sell Amount (%)'}
-                  </label>
-                  
-                  {tradeType === 'buy' ? <div className="grid grid-cols-2 gap-3">
-                      {[1, 5, 10, 25].map(amount => <Button key={amount} variant={selectedAmount === amount ? "default" : "outline"} size="lg" onClick={() => handleAmountSelect(amount)} className={`h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 transition-all duration-300 ${selectedAmount === amount ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'hover:bg-primary/10 hover:border-primary/50'}`}>
-                          {amount} SOL
-                        </Button>)}
-                    </div> : <div className="grid grid-cols-2 gap-3">
-                      {[25, 50, 75, 100].map(percentage => <Button key={percentage} variant="outline" size="lg" onClick={() => calculateSellPercentage(percentage)} className="h-16 text-xl font-crypto font-bold tracking-wider uppercase rounded-2xl border-2 hover:bg-red-500/10 hover:border-red-500/50 transition-all duration-300">
-                          {percentage === 100 ? 'SELL ALL' : `${percentage}%`}
-                        </Button>)}
-                    </div>}
-                  
-                  {/* Custom Amount Input */}
-                  <div className="space-y-3">
-                    <label className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">
-                      Custom {tradeType === 'buy' ? 'SOL Amount' : 'Token Amount'}
-                    </label>
-                    <div className="relative">
-                      <input type="text" inputMode="decimal" pattern="[0-9]*\.?[0-9]*" value={customAmount} onChange={e => handleCustomAmountChange(e.target.value)} placeholder={tradeType === 'buy' ? "Enter SOL amount" : "Enter token amount"} className="w-full h-16 px-6 text-xl font-crypto font-semibold bg-muted/20 border-2 border-border/30 rounded-2xl focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                      <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-xl font-crypto font-bold text-muted-foreground">
-                        {tradeType === 'buy' ? 'SOL' : token.symbol}
-                      </span>
-                    </div>
-                    {tradeType === 'sell' && <p className="text-sm font-oblivion text-muted-foreground">
-                        Available: {tokenBalance.toLocaleString()} {token.symbol}
-                      </p>}
-                  </div>
-                </div>
-
-                {/* Execute Trade Button - FIXED text overflow and removed icons */}
-                <Button size="lg" onClick={handleTrade} disabled={!customAmount && !selectedAmount || isTrading} className={`w-full h-20 text-2xl font-crypto font-bold tracking-wider uppercase rounded-3xl shadow-xl transition-all duration-300 hover:scale-105 px-4 ${tradeType === 'buy' ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'} text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}>
-                  {isTrading ? <div className="flex items-center justify-center gap-3">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                      Processing...
-                    </div> : <span className="truncate">
-                      {tradeType === 'buy' ? 'BUY' : 'SELL'} {token.symbol}
-                    </span>}
-                </Button>
-
-                {/* Wallet Balance Info */}
-                <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-crypto font-bold tracking-wider uppercase text-muted-foreground">Wallet Balance</span>
-                    <div className="text-right">
-                      <div className="text-sm font-crypto font-bold">{solBalance.toFixed(4)} SOL</div>
-                      <div className="text-xs font-crypto text-muted-foreground">{tokenBalance.toLocaleString()} {token.symbol}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Risk Warning */}
-                <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5" />
-                    <div>
-                      <h4 className="font-crypto font-bold tracking-wider uppercase text-amber-500 mb-1">Trading Risk</h4>
-                      <p className="text-sm font-crypto text-muted-foreground">
-                        Meme tokens are highly volatile. Only invest what you can afford to lose.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Token Address Card */}
-              <Card className="p-6 bg-card/40 backdrop-blur-xl border-border/30 shadow-xl rounded-3xl">
-                <h3 className="text-2xl font-crypto font-bold tracking-wider uppercase mb-6 flex items-center gap-3">
-                  <Copy className="w-6 h-6 text-primary" />
-                  Token Info
-                </h3>
-                
-                <div className="space-y-4">
-                  {/* Token Address */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/20">
-                    <div className="flex items-center gap-3 mb-3">
-                      <Copy className="w-5 h-5 text-purple-500" />
-                      <span className="font-crypto font-bold tracking-wider uppercase text-purple-500">Token Address</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <input readOnly value={tokenAddress} className="flex-1 h-8 px-3 text-xs font-mono bg-muted/20 border border-border/30 rounded-lg" />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 px-3 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg"
-                        onClick={async () => {
-                          try {
-                            await navigator.clipboard.writeText(tokenAddress || '');
-                            toast({ title: 'Copied', description: 'Token address copied to clipboard' });
-                          } catch {}
-                        }}
-                      >
-                        Copy
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>;
 };
+
 export default MemeTokenDetailPage;
