@@ -130,22 +130,7 @@ const MemeTokenDetailPage = () => {
   const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : (beMarket?.volume24h ?? beMarket?.volume_24h ?? undefined);
   const tokenAddress = details?.address || address || (token as any)?.id || '';
 
-  // Fetch Birdeye market data (public plan 1 req/s handled by edge function throttle)
-  useEffect(() => {
-    if (!tokenAddress) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data } = await supabase.functions.invoke('birdeye-proxy', {
-          body: { action: 'market-data', address: tokenAddress },
-        });
-        if (!cancelled) {
-          setBeMarket(data?.data?.data ?? data?.data ?? null);
-        }
-      } catch {}
-    })();
-    return () => { cancelled = true; };
-  }, [tokenAddress]);
+// Removed Birdeye market-data fetching to respect rate limits; using central hook instead
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   useEffect(() => {
@@ -243,31 +228,7 @@ const MemeTokenDetailPage = () => {
     return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
   }, [orderType]);
 
-  // Birdeye OHLCV volumes
-  const [volumes, setVolumes] = useState<{ v1h?: number; v6h?: number; v24h?: number }>({});
-  useEffect(() => {
-    let cancelled = false;
-    const run = async () => {
-      if (!tokenAddress) return;
-      try {
-        const { data } = await supabase.functions.invoke('birdeye-proxy', {
-          body: { action: 'ohlcv', address: tokenAddress, params: { type: '1H' } },
-        });
-        const items: any[] = (data?.data?.data?.items ?? data?.data?.items ?? data?.data ?? data?.items ?? []) as any[];
-        if (Array.isArray(items) && items.length) {
-          // items oldest->newest or vice versa; take last N safely
-          const last = (n: number) => items.slice(-n);
-          const sumV = (arr: any[]) => arr.reduce((s, c) => s + (typeof c?.v === 'number' ? c.v : (typeof c?.volume === 'number' ? c.volume : 0)), 0);
-          const v1 = sumV(last(1));
-          const v6 = sumV(last(6));
-          const v24 = sumV(last(24));
-          if (!cancelled) setVolumes({ v1h: v1, v6h: v6, v24h: v24 });
-        }
-      } catch {}
-    };
-    run();
-    return () => { cancelled = true; };
-  }, [tokenAddress]);
+// Removed extra OHLCV polling to respect rate limits; volumes are shown in the market section
 
   // Helper functions (non-hooks)
   const formatPrice = (price: number): string => {
@@ -436,8 +397,8 @@ const MemeTokenDetailPage = () => {
                         <span className="text-sm text-muted-foreground">24h Volume</span>
                       </div>
                       <div className="text-lg font-bold">
-                        ${typeof (volumes.v24h ?? volume24hDerived ?? token.volume24h) === 'number' 
-                          ? Number((volumes.v24h ?? volume24hDerived ?? token.volume24h)).toLocaleString() 
+                        ${typeof (volume24hDerived ?? token.volume24h) === 'number' 
+                          ? Number((volume24hDerived ?? token.volume24h)).toLocaleString() 
                           : '—'}
                       </div>
                     </div>

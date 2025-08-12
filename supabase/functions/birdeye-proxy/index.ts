@@ -1,6 +1,16 @@
 // deno-lint-ignore-file no-explicit-any
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
+// Simple in-memory cache to respect Birdeye rate limits
+const memCache = new Map<string, { ts: number; data: any }>();
+const DEFAULT_TTL = 10_000; // 10s general cache
+const getTtlFor = (path: string) => {
+  if (path.includes('/defi/txs/token')) return 5_000; // transactions refresh fast
+  if (path.includes('/defi/v3/token/trade-data')) return 15_000;
+  if (path.includes('/defi/token_overview')) return 20_000;
+  return DEFAULT_TTL;
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -75,8 +85,23 @@ serve(async (req) => {
         });
     }
 
+    // Serve from cache if fresh
+    const now = Date.now();
+    const ttl = getTtlFor(url);
+    const cached = memCache.get(url);
+    if (cached && now - cached.ts < ttl) {
+      return new Response(JSON.stringify({ ok: true, status: 200, data: cached.data }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const res = await fetch(url, { headers, method: "GET" });
     const data = await res.json();
+
+    if (res.ok) {
+      memCache.set(url, { ts: now, data });
+    }
 
     return new Response(JSON.stringify({ ok: res.ok, status: res.status, data }), {
       status: 200,
