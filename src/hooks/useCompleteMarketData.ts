@@ -120,6 +120,13 @@ export function useCompleteMarketData(address?: string) {
           raw: { tokenResponse, poolPrice, poolLiquidity },
         };
 
+        // Fallback compute for buy/sell volume if API doesn't provide split
+        const totalTx24 = (combined.tradingActivity.buys24h || 0) + (combined.tradingActivity.sells24h || 0);
+        if (!combined.volume.buyVolume24h && combined.volume.volume24h && totalTx24 > 0) {
+          combined.volume.buyVolume24h = (combined.volume.volume24h * (combined.tradingActivity.buys24h || 0)) / totalTx24;
+          combined.volume.sellVolume24h = (combined.volume.volume24h * (combined.tradingActivity.sells24h || 0)) / totalTx24;
+        }
+
         if (!mounted) return;
         // Client-side diagnostics for missing fields
         if (!combined.market.liquidity || !combined.tradingActivity.txns24h || !combined.volume.volume24h || !combined.participants.holders) {
@@ -139,7 +146,7 @@ export function useCompleteMarketData(address?: string) {
             }
           });
         }
-        setCache(key, combined, { ttlMs: 30_000 });
+        setCache(key, combined, { ttlMs: 3_000 });
         setData(combined);
       } catch (e: any) {
         if (!mounted) return;
@@ -152,7 +159,8 @@ export function useCompleteMarketData(address?: string) {
     };
 
     fetchAll();
-    return () => { mounted = false; };
+    const intervalId = setInterval(fetchAll, 3000);
+    return () => { mounted = false; clearInterval(intervalId); };
   }, [address]);
 
   return { data, loading, error };

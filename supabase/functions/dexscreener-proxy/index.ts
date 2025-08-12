@@ -56,6 +56,14 @@ function mapToDexToolsLike(pair: any) {
     if (s?.type && s?.url) socialInfo[s.type] = s.url;
   }
 
+  // Derive buy/sell volume split proportionally from trade counts when exact split is not provided by API
+  const buys24 = asNum(txns?.h24?.buys) ?? 0;
+  const sells24 = asNum(txns?.h24?.sells) ?? 0;
+  const totalTx24 = buys24 + sells24;
+  const vol24 = asNum(volume?.h24);
+  const buyVol24 = vol24 !== undefined && totalTx24 > 0 ? (vol24 * buys24) / totalTx24 : undefined;
+  const sellVol24 = vol24 !== undefined && totalTx24 > 0 ? (vol24 * sells24) / totalTx24 : undefined;
+
   const mapped = {
     meta: {
       data: {
@@ -82,7 +90,7 @@ function mapToDexToolsLike(pair: any) {
         fdv: asNum(pair?.fdv),
         circulatingSupply: undefined,
         totalSupply: undefined,
-        holders: undefined,
+        holders: undefined, // may be enriched from Jupiter
       }
     },
     poolPrice: {
@@ -92,9 +100,12 @@ function mapToDexToolsLike(pair: any) {
         sells1h: asNum(txns?.h1?.sells),
         buys24h: asNum(txns?.h24?.buys),
         sells24h: asNum(txns?.h24?.sells),
-        volume24h: asNum(volume?.h24),
-        volume1h: undefined,
-        volume6h: undefined,
+        txns24h: totalTx24 || undefined,
+        volume24h: vol24,
+        buyVolume24h: buyVol24,
+        sellVolume24h: sellVol24,
+        volume1h: asNum(volume?.h1),
+        volume6h: asNum(volume?.h6),
       }
     },
     poolLiquidity: {
@@ -134,7 +145,7 @@ serve(async (req) => {
     }
 
     // TTLs: token data 15s, trades 5s
-    const TTL_TOKEN = 15_000;
+    const TTL_TOKEN = 3_000;
     const TTL_TRADES = 5_000;
 
     if (action === 'tokenFull') {
@@ -167,7 +178,20 @@ serve(async (req) => {
         return new Response(JSON.stringify({ error: 'No pairs found', results: [] }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
 
+      // Enrich with Jupiter holders if available
+      let jupHolders: number | undefined;
+      try {
+        const jupUrl = `https://price.jup.ag/v4/price?ids=${address}`;
+        const jup = await fetchJsonCached(jupUrl, TTL_TOKEN);
+        const rawHold = (jup as any)?.data?.[address]?.extraInfo?.holders;
+        const parsedHold = asNum(rawHold);
+        if (typeof parsedHold === 'number') jupHolders = parsedHold;
+      } catch (_) {}
+
       const mapped = mapToDexToolsLike(best);
+      if (jupHolders !== undefined) {
+        try { (mapped as any).info.data.holders = jupHolders; } catch (_) {}
+      }
       return new Response(JSON.stringify(mapped), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 

@@ -82,7 +82,7 @@ export const TransactionsTable = ({ tokenAddress, tokenSymbol }: TransactionsTab
     let cancelled = false;
     (async () => {
       await load();
-      const id = setInterval(() => { if (!cancelled) load(); }, 10000);
+      const id = setInterval(() => { if (!cancelled) load(); }, 3000);
       return () => clearInterval(id);
     })();
     return () => { cancelled = true; };
