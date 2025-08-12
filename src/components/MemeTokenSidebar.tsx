@@ -81,48 +81,48 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
   ];
 
   return (
-    <Card className="w-full bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl">
+    <Card className="w-full min-w-[400px] max-w-md bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl">
       <div className="p-6 space-y-4">
         {/* Social Links - Compact */}
-        <div className="flex gap-2 mb-6">
-          <Button size="sm" variant="outline" className="flex items-center gap-2 text-sm px-4 py-2 h-9 rounded-lg">
-            <Globe className="h-4 w-4" />
+        <div className="flex gap-1.5 mb-4">
+          <Button size="sm" variant="outline" className="flex items-center gap-1.5 text-xs px-3 py-1.5 h-8 rounded-lg flex-1">
+            <Globe className="h-3 w-3" />
             Web
           </Button>
-          <Button size="sm" variant="outline" className="flex items-center gap-2 text-sm px-4 py-2 h-9 rounded-lg">
-            <ExternalLink className="h-4 w-4" />
+          <Button size="sm" variant="outline" className="flex items-center gap-1.5 text-xs px-3 py-1.5 h-8 rounded-lg flex-1">
+            <ExternalLink className="h-3 w-3" />
             Twitter
           </Button>
-          <Button size="sm" variant="outline" className="flex items-center gap-2 text-sm px-4 py-2 h-9 rounded-lg">
-            <ExternalLink className="h-4 w-4" />
+          <Button size="sm" variant="outline" className="flex items-center gap-1.5 text-xs px-3 py-1.5 h-8 rounded-lg flex-1">
+            <ExternalLink className="h-3 w-3" />
             Telegram
           </Button>
         </div>
 
         {/* Core Price Section - Large and Prominent */}
         {coreMetrics.map((metric, index) => (
-          <Card key={index} className="bg-background/70 border-2 border-border/70 mb-4">
-            <div className="p-6">
-              <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-3">
+          <Card key={index} className="bg-background/70 border-2 border-border/70 mb-3">
+            <div className="p-4">
+              <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2">
                 {metric.label}
               </div>
-              <div className="text-4xl font-black text-foreground">
+              <div className="text-2xl font-black text-foreground break-words">
                 {metric.value}
               </div>
             </div>
           </Card>
         ))}
 
-        {/* Market Data - Larger 3 Column Grid */}
-        <Card className="bg-background/70 border-2 border-border/70 mb-4">
-          <div className="p-6">
-            <div className="grid grid-cols-3 gap-6">
+        {/* Market Data - 3 Column Grid */}
+        <Card className="bg-background/70 border-2 border-border/70 mb-3">
+          <div className="p-4">
+            <div className="grid grid-cols-3 gap-3">
               {marketData.map((item, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
+                <div key={index} className="text-center min-w-0">
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">
                     {item.label}
                   </div>
-                  <div className="text-2xl font-black text-foreground">
+                  <div className="text-sm font-black text-foreground break-words">
                     {item.value}
                   </div>
                 </div>
@@ -131,29 +131,29 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
           </div>
         </Card>
 
-        {/* Performance Section - Larger and More Visible */}
-        <Card className="bg-background/70 border-2 border-border/70 mb-4">
-          <div className="p-6">
+        {/* Performance Section */}
+        <Card className="bg-background/70 border-2 border-border/70 mb-3">
+          <div className="p-4">
             <Button
               variant="ghost"
               onClick={() => setShowPerformance(!showPerformance)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
+              className="w-full flex items-center justify-between p-0 h-auto mb-3"
             >
-              <div className="flex items-center gap-3">
-                <TrendingUp className="h-5 w-5" />
-                <span className="text-lg font-bold">PERFORMANCE</span>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                <span className="text-sm font-bold">PERFORMANCE</span>
               </div>
-              {showPerformance ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              {showPerformance ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
             
             {showPerformance && (
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-4 gap-2">
                 {performanceData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold mb-2">
+                  <div key={index} className="text-center min-w-0">
+                    <div className="text-xs text-muted-foreground font-semibold mb-1 truncate">
                       {item.label}
                     </div>
-                    <div className={`text-xl font-black ${item.isNegative ? 'text-destructive' : 'text-success'}`}>
+                    <div className={`text-sm font-black break-words ${item.isNegative ? 'text-destructive' : 'text-success'}`}>
                       {item.value}
                     </div>
                   </div>
@@ -163,29 +163,29 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
           </div>
         </Card>
 
-        {/* Trading Activity - Much Larger and More Prominent */}
-        <Card className="bg-background/70 border-2 border-border/70 mb-4">
-          <div className="p-6">
+        {/* Trading Activity */}
+        <Card className="bg-background/70 border-2 border-border/70 mb-3">
+          <div className="p-4">
             <Button
               variant="ghost"
               onClick={() => setShowTrading(!showTrading)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
+              className="w-full flex items-center justify-between p-0 h-auto mb-3"
             >
-              <div className="flex items-center gap-3">
-                <BarChart3 className="h-5 w-5" />
-                <span className="text-lg font-bold">TRADING ACTIVITY</span>
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                <span className="text-sm font-bold">TRADING ACTIVITY</span>
               </div>
-              {showTrading ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              {showTrading ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
             
             {showTrading && (
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-3">
                 {tradingData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
+                  <div key={index} className="text-center min-w-0">
+                    <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">
                       {item.label}
                     </div>
-                    <div className="text-2xl font-black text-foreground">
+                    <div className="text-sm font-black text-foreground break-words">
                       {item.value}
                     </div>
                   </div>
@@ -195,43 +195,43 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
           </div>
         </Card>
 
-        {/* Volume Section - Larger and More Visible */}
-        <Card className="bg-background/70 border-2 border-border/70 mb-4">
-          <div className="p-6">
+        {/* Volume Section */}
+        <Card className="bg-background/70 border-2 border-border/70 mb-3">
+          <div className="p-4">
             <Button
               variant="ghost"
               onClick={() => setShowVolume(!showVolume)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
+              className="w-full flex items-center justify-between p-0 h-auto mb-3"
             >
-              <div className="flex items-center gap-3">
-                <Info className="h-5 w-5" />
-                <span className="text-lg font-bold">VOLUME DETAILS</span>
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4" />
+                <span className="text-sm font-bold">VOLUME DETAILS</span>
               </div>
-              {showVolume ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              {showVolume ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
             
             {showVolume && (
-              <div className="space-y-6">
+              <div className="space-y-3">
                 <div className="text-center">
-                  <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">TOTAL</div>
-                  <div className="text-3xl font-black text-foreground">
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">TOTAL</div>
+                  <div className="text-lg font-black text-foreground">
                     $1.7M
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">BUY VOL</div>
-                    <div className="text-xl font-black text-success">$882K</div>
-                    <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
-                      <div className="bg-success h-2 rounded-full" style={{ width: '51%' }}></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center min-w-0">
+                    <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">BUY VOL</div>
+                    <div className="text-sm font-black text-success break-words">$882K</div>
+                    <div className="w-full bg-muted/30 rounded-full h-1.5 mt-1">
+                      <div className="bg-success h-1.5 rounded-full" style={{ width: '51%' }}></div>
                     </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">SELL VOL</div>
-                    <div className="text-xl font-black text-destructive">$854K</div>
-                    <div className="w-full bg-muted/30 rounded-full h-2 mt-2">
-                      <div className="bg-destructive h-2 rounded-full" style={{ width: '49%' }}></div>
+                  <div className="text-center min-w-0">
+                    <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">SELL VOL</div>
+                    <div className="text-sm font-black text-destructive break-words">$854K</div>
+                    <div className="w-full bg-muted/30 rounded-full h-1.5 mt-1">
+                      <div className="bg-destructive h-1.5 rounded-full" style={{ width: '49%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -240,29 +240,29 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
           </div>
         </Card>
 
-        {/* Participants Section - Larger and More Visible */}
+        {/* Participants Section */}
         <Card className="bg-background/70 border-2 border-border/70">
-          <div className="p-6">
+          <div className="p-4">
             <Button
               variant="ghost"
               onClick={() => setShowParticipants(!showParticipants)}
-              className="w-full flex items-center justify-between p-0 h-auto mb-4"
+              className="w-full flex items-center justify-between p-0 h-auto mb-3"
             >
-              <div className="flex items-center gap-3">
-                <Users className="h-5 w-5" />
-                <span className="text-lg font-bold">PARTICIPANTS</span>
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span className="text-sm font-bold">PARTICIPANTS</span>
               </div>
-              {showParticipants ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              {showParticipants ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
             
             {showParticipants && (
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-3">
                 {participantData.map((item, index) => (
-                  <div key={index} className="text-center">
-                    <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wider mb-2">
+                  <div key={index} className="text-center min-w-0">
+                    <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">
                       {item.label}
                     </div>
-                    <div className="text-2xl font-black text-foreground">
+                    <div className="text-sm font-black text-foreground break-words">
                       {item.value}
                     </div>
                   </div>
