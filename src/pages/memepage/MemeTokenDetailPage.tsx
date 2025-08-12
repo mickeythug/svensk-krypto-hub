@@ -77,23 +77,46 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
   // Prefer full details when available (with Birdeye fallback from local state)
   const [beMarket, setBeMarket] = useState<any>(null);
   
-  // Resolve derived token object with Birdeye merge
-  const token = details ? {
-    id: details.address,
-    symbol: details.symbol,
-    name: details.name,
-    image: details.logo || found?.image,
-    price: details.price ?? (beMarket?.price ?? beMarket?.priceUsd ?? beMarket?.value) ?? found?.price ?? 0,
-    change24h: details.variation24h ?? found?.change24h ?? 0,
-    volume24h: details.pool?.volume24h ?? (beMarket?.volume24h ?? beMarket?.volume_24h ?? beMarket?.volume) ?? found?.volume24h ?? 0,
-    marketCap: details.marketCap ?? (beMarket?.marketCap ?? beMarket?.marketcap ?? beMarket?.mc) ?? found?.marketCap ?? 0,
-    holders: details.holders ?? found?.holders ?? 0,
-    views: found?.views ?? '—',
-    emoji: found?.emoji,
-    tags: found?.tags ?? [],
-    isHot: found?.isHot ?? false,
-    description: details.description || found?.description,
-  } : found;
+  // Resolve derived token object with Birdeye merge even if DEXTools is missing
+  const tokenBase = found ? { ...found } : {
+    id: address || '',
+    symbol: (symbol ?? 'TOKEN').toUpperCase(),
+    name: symbol || 'Token',
+    image: found?.image,
+    price: 0,
+    change24h: 0,
+    volume24h: 0,
+    marketCap: 0,
+    holders: 0,
+    views: '—',
+    emoji: undefined,
+    tags: [],
+    isHot: false,
+    description: undefined,
+  };
+
+  const beMerged = beMarket ? {
+    price: tokenBase.price || beMarket?.price || beMarket?.priceUsd || beMarket?.value || 0,
+    marketCap: tokenBase.marketCap || beMarket?.marketCap || beMarket?.marketcap || beMarket?.mc || 0,
+    volume24h: tokenBase.volume24h || beMarket?.volume24h || beMarket?.volume_24h || beMarket?.volume || 0,
+  } : {};
+
+  const token = {
+    ...tokenBase,
+    ...beMerged,
+    ...(details ? {
+      id: details.address,
+      symbol: details.symbol,
+      name: details.name,
+      image: details.logo || tokenBase.image,
+      price: details.price ?? (beMerged as any).price ?? tokenBase.price,
+      change24h: details.variation24h ?? tokenBase.change24h,
+      volume24h: details.pool?.volume24h ?? (beMerged as any).volume24h ?? tokenBase.volume24h,
+      marketCap: details.marketCap ?? (beMerged as any).marketCap ?? tokenBase.marketCap,
+      holders: details.holders ?? tokenBase.holders,
+      description: details.description || tokenBase.description,
+    } : {}),
+  } as any;
 
   // Derived data from DEXTools pool price for volumes and token address
   const poolPrice = (details as any)?.raw?.poolPrice?.data ?? (details as any)?.raw?.poolPrice ?? null;
