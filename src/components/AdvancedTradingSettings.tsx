@@ -385,7 +385,6 @@ export const AdvancedTradingSettings = ({
               >
                 <span className="font-semibold">{label}</span>
                 <span className="text-xs opacity-70 mt-1">{fee}</span>
-                <span className="text-xs opacity-70">{desc}</span>
               </Button>
             ))}
           </div>
