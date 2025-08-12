@@ -185,22 +185,20 @@ export default function SmartTradePanel({ symbol, currentPrice }: { symbol: stri
       if (!Number.isFinite(amt) || amt <= 0) throw new Error('Ogiltigt belopp');
 
       // Säkerställ trading wallet med API‑nyckel
-      const { createIfMissing: createTwIfMissing } = useTradingWallet();
       await createTwIfMissing();
 
       const isBuy = side === 'buy';
-      const params = {
-        action: isBuy ? 'buy' : 'sell',
+      const params: PumpTradeParams = {
+        action: (isBuy ? 'buy' : 'sell'),
         mint: tokenMint,
         amount: amt,
-        denominatedInSol: isBuy ? 'true' : 'false',
+        denominatedInSol: (isBuy ? 'true' : 'false'),
         slippage: Math.max(0, slippage / 100),
         priorityFee: 0.00005,
-        pool: 'auto' as const,
-        jitoOnly: 'false' as const,
+        pool: 'auto',
+        jitoOnly: 'false',
       };
 
-      const { trade: pumpTrade } = usePumpTrade();
       const res = await pumpTrade(params);
       const sig = (res?.result as any)?.signature || (res?.result as any)?.txSig || '';
       if (!sig) throw new Error('Ingen transaktionssignatur returnerades');
