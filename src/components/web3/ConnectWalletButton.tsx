@@ -138,24 +138,36 @@ export default function ConnectWalletButton() {
             select?.(phantomWallet.adapter.name as any);
             await new Promise((r) => setTimeout(r, 0));
           }
-
+          let pubkeyStr: string | undefined;
           if (!wallet) {
-            toast({ title: 'Välj Solana‑wallet', description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.' });
-            setWalletModalVisible(true);
-            return;
-          }
+            const provider = (typeof window !== 'undefined' ? (window as any)?.solana : undefined);
+            if (provider?.connect) {
+              try {
+                const res = await provider.connect({ onlyIfTrusted: false });
+                pubkeyStr = res?.publicKey?.toBase58?.() || res?.publicKey?.toString?.();
+              } catch (e) {
+                // Om användaren avbryter, visa modal som fallback
+                toast({ title: 'Välj Solana‑wallet', description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.' });
+                setWalletModalVisible(true);
+                return;
+              }
+            } else {
+              toast({ title: 'Välj Solana‑wallet', description: 'Öppnar wallet‑väljaren – välj Phantom för att fortsätta.' });
+              setWalletModalVisible(true);
+              return;
+            }
+          } else {
+            await connectSol();
 
-          await connectSol();
-
-          // Vänta kort på att publicKey uppdateras
-          let pk = publicKey as typeof publicKey | undefined;
-          for (let i = 0; i < 20 && !pk; i++) {
-            await new Promise((r) => setTimeout(r, 50));
-            pk = publicKey as typeof publicKey | undefined;
+            // Vänta kort på att publicKey uppdateras
+            let pk = publicKey as typeof publicKey | undefined;
+            for (let i = 0; i < 20 && !pk; i++) {
+              await new Promise((r) => setTimeout(r, 50));
+              pk = publicKey as typeof publicKey | undefined;
+            }
+            pubkeyStr = pk?.toBase58?.() || (wallet as any)?.adapter?.publicKey?.toBase58?.();
           }
-          const pubkeyStr = pk?.toBase58?.() || (wallet as any)?.adapter?.publicKey?.toBase58?.();
           if (!pubkeyStr) throw new Error('Kunde inte läsa din Solana‑adress. Godkänn anslutningen i Phantom och försök igen.');
-
           const canAdapterSign = typeof signMessageSol === 'function';
           const providerSign = (typeof window !== 'undefined' ? (window as any)?.solana?.signMessage : undefined) as ((message: Uint8Array, display?: string) => Promise<{ signature: Uint8Array | number[] }>) | undefined;
           const canProviderSign = typeof providerSign === 'function';

@@ -18,7 +18,7 @@ import {
 import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
-import MobileWalletConnect from './MobileWalletConnect';
+import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 
 interface MobileHeaderProps {
   title: string;
@@ -123,23 +123,10 @@ const MobileHeader = ({
                 </div>
 
                 {/* Wallet Connect Section */}
-                {!showWalletConnect ? (
-                  <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                    <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
-                    <Button 
-                      onClick={() => setShowWalletConnect(true)}
-                      className="w-full justify-center bg-gradient-primary hover:opacity-90"
-                    >
-                      <Wallet className="h-4 w-4 mr-2" />
-                      Connect Wallet
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="mb-6">
-                    <MobileWalletConnect onBack={() => setShowWalletConnect(false)} />
-                  </div>
-                )}
-
+                <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
+                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                  <ConnectWalletButton />
+                </div>
                 <nav className="space-y-2 pb-6">
                   {navItems.map((item) => {
                     const IconComponent = item.icon;

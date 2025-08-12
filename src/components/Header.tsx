@@ -21,7 +21,6 @@ import {
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
-import MobileWalletConnect from './mobile/MobileWalletConnect';
 
 
 interface HeaderProps {
