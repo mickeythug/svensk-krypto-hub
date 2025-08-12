@@ -68,6 +68,13 @@ All colors MUST be HSL.
     --meme-gradient-secondary: linear-gradient(135deg, hsl(44 100% 60%) 0%, hsl(30 100% 50%) 50%, hsl(340 75% 55%) 100%);
     --meme-gradient-hot: linear-gradient(135deg, hsl(30 100% 50%), hsl(0 84% 60%));
     
+    /* Casino-specific gradients */
+    --gradient-casino-gold: linear-gradient(135deg, hsl(44 100% 20%) 0%, hsl(44 100% 35%) 25%, hsl(44 100% 50%) 50%, hsl(44 100% 35%) 75%, hsl(44 100% 20%) 100%);
+    --gradient-casino-rainbow: linear-gradient(90deg, hsl(0 100% 60%) 0%, hsl(60 100% 60%) 16%, hsl(120 100% 60%) 32%, hsl(180 100% 60%) 48%, hsl(240 100% 60%) 64%, hsl(300 100% 60%) 80%, hsl(0 100% 60%) 100%);
+    --shadow-glow-gold: 0 0 40px hsl(44 100% 50% / 0.6), 0 0 80px hsl(44 100% 50% / 0.3);
+    --shadow-glow-rainbow: 0 0 30px hsl(0 100% 60% / 0.4), 0 0 60px hsl(120 100% 60% / 0.3), 0 0 90px hsl(240 100% 60% / 0.2);
+    --shadow-glow-primary: 0 0 25px hsl(var(--primary) / 0.5), 0 0 50px hsl(var(--primary) / 0.3);
+    
     /* Meme token specific colors */
     --meme-pink: 330 100% 70%;
     --meme-cyan: 165 85% 45%; /* Changed from blue to our green */

@@ -79,10 +79,15 @@ export default {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-secondary': 'var(--gradient-secondary)',
 				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-casino-gold': 'var(--gradient-casino-gold)',
+				'gradient-casino-rainbow': 'var(--gradient-casino-rainbow)',
 			},
 			boxShadow: {
 				'glow-primary': 'var(--glow-primary)',
 				'glow-secondary': 'var(--glow-secondary)',
+				'glow-gold': 'var(--shadow-glow-gold)',
+				'glow-rainbow': 'var(--shadow-glow-rainbow)',
+				'glow-primary': 'var(--shadow-glow-primary)',
 			},
 			fontFamily: {
 				sans: ['Orbitron', 'sans-serif'],
@@ -153,6 +158,10 @@ export default {
         'bounce': {
           '0%, 100%': { transform: 'translateY(-25%)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
           '50%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' }
+        },
+        'shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' }
         }
 			},
 			animation: {
@@ -166,7 +175,8 @@ export default {
         'ticker-seamless': 'ticker-seamless 30s linear infinite',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'spin': 'spin 1s linear infinite',
-        'bounce': 'bounce 1s infinite'
+        'bounce': 'bounce 1s infinite',
+        'shimmer': 'shimmer 2s ease-in-out infinite'
 			}
 		}
 	},
