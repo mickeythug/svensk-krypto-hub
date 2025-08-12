@@ -79,10 +79,7 @@ const MemeTokenDetailPage = () => {
   // Find fallback token by symbol
   const found = tokens.find(t => t.symbol.toLowerCase() === (symbol ?? '').toLowerCase());
 
-  // Prefer full details when available (with Birdeye fallback from local state)
-  const [beMarket, setBeMarket] = useState<any>(null);
-  
-  // Resolve derived token object with Birdeye merge even if DEXTools is missing
+  // Resolve derived token object
   const tokenBase = found ? { ...found } : {
     id: address || '',
     symbol: (symbol ?? 'TOKEN').toUpperCase(),
@@ -100,24 +97,17 @@ const MemeTokenDetailPage = () => {
     description: undefined,
   };
 
-  const beMerged = beMarket ? {
-    price: tokenBase.price || beMarket?.price || beMarket?.priceUsd || beMarket?.value || 0,
-    marketCap: tokenBase.marketCap || beMarket?.marketCap || beMarket?.marketcap || beMarket?.mc || 0,
-    volume24h: tokenBase.volume24h || beMarket?.volume24h || beMarket?.volume_24h || beMarket?.volume || 0,
-  } : {};
-
   const token = {
     ...tokenBase,
-    ...beMerged,
     ...(details ? {
       id: details.address,
       symbol: details.symbol,
       name: details.name,
       image: details.logo || tokenBase.image,
-      price: details.price ?? (beMerged as any).price ?? tokenBase.price,
+      price: details.price ?? tokenBase.price,
       change24h: details.variation24h ?? tokenBase.change24h,
-      volume24h: details.pool?.volume24h ?? (beMerged as any).volume24h ?? tokenBase.volume24h,
-      marketCap: details.marketCap ?? (beMerged as any).marketCap ?? tokenBase.marketCap,
+      volume24h: details.pool?.volume24h ?? tokenBase.volume24h,
+      marketCap: details.marketCap ?? tokenBase.marketCap,
       holders: details.holders ?? tokenBase.holders,
       description: details.description || tokenBase.description,
     } : {}),
@@ -127,7 +117,7 @@ const MemeTokenDetailPage = () => {
   const poolPrice = (details as any)?.raw?.poolPrice?.data ?? (details as any)?.raw?.poolPrice ?? null;
   const volume1h = typeof poolPrice?.volume1h === 'number' ? poolPrice.volume1h : undefined;
   const volume6h = typeof poolPrice?.volume6h === 'number' ? poolPrice.volume6h : undefined;
-  const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : (beMarket?.volume24h ?? beMarket?.volume_24h ?? undefined);
+  const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : undefined;
   const tokenAddress = details?.address || address || (token as any)?.id || '';
 
 // Removed Birdeye market-data fetching to respect rate limits; using central hook instead

@@ -38,7 +38,7 @@ export const TokenInfoSection = ({ tokenAddress, fallbackData }: TokenInfoSectio
     return `${sign}${num.toFixed(2)}%`;
   };
 
-// Real data combined from DEXTools + Birdeye
+// Real data combined from DEXTools
 const price = marketData?.price.usd ?? fallbackData?.price ?? 0;
 const liquidity = marketData?.market.liquidity ?? 0;
 const fdv = marketData?.market.fdv ?? marketData?.market.marketCap ?? fallbackData?.marketCap ?? 0;
@@ -75,7 +75,7 @@ const performanceData = [
   },
 ];
 
-// Trading activity from Birdeye 24h
+// Trading activity from DEXTools 24h
 const txBuys = marketData?.tradingActivity.buys24h || 0;
 const txSells = marketData?.tradingActivity.sells24h || 0;
 const totalTxns24h = (marketData?.tradingActivity.txns24h) || (txBuys + txSells);

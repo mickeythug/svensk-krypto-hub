@@ -227,47 +227,18 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         setCache(cacheKey, mapped, { ttlMs: 2 * 60 * 1000 });
         setTokens(mapped);
 
-        // 5) Enrich missing data (prefer Birdeye for reliable market metrics, then fallback to DEXTools for holders)
-        const needsEnrichment = mapped.filter(t => !(t.marketCap > 0 && t.volume24h > 0));
-        if (needsEnrichment.length) {
+        // 5) Enrich missing data via DEXTools tokenFull for gaps (holders/volume/mcap)
+        const stillNeedsBase = mapped.filter(t => !(t.marketCap > 0 && t.holders > 0 && t.volume24h > 0));
+        if (stillNeedsBase.length) {
           try {
-            const birdeyeBatch = needsEnrichment.slice(0, 20).map(t => t.id);
-            if (birdeyeBatch.length) {
-              const { data: enr } = await supabase.functions.invoke('meme-birdeye-enrich', {
-                body: { addresses: birdeyeBatch, limit: 20, delayMs: 1100 },
-              });
-              const results = (enr?.results || {}) as Record<string, any>;
-              if (mounted && results && Object.keys(results).length) {
-                setTokens(prev => prev.map(p => {
-                  const r = results[p.id];
-                  if (!r) return p;
-                  const toNum = (v: any): number => {
-                    if (typeof v === 'number') return v;
-                    if (typeof v === 'string') { const n = Number(v.replace(/[\,\s]/g, '')); return isNaN(n) ? 0 : n; }
-                    return 0;
-                  };
-                  return {
-                    ...p,
-                    price: toNum(r.price) || p.price,
-                    marketCap: toNum(r.marketCap) || p.marketCap,
-                    volume24h: toNum(r.volume24h) || p.volume24h,
-                  };
-                }));
-              }
-            }
-          } catch (_) {}
-
-          // Fallback: fill remaining gaps via DEXTools tokenFull (faster for holders)
-          const stillNeeds = tokens.filter(t => !(t.marketCap > 0 && t.holders > 0 && t.volume24h > 0));
-          if (stillNeeds.length) {
             const concurrency = 3;
             const toNum = (v: any): number => {
               if (typeof v === 'number') return v;
               if (typeof v === 'string') { const n = Number(v.replace(/[\,\s]/g, '')); return isNaN(n) ? 0 : n; }
               return 0;
             };
-            const chunks: typeof stillNeeds[] = [];
-            for (let i = 0; i < stillNeeds.length; i += concurrency) chunks.push(stillNeeds.slice(i, i + concurrency));
+            const chunks: typeof stillNeedsBase[] = [];
+            for (let i = 0; i < stillNeedsBase.length; i += concurrency) chunks.push(stillNeedsBase.slice(i, i + concurrency));
             for (const grp of chunks) {
               const res = await Promise.all(grp.map(async (t) => {
                 try {
@@ -295,7 +266,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
               }));
               await new Promise(r => setTimeout(r, 350));
             }
-          }
+          } catch (_) {}
         }
       } catch (e: any) {
         // On error, try centralized cache, then local stale cache
