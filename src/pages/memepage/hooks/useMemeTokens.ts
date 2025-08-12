@@ -190,9 +190,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         }
 
         if (!addresses.length) {
-          if (mounted) {
-            setTokens([]);
-          }
+          console.warn('[useMemeTokens] No addresses resolved; preserving existing tokens');
           return;
         }
 
@@ -202,6 +200,10 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         });
         if (batchErr) throw batchErr;
         const items: any[] = batch?.results || [];
+        if (!Array.isArray(items) || items.length === 0) {
+          console.warn('[useMemeTokens] tokenBatch returned empty; skip override and keep cached tokens');
+          return;
+        }
         // 3) Map, filter and prepare tokens
         let mapped: MemeToken[] = items
           .filter((x: any) => {
