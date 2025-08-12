@@ -16,6 +16,7 @@ import { useMemeTokenDetails } from './hooks/useMemeTokenDetails';
 import JupiterSwapWidget from '@/components/web3/JupiterSwapWidget';
 import TradingViewMobileChart from '@/components/mobile/TradingViewMobileChart';
 import TradingViewChart from '@/components/TradingViewChart';
+import { useToast } from '@/hooks/use-toast';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -63,7 +64,8 @@ const MemeTokenDetailPage = () => {
   // Resolve address from query and fetch full details
   const [searchParams] = useSearchParams();
   const address = searchParams.get('address') || undefined;
-  const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
+const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
+  const { toast } = useToast();
 
   // Find fallback token by symbol
   const found = tokens.find(t => t.symbol.toLowerCase() === (symbol ?? '').toLowerCase());
@@ -84,7 +86,14 @@ const MemeTokenDetailPage = () => {
     tags: found?.tags ?? [],
     isHot: found?.isHot ?? false,
     description: details.description || found?.description,
-  } : found;
+} : found;
+
+  // Derived data from DEXTools pool price for volumes and token address
+  const poolPrice = (details as any)?.raw?.poolPrice?.data ?? (details as any)?.raw?.poolPrice ?? null;
+  const volume1h = typeof poolPrice?.volume1h === 'number' ? poolPrice.volume1h : undefined;
+  const volume6h = typeof poolPrice?.volume6h === 'number' ? poolPrice.volume6h : undefined;
+  const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : undefined;
+  const tokenAddress = details?.address || address || (token as any)?.id || '';
 
   // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
   useEffect(() => {
@@ -744,8 +753,16 @@ const MemeTokenDetailPage = () => {
                     <span className="text-xl font-crypto font-black">{formatMarketCap(token.marketCap)}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
+                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">1h Volume</span>
+                    <span className="text-xl font-crypto font-black">{typeof volume1h === 'number' ? `$${volume1h.toLocaleString()}` : '—'}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
+                    <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">6h Volume</span>
+                    <span className="text-xl font-crypto font-black">{typeof volume6h === 'number' ? `$${volume6h.toLocaleString()}` : '—'}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
                     <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">24h Volume</span>
-                    <span className="text-xl font-crypto font-black">{stats.volume24h}</span>
+                    <span className="text-xl font-crypto font-black">{typeof volume24hDerived === 'number' ? `$${volume24hDerived.toLocaleString()}` : stats.volume24h}</span>
                   </div>
                   <div className="flex justify-between items-center p-4 rounded-2xl bg-gradient-to-r from-muted/30 to-muted/20">
                     <span className="text-lg font-crypto font-bold tracking-wider uppercase text-muted-foreground">Holders</span>
@@ -867,8 +884,18 @@ const MemeTokenDetailPage = () => {
                       <span className="font-crypto font-bold tracking-wider uppercase text-purple-500">Token Address</span>
                     </div>
                     <div className="flex gap-2">
-                      <input readOnly value="7xKXt..." className="flex-1 h-8 px-3 text-xs font-crypto bg-muted/20 border border-border/30 rounded-lg" />
-                      <Button variant="outline" size="sm" className="h-8 px-3 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg">
+                      <input readOnly value={tokenAddress} className="flex-1 h-8 px-3 text-xs font-mono bg-muted/20 border border-border/30 rounded-lg" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-3 text-xs font-crypto font-bold tracking-wider uppercase rounded-lg"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(tokenAddress || '');
+                            toast({ title: 'Copied', description: 'Token address copied to clipboard' });
+                          } catch {}
+                        }}
+                      >
                         Copy
                       </Button>
                     </div>
