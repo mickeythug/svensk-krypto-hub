@@ -65,8 +65,16 @@ const MemePage: React.FC = () => {
         <MemeHeroNew />
 
         {/* Top Meme Coins with Large Images */}
-        <section className={`${isMobile ? 'py-8 px-3' : 'py-16 px-4'}`}>
-          <div className="container mx-auto">
+        <section className={`${isMobile ? 'py-12 px-4' : 'py-20 px-6'}`}>
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12">
+              <h2 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-4xl md:text-6xl'} font-black mb-4 bg-gradient-neon bg-clip-text text-transparent`}>
+                🏆 Top 6 Meme Tokens
+              </h2>
+              <p className={`text-muted-foreground ${isMobile ? 'text-base' : 'text-lg'} font-medium max-w-2xl mx-auto`}>
+                De hetaste och mest populära meme tokens just nu med stora bilder och detaljerad information
+              </p>
+            </div>
             <MemeTopCoins />
           </div>
         </section>
