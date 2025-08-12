@@ -113,27 +113,30 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
 
         // 3) Map, filter and prepare tokens
         let mapped: MemeToken[] = items
-          .filter((x: any) => x?.ok && x?.meta?.address)
+          .filter((x: any) => {
+            const metaD = (x?.meta?.data ?? x?.meta) as any;
+            return x?.ok && metaD?.address;
+          })
           .map((x: any, idx: number) => {
-            const meta = x.meta || {};
-            const price = x.price || {};
-            const info = x.info || {};
-            const pool = x.poolPrice || {};
+            const metaD = (x?.meta?.data ?? x?.meta) as any || {};
+            const priceD = (x?.price?.data ?? x?.price) as any || {};
+            const infoD = (x?.info?.data ?? x?.info) as any || {};
+            const poolD = (x?.poolPrice?.data ?? x?.poolPrice) as any || {};
             return {
-              id: meta.address,
-              symbol: (meta.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
-              name: meta.name || meta.symbol || 'Token',
-              image: meta.logo || '/placeholder.svg',
-              price: Number(price.price ?? 0),
-              change24h: Number(price.variation24h ?? 0),
-              volume24h: Number(pool.volume24h ?? 0),
-              marketCap: Number(info.mcap ?? 0),
-              holders: Number(info.holders ?? 0),
+              id: metaD.address,
+              symbol: (metaD.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
+              name: metaD.name || metaD.symbol || 'Token',
+              image: metaD.logo || '/placeholder.svg',
+              price: Number(priceD.price ?? 0),
+              change24h: Number(priceD.variation24h ?? 0),
+              volume24h: Number(poolD.volume24h ?? 0),
+              marketCap: Number(infoD.mcap ?? 0),
+              holders: Number(infoD.holders ?? 0),
               views: '—',
               emoji: undefined,
               tags: [category],
               isHot: category === 'trending' ? idx < 10 : false,
-              description: meta.description,
+              description: metaD.description,
             } as MemeToken;
           });
 

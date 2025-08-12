@@ -97,65 +97,75 @@ Deno.serve(async (req) => {
       }
       case 'tokenFull': {
         if (!address) return json({ error: 'address required' }, 400);
-        const [meta, price, info, audit] = await Promise.all([
-          fetchJSON(`/v2/token/solana/${address}`),
-          fetchJSON(`/v2/token/solana/${address}/price`).catch(() => null),
-          fetchJSON(`/v2/token/solana/${address}/info`).catch(() => null),
-          fetchJSON(`/v2/token/solana/${address}/audit`).catch(() => null),
-        ]);
-
-        // Try to get a primary pool and its price/volume
-        let poolPrice: any = null;
         try {
-          const poolsResp = await fetchJSON(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
-          const firstPool = poolsResp?.results?.[0]?.address;
-          if (firstPool) {
-            poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
-          }
-        } catch (_) {
-          // ignore pool errors
-        }
+          const [meta, price, info, audit] = await Promise.all([
+            fetchJSON(`/v2/token/solana/${address}`),
+            fetchJSON(`/v2/token/solana/${address}/price`).catch(() => null),
+            fetchJSON(`/v2/token/solana/${address}/info`).catch(() => null),
+            fetchJSON(`/v2/token/solana/${address}/audit`).catch(() => null),
+          ]);
 
-        return json({ meta, price, info, audit, poolPrice });
+          // Try to get a primary pool and its price/volume
+          let poolPrice: any = null;
+          try {
+            const poolsResp = await fetchJSON(`/v2/token/solana/${address}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
+            const firstPool = poolsResp?.results?.[0]?.address;
+            if (firstPool) {
+              poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+            }
+          } catch (_) {
+            // ignore pool errors
+          }
+
+          return json({ meta, price, info, audit, poolPrice });
+        } catch (e: any) {
+          console.error('dextools-proxy tokenFull fallback (nulls)', e?.message ?? e);
+          return json({ meta: null, price: null, info: null, audit: null, poolPrice: null });
+        }
       }
       case 'tokenBatch': {
-        const addresses = (payload.addresses as string[] | undefined)?.filter(Boolean) ?? [];
-        if (!Array.isArray(addresses) || addresses.length === 0) {
-          return json({ error: 'addresses array required' }, 400);
-        }
-        const unique = Array.from(new Set(addresses)).slice(0, 60); // safety cap
-        const chunk = async <T,>(arr: T[], size: number) => {
-          const out: T[][] = [];
-          for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-          return out;
-        };
-        const chunks = await chunk(unique, 8); // limit concurrency bursts
-        const results: any[] = [];
-        for (const group of chunks) {
-          const part = await Promise.all(group.map(async (addr) => {
-            try {
-              const [meta, price, info, audit] = await Promise.all([
-                fetchJSON(`/v2/token/solana/${addr}`),
-                fetchJSON(`/v2/token/solana/${addr}/price`).catch(() => null),
-                fetchJSON(`/v2/token/solana/${addr}/info`).catch(() => null),
-                fetchJSON(`/v2/token/solana/${addr}/audit`).catch(() => null),
-              ]);
-              let poolPrice: any = null;
+        try {
+          const addresses = (payload.addresses as string[] | undefined)?.filter(Boolean) ?? [];
+          if (!Array.isArray(addresses) || addresses.length === 0) {
+            return json({ error: 'addresses array required' }, 400);
+          }
+          const unique = Array.from(new Set(addresses)).slice(0, 60); // safety cap
+          const chunk = async <T,>(arr: T[], size: number) => {
+            const out: T[][] = [];
+            for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+            return out;
+          };
+          const chunks = await chunk(unique, 8); // limit concurrency bursts
+          const results: any[] = [];
+          for (const group of chunks) {
+            const part = await Promise.all(group.map(async (addr) => {
               try {
-                const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
-                const firstPool = poolsResp?.results?.[0]?.address;
-                if (firstPool) {
-                  poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
-                }
-              } catch (_) {}
-              return { ok: true, address: addr, meta, price, info, audit, poolPrice };
-            } catch (e: any) {
-              return { ok: false, address: addr, error: e?.message ?? String(e) };
-            }
-          }));
-          results.push(...part);
+                const [meta, price, info, audit] = await Promise.all([
+                  fetchJSON(`/v2/token/solana/${addr}`),
+                  fetchJSON(`/v2/token/solana/${addr}/price`).catch(() => null),
+                  fetchJSON(`/v2/token/solana/${addr}/info`).catch(() => null),
+                  fetchJSON(`/v2/token/solana/${addr}/audit`).catch(() => null),
+                ]);
+                let poolPrice: any = null;
+                try {
+                  const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
+                  const firstPool = poolsResp?.results?.[0]?.address;
+                  if (firstPool) {
+                    poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
+                  }
+                } catch (_) {}
+                return { ok: true, address: addr, meta, price, info, audit, poolPrice };
+              } catch (e: any) {
+                return { ok: false, address: addr, error: e?.message ?? String(e) };
+              }
+            }));
+            results.push(...part);
+          }
+          return json({ results });
+        } catch (e: any) {
+          console.error('dextools-proxy tokenBatch fallback (empty results)', e?.message ?? e);
+          return json({ results: [] });
         }
-        return json({ results });
       }
       default:
         return json({ error: 'Unknown action' }, 400);
