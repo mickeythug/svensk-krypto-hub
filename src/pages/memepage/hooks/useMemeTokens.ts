@@ -32,8 +32,16 @@ const preloadImage = (src?: string) =>
   });
 
 export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
-  const [tokens, setTokens] = useState<MemeToken[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tokens, setTokens] = useState<MemeToken[]>(() => {
+    const k = `memeTokens:${category}:v2`;
+    const boot = getCacheStaleOk<MemeToken[]>(k);
+    return Array.isArray(boot) ? boot.slice(0, limit) : [];
+  });
+  const [loading, setLoading] = useState(() => {
+    const k = `memeTokens:${category}:v2`;
+    const boot = getCacheStaleOk<MemeToken[]>(k);
+    return !(Array.isArray(boot) && boot.length);
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

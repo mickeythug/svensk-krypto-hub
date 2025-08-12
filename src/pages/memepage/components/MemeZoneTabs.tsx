@@ -23,7 +23,7 @@ const Grid: React.FC<{ category: 'newest' | 'trending' | 'potential' }> = ({ cat
   const navigate = useNavigate();
   const { tokens, loading, error } = useMemeTokens(category, 50);
 
-  if (loading) {
+  if (loading && tokens.length === 0) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {Array.from({ length: 8 }).map((_, i) => (
@@ -105,9 +105,9 @@ const MemeZoneTabs: React.FC = () => {
               <TabsTrigger value="potential">Potential</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="newest"><Grid category="newest" /></TabsContent>
-          <TabsContent value="trending"><Grid category="trending" /></TabsContent>
-          <TabsContent value="potential"><Grid category="potential" /></TabsContent>
+          <TabsContent value="newest" forceMount><Grid category="newest" /></TabsContent>
+          <TabsContent value="trending" forceMount><Grid category="trending" /></TabsContent>
+          <TabsContent value="potential" forceMount><Grid category="potential" /></TabsContent>
         </Tabs>
       </div>
     </section>

@@ -6,8 +6,13 @@ import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const TokenChip = ({ symbol, name, price, change24h, image, isMobile }: any) => {
+const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any) => {
   const positive = change24h > 0;
+  const formatCompactUsd = (n: number) => {
+    if (!isFinite(n) || n <= 0) return '—';
+    const v = new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+    return `$${v} MCAP`;
+  };
   
   if (isMobile) {
     return (
@@ -37,7 +42,7 @@ const TokenChip = ({ symbol, name, price, change24h, image, isMobile }: any) => 
               {positive ? '+' : ''}{Math.abs(change24h).toFixed(1)}%
             </Badge>
           </div>
-          <span className="tabular-nums font-bold text-[10px] text-accent">${price.toFixed(price < 1 ? 4 : 2)}</span>
+          <span className="tabular-nums font-bold text-[10px] text-accent">{formatCompactUsd(marketCap)}</span>
         </div>
       </div>
     );
@@ -72,7 +77,7 @@ const TokenChip = ({ symbol, name, price, change24h, image, isMobile }: any) => 
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground truncate max-w-[120px]">{name}</span>
-          <span className="tabular-nums font-bold text-accent">${price.toFixed(price < 1 ? 6 : 2)}</span>
+          <span className="tabular-nums font-bold text-accent">{formatCompactUsd(marketCap)}</span>
         </div>
       </div>
     </div>
@@ -83,7 +88,7 @@ const MemeLiveTicker = () => {
   const isMobile = useIsMobile();
   const { tokens, loading, error } = useMemeTokens('trending', 15);
   const list = useMemo(() => (loading ? Array.from({ length: 15 }).map((_, i) => ({ 
-    id: i, symbol: '...', name: 'Laddar', price: 0, change24h: 0 
+    id: i, symbol: '...', name: 'Laddar', marketCap: 0, change24h: 0 
   })) : tokens), [loading, tokens]);
 
   if (error) return null;

@@ -4,8 +4,13 @@ import { Badge } from '@/components/ui/badge';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
 
-const TokenChip = ({ symbol, name, price, change24h, image }: any) => {
+const TokenChip = ({ symbol, name, marketCap, change24h, image }: any) => {
   const positive = change24h > 0;
+  const formatCompactUsd = (n: number) => {
+    if (!isFinite(n) || n <= 0) return '—';
+    const v = new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+    return `$${v} MCAP`;
+  };
   return (
     <div className="group flex items-center gap-3 px-4 py-2 rounded-full border border-border/60 bg-card/70 backdrop-blur-sm hover:shadow-glow-secondary transition">
       {image ? (
@@ -16,7 +21,7 @@ const TokenChip = ({ symbol, name, price, change24h, image }: any) => {
       <div className="flex items-center gap-3">
         <span className="font-bold">{symbol}</span>
         <span className="text-muted-foreground hidden sm:inline">{name}</span>
-        <span className="tabular-nums text-sm">${price.toFixed(price < 1 ? 4 : 2)}</span>
+        <span className="tabular-nums text-sm">{formatCompactUsd(marketCap)}</span>
         <Badge variant="outline" className={`${positive ? 'text-success border-success/40' : 'text-destructive border-destructive/40'} bg-transparent`}>
           {positive ? '+' : ''}{change24h.toFixed(2)}%
         </Badge>
