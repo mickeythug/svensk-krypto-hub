@@ -3,22 +3,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from 'lucide-react';
 import { formatUsd } from '@/lib/utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
-interface BirdeyeTxItem {
-  txHash: string;
-  blockUnixTime: number;
-  from?: { address?: string; owner?: string };
-  to?: { address?: string; owner?: string };
-  side?: 'buy' | 'sell';
-  amount?: number;
-  uiAmount?: number;
-  price?: number;
-  volumeUSD?: number;
-  solAmount?: number;
-  source?: string;
+interface ActivityItem {
+  id: string;
+  ts: number;
+  side: 'buy' | 'sell';
+  usd: number;
+  tokenAmount: number;
+  solAmount: number;
+  price: number;
+  maker?: string;
 }
+
 
 interface TransactionsTableProps {
   tokenAddress: string | undefined;

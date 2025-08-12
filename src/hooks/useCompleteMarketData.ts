@@ -108,8 +108,8 @@ export function useCompleteMarketData(address?: string) {
           },
           volume: {
             volume24h: poolPrice?.volume24h,
-            buyVolume24h: poolPrice?.buyVolume5m ? poolPrice.buyVolume5m * 288 : undefined, // Estimate 24h from 5m
-            sellVolume24h: poolPrice?.sellVolume5m ? poolPrice.sellVolume5m * 288 : undefined,
+            buyVolume24h: poolPrice?.buyVolume24h,
+            sellVolume24h: poolPrice?.sellVolume24h,
             volume1h: poolPrice?.volume1h,
             volume6h: poolPrice?.volume6h,
           },
