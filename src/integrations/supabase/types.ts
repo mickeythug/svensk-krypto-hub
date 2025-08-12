@@ -275,6 +275,45 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_log: {
+        Row: {
+          action: string
+          created_at: string | null
+          error_message: string | null
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          resource: string | null
+          success: boolean | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       tokens_catalog: {
         Row: {
           address: string
@@ -394,6 +433,41 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      delete_user_keys: {
+        Args: { p_user_id: string; p_wallet_address?: string }
+        Returns: undefined
+      }
+      get_encrypted_key: {
+        Args: {
+          p_user_id: string
+          p_wallet_address: string
+          p_key_type: string
+        }
+        Returns: string
+      }
+      log_security_event: {
+        Args: {
+          p_action: string
+          p_resource?: string
+          p_success?: boolean
+          p_error_message?: string
+          p_metadata?: Json
+        }
+        Returns: undefined
+      }
+      store_encrypted_key: {
+        Args: {
+          p_user_id: string
+          p_wallet_address: string
+          p_private_key_encrypted?: string
+          p_pump_api_key_encrypted?: string
+        }
+        Returns: undefined
+      }
       user_owns_wallet: {
         Args: { wallet_addr: string }
         Returns: boolean
