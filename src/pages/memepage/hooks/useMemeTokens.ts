@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
 
 export interface MemeToken {
   id: string; // mint address
@@ -39,6 +40,13 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     setLoading(true);
     setError(null);
     console.log('[useMemeTokens] start', { category, limit });
+
+    const cacheKey = `memeTokens:${category}:v1`;
+    // Immediate bootstrap from cache (stale OK) to avoid empty UI
+    const bootstrap = getCacheStaleOk<MemeToken[]>(cacheKey);
+    if (bootstrap && bootstrap.length && mounted) {
+      setTokens(bootstrap.slice(0, limit));
+    }
 
     const normalize = (d: any): any[] => {
       if (!d) return [];
@@ -152,9 +160,18 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
         await Promise.all(mapped.map((t) => preloadImage(t.image)));
 
         if (!mounted) return;
+        // Update cache (fresh for 2 minutes)
+        setCache(cacheKey, mapped, { ttlMs: 2 * 60 * 1000 });
         setTokens(mapped);
       } catch (e: any) {
-        if (mounted) setError(e?.message || 'Kunde inte hämta data från DEXTools');
+        // On error, try serve stale cache as graceful fallback
+        const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
+        if (mounted && cached && cached.length) {
+          setTokens(cached.slice(0, limit));
+          setError(null);
+        } else if (mounted) {
+          setError(e?.message || 'Kunde inte hämta data från DEXTools');
+        }
       } finally {
         if (mounted) setLoading(false);
       }

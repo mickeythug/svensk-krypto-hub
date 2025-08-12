@@ -4,6 +4,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useNavigate } from 'react-router-dom';
 
 function formatPrice(n: number) {
   if (!isFinite(n)) return '—';
@@ -19,7 +20,8 @@ function formatCompact(n: number) {
 }
 
 const Grid: React.FC<{ category: 'newest' | 'trending' | 'potential' }> = ({ category }) => {
-  const { tokens, loading, error } = useMemeTokens(category, 30);
+  const navigate = useNavigate();
+  const { tokens, loading, error } = useMemeTokens(category, 50);
 
   if (loading) {
     return (
@@ -43,7 +45,11 @@ const Grid: React.FC<{ category: 'newest' | 'trending' | 'potential' }> = ({ cat
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       {tokens.map((t) => (
-        <Card key={t.id} className="p-4 bg-card/60 hover:shadow-lg transition-all">
+        <Card 
+          key={t.id} 
+          className="p-4 bg-card/60 hover:shadow-lg transition-all cursor-pointer"
+          onClick={() => navigate(`/meme/token/${t.symbol.toLowerCase()}?address=${encodeURIComponent(t.id)}`)}
+        >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden ring-1 ring-border/50">
               <OptimizedImage src={t.image || '/placeholder.svg'} alt={`${t.name} logo`} className="w-full h-full object-cover" />

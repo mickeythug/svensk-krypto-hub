@@ -6,30 +6,16 @@ import { useMemeTokens } from '../hooks/useMemeTokens';
 import OptimizedImage from '@/components/OptimizedImage';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-import btc from '@/assets/crypto-logos/btc.png';
-import eth from '@/assets/crypto-logos/eth.png';
-import doge from '@/assets/meme-tokens/doge.png';
-import shib from '@/assets/crypto-logos/shib.png';
-import link from '@/assets/crypto-logos/link.png';
-import bnb from '@/assets/crypto-logos/bnb.png';
-import sol from '@/assets/crypto-logos/sol.png';
-import ada from '@/assets/crypto-logos/ada.png';
-
-const logoMap: Record<string, string> = {
-  btc, eth, doge, shib, link, bnb, sol, ada,
-};
-
-const TokenChip = ({ symbol, name, price, change24h, isMobile }: any) => {
+const TokenChip = ({ symbol, name, price, change24h, image, isMobile }: any) => {
   const positive = change24h > 0;
-  const logo = logoMap[(symbol || '').toLowerCase()];
   
   if (isMobile) {
     return (
       <div className="group flex items-center gap-2 px-3 py-2 rounded-xl border border-primary/40 bg-gradient-to-r from-card/95 to-card/85 backdrop-blur-sm min-w-[140px] shadow-sm">
-        {logo ? (
+        {image ? (
           <div className="relative">
             <OptimizedImage 
-              src={logo} 
+              src={image}
               alt={`${name} logo`} 
               className="h-6 w-6 rounded-full object-contain" 
               fallbackSrc="/placeholder.svg" 
@@ -59,10 +45,10 @@ const TokenChip = ({ symbol, name, price, change24h, isMobile }: any) => {
 
   return (
     <div className="group flex items-center gap-4 px-6 py-4 rounded-2xl border-2 border-primary/30 bg-gradient-to-r from-card/90 to-card/70 backdrop-blur-sm hover:shadow-glow-rainbow transition-all duration-300 min-w-[280px]">
-      {logo ? (
+      {image ? (
         <div className="relative">
           <OptimizedImage 
-            src={logo} 
+            src={image}
             alt={`${name} logo`} 
             className="h-12 w-12 rounded-full object-contain animate-float" 
             fallbackSrc="/placeholder.svg" 

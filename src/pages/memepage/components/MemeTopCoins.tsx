@@ -179,7 +179,7 @@ const MemeTopCoins = () => {
               <Button 
                 className={`w-full font-crypto bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-full ${isMobile ? 'h-9 text-sm px-4' : 'h-12 text-base'}`}
                 size={isMobile ? "default" : "lg"}
-                onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}`)}
+                onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)}
               >
                 <Zap className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
                 <span className={`${isMobile ? 'text-xs font-semibold tracking-tight' : ''}`}>
