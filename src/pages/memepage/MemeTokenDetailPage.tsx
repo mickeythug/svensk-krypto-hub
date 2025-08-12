@@ -194,8 +194,9 @@ const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
 
   // Enhanced statistics for desktop
   const getEnhancedStats = () => ({
-    volume24h: token.volume24h ? `$${(token.volume24h).toLocaleString()}` : '—',
-    volume7d: '—',
+    volume1h: typeof volume1h === 'number' ? `$${volume1h.toLocaleString()}` : '—',
+    volume6h: typeof volume6h === 'number' ? `$${volume6h.toLocaleString()}` : '—',
+    volume24h: typeof volume24hDerived === 'number' ? `$${volume24hDerived.toLocaleString()}` : (token.volume24h ? `$${token.volume24h.toLocaleString()}` : '—'),
     marketCapRank: '—',
     holders: token.holders,
     maxSupply: token?.description ? undefined : '—',

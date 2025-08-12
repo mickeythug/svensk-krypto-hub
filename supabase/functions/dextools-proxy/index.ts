@@ -203,8 +203,12 @@ Deno.serve(async (req) => {
                 let poolPrice: any = null;
                 let poolLiquidity: any = null;
                 try {
-                  const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
-                  const firstPool = poolsResp?.results?.[0]?.address;
+                  let poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
+                  let firstPool = poolsResp?.results?.[0]?.address;
+                  if (!firstPool) {
+                    poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
+                    firstPool = poolsResp?.results?.[0]?.address;
+                  }
                   if (firstPool) {
                     poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
                     poolLiquidity = await fetchJSON(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
@@ -288,8 +292,12 @@ Deno.serve(async (req) => {
               let poolPrice: any = null;
               let poolLiquidity: any = null;
               try {
-                const poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`);
-                const firstPool = poolsResp?.results?.[0]?.address;
+                let poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
+                let firstPool = poolsResp?.results?.[0]?.address;
+                if (!firstPool) {
+                  poolsResp = await fetchJSON(`/v2/token/solana/${addr}/pools?sort=creationTime&order=desc&page=0&pageSize=1`).catch(() => null);
+                  firstPool = poolsResp?.results?.[0]?.address;
+                }
                 if (firstPool) {
                   poolPrice = await fetchJSON(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
                   poolLiquidity = await fetchJSON(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);

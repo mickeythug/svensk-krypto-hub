@@ -41,7 +41,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
     setError(null);
     console.log('[useMemeTokens] start', { category, limit });
 
-    const cacheKey = `memeTokens:${category}:v1`;
+    const cacheKey = `memeTokens:${category}:v2`;
     // Immediate bootstrap from cache (stale OK) to avoid empty UI
     const bootstrap = getCacheStaleOk<MemeToken[]>(cacheKey);
     if (bootstrap && bootstrap.length && mounted) {
@@ -135,23 +135,39 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 30) => {
             const priceD = (x?.price?.data ?? x?.price) as any || {};
             const infoD = (x?.info?.data ?? x?.info) as any || {};
             const poolD = (x?.poolPrice?.data ?? x?.poolPrice) as any || {};
+
+            const toNum = (v: any): number => {
+              if (typeof v === 'number') return v;
+              if (typeof v === 'string') {
+                const n = Number(v.replace(/[,\s]/g, ''));
+                return isNaN(n) ? 0 : n;
+              }
+              return 0;
+            };
+
+            const marketCap = toNum(infoD.mcap);
+            const holders = toNum(infoD.holders);
+            const volume24h = toNum(poolD.volume24h);
+
             return {
               id: metaD.address,
               symbol: (metaD.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
               name: metaD.name || metaD.symbol || 'Token',
               image: metaD.logo || '/placeholder.svg',
-              price: Number(priceD.price ?? 0),
-              change24h: Number(priceD.variation24h ?? 0),
-              volume24h: Number(poolD.volume24h ?? 0),
-              marketCap: Number(infoD.mcap ?? 0),
-              holders: Number(infoD.holders ?? 0),
+              price: toNum(priceD.price),
+              change24h: toNum(priceD.variation24h),
+              volume24h,
+              marketCap,
+              holders,
               views: '—',
               emoji: undefined,
               tags: [category],
               isHot: category === 'trending' ? idx < 10 : false,
               description: metaD.description,
             } as MemeToken;
-          });
+          })
+          // Ensure we never show cards without required data
+          .filter((t) => t.marketCap > 0 && t.holders > 0 && t.volume24h > 0);
 
         if (category === 'potential') {
           // nyaste med minst 40k marketcap
