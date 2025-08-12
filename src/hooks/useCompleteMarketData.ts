@@ -121,6 +121,24 @@ export function useCompleteMarketData(address?: string) {
         };
 
         if (!mounted) return;
+        // Client-side diagnostics for missing fields
+        if (!combined.market.liquidity || !combined.tradingActivity.txns24h || !combined.volume.volume24h || !combined.participants.holders) {
+          console.warn('[market-debug-client]', {
+            address,
+            missing: {
+              liquidity: !combined.market.liquidity,
+              txns24h: !combined.tradingActivity.txns24h,
+              volume24h: !combined.volume.volume24h,
+              holders: !combined.participants.holders,
+            },
+            rawKeys: {
+              price: Object.keys((tokenResponse?.price?.data ?? tokenResponse?.price ?? {}) || {}),
+              info: Object.keys((tokenResponse?.info?.data ?? tokenResponse?.info ?? {}) || {}),
+              poolPrice: Object.keys((tokenResponse?.poolPrice?.data ?? tokenResponse?.poolPrice ?? {}) || {}),
+              poolLiquidity: Object.keys((tokenResponse?.poolLiquidity?.data ?? tokenResponse?.poolLiquidity ?? {}) || {}),
+            }
+          });
+        }
         setCache(key, combined, { ttlMs: 30_000 });
         setData(combined);
       } catch (e: any) {

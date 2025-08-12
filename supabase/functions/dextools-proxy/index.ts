@@ -223,6 +223,7 @@ Deno.serve(async (req) => {
           // Try to get a primary pool and its price/volume (prefer oldest pool first)
           let poolPrice: any = null;
           let poolLiquidity: any = null;
+          let chosenPoolAddress: string | null = null;
           try {
             let poolsResp = await fetchCachedWithRetry(`/v2/token/solana/${address}/pools?sort=creationTime&order=asc&page=0&pageSize=1`).catch(() => null);
             let firstPool = poolsResp?.results?.[0]?.address;
@@ -232,12 +233,38 @@ Deno.serve(async (req) => {
               firstPool = poolsResp?.results?.[0]?.address;
             }
             if (firstPool) {
+              chosenPoolAddress = firstPool;
               poolPrice = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/price`).catch(() => null);
               poolLiquidity = await fetchCachedWithRetry(`/v2/pool/solana/${firstPool}/liquidity`).catch(() => null);
             }
           } catch (_) {
             // ignore pool errors
           }
+
+          // Structured debug log for diagnostics
+          try {
+            const metaD = meta?.data ?? meta ?? {};
+            const priceD = price?.data ?? price ?? {};
+            const infoD = info?.data ?? info ?? {};
+            const poolPD = poolPrice?.data ?? poolPrice ?? {};
+            const poolLD = poolLiquidity?.data ?? poolLiquidity ?? {};
+            console.log('[market-debug]', JSON.stringify({
+              address,
+              metaOk: !!metaD?.address,
+              priceKeys: Object.keys(priceD || {}),
+              infoKeys: Object.keys(infoD || {}),
+              holders: infoD?.holders ?? null,
+              mcap: infoD?.mcap ?? null,
+              fdv: infoD?.fdv ?? null,
+              chosenPoolAddress,
+              poolPriceKeys: Object.keys(poolPD || {}),
+              poolLiquidityKeys: Object.keys(poolLD || {}),
+              volume24h: poolPD?.volume24h ?? null,
+              buys24h: poolPD?.buys24h ?? null,
+              sells24h: poolPD?.sells24h ?? null,
+              liquidity: poolLD?.liquidity ?? null,
+            }));
+          } catch (_) {}
 
           // Persist to catalog (best-effort)
           try {
