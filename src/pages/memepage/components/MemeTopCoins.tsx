@@ -44,7 +44,7 @@ const formatMarketCap = (cap: number): string => {
 };
 
 const MemeTopCoins = () => {
-  const { tokens, loading, error } = useMemeTokens('trending', 6);
+  const { tokens, loading, error } = useMemeTokens('trending', 12);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -58,12 +58,12 @@ const MemeTopCoins = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i} className="p-6 animate-pulse">
-            <div className="h-48 bg-muted rounded-lg mb-4"></div>
-            <div className="h-4 bg-muted rounded mb-2"></div>
-            <div className="h-4 bg-muted rounded w-2/3"></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <Card key={i} className="p-6 animate-pulse border-2">
+            <div className="h-48 bg-gradient-to-br from-muted to-muted/50 rounded-lg mb-4 animate-pulse"></div>
+            <div className="h-6 bg-gradient-to-r from-muted to-muted/50 rounded mb-3 animate-pulse"></div>
+            <div className="h-4 bg-muted rounded w-2/3 animate-pulse"></div>
           </Card>
         ))}
       </div>
@@ -71,14 +71,32 @@ const MemeTopCoins = () => {
   }
 
   if (error) {
-    return <div className="text-center text-destructive">Failed to load top meme coins</div>;
+    return <div className="text-center text-destructive p-8 bg-destructive/10 rounded-xl border-2 border-destructive/20">Failed to load top meme coins</div>;
   }
 
   return (
-    <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'}`}>
-      {processedTokens.map((token, index) => {
-        const positive = token.change24h > 0;
-        const isTop3 = index < 3;
+    <div className="space-y-8">
+      {/* Casino-Style Header */}
+      <div className="text-center space-y-4 p-8 bg-gradient-casino-gold rounded-2xl border-4 border-yellow-400/50 shadow-glow-gold">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Crown className="w-8 h-8 text-yellow-400 animate-pulse" />
+          <h2 className="font-crypto text-4xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent animate-shimmer">
+            🏆 HETASTE TOKENS 🏆
+          </h2>
+          <Crown className="w-8 h-8 text-yellow-400 animate-pulse" />
+        </div>
+        <div className="flex items-center justify-center gap-2 text-lg font-bold text-yellow-100">
+          <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
+          <span>CASINO-KVALITET • HÖGSTA VINSTER • LIVE DATA</span>
+          <Zap className="w-5 h-5 text-yellow-400 animate-pulse" />
+        </div>
+      </div>
+
+      {/* Responsive Grid - Casino Style */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+        {processedTokens.map((token, index) => {
+          const positive = token.change24h > 0;
+          const isTop3 = index < 3;
         
         return (
           <Card 
@@ -190,6 +208,7 @@ const MemeTopCoins = () => {
           </Card>
         );
       })}
+      </div>
     </div>
   );
 };
