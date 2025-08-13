@@ -51,35 +51,35 @@ const MemePage: React.FC = () => {
     document.head.appendChild(ld);
   }, []);
   return (
-    <div className="meme-page font-sans bg-background min-h-screen">
-      <main className="relative z-10 w-full min-h-screen">
-        {/* Hero Section - Fixed Container */}
-        <section className="w-full">
+    <div className="meme-page font-sans bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
+      {/* Full Screen Gaming Background */}
+      <div className="fixed inset-0 bg-gradient-casino-rainbow opacity-5 animate-shimmer pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
+      
+      <main className="relative z-10 w-full min-h-screen overflow-x-hidden">
+        {/* Full Width Hero Section */}
+        <div className="w-full">
           <MemeHeroNew />
-        </section>
+        </div>
 
-        {/* Top Tokens Section - Fixed Container */}
-        <section className="w-full">
+        {/* Full Screen Top Tokens Section */}
+        <div className="w-full">
           <MemeTopCoins />
-        </section>
+        </div>
 
-        {/* Stats Banner - Fixed Container with proper spacing */}
-        <section className="w-full py-8">
+        {/* Enhanced Stats Banner */}
+        <div className="w-full bg-gradient-casino-gold/20 border-y-4 border-yellow-400/30">
           <MemeStatsBanner />
-        </section>
+        </div>
 
-        {/* Explore Section - Fixed Container */}
-        <section className="w-full">
+        {/* Full Screen Explore Section */}
+        <div className="w-full">
           <MemeZoneTabs />
-        </section>
+        </div>
       </main>
       
-      {/* Mobile Navigation - Fixed positioning */}
-      {isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 z-50">
-          <MemeZoneBottomNavigation />
-        </div>
-      )}
+      {/* Mobile Navigation */}
+      {isMobile && <MemeZoneBottomNavigation />}
     </div>
   );
 };

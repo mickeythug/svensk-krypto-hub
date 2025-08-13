@@ -79,8 +79,8 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
 
   return (
     <div className="space-y-8">
-      {/* Professional Token Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6">
+      {/* Ultra Large Gaming Grid - Full Screen */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-6 md:gap-8">
         {tokens.map((t, index) => {
           const positive = t.change24h > 0;
           const isTop = index < 3;
@@ -89,95 +89,136 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
           return (
             <Card 
               key={t.id} 
-              className={`group relative overflow-hidden border transition-all duration-300 hover:scale-[1.02] cursor-pointer rounded-xl ${
-                isTop1 ? 'border-primary/50 bg-card shadow-glow-primary' :
-                isTop ? 'border-primary/30 bg-card hover:border-primary/50' : 
-                'border-border/50 bg-card/80 hover:border-primary/30'
+              className={`group relative overflow-hidden border-4 transition-all duration-500 hover:scale-105 hover:shadow-glow-rainbow cursor-pointer rounded-2xl ${
+                isTop1 ? 'border-yellow-400 bg-gradient-to-br from-card via-yellow-900/30 to-yellow-400/20 shadow-glow-gold animate-pulse' :
+                isTop ? 'border-primary bg-gradient-to-br from-card via-primary/20 to-primary/10 shadow-glow-primary' : 
+                'border-border/50 bg-card/90 hover:border-primary/50'
               }`}
               onClick={() => navigate(`/meme/token/${t.symbol.toLowerCase()}?address=${encodeURIComponent(t.id)}`)}
             >
-              {/* Professional Rank Badge */}
+              {/* Enhanced Gaming Rank Badge */}
               {isTop && (
                 <div className="absolute top-3 left-3 z-20">
-                  <Badge className={`text-sm px-3 py-1.5 font-bold ${
-                    index === 0 ? 'bg-primary text-primary-foreground shadow-glow-primary' :
-                    index === 1 ? 'bg-muted-foreground text-background' :
-                    'bg-orange-500 text-white'
+                  <Badge className={`text-sm font-sans font-black px-3 py-2 shadow-lg ${
+                    index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' :
+                    index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
+                    'bg-gradient-to-r from-orange-400 to-orange-600 text-black'
                   }`}>
-                    {index === 0 && <Crown className="w-3 h-3 mr-1" />}
+                    {index === 0 && <Crown className="w-4 h-4 mr-1 animate-pulse" />}
                     #{index + 1}
                   </Badge>
                 </div>
               )}
 
-              {/* HOT Badge for trending tokens */}
+              {/* Ultra Gaming HOT Badge */}
               {t.isHot && (
                 <div className="absolute top-3 right-3 z-20">
-                  <Badge className="bg-destructive text-destructive-foreground">
-                    🔥
+                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-sm font-sans font-black px-3 py-2 shadow-glow-destructive">
+                    🔥 HOT
                   </Badge>
                 </div>
               )}
 
-              {/* Token Image - Same as other sections */}
+              {/* Extra Large Token Image - Like MemeTopCoins */}
               <div className="relative overflow-hidden">
-                <AspectRatio ratio={4/5}>
+                <AspectRatio ratio={16/12}>
+                  <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                   <OptimizedImage
                     src={t.image || '/placeholder.svg'}
                     alt={`${t.name} logo`}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     fallbackSrc="/placeholder.svg"
                   />
+                  {isTop1 && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/30 to-transparent pointer-events-none animate-pulse"></div>
+                  )}
                 </AspectRatio>
               </div>
 
-              {/* Token Info - Same layout as other sections */}
-              <div className="p-3 md:p-4">
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <div className="min-w-0">
-                    <h3 className="truncate font-extrabold text-lg md:text-xl">{t.emoji} {t.symbol}</h3>
-                    <p className="truncate text-xs md:text-sm text-muted-foreground">{t.name}</p>
-                  </div>
+              {/* Enhanced Gaming Token Details */}
+              <div className="p-3 md:p-4 lg:p-6 space-y-3 md:space-y-4">
+                {/* Symbol and Change */}
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className={`font-sans font-black text-white ${isMobile ? 'text-lg' : 'text-xl md:text-2xl'} ${isTop1 ? 'text-blue-300' : ''} truncate`}>
+                    {t.symbol}
+                  </h3>
                   
-                  {/* Large Percentage Display */}
-                  <div className={`flex items-center gap-1 text-2xl font-black drop-shadow-lg ${
+                  {/* Modern Large Percentage Display */}
+                  <div className={`flex items-center gap-2 ${isMobile ? 'text-lg' : 'text-xl md:text-2xl'} font-sans font-black ${
                     positive ? 'text-green-400' : 'text-red-400'
                   }`}>
                     {positive ? (
-                      <TrendingUp className="w-5 h-5 animate-pulse" />
+                      <TrendingUp className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} animate-pulse`} />
                     ) : (
-                      <TrendingDown className="w-5 h-5 animate-pulse" />
+                      <TrendingDown className={`${isMobile ? 'w-5 h-5' : 'w-6 h-6'} animate-pulse`} />
                     )}
-                    <span>
+                    <span className="drop-shadow-lg">
                       {positive ? '+' : ''}{formatPercentage(t.change24h)}
                     </span>
                   </div>
                 </div>
+
+                {/* Token Name */}
+                <p className="text-gray-300 text-sm font-sans font-medium truncate mb-1">{t.name}</p>
                 
-                <div className="mt-2 flex items-center justify-between text-sm">
-                  <span className="tabular-nums font-bold text-lg">{formatPrice(t.price)}</span>
-                  <span className="text-muted-foreground font-medium">{formatCompact(t.marketCap)}</span>
+                {/* Enhanced Stats Grid */}
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <DollarSign className="w-3 h-3 md:w-4 md:h-4" />
+                      PRIS
+                    </div>
+                    <div className={`${isMobile ? 'text-sm' : 'text-base md:text-lg'} font-sans font-black text-white`}>{formatPrice(t.price)}</div>
+                  </div>
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" />
+                      MCAP
+                    </div>
+                    <div className={`${isMobile ? 'text-sm' : 'text-base md:text-lg'} font-sans font-black text-white`}>{formatCompact(t.marketCap)}</div>
+                  </div>
                 </div>
 
-                {/* Volume and Holders - Compact */}
-                <div className="grid grid-cols-2 gap-2 mt-3">
-                  <div className="text-center">
-                    <div className="text-xs text-muted-foreground">Vol 24H</div>
-                    <div className="text-sm font-bold">{formatCompact(t.volume24h)}</div>
+                {/* Volume and Holders Grid */}
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <BarChart3 className="w-3 h-3 md:w-4 md:h-4" />
+                      VOL 24H
+                    </div>
+                    <div className={`${isMobile ? 'text-xs' : 'text-sm md:text-base'} font-sans font-black text-white`}>{formatCompact(t.volume24h)}</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-xs text-muted-foreground">Holders</div>
-                    <div className="text-sm font-bold">{formatCompact(t.holders)}</div>
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <Users className="w-3 h-3 md:w-4 md:h-4" />
+                      HOLDERS
+                    </div>
+                    <div className={`${isMobile ? 'text-xs' : 'text-sm md:text-base'} font-sans font-black text-white`}>{formatCompact(t.holders)}</div>
                   </div>
                 </div>
 
-                {/* Professional Action Button */}
+                {/* Gaming Tags */}
+                {t.tags && t.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {t.tags.slice(0, 2).map((tag: string, i: number) => (
+                      <Badge key={i} variant="secondary" className="text-xs font-sans font-medium">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* Gaming Action Button */}
                 <Button 
-                  className="w-full mt-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
-                  size="sm"
+                  className={`w-full font-sans bg-gradient-casino-gold text-black hover:shadow-glow-gold transition-all duration-300 rounded-lg font-bold h-12 text-base ${
+                    isTop1 ? 'animate-pulse shadow-glow-gold' : ''
+                  }`}
+                  size="lg"
                 >
-                  <Zap className="w-4 h-4 mr-2" />
-                  Handla
+                  <Zap className="w-4 h-4 mr-2 animate-pulse" />
+                  <span className="font-bold tracking-wide">
+                    HANDLA NU
+                  </span>
                 </Button>
               </div>
             </Card>
@@ -185,27 +226,27 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
         })}
       </div>
 
-      {/* Professional Pagination */}
+      {/* Modern Pagination with Icons */}
       <div className="flex items-center justify-center gap-4 pt-8">
         <Button 
           variant="outline" 
           disabled={loading || page === 1} 
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="flex items-center gap-2 font-medium px-6 py-3 rounded-full border border-border hover:bg-muted transition-all duration-300"
+          className="flex items-center gap-2 font-sans font-bold px-6 py-3 rounded-full border-2 border-yellow-400/50 hover:bg-yellow-400/20 hover:border-yellow-400 text-white transition-all duration-300"
         >
           <ChevronLeft className="w-4 h-4" />
           Föregående
         </Button>
         
-        <div className="flex items-center gap-3 px-4 py-2 bg-muted rounded-full border border-border">
-          <span className="text-sm font-medium text-muted-foreground">Sida</span>
-          <span className="text-lg font-bold text-foreground">{page}</span>
+        <div className="flex items-center gap-3 px-4 py-2 bg-black/60 rounded-full border-2 border-yellow-400/50 shadow-glow-gold">
+          <span className="text-sm font-sans font-bold text-yellow-200">Sida</span>
+          <span className="text-lg font-sans font-black text-yellow-400">{page}</span>
         </div>
         
         <Button 
           disabled={loading || !hasMore} 
           onClick={() => setPage((p) => p + 1)}
-          className="flex items-center gap-2 font-medium px-6 py-3 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300"
+          className="flex items-center gap-2 font-sans font-bold px-6 py-3 rounded-full bg-gradient-casino-gold text-black hover:shadow-glow-gold transition-all duration-300"
         >
           Nästa
           <ChevronRight className="w-4 h-4" />
@@ -233,51 +274,50 @@ const MemeZoneTabs: React.FC = () => {
   ];
 
   return (
-    <section className="w-full py-16 bg-background">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-        
-        {/* Professional Header */}
-        <div className="text-center mb-12">
-          <div className="bg-card/50 backdrop-blur-sm border border-border/30 rounded-2xl p-8 mb-8">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Crown className="w-8 h-8 text-primary" />
-              <h2 className={`font-sans font-bold text-foreground ${
-                isMobile ? 'text-3xl' : 'text-4xl md:text-5xl'
+    <section className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8 md:py-16">
+      {/* Golden Gaming Background */}
+      <div className="absolute inset-0 bg-gradient-casino-gold opacity-15 animate-shimmer pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20 pointer-events-none"></div>
+      
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-3 md:px-6 lg:px-8">
+        {/* Modern Header */}
+        <div className="text-center mb-8 md:mb-16">
+          <div className="bg-gradient-casino-royal rounded-2xl md:rounded-3xl border-2 border-yellow-400/50 shadow-glow-gold p-6 md:p-10 mb-8">
+            <div className="flex items-center justify-center gap-3 md:gap-6 mb-4 md:mb-6">
+              <Crown className="w-6 h-6 md:w-10 md:h-10 text-yellow-400 animate-pulse" />
+              <h2 className={`font-sans font-black text-white ${
+                isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'
               }`}>
-                Utforska Alla Tokens
+                UTFORSKA ALLA TOKENS
               </h2>
-              <Crown className="w-8 h-8 text-primary" />
+              <Crown className="w-6 h-6 md:w-10 md:h-10 text-yellow-400 animate-pulse" />
             </div>
-            <p className={`text-muted-foreground font-medium ${
-              isMobile ? 'text-base' : 'text-lg md:text-xl'
-            } max-w-3xl mx-auto`}>
-              Stora bilder • Live data • Premium upplevelse
+            <p className={`text-yellow-100 font-sans font-bold ${isMobile ? 'text-base' : 'text-xl md:text-2xl'} max-w-4xl mx-auto`}>
+              💎 STORA BILDER • LIVE DATA • PREMIUM UPPLEVELSE 💎
             </p>
           </div>
         </div>
         <Tabs defaultValue="trending" className="w-full">
-          {/* Professional Tab Navigation */}
+          {/* Modern Tab Navigation */}
           <div className="flex justify-center mb-10">
-            <TabsList className={`bg-muted/50 backdrop-blur-sm border border-border/30 ${
-              isMobile ? 'h-12' : 'h-14'
-            } rounded-full p-2`}>
+            <TabsList className={`bg-black/60 backdrop-blur-sm border-2 border-yellow-400/30 ${isMobile ? 'h-12' : 'h-14'} rounded-full p-2 shadow-glow-gold`}>
               <TabsTrigger 
                 value="newest" 
-                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-medium rounded-full transition-all duration-300 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground`}
+                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-casino-gold data-[state=active]:text-black data-[state=active]:shadow-glow-gold`}
               >
                 <SortDesc className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} mr-2`} />
                 Nyast
               </TabsTrigger>
               <TabsTrigger 
                 value="trending" 
-                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-medium rounded-full transition-all duration-300 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground`}
+                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-casino-gold data-[state=active]:text-black data-[state=active]:shadow-glow-gold`}
               >
                 <TrendingUp className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} mr-2`} />
                 Trending
               </TabsTrigger>
               <TabsTrigger 
                 value="potential" 
-                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-medium rounded-full transition-all duration-300 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground`}
+                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-casino-gold data-[state=active]:text-black data-[state=active]:shadow-glow-gold`}
               >
                 <Star className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} mr-2`} />
                 Potential
@@ -305,10 +345,10 @@ const MemeZoneTabs: React.FC = () => {
                       size={isMobile ? 'sm' : 'default'}
                       variant={trendingCat === opt.value ? 'default' : 'outline'}
                       onClick={() => setTrendingCat(opt.value)}
-                      className={`flex items-center gap-2 font-medium rounded-full transition-all duration-300 ${
+                      className={`flex items-center gap-2 font-sans font-bold rounded-full transition-all duration-300 ${
                         trendingCat === opt.value 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'border border-border hover:bg-muted'
+                          ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
+                          : 'border-2 border-yellow-400/30 hover:border-yellow-400/60 hover:bg-yellow-400/10 text-white'
                       } ${isMobile ? 'px-3 py-2 text-xs' : 'px-4 py-3 text-sm'}`}
                     >
                       <IconComponent className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
