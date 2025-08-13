@@ -219,7 +219,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
           )}
 
           {/* Trading Wallet Card */}
-          {tradingWalletAddress ? (
+          {tradingWalletAddress && (
             <Card className="overflow-hidden border">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -242,7 +242,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                     <div className="space-y-3">
                       <label className="text-sm font-medium flex items-center gap-2">
                         <Wallet className="h-4 w-4" />
-                        Wallet Address
+                        Trading Wallet Address
                       </label>
                       <div className="relative group">
                         <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all min-h-[50px] flex items-center">
@@ -493,6 +493,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
             </Card>
           )}
 
+          {/* No wallet states */}
           {!authConnected && !tradingWalletAddress && (
             <Card className="p-8 text-center">
               <div className="space-y-4 max-w-md mx-auto">
