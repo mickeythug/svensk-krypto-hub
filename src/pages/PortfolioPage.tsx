@@ -19,12 +19,14 @@ import {
   DollarSign,
   CreditCard,
   Zap,
-  Link
+  Link,
+  User
 } from "lucide-react";
 import Header from "@/components/Header";
 import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import ConnectWalletButton from "@/components/web3/ConnectWalletButton";
+import { WalletManagementModal } from "@/components/WalletManagementModal";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useWatchlist } from "@/hooks/useWatchlist";
@@ -52,6 +54,7 @@ const PortfolioPage = () => {
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [showValues, setShowValues] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [showWalletModal, setShowWalletModal] = useState(false);
   
   // Auth and wallet hooks
   const { fullyAuthed, authedSol, authedEvm, solAddress, evmAddress } = useWalletAuthStatus();
@@ -263,6 +266,15 @@ const PortfolioPage = () => {
             >
               {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               {!isMobile && (showValues ? "Dölj" : "Visa")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowWalletModal(true)}
+              className="flex items-center gap-2"
+            >
+              <User className="h-4 w-4" />
+              {!isMobile && "MINA WALLETS"}
             </Button>
             <ConnectWalletButton />
           </div>
@@ -535,6 +547,11 @@ const PortfolioPage = () => {
           </TabsContent>
         </Tabs>
       </main>
+      
+      <WalletManagementModal 
+        open={showWalletModal} 
+        onOpenChange={setShowWalletModal} 
+      />
       
       {isMobile && <MobileBottomNavigation />}
     </div>
