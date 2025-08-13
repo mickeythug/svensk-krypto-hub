@@ -162,8 +162,8 @@ const MemeTopCoins = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-background">
-      <div className="w-full h-screen p-4 space-y-6">
+    <div className="w-full bg-background">
+      <div className="w-full max-w-[2000px] mx-auto p-4 md:p-8 space-y-6">
         
         {/* Modern Professional Header with Navigation */}
         <div className="relative w-full bg-card/50 border border-border/40 rounded-2xl overflow-hidden backdrop-blur-sm">

@@ -62,15 +62,24 @@ const MemePage: React.FC = () => {
           <MemeHeroNew />
         </div>
 
-        {/* Full Screen Top Tokens Section */}
-        <div className="w-full">
+        {/* Separation Bar */}
+        <div className="w-full h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
+
+        {/* Full Screen Top Tokens Section with proper spacing */}
+        <div className="w-full pt-8">
           <MemeTopCoins />
         </div>
+
+        {/* Separation Bar */}
+        <div className="w-full h-1 bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40 my-8"></div>
 
         {/* Enhanced Stats Banner */}
         <div className="w-full bg-gradient-casino-gold/20 border-y-4 border-yellow-400/30">
           <MemeStatsBanner />
         </div>
+
+        {/* Separation Bar */}
+        <div className="w-full h-1 bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40 my-8"></div>
 
         {/* Full Screen Explore Section */}
         <div className="w-full">
