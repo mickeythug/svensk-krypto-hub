@@ -15,7 +15,7 @@ function formatPrice(n: number) {
   if (!isFinite(n)) return '—';
   if (n === 0) return '$0.0000';
   if (n < 0.0001) return `$${n.toExponential(2)}`;
-  if (n < 1) return `$${n.toFixed(6)}`;
+  if (n < 1) return `$${n.toFixed(4)}`;
   return `$${n.toLocaleString(undefined, { maximumFractionDigits: 4 })}`;
 }
 
@@ -194,8 +194,8 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
 
                 {/* Gaming Action Button */}
                 <Button 
-                  className={`w-full font-sans bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-lg font-bold h-12 text-base ${
-                    isTop1 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' : ''
+                  className={`w-full font-sans bg-gradient-casino-gold text-black hover:shadow-glow-gold transition-all duration-300 rounded-lg font-bold h-12 text-base ${
+                    isTop1 ? 'animate-pulse shadow-glow-gold' : ''
                   }`}
                   size="lg"
                 >
@@ -216,21 +216,21 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
           variant="outline" 
           disabled={loading || page === 1} 
           onClick={() => setPage((p) => Math.max(1, p - 1))}
-          className="flex items-center gap-2 font-crypto font-bold px-6 py-3 rounded-full border-2 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+          className="flex items-center gap-2 font-sans font-bold px-6 py-3 rounded-full border-2 border-yellow-400/50 hover:bg-yellow-400/20 hover:border-yellow-400 text-white transition-all duration-300"
         >
           <ChevronLeft className="w-4 h-4" />
           Föregående
         </Button>
         
-        <div className="flex items-center gap-3 px-4 py-2 bg-muted rounded-full border-2 border-border">
-          <span className="text-sm font-crypto font-bold text-muted-foreground">Sida</span>
-          <span className="text-lg font-crypto font-black text-foreground">{page}</span>
+        <div className="flex items-center gap-3 px-4 py-2 bg-black/60 rounded-full border-2 border-yellow-400/50 shadow-glow-gold">
+          <span className="text-sm font-sans font-bold text-yellow-200">Sida</span>
+          <span className="text-lg font-sans font-black text-yellow-400">{page}</span>
         </div>
         
         <Button 
           disabled={loading || !hasMore} 
           onClick={() => setPage((p) => p + 1)}
-          className="flex items-center gap-2 font-crypto font-bold px-6 py-3 rounded-full bg-gradient-primary hover:shadow-glow-primary transition-all duration-300"
+          className="flex items-center gap-2 font-sans font-bold px-6 py-3 rounded-full bg-gradient-casino-gold text-black hover:shadow-glow-gold transition-all duration-300"
         >
           Nästa
           <ChevronRight className="w-4 h-4" />
@@ -259,24 +259,24 @@ const MemeZoneTabs: React.FC = () => {
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8 md:py-16">
-      {/* Modern Background */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-blue-600/10 animate-pulse pointer-events-none"></div>
-      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
+      {/* Golden Gaming Background */}
+      <div className="absolute inset-0 bg-gradient-casino-gold opacity-15 animate-shimmer pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20 pointer-events-none"></div>
       
       <div className="relative z-10 w-full max-w-[1800px] mx-auto px-3 md:px-6 lg:px-8">
         {/* Modern Header */}
         <div className="text-center mb-8 md:mb-16">
-          <div className="bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 rounded-2xl md:rounded-3xl border-2 border-blue-400/50 shadow-lg p-6 md:p-10 mb-8">
+          <div className="bg-gradient-casino-royal rounded-2xl md:rounded-3xl border-2 border-yellow-400/50 shadow-glow-gold p-6 md:p-10 mb-8">
             <div className="flex items-center justify-center gap-3 md:gap-6 mb-4 md:mb-6">
-              <Crown className="w-6 h-6 md:w-10 md:h-10 text-blue-400" />
+              <Crown className="w-6 h-6 md:w-10 md:h-10 text-yellow-400 animate-pulse" />
               <h2 className={`font-sans font-black text-white ${
                 isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'
               }`}>
                 UTFORSKA ALLA TOKENS
               </h2>
-              <Crown className="w-6 h-6 md:w-10 md:h-10 text-blue-400" />
+              <Crown className="w-6 h-6 md:w-10 md:h-10 text-yellow-400 animate-pulse" />
             </div>
-            <p className={`text-blue-100 font-sans font-bold ${isMobile ? 'text-base' : 'text-xl md:text-2xl'} max-w-4xl mx-auto`}>
+            <p className={`text-yellow-100 font-sans font-bold ${isMobile ? 'text-base' : 'text-xl md:text-2xl'} max-w-4xl mx-auto`}>
               💎 STORA BILDER • LIVE DATA • PREMIUM UPPLEVELSE 💎
             </p>
           </div>
@@ -284,24 +284,24 @@ const MemeZoneTabs: React.FC = () => {
         <Tabs defaultValue="trending" className="w-full">
           {/* Modern Tab Navigation */}
           <div className="flex justify-center mb-10">
-            <TabsList className={`bg-card/80 backdrop-blur-sm border-2 border-border/50 ${isMobile ? 'h-12' : 'h-14'} rounded-full p-2`}>
+            <TabsList className={`bg-black/60 backdrop-blur-sm border-2 border-yellow-400/30 ${isMobile ? 'h-12' : 'h-14'} rounded-full p-2 shadow-glow-gold`}>
               <TabsTrigger 
                 value="newest" 
-                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-crypto font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground`}
+                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-casino-gold data-[state=active]:text-black data-[state=active]:shadow-glow-gold`}
               >
                 <SortDesc className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} mr-2`} />
                 Nyast
               </TabsTrigger>
               <TabsTrigger 
                 value="trending" 
-                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-crypto font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground`}
+                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-casino-gold data-[state=active]:text-black data-[state=active]:shadow-glow-gold`}
               >
                 <TrendingUp className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} mr-2`} />
                 Trending
               </TabsTrigger>
               <TabsTrigger 
                 value="potential" 
-                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-crypto font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground`}
+                className={`${isMobile ? 'text-sm px-4' : 'text-base px-6'} font-sans font-bold rounded-full transition-all duration-300 data-[state=active]:bg-gradient-casino-gold data-[state=active]:text-black data-[state=active]:shadow-glow-gold`}
               >
                 <Star className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} mr-2`} />
                 Potential
@@ -318,7 +318,7 @@ const MemeZoneTabs: React.FC = () => {
             <div className="mb-8">
               <div className="flex items-center gap-4 mb-6">
                 <Filter className="w-5 h-5 text-muted-foreground" />
-                <span className="font-crypto font-bold text-foreground">Sortera efter:</span>
+                <span className="font-sans font-bold text-foreground">Sortera efter:</span>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 {options.map((opt) => {
@@ -329,10 +329,10 @@ const MemeZoneTabs: React.FC = () => {
                       size={isMobile ? 'sm' : 'default'}
                       variant={trendingCat === opt.value ? 'default' : 'outline'}
                       onClick={() => setTrendingCat(opt.value)}
-                      className={`flex items-center gap-2 font-crypto font-bold rounded-full transition-all duration-300 ${
+                      className={`flex items-center gap-2 font-sans font-bold rounded-full transition-all duration-300 ${
                         trendingCat === opt.value 
-                          ? 'bg-gradient-primary text-primary-foreground shadow-glow-primary' 
-                          : 'border-2 border-border/50 hover:border-primary/50 hover:bg-primary/10'
+                          ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
+                          : 'border-2 border-yellow-400/30 hover:border-yellow-400/60 hover:bg-yellow-400/10 text-white'
                       } ${isMobile ? 'px-3 py-2 text-xs' : 'px-4 py-3 text-sm'}`}
                     >
                       <IconComponent className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />

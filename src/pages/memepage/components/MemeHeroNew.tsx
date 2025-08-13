@@ -9,7 +9,7 @@ const MemeHeroNew = () => {
   const isMobile = useIsMobile();
   
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-yellow-900/30 to-gray-900">
       {/* Modern Background Layers */}
       <div className="absolute inset-0 z-0">
         <OptimizedImage 
@@ -18,21 +18,21 @@ const MemeHeroNew = () => {
           className="w-full h-full object-cover opacity-30" 
           fallbackSrc="/placeholder.svg" 
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-casino-gold opacity-20 animate-shimmer"></div>
         <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-transparent to-black/40"></div>
       </div>
 
       {/* Subtle Grid Pattern Overlay */}
       <div className="absolute inset-0 z-5 opacity-10">
-        <div className="w-full h-full bg-gradient-to-r from-transparent via-blue-400/20 to-transparent animate-pulse"></div>
+        <div className="w-full h-full bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent animate-pulse"></div>
       </div>
 
       <div className="relative z-10 w-full max-w-[1800px] mx-auto px-3 md:px-6 lg:px-8 py-8 md:py-16 lg:py-20">
         <div className="text-center space-y-6 md:space-y-10 lg:space-y-12">
           {/* Modern Badge */}
           <div className="flex justify-center">
-            <Badge className="font-sans font-bold text-base md:text-xl lg:text-2xl px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg border-2 border-blue-400/50 rounded-full">
+            <Badge className="font-sans font-bold text-base md:text-xl lg:text-2xl px-6 md:px-8 py-3 md:py-4 bg-gradient-casino-gold text-black shadow-glow-gold border-2 border-yellow-400/50 rounded-full">
               <Crown className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
               MEME TOKEN HUB
               <Zap className="w-5 h-5 md:w-6 md:h-6 ml-2 md:ml-3" />
@@ -45,10 +45,10 @@ const MemeHeroNew = () => {
               isMobile ? 'text-5xl' : 'text-7xl md:text-8xl lg:text-9xl xl:text-[10rem]'
             }`}>
               MEME<br />
-              <span className={`${isMobile ? 'text-4xl' : 'text-6xl md:text-7xl lg:text-8xl xl:text-[8rem]'} text-blue-300`}>
+              <span className={`${isMobile ? 'text-4xl' : 'text-6xl md:text-7xl lg:text-8xl xl:text-[8rem]'} text-yellow-300`}>
                 TOKEN
               </span><br />
-              <span className="text-purple-300">
+              <span className="text-orange-300">
                 MADNESS
               </span>
             </h1>
@@ -56,12 +56,12 @@ const MemeHeroNew = () => {
 
           {/* Gaming Subtitle */}
           <div className="max-w-6xl mx-auto">
-            <p className={`font-sans font-bold text-blue-100 leading-relaxed ${
+            <p className={`font-sans font-bold text-yellow-100 leading-relaxed ${
               isMobile ? 'text-lg' : 'text-2xl md:text-3xl lg:text-4xl'
             }`}>
-              💎 <span className="text-blue-300 font-black">STORA BILDER</span> • 
-              <span className="text-blue-200 font-black"> LIVE DATA</span> • 
-              <span className="text-purple-200 font-black"> PREMIUM KÄNSLA</span> 💎
+              💎 <span className="text-yellow-300 font-black">STORA BILDER</span> • 
+              <span className="text-yellow-200 font-black"> LIVE DATA</span> • 
+              <span className="text-orange-200 font-black"> PREMIUM KÄNSLA</span> 💎
             </p>
           </div>
 
@@ -69,7 +69,7 @@ const MemeHeroNew = () => {
           <div className={`flex ${isMobile ? 'flex-col gap-4' : 'flex-row gap-8'} justify-center items-center pt-8`}>
             <Button 
               size="lg" 
-              className={`font-sans font-black bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-blue-400/50 rounded-full ${
+              className={`font-sans font-black bg-gradient-casino-gold text-black shadow-glow-gold hover:shadow-xl transition-all duration-300 border-2 border-yellow-400/50 rounded-full ${
                 isMobile ? 'text-xl px-12 py-6 h-16' : 'text-2xl px-16 py-8 h-20'
               }`}
             >
@@ -80,7 +80,7 @@ const MemeHeroNew = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className={`font-sans font-black border-2 border-blue-400/70 text-blue-200 hover:bg-blue-400/20 hover:border-blue-400 transition-all duration-300 rounded-full ${
+              className={`font-sans font-black border-2 border-yellow-400/70 text-yellow-200 hover:bg-yellow-400/20 hover:border-yellow-400 transition-all duration-300 rounded-full ${
                 isMobile ? 'text-xl px-12 py-6 h-16' : 'text-2xl px-16 py-8 h-20'
               }`}
             >
@@ -91,23 +91,23 @@ const MemeHeroNew = () => {
 
           {/* Gaming Stats Grid */}
           <div className={`grid ${isMobile ? 'grid-cols-2 gap-4 pt-12' : 'grid-cols-4 gap-8 pt-16'} max-w-6xl mx-auto`}>
-            <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-black/40 backdrop-blur-sm border-2 border-blue-400/50 hover:shadow-lg transition-all duration-300 rounded-xl`}>
+            <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-black/40 backdrop-blur-sm border-2 border-yellow-400/50 hover:shadow-glow-gold transition-all duration-300 rounded-xl`}>
               <div className="text-center">
-                <div className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-sans font-black text-blue-400`}>
+                <div className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-sans font-black text-yellow-400`}>
                   500+
                 </div>
-                <div className={`font-sans font-bold ${isMobile ? 'text-sm' : 'text-lg'} text-blue-200`}>
+                <div className={`font-sans font-bold ${isMobile ? 'text-sm' : 'text-lg'} text-yellow-200`}>
                   TOKENS
                 </div>
               </div>
             </Card>
             
-            <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-black/40 backdrop-blur-sm border-2 border-green-400/50 hover:shadow-lg transition-all duration-300 rounded-xl`}>
+            <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-black/40 backdrop-blur-sm border-2 border-orange-400/50 hover:shadow-glow-orange transition-all duration-300 rounded-xl`}>
               <div className="text-center">
-                <div className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-sans font-black text-green-400`}>
+                <div className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-sans font-black text-orange-400`}>
                   24/7
                 </div>
-                <div className={`font-sans font-bold ${isMobile ? 'text-sm' : 'text-lg'} text-green-200`}>
+                <div className={`font-sans font-bold ${isMobile ? 'text-sm' : 'text-lg'} text-orange-200`}>
                   LIVE
                 </div>
               </div>
