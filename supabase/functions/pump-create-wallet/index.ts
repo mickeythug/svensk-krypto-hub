@@ -50,8 +50,8 @@ serve(async (req) => {
 
     const responseBody = await res.json();
     console.log('PumpPortal response body:', responseBody);
-    // Try common field names
-    const walletAddress = responseBody.walletAddress || responseBody.publicKey || responseBody.address || responseBody.pubkey;
+    // Try common field names - PumpPortal uses different field names
+    const walletAddress = responseBody.walletAddress || responseBody.walletPublicKey || responseBody.publicKey || responseBody.address || responseBody.pubkey;
     const privateKey = responseBody.privateKey || responseBody.secretKey || responseBody.sk;
     const pumpApiKey = responseBody.apiKey || responseBody.api_key || responseBody.key;
 
