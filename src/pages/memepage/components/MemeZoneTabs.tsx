@@ -90,7 +90,7 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
               {/* Enhanced Gaming Rank Badge */}
               {isTop && (
                 <div className="absolute top-3 left-3 z-20">
-                  <Badge className={`text-sm font-orbitron font-black px-3 py-2 shadow-lg ${
+                  <Badge className={`text-sm font-sans font-black px-3 py-2 shadow-lg ${
                     index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' :
                     index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
                     'bg-gradient-to-r from-orange-400 to-orange-600 text-black'
@@ -104,7 +104,7 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
               {/* Ultra Gaming HOT Badge */}
               {t.isHot && (
                 <div className="absolute top-3 right-3 z-20">
-                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-sm font-orbitron font-black px-3 py-2 shadow-glow-destructive">
+                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-sm font-sans font-black px-3 py-2 shadow-glow-destructive">
                     🔥 HOT
                   </Badge>
                 </div>
@@ -185,7 +185,7 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
                 {t.tags && t.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {t.tags.slice(0, 2).map((tag: string, i: number) => (
-                      <Badge key={i} variant="secondary" className="text-xs font-orbitron font-medium">
+                      <Badge key={i} variant="secondary" className="text-xs font-sans font-medium">
                         {tag}
                       </Badge>
                     ))}
@@ -194,7 +194,7 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
 
                 {/* Gaming Action Button */}
                 <Button 
-                  className={`w-full font-orbitron bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-lg font-bold h-12 text-base ${
+                  className={`w-full font-sans bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-lg font-bold h-12 text-base ${
                     isTop1 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' : ''
                   }`}
                   size="lg"

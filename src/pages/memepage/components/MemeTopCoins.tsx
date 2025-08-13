@@ -345,7 +345,7 @@ const MemeTopCoins = () => {
 
                   {/* Gaming Action Button */}
                   <Button 
-                    className={`w-full font-orbitron bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-lg font-bold ${
+                    className={`w-full font-sans bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-lg font-bold ${
                       isMobile ? 'h-8 text-xs px-2' : 'h-10 text-sm px-4'
                     } ${
                       isTop1 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' : ''
