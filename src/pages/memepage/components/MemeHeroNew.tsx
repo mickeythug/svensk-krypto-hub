@@ -38,7 +38,7 @@ function formatCompact(n: number) {
 const MemeHeroNew = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const { tokens, loading, error } = useMemeTokens('trending', 15, 1);
+  const { tokens, loading, error } = useMemeTokens('trending', 20, 1);
 
   // Sort tokens by hotness score (volume × absolute change)
   const hottestTokens = tokens
@@ -48,10 +48,10 @@ const MemeHeroNew = () => {
       const scoreB = (b.volume24h || 0) * Math.abs(b.change24h || 0);
       return scoreB - scoreA;
     })
-    .slice(0, 15);
+    .slice(0, 20);
 
   return (
-    <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-yellow-900/30 to-gray-900">
+    <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-yellow-900/30 to-gray-900 pt-32 pb-16">
       {/* Modern Background Layers */}
       <div className="absolute inset-0 z-0">
         <OptimizedImage 
@@ -66,59 +66,59 @@ const MemeHeroNew = () => {
       </div>
 
       {/* Floating Elements */}
-      <div className="absolute top-20 left-10 animate-float">
-        <Flame className="w-8 h-8 text-orange-400 opacity-60" />
+      <div className="absolute top-32 left-10 animate-float">
+        <Flame className="w-10 h-10 text-orange-400 opacity-60" />
       </div>
-      <div className="absolute top-32 right-20 animate-float delay-1000">
-        <Sparkles className="w-6 h-6 text-yellow-400 opacity-60" />
+      <div className="absolute top-48 right-20 animate-float delay-1000">
+        <Sparkles className="w-8 h-8 text-yellow-400 opacity-60" />
       </div>
-      <div className="absolute bottom-20 left-1/4 animate-float delay-2000">
-        <Zap className="w-7 h-7 text-blue-400 opacity-60" />
+      <div className="absolute bottom-32 left-1/4 animate-float delay-2000">
+        <Zap className="w-9 h-9 text-blue-400 opacity-60" />
       </div>
 
       {/* Content Container */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-12">
+      <div className="relative z-10 w-full max-w-[1600px] mx-auto px-8 py-16">
         {/* Hero Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center shadow-2xl">
-              <Flame className="w-8 h-8 text-white animate-pulse" />
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center gap-6 mb-8">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center shadow-2xl">
+              <Flame className="w-10 h-10 text-white animate-pulse" />
             </div>
-            <h1 className="text-5xl md:text-7xl font-black bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
+            <h1 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
               HETASTE TOKENS
             </h1>
-            <div className="w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center shadow-2xl">
-              <Crown className="w-8 h-8 text-white animate-pulse" />
+            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center shadow-2xl">
+              <Crown className="w-10 h-10 text-white animate-pulse" />
             </div>
           </div>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto mb-6 font-medium">
-            De 15 mest explosiva meme tokens just nu – Live data från marknaden
+          <p className="text-2xl text-white/90 max-w-4xl mx-auto mb-8 font-medium">
+            De 20 mest explosiva meme tokens just nu – Live data från marknaden
           </p>
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-lg font-bold text-green-400">LIVE UPPDATERINGAR</span>
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+          <div className="flex items-center justify-center gap-4">
+            <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-xl font-bold text-green-400">LIVE UPPDATERINGAR</span>
+            <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
           </div>
         </div>
 
         {/* Hottest Tokens Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {Array.from({ length: 15 }).map((_, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
+            {Array.from({ length: 20 }).map((_, i) => (
               <div key={i} className="relative">
-                <Skeleton className="w-full h-80 rounded-2xl bg-white/10" />
+                <Skeleton className="w-full h-[420px] rounded-3xl bg-white/10" />
               </div>
             ))}
           </div>
         ) : error || hottestTokens.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-white/80 text-xl mb-4">Laddar hetaste tokens...</p>
-            <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+          <div className="text-center py-20">
+            <p className="text-white/80 text-2xl mb-6">Laddar hetaste tokens...</p>
+            <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-lg px-8 py-4">
               Försök igen
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
             {hottestTokens.map((token, index) => {
               const positive = token.change24h > 0;
               const isTop3 = index < 3;
@@ -127,36 +127,36 @@ const MemeHeroNew = () => {
               return (
                 <Card
                   key={token.id}
-                  className={`group relative overflow-hidden border-2 transition-all duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer rounded-2xl bg-card/90 backdrop-blur-sm ${
-                    isTop1 ? 'border-yellow-400 bg-gradient-to-br from-yellow-900/50 to-yellow-400/30 shadow-2xl animate-pulse' :
-                    isTop3 ? 'border-orange-400 bg-gradient-to-br from-orange-900/40 to-orange-400/20 shadow-xl' :
-                    'border-white/20 hover:border-primary/60'
+                  className={`group relative overflow-hidden border-3 transition-all duration-500 hover:scale-105 hover:shadow-2xl cursor-pointer rounded-3xl bg-card/95 backdrop-blur-sm ${
+                    isTop1 ? 'border-yellow-400 bg-gradient-to-br from-yellow-900/60 to-yellow-400/40 shadow-2xl animate-pulse' :
+                    isTop3 ? 'border-orange-400 bg-gradient-to-br from-orange-900/50 to-orange-400/30 shadow-xl' :
+                    'border-white/30 hover:border-primary/70'
                   }`}
                   onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)}
                 >
                   {/* Rank Badge */}
-                  <div className="absolute top-3 left-3 z-20">
-                    <Badge className={`text-sm font-bold px-3 py-2 shadow-lg ${
+                  <div className="absolute top-4 left-4 z-20">
+                    <Badge className={`text-lg font-bold px-4 py-3 shadow-lg ${
                       index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black animate-pulse' :
                       index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
                       index === 2 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black' :
                       'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground'
                     }`}>
-                      {index === 0 && <Crown className="w-4 h-4 mr-1 animate-pulse" />}
+                      {index === 0 && <Crown className="w-5 h-5 mr-2 animate-pulse" />}
                       #{index + 1}
                     </Badge>
                   </div>
 
                   {/* Hot Badge */}
-                  <div className="absolute top-3 right-3 z-20">
-                    <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-xs font-bold px-2 py-1">
+                  <div className="absolute top-4 right-4 z-20">
+                    <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-sm font-bold px-3 py-2">
                       🔥
                     </Badge>
                   </div>
 
                   {/* Token Image */}
                   <div className="relative overflow-hidden">
-                    <AspectRatio ratio={16 / 10}>
+                    <AspectRatio ratio={16 / 12}>
                       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                       <OptimizedImage
                         src={token.image || '/placeholder.svg'}
@@ -174,64 +174,64 @@ const MemeHeroNew = () => {
                   </div>
 
                   {/* Token Details */}
-                  <div className="p-4 space-y-3">
+                  <div className="p-6 space-y-4">
                     {/* Symbol and Change */}
                     <div className="flex items-center justify-between">
-                      <h3 className="font-black text-xl text-foreground truncate max-w-[120px]">
+                      <h3 className="font-black text-2xl text-foreground truncate max-w-[140px]">
                         {token.symbol}
                       </h3>
-                      <div className={`flex items-center gap-1 text-lg font-black ${
+                      <div className={`flex items-center gap-2 text-xl font-black ${
                         positive ? 'text-green-400' : 'text-red-400'
                       }`}>
                         {positive ? (
-                          <TrendingUp className="w-4 h-4 animate-pulse" />
+                          <TrendingUp className="w-5 h-5 animate-pulse" />
                         ) : (
-                          <TrendingDown className="w-4 h-4 animate-pulse" />
+                          <TrendingDown className="w-5 h-5 animate-pulse" />
                         )}
-                        <span className="text-sm">
+                        <span className="text-lg">
                           {positive ? '+' : ''}{formatPercentage(token.change24h)}
                         </span>
                       </div>
                     </div>
 
                     {/* Token Name */}
-                    <p className="text-muted-foreground text-sm font-medium truncate">{token.name}</p>
+                    <p className="text-muted-foreground text-lg font-medium truncate">{token.name}</p>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="bg-muted/50 rounded-lg p-2 border">
-                        <div className="flex items-center gap-1 text-muted-foreground text-xs mb-1">
-                          <DollarSign className="w-3 h-3" />
-                          PRIS
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-muted/60 rounded-xl p-4 border-2 border-white/10">
+                        <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
+                          <DollarSign className="w-4 h-4" />
+                          <span className="font-bold">PRIS</span>
                         </div>
-                        <div className="text-sm font-black text-foreground">{formatPrice(token.price)}</div>
+                        <div className="text-xl font-black text-foreground">{formatPrice(token.price)}</div>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-2 border">
-                        <div className="flex items-center gap-1 text-muted-foreground text-xs mb-1">
-                          <Star className="w-3 h-3" />
-                          MCAP
+                      <div className="bg-muted/60 rounded-xl p-4 border-2 border-white/10">
+                        <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
+                          <Star className="w-4 h-4" />
+                          <span className="font-bold">MCAP</span>
                         </div>
-                        <div className="text-sm font-black text-foreground">{formatCompact(token.marketCap)}</div>
+                        <div className="text-xl font-black text-foreground">{formatCompact(token.marketCap)}</div>
                       </div>
                     </div>
 
                     {/* Hotness Indicator */}
-                    <div className={`text-center py-2 rounded-lg font-bold text-xs ${
-                      isTop1 ? 'bg-gradient-to-r from-yellow-400/30 to-orange-400/30 text-yellow-200 animate-pulse' :
-                      isTop3 ? 'bg-gradient-to-r from-orange-400/30 to-red-400/30 text-orange-200' :
-                      'bg-gradient-to-r from-primary/30 to-accent/30 text-primary'
+                    <div className={`text-center py-3 rounded-xl font-bold text-sm ${
+                      isTop1 ? 'bg-gradient-to-r from-yellow-400/40 to-orange-400/40 text-yellow-200 animate-pulse' :
+                      isTop3 ? 'bg-gradient-to-r from-orange-400/40 to-red-400/40 text-orange-200' :
+                      'bg-gradient-to-r from-primary/40 to-accent/40 text-primary'
                     }`}>
                       {isTop1 ? '🔥 EXPLOSIV' : isTop3 ? '🚀 HET' : '⭐ TRENDING'}
                     </div>
 
                     {/* Action Button */}
                     <Button 
-                      className={`w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-primary-foreground font-bold h-10 rounded-lg transition-all duration-300 text-sm ${
+                      className={`w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-primary-foreground font-bold h-12 rounded-xl transition-all duration-300 text-lg ${
                         isTop1 ? 'animate-pulse shadow-lg' : ''
                       }`}
                     >
-                      <Target className="w-4 h-4 mr-1" />
-                      HANDLA
+                      <Target className="w-5 h-5 mr-2" />
+                      HANDLA NU
                     </Button>
                   </div>
                 </Card>
@@ -241,19 +241,19 @@ const MemeHeroNew = () => {
         )}
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-16">
           <Button 
             size="lg" 
-            className="bg-gradient-to-r from-primary via-accent to-primary hover:from-primary/90 hover:via-accent/90 hover:to-primary/90 text-primary-foreground font-bold px-8 py-4 text-lg rounded-full shadow-2xl"
+            className="bg-gradient-to-r from-primary via-accent to-primary hover:from-primary/90 hover:via-accent/90 hover:to-primary/90 text-primary-foreground font-bold px-12 py-6 text-xl rounded-full shadow-2xl"
             onClick={() => {
               const element = document.querySelector('[data-section="token-explorer"]');
               element?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            <Rocket className="w-5 h-5 mr-2" />
+            <Rocket className="w-6 h-6 mr-3" />
             UTFORSKA ALLA TOKENS
           </Button>
-          <p className="text-white/70 text-sm mt-4">
+          <p className="text-white/70 text-lg mt-6">
             Uppdateras varje minut • {hottestTokens.length} hetaste tokens
           </p>
         </div>
