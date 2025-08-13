@@ -11,7 +11,6 @@ import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigati
 import MemeZoneTabs from './components/MemeZoneTabs';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
-
   useEffect(() => {
     const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
     const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
@@ -51,8 +50,7 @@ const MemePage: React.FC = () => {
     });
     document.head.appendChild(ld);
   }, []);
-  return (
-    <div className="meme-page font-sans bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
+  return <div className="meme-page font-sans bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
       {/* Full Screen Gaming Background */}
       <div className="fixed inset-0 bg-gradient-casino-rainbow opacity-5 animate-shimmer pointer-events-none"></div>
       <div className="fixed inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
@@ -121,47 +119,27 @@ const MemePage: React.FC = () => {
 
             {/* Professional Sort Navigation */}
             <div className="flex flex-wrap gap-2">
-              <Button
-                variant="default"
-                size="sm"
-                className="gap-2 bg-primary text-primary-foreground"
-              >
+              <Button variant="default" size="sm" className="gap-2 bg-primary text-primary-foreground">
                 <BarChart3 className="w-4 h-4" />
                 Market Cap ↓
               </Button>
               
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-muted hover:bg-muted/80"
-              >
+              <Button variant="outline" size="sm" className="gap-2 bg-muted hover:bg-muted/80">
                 <Volume2 className="w-4 h-4" />
                 Volume
               </Button>
               
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-muted hover:bg-muted/80"
-              >
+              <Button variant="outline" size="sm" className="gap-2 bg-muted hover:bg-muted/80">
                 <TrendingUp className="w-4 h-4" />
                 24h Change
               </Button>
               
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-muted hover:bg-muted/80"
-              >
+              <Button variant="outline" size="sm" className="gap-2 bg-muted hover:bg-muted/80">
                 <Users className="w-4 h-4" />
                 Holders
               </Button>
               
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-muted hover:bg-muted/80"
-              >
+              <Button variant="outline" size="sm" className="gap-2 bg-muted hover:bg-muted/80">
                 <DollarSign className="w-4 h-4" />
                 Price
               </Button>
@@ -177,13 +155,7 @@ const MemePage: React.FC = () => {
         {/* Section Separation Bar */}
         <div className="w-full bg-card/60 border-y border-border/30">
           <div className="max-w-[2000px] mx-auto px-4 md:px-8 py-3">
-            <div className="flex items-center justify-center gap-8 text-sm">
-              <span className="text-muted-foreground">📊 Marknadsstatistik</span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-primary font-medium">🎯 Upptäck Alla Tokens</span>
-              <span className="text-muted-foreground">•</span>
-              <span className="text-muted-foreground">🚀 Trading Verktyg</span>
-            </div>
+            
           </div>
         </div>
 
@@ -195,7 +167,6 @@ const MemePage: React.FC = () => {
       
       {/* Mobile Navigation */}
       {isMobile && <MemeZoneBottomNavigation />}
-    </div>
-  );
+    </div>;
 };
 export default MemePage;
