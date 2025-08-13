@@ -1,24 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Use Deno's built-in base58 decoder instead of npm package
+// Use simple base58 decoder 
 function decodeBase58(encoded: string): Uint8Array {
   const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-  let decoded = BigInt(0);
-  let multi = BigInt(1);
+  let decoded = 0;
+  let multi = 1;
   
   for (let i = encoded.length - 1; i >= 0; i--) {
     const index = alphabet.indexOf(encoded[i]);
     if (index === -1) throw new Error('Invalid base58 character');
-    decoded += multi * BigInt(index);
-    multi *= BigInt(58);
+    decoded += multi * index;
+    multi *= 58;
   }
   
   // Convert to bytes
   const bytes = [];
-  while (decoded > 0) {
-    bytes.unshift(Number(decoded % 256n));
-    decoded = decoded / 256n;
+  let num = decoded;
+  while (num > 0) {
+    bytes.unshift(num % 256);
+    num = Math.floor(num / 256);
   }
   
   // Add leading zeros
@@ -244,9 +245,9 @@ Domain: ${body.domain}`;
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     // Create user in Supabase using deterministic email/password
-    // Use first 8 chars of wallet address to create valid email
+    // Use first 8 chars of wallet address to create valid email with real domain
     const walletPrefix = body.address.substring(0, 8).toLowerCase();
-    const email = `phantom-${walletPrefix}@wallet.auth`;
+    const email = `phantom-${walletPrefix}@example.com`;
     const password = `phantom_${body.address}_wallet`;
 
     console.log('Creating/signing in Supabase user with email:', email);
