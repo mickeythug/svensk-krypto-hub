@@ -188,7 +188,7 @@ const TokenGrid: React.FC<{
                       index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black text-lg font-bold px-5 py-3' :
                     index === 2 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black text-lg font-bold px-5 py-3' :
                     'bg-gradient-to-r from-gray-400 to-gray-600 text-white text-base font-bold px-4 py-2'
-                  } transition-all duration-75 ease-out hover:animate-coin-flip hover:shadow-2xl hover:shadow-yellow-500/50 cursor-pointer transform-gpu will-change-transform`}>
+                  } transition-all duration-200 ease-out hover:animate-neon-pulse cursor-pointer`}>
                     {index === 0 && <Crown className="w-6 h-6 mr-2 animate-pulse" />}
                     #{token.rank}
                   </Badge>
