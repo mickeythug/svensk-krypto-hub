@@ -205,10 +205,12 @@ Domain: ${body.domain}`;
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
 
     // Create user in Supabase using deterministic email/password
-    const email = `${body.address}@phantom.wallet`;
+    // Use first 8 chars of wallet address to create valid email
+    const walletPrefix = body.address.substring(0, 8).toLowerCase();
+    const email = `phantom-${walletPrefix}@wallet.auth`;
     const password = `phantom_${body.address}_wallet`;
 
-    console.log('Creating/signing in Supabase user...');
+    console.log('Creating/signing in Supabase user with email:', email);
 
     // Try to sign in first
     let authResponse = await supabaseAdmin.auth.signInWithPassword({
