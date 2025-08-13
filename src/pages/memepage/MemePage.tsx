@@ -62,24 +62,64 @@ const MemePage: React.FC = () => {
           <MemeHeroNew />
         </div>
 
-        {/* Separation Bar */}
-        <div className="w-full h-1 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
+        {/* Navigation Separation Bar */}
+        <div className="w-full bg-card/80 border-y border-border/40 backdrop-blur-sm">
+          <div className="max-w-[2000px] mx-auto px-4 md:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-bold text-foreground">Sortera efter:</span>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="px-3 py-1.5 bg-primary text-primary-foreground rounded-full font-medium">Alla tokens</span>
+                  <span className="px-3 py-1.5 bg-muted text-muted-foreground rounded-full">Live Data</span>
+                  <span className="px-3 py-1.5 bg-muted text-muted-foreground rounded-full">Analytics</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm">
+                <span className="px-3 py-1.5 bg-primary/20 text-primary rounded-full font-medium">Market Cap ↓</span>
+                <span className="px-3 py-1.5 bg-muted/50 text-muted-foreground rounded-full">Volume</span>
+                <span className="px-3 py-1.5 bg-muted/50 text-muted-foreground rounded-full">24h Change</span>
+                <span className="px-3 py-1.5 bg-muted/50 text-muted-foreground rounded-full">Holders</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Full Screen Top Tokens Section with proper spacing */}
         <div className="w-full pt-8">
           <MemeTopCoins />
         </div>
 
-        {/* Separation Bar */}
-        <div className="w-full h-1 bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40 my-8"></div>
+        {/* Content Separation Bar */}
+        <div className="w-full bg-muted/20 border-y border-border/20">
+          <div className="max-w-[2000px] mx-auto px-4 md:px-8 py-3">
+            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+              <span>🔥 Hetaste Tokens</span>
+              <span>•</span>
+              <span>📊 Live Market Data</span>
+              <span>•</span>
+              <span>📈 Realtidsuppdateringar</span>
+            </div>
+          </div>
+        </div>
 
         {/* Enhanced Stats Banner */}
         <div className="w-full bg-gradient-casino-gold/20 border-y-4 border-yellow-400/30">
           <MemeStatsBanner />
         </div>
 
-        {/* Separation Bar */}
-        <div className="w-full h-1 bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40 my-8"></div>
+        {/* Section Separation Bar */}
+        <div className="w-full bg-card/60 border-y border-border/30">
+          <div className="max-w-[2000px] mx-auto px-4 md:px-8 py-3">
+            <div className="flex items-center justify-center gap-8 text-sm">
+              <span className="text-muted-foreground">📊 Marknadsstatistik</span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-primary font-medium">🎯 Upptäck Alla Tokens</span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-muted-foreground">🚀 Trading Verktyg</span>
+            </div>
+          </div>
+        </div>
 
         {/* Full Screen Explore Section */}
         <div className="w-full">
