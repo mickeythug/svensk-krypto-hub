@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import MemeHeroNew from './components/MemeHeroNew';
 import MemeLiveTicker from './components/MemeLiveTicker';
 import MemeTopCoins from './components/MemeTopCoins';
-
+import { Button } from '@/components/ui/button';
+import { Crown, Activity, BarChart3, Volume2, TrendingUp, Users, DollarSign } from 'lucide-react';
 import MemeStatsBanner from './components/MemeStatsBanner';
 import MemePageHeader from './components/MemePageHeader';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -90,15 +91,80 @@ const MemePage: React.FC = () => {
           <MemeTopCoins />
         </div>
 
-        {/* Content Separation Bar */}
-        <div className="w-full bg-muted/20 border-y border-border/20">
-          <div className="max-w-[2000px] mx-auto px-4 md:px-8 py-3">
-            <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-              <span>🔥 Hetaste Tokens</span>
-              <span>•</span>
-              <span>📊 Live Market Data</span>
-              <span>•</span>
-              <span>📈 Realtidsuppdateringar</span>
+        {/* Modern Professional Header for Alla Tokens - Exact same style as Hetaste Tokens */}
+        <div className="w-full bg-card/50 border border-border/40 rounded-2xl overflow-hidden backdrop-blur-sm mx-4 md:mx-8 my-8">
+          <div className="relative z-10 p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/20 p-3 rounded-xl border border-primary/30">
+                  <Crown className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="font-sans font-bold text-2xl md:text-3xl text-foreground">
+                    Alla Tokens
+                  </h1>
+                  <p className="text-muted-foreground text-sm">Upptäck alla tillgängliga meme tokens</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Activity className="w-4 h-4" />
+                  Live Data
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Analytics
+                </Button>
+              </div>
+            </div>
+
+            {/* Professional Sort Navigation */}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                className="gap-2 bg-primary text-primary-foreground"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Market Cap ↓
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 bg-muted hover:bg-muted/80"
+              >
+                <Volume2 className="w-4 h-4" />
+                Volume
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 bg-muted hover:bg-muted/80"
+              >
+                <TrendingUp className="w-4 h-4" />
+                24h Change
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 bg-muted hover:bg-muted/80"
+              >
+                <Users className="w-4 h-4" />
+                Holders
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 bg-muted hover:bg-muted/80"
+              >
+                <DollarSign className="w-4 h-4" />
+                Price
+              </Button>
             </div>
           </div>
         </div>
