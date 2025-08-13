@@ -1,21 +1,60 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import bs58 from 'npm:bs58';
-import * as ed from 'npm:@noble/ed25519';
-import { sha512 } from 'npm:@noble/hashes/sha512';
 
-// Configure noble-ed25519 for Deno runtime
-function concatBytes(...arrays: Uint8Array[]) {
-  const length = arrays.reduce((a, b) => a + b.length, 0);
-  const out = new Uint8Array(length);
-  let offset = 0;
-  for (const a of arrays) {
-    out.set(a, offset);
-    offset += a.length;
+// Use Deno's built-in base58 decoder instead of npm package
+function decodeBase58(encoded: string): Uint8Array {
+  const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let decoded = BigInt(0);
+  let multi = BigInt(1);
+  
+  for (let i = encoded.length - 1; i >= 0; i--) {
+    const index = alphabet.indexOf(encoded[i]);
+    if (index === -1) throw new Error('Invalid base58 character');
+    decoded += multi * BigInt(index);
+    multi *= BigInt(58);
   }
-  return out;
+  
+  // Convert to bytes
+  const bytes = [];
+  while (decoded > 0) {
+    bytes.unshift(Number(decoded % 256n));
+    decoded = decoded / 256n;
+  }
+  
+  // Add leading zeros
+  for (let i = 0; i < encoded.length && encoded[i] === '1'; i++) {
+    bytes.unshift(0);
+  }
+  
+  return new Uint8Array(bytes);
 }
-(ed.etc || (ed as any).etc).sha512Sync = (...msgs: Uint8Array[]) => sha512(concatBytes(...msgs));
+
+// Simplified signature verification using Web Crypto API
+async function verifyEd25519Signature(
+  signatureBytes: Uint8Array,
+  messageBytes: Uint8Array,
+  publicKeyBytes: Uint8Array
+): Promise<boolean> {
+  try {
+    const key = await crypto.subtle.importKey(
+      'raw',
+      publicKeyBytes,
+      { name: 'Ed25519', namedCurve: 'Ed25519' },
+      false,
+      ['verify']
+    );
+    
+    return await crypto.subtle.verify(
+      'Ed25519',
+      key,
+      signatureBytes,
+      messageBytes
+    );
+  } catch (error) {
+    console.error('Ed25519 verification failed:', error);
+    return false;
+  }
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -68,11 +107,11 @@ function isTimestampValid(timestamp: string): boolean {
 
 async function verifySignature(address: string, signature: string, message: string): Promise<boolean> {
   try {
-    const publicKeyBytes = bs58.decode(address);
+    const publicKeyBytes = decodeBase58(address);
     const signatureBytes = hexToBytes(signature);
     const messageBytes = new TextEncoder().encode(message);
 
-    return await ed.verify(signatureBytes, messageBytes, publicKeyBytes);
+    return await verifyEd25519Signature(signatureBytes, messageBytes, publicKeyBytes);
   } catch (error) {
     console.error('Signature verification failed:', error);
     return false;
