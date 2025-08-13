@@ -5,31 +5,42 @@ import { useWallet } from '@solana/wallet-adapter-react';
 
 export function useTradingWallet() {
   const { toast } = useToast();
-  const { connected: authConnected } = useWallet();
+  const { connected: authConnected, publicKey } = useWallet();
   const [loading, setLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [privateKey, setPrivateKey] = useState<string | null>(null);
   const [acknowledged, setAcknowledged] = useState<boolean>(false);
+  
+  // Get authenticated Solana address from session storage
+  const authenticatedSolAddress = useMemo(() => {
+    const verified = sessionStorage.getItem('siws_verified') === 'true';
+    const storedAddress = sessionStorage.getItem('siws_address');
+    const currentAddress = publicKey?.toBase58();
+    
+    if (verified && storedAddress && currentAddress && storedAddress === currentAddress) {
+      return storedAddress;
+    }
+    return null;
+  }, [publicKey]);
 
   const load = useCallback(async () => {
+    if (!authenticatedSolAddress) {
+      console.log('No authenticated Solana address');
+      setWalletAddress(null);
+      setPrivateKey(null);
+      setAcknowledged(false);
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.log('No authenticated user found');
-        setWalletAddress(null);
-        setPrivateKey(null);
-        setAcknowledged(false);
-        return;
-      }
-
-      console.log('Loading trading wallet for user:', user.id);
+      console.log('Loading trading wallet for address:', authenticatedSolAddress);
       
-      // Check if trading wallet exists in database
+      // Check if trading wallet exists for this address
       const { data, error } = await supabase
         .from('trading_wallets')
-        .select('wallet_address, acknowledged_backup')
-        .eq('user_id', user.id)
+        .select('wallet_address, acknowledged_backup, user_id')
+        .eq('user_id', authenticatedSolAddress) // Use Solana address as user_id
         .maybeSingle();
         
       if (error) {
@@ -72,7 +83,7 @@ export function useTradingWallet() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [authenticatedSolAddress]);
 
   useEffect(() => { 
     load(); 
@@ -107,13 +118,12 @@ export function useTradingWallet() {
       return { walletAddress, privateKey };
     }
     
-    // Check if user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      console.log('User not authenticated, cannot create trading wallet');
+    // Check if Solana wallet is authenticated
+    if (!authenticatedSolAddress) {
+      console.log('Solana wallet not authenticated, cannot create trading wallet');
       toast({
-        title: "Authensiering krävs",
-        description: "Du måste vara inloggad för att skapa en trading wallet",
+        title: "Autentisering krävs",
+        description: "Du måste vara inloggad med Phantom för att skapa en trading wallet",
         variant: "destructive",
       });
       return { walletAddress: null, privateKey: null };
@@ -123,7 +133,7 @@ export function useTradingWallet() {
     const { data: existingWallet } = await supabase
       .from('trading_wallets')
       .select('wallet_address, acknowledged_backup')
-      .eq('user_id', user.id)
+      .eq('user_id', authenticatedSolAddress)
       .maybeSingle();
       
     if (existingWallet) {
@@ -138,7 +148,9 @@ export function useTradingWallet() {
     
     try {
       // Create wallet via secure edge function
-      const { data, error } = await supabase.functions.invoke('pump-create-wallet');
+      const { data, error } = await supabase.functions.invoke('pump-create-wallet', {
+        body: { solanaAddress: authenticatedSolAddress }
+      });
       
       if (error) {
         console.error('Error creating wallet:', error);
@@ -179,11 +191,10 @@ export function useTradingWallet() {
     } finally {
       setLoading(false);
     }
-  }, [walletAddress, acknowledged, privateKey, toast]);
+  }, [walletAddress, acknowledged, privateKey, toast, authenticatedSolAddress]);
 
   const confirmBackup = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !walletAddress) {
+    if (!authenticatedSolAddress || !walletAddress) {
       return false;
     }
     
@@ -191,7 +202,7 @@ export function useTradingWallet() {
       const { error } = await supabase
         .from('trading_wallets')
         .update({ acknowledged_backup: true })
-        .eq('user_id', user.id)
+        .eq('user_id', authenticatedSolAddress)
         .eq('wallet_address', walletAddress);
         
       if (error) {
@@ -212,10 +223,10 @@ export function useTradingWallet() {
       console.error('Error confirming backup:', error);
       return false;
     }
-  }, [walletAddress, toast]);
+  }, [walletAddress, toast, authenticatedSolAddress]);
 
   const getPrivateKey = useCallback(async () => {
-    if (!walletAddress || !acknowledged) {
+    if (!authenticatedSolAddress || !walletAddress || !acknowledged) {
       return null;
     }
     

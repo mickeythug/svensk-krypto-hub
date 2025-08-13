@@ -12,21 +12,21 @@ serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      {
-        global: { headers: { Authorization: req.headers.get("Authorization")! } },
-      }
-    );
-
-    const { data: authData, error: authError } = await supabase.auth.getUser();
-    if (authError || !authData?.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+    // Get the Solana address from the request body
+    const requestBody = await req.json();
+    const { solanaAddress } = requestBody;
+    
+    if (!solanaAddress) {
+      return new Response(JSON.stringify({ error: "Solana address required" }), {
+        status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!
+    );
 
     // Call PumpPortal to create wallet
     const res = await fetch("https://pumpportal.fun/api/create-wallet", { method: "GET" });
@@ -38,14 +38,14 @@ serve(async (req) => {
       });
     }
 
-    const body = await res.json();
+    const responseBody = await res.json();
     // Try common field names
-    const walletAddress = body.walletAddress || body.publicKey || body.address || body.pubkey;
-    const privateKey = body.privateKey || body.secretKey || body.sk;
-    const pumpApiKey = body.apiKey || body.api_key || body.key;
+    const walletAddress = responseBody.walletAddress || responseBody.publicKey || responseBody.address || responseBody.pubkey;
+    const privateKey = responseBody.privateKey || responseBody.secretKey || responseBody.sk;
+    const pumpApiKey = responseBody.apiKey || responseBody.api_key || responseBody.key;
 
     if (!walletAddress || !pumpApiKey) {
-      return new Response(JSON.stringify({ error: "Malformed response from PumpPortal", body }), {
+      return new Response(JSON.stringify({ error: "Malformed response from PumpPortal", responseBody }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -82,7 +82,7 @@ serve(async (req) => {
 
     // Store keys securely in private schema
     const { error: secureStoreError } = await supabaseAdmin.rpc('store_encrypted_key', {
-      p_user_id: authData.user.id,
+      p_user_id: solanaAddress,
       p_wallet_address: String(walletAddress),
       p_private_key_encrypted: encryptedPriv,
       p_pump_api_key_encrypted: encryptedApiKey,
@@ -96,11 +96,11 @@ serve(async (req) => {
     }
 
     // Update the public trading_wallets table with non-sensitive data only
-    const { error: upsertErr } = await supabase
+    const { error: upsertErr } = await supabaseAdmin
       .from("trading_wallets")
       .upsert(
         {
-          user_id: authData.user.id,
+          user_id: solanaAddress,
           wallet_address: String(walletAddress),
           acknowledged_backup: false,
         },
