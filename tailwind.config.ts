@@ -163,19 +163,19 @@ export default {
           '100%': { backgroundPosition: '200% 0' }
         },
         'coin-flip': {
-          '0%': { transform: 'rotateY(0deg) rotateX(0deg) scale(1)' },
-          '25%': { transform: 'rotateY(90deg) rotateX(15deg) scale(1.1)' },
-          '50%': { transform: 'rotateY(180deg) rotateX(30deg) scale(1.2)' },
-          '75%': { transform: 'rotateY(270deg) rotateX(15deg) scale(1.1)' },
-          '100%': { transform: 'rotateY(360deg) rotateX(0deg) scale(1)' }
+          '0%': { transform: 'rotateY(0deg) rotateX(0deg) scale(1)', filter: 'brightness(1)' },
+          '50%': { transform: 'rotateY(180deg) rotateX(20deg) scale(1.3)', filter: 'brightness(1.5)' },
+          '100%': { transform: 'rotateY(360deg) rotateX(0deg) scale(1)', filter: 'brightness(1)' }
         },
         'rank-bounce': {
-          '0%': { transform: 'scale(1) rotateZ(0deg)' },
-          '20%': { transform: 'scale(1.15) rotateZ(5deg)' },
-          '40%': { transform: 'scale(1.3) rotateZ(-5deg)' },
-          '60%': { transform: 'scale(1.15) rotateZ(3deg)' },
-          '80%': { transform: 'scale(1.05) rotateZ(-2deg)' },
-          '100%': { transform: 'scale(1) rotateZ(0deg)' }
+          '0%': { transform: 'scale(1) rotateZ(0deg)', filter: 'brightness(1)' },
+          '30%': { transform: 'scale(1.4) rotateZ(8deg)', filter: 'brightness(1.6)' },
+          '60%': { transform: 'scale(0.9) rotateZ(-4deg)', filter: 'brightness(1.2)' },
+          '100%': { transform: 'scale(1) rotateZ(0deg)', filter: 'brightness(1)' }
+        },
+        'ultra-spin': {
+          '0%': { transform: 'rotate(0deg) scale(1)' },
+          '100%': { transform: 'rotate(1080deg) scale(1.2)' }
         }
 			},
 			animation: {
@@ -191,8 +191,9 @@ export default {
         'spin': 'spin 1s linear infinite',
         'bounce': 'bounce 1s infinite',
         'shimmer': 'shimmer 2s ease-in-out infinite',
-        'coin-flip': 'coin-flip 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-        'rank-bounce': 'rank-bounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+        'coin-flip': 'coin-flip 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        'rank-bounce': 'rank-bounce 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'ultra-spin': 'ultra-spin 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
 			}
 		}
 	},
