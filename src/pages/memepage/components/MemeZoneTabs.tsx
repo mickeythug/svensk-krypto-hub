@@ -488,7 +488,7 @@ const MemeZoneTabs: React.FC = () => {
   };
 
   return (
-    <section className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8">
+    <section data-section="token-explorer" className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-casino-gold opacity-15 animate-shimmer pointer-events-none"></div>
       <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20 pointer-events-none"></div>

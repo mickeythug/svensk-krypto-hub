@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import MemeHeroNew from './components/MemeHeroNew';
-import HottestTokensMarquee from './components/HottestTokensMarquee';
 import MemeZoneTabs from './components/MemeZoneTabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
@@ -63,11 +62,6 @@ const MemePage: React.FC = () => {
         {/* Full Width Hero Section */}
         <div className="w-full">
           <MemeHeroNew />
-        </div>
-
-        {/* Hottest Tokens Section */}
-        <div className="w-full">
-          <HottestTokensMarquee />
         </div>
 
         {/* Full Screen Token Explorer */}
