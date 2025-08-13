@@ -12,7 +12,8 @@ import {
   Shield, 
   AlertTriangle,
   CheckCircle,
-  Download
+  Download,
+  Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTradingWallet } from "@/hooks/useTradingWallet";
@@ -32,7 +33,8 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     privateKey, 
     acknowledged, 
     confirmBackup, 
-    loading 
+    loading,
+    createIfMissing 
   } = useTradingWallet();
 
   const copyToClipboard = async (text: string, label: string) => {
@@ -91,21 +93,22 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
 
         <div className="space-y-6">
           {/* Trading Wallet Card */}
-          <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/30">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-full bg-primary/20">
-                  <Wallet className="h-6 w-6 text-primary" />
+          {walletAddress ? (
+            <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/30">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-primary/20">
+                    <Wallet className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold">Trading Wallet</h3>
+                    <p className="text-sm text-muted-foreground">Auto-genererad för plattformen</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold">Trading Wallet</h3>
-                  <p className="text-sm text-muted-foreground">Auto-genererad för plattformen</p>
-                </div>
+                <Badge variant="default" className="bg-success/20 text-success border-success/30">
+                  Aktiv
+                </Badge>
               </div>
-              <Badge variant="default" className="bg-success/20 text-success border-success/30">
-                Aktiv
-              </Badge>
-            </div>
 
             {/* Wallet Address */}
             <div className="space-y-4">
@@ -260,6 +263,39 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
               </Card>
             </div>
           </Card>
+          ) : (
+            // No Trading Wallet - Show Create Button
+            <Card className="p-6 bg-gradient-to-br from-muted/10 to-secondary/10 border-muted/30">
+              <div className="text-center space-y-4">
+                <div className="p-4 rounded-full bg-muted/20 w-fit mx-auto">
+                  <Wallet className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Ingen Trading Wallet</h3>
+                  <p className="text-muted-foreground">
+                    Du har ingen trading wallet ännu. Skapa en för att börja handla på plattformen.
+                  </p>
+                </div>
+                <Button 
+                  onClick={createIfMissing}
+                  disabled={loading}
+                  className="bg-gradient-primary"
+                >
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Skapar wallet...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Skapa Trading Wallet
+                    </>
+                  )}
+                </Button>
+              </div>
+            </Card>
+          )}
         </div>
       </DialogContent>
     </Dialog>

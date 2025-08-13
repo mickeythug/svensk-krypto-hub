@@ -16,54 +16,77 @@ export function useTradingWallet() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        console.log('Loading trading wallet for user:', user.id);
+        
+        // FIRST: Check if trading wallet exists in database
         const { data, error } = await supabase
           .from('trading_wallets')
           .select('wallet_address, acknowledged_backup')
           .eq('user_id', user.id)
           .maybeSingle();
+          
         if (!error && data) {
+          console.log('Found existing trading wallet in DB:', data.wallet_address);
           setWalletAddress(data.wallet_address);
           setAcknowledged(!!data.acknowledged_backup);
+          
           // If backup not acknowledged, try to fetch decrypted private key for one-time display
           if (!data.acknowledged_backup) {
             try {
               const { data: getData } = await supabase.functions.invoke('pump-get-wallet');
               const pkServer = (getData as any)?.privateKey || null;
               if (pkServer) setPrivateKey(pkServer);
-            } catch {}
+            } catch (err) {
+              console.log('Could not retrieve private key:', err);
+            }
           }
           setLoading(false);
           return;
         }
-        // No DB record yet: try to import from localStorage if present
+        
+        console.log('No trading wallet found in DB for user');
+        
+        // SECOND: Check localStorage for migration
         const lsAddr = localStorage.getItem('pump_wallet_address');
         const lsPk = localStorage.getItem('pump_private_key');
         const lsKey = localStorage.getItem('pump_api_key');
         const lsAck = localStorage.getItem('pump_ack') === 'true';
+        
         if (lsAddr && lsKey) {
+          console.log('Found wallet in localStorage, migrating to DB');
           try {
-            await supabase.functions.invoke('pump-store-wallet', { body: { walletAddress: lsAddr, privateKey: lsPk, apiKey: lsKey } });
+            await supabase.functions.invoke('pump-store-wallet', { 
+              body: { walletAddress: lsAddr, privateKey: lsPk, apiKey: lsKey } 
+            });
             setWalletAddress(lsAddr);
             setAcknowledged(lsAck);
             if (!lsAck && lsPk) setPrivateKey(lsPk);
             setLoading(false);
             return;
-          } catch {}
+          } catch (err) {
+            console.error('Failed to migrate wallet to DB:', err);
+          }
+        }
+        
+        console.log('No existing trading wallet found for authenticated user');
+      } else {
+        // Not authenticated - check localStorage only
+        const lsAddr = localStorage.getItem('pump_wallet_address');
+        const lsAck = localStorage.getItem('pump_ack') === 'true';
+        if (lsAddr) {
+          console.log('Found wallet in localStorage (not authenticated)');
+          setWalletAddress(lsAddr);
+          setAcknowledged(lsAck);
+          if (!lsAck) {
+            try {
+              const lsPk = localStorage.getItem('pump_private_key');
+              if (lsPk) setPrivateKey(lsPk);
+            } catch {}
+          }
         }
       }
-      // Fallback to localStorage (no Supabase user)
-      const lsAddr = localStorage.getItem('pump_wallet_address');
-      const lsAck = localStorage.getItem('pump_ack') === 'true';
-      if (lsAddr) {
-        setWalletAddress(lsAddr);
-        setAcknowledged(lsAck);
-        if (!lsAck) {
-          try {
-            const lsPk = localStorage.getItem('pump_private_key');
-            if (lsPk) setPrivateKey(lsPk);
-          } catch {}
-        }
-      }
+    } catch (err) {
+      console.error('Error loading trading wallet:', err);
     } finally {
       setLoading(false);
     }
@@ -72,7 +95,11 @@ export function useTradingWallet() {
   useEffect(() => { load(); }, [load]);
 
   const createIfMissing = useCallback(async () => {
+    console.log('createIfMissing called, current walletAddress:', walletAddress);
+    
+    // If wallet already exists, don't create a new one
     if (walletAddress) {
+      console.log('Trading wallet already exists, not creating new one');
       // Ensure we retrieve private key if not acknowledged yet
       if (!acknowledged && !privateKey) {
         try {
@@ -84,6 +111,25 @@ export function useTradingWallet() {
       }
       return { walletAddress, privateKey, apiKey };
     }
+    
+    // Double-check database before creating new wallet
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from('trading_wallets')
+        .select('wallet_address, acknowledged_backup')
+        .eq('user_id', user.id)
+        .maybeSingle();
+        
+      if (data) {
+        console.log('Found existing wallet in DB during create check:', data.wallet_address);
+        setWalletAddress(data.wallet_address);
+        setAcknowledged(!!data.acknowledged_backup);
+        return { walletAddress: data.wallet_address, privateKey: null, apiKey: null };
+      }
+    }
+    
+    console.log('Creating NEW trading wallet...');
     setLoading(true);
     try {
       // Try via edge function first (saves to DB when user is authenticated)

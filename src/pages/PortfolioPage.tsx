@@ -65,12 +65,11 @@ const PortfolioPage = () => {
   const { cryptoPrices, isLoading: cryptoLoading } = useCryptoData();
   const { watchlist, toggleWatchlist } = useWatchlist();
 
-  // Initialize trading wallet on auth
+  // Initialize trading wallet ONLY once when authenticated (don't create multiple)
   useEffect(() => {
-    if (fullyAuthed) {
-      createIfMissing();
-    }
-  }, [fullyAuthed, createIfMissing]);
+    // Remove automatic creation - let it load existing wallet first
+    // User can manually create via the wallet management modal if needed
+  }, [fullyAuthed]);
 
   // Convert wallet balances to holdings
   useEffect(() => {
