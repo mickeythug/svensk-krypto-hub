@@ -164,6 +164,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     }
   }, [acknowledged, tradingWalletAddress, getPrivateKey, toast]);
 
+  // Mobile rendering - keeping this after all hooks
   if (isMobile) {
     return <MobileWalletManagement 
       open={open} 
@@ -186,6 +187,8 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
       getPrivateKeyForDisplay={getPrivateKeyForDisplay}
     />;
   }
+
+  // Desktop rendering
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">{/* z-index redan satt i dialog.tsx */}
