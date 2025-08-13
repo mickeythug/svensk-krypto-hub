@@ -73,11 +73,16 @@ const PortfolioPage = () => {
   useEffect(() => {
     if (!fullyAuthed || !cryptoPrices?.length) return;
 
+    console.log('Portfolio: Converting wallet balances to holdings');
+    console.log('Auth status:', { authedSol, authedEvm, solAddress, evmAddress });
+    console.log('Balances:', { solBalance, evmBalances });
+
     const newHoldings: PortfolioHolding[] = [];
 
     // Add SOL balance if authenticated with Solana
     if (authedSol && solBalance && solBalance > 0) {
       const solPrice = cryptoPrices.find(c => c.symbol === "SOL");
+      console.log('SOL price found:', solPrice);
       if (solPrice) {
         newHoldings.push({
           id: "sol-main",
@@ -95,6 +100,7 @@ const PortfolioPage = () => {
     // Add ETH balance if authenticated with Ethereum
     if (authedEvm && evmBalances?.length) {
       evmBalances.forEach((balance) => {
+        console.log('Processing EVM balance:', balance);
         if (balance.balanceWei > 0n) {
           const ethPrice = cryptoPrices.find(c => c.symbol === "ETH");
           if (ethPrice && balance.symbol === "ETH") {
@@ -113,6 +119,7 @@ const PortfolioPage = () => {
       });
     }
 
+    console.log('Final holdings:', newHoldings);
     setHoldings(newHoldings);
   }, [authedSol, authedEvm, solBalance, evmBalances, cryptoPrices, fullyAuthed]);
 
@@ -205,8 +212,9 @@ const PortfolioPage = () => {
     );
   }
 
-  // Show loading state
-  if (cryptoLoading || solLoading || evmLoading || tradingLoading) {
+  // Show loading state with better error handling
+  if (cryptoLoading || (fullyAuthed && (solLoading || evmLoading || tradingLoading))) {
+    console.log('Portfolio: Loading state', { cryptoLoading, solLoading, evmLoading, tradingLoading });
     return (
       <div className="min-h-screen bg-background">
         {isMobile ? <MobileHeader title="PORTFÖLJ" /> : <Header />}
@@ -214,7 +222,13 @@ const PortfolioPage = () => {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Laddar portföljdata...</p>
+              <p className="text-muted-foreground">
+                {cryptoLoading ? 'Laddar marknadspriser...' : 
+                 solLoading ? 'Laddar Solana balans...' :
+                 evmLoading ? 'Laddar Ethereum balans...' :
+                 tradingLoading ? 'Laddar trading wallet...' :
+                 'Laddar portföljdata...'}
+              </p>
             </div>
           </div>
         </div>
@@ -280,7 +294,10 @@ const PortfolioPage = () => {
               {tradingWalletAddress ? 'Aktiv' : 'Skapar...'}
             </div>
             <div className="text-xs text-muted-foreground truncate">
-              {tradingWalletAddress || 'Genererar automatiskt...'}
+              {tradingWalletAddress ? `${tradingWalletAddress.slice(0, 8)}...${tradingWalletAddress.slice(-8)}` : 'Genererar automatiskt...'}
+            </div>
+            <div className="text-xs text-secondary mt-1">
+              Auto-genererad för plattformen
             </div>
           </Card>
 
@@ -294,7 +311,10 @@ const PortfolioPage = () => {
               {formatCurrency(totalValue)}
             </div>
             <div className="text-sm text-muted-foreground">
-              Portfolio balans
+              {holdings.length > 0 ? `Från ${holdings.length} holdings` : 'Portfolio balans'}
+            </div>
+            <div className="text-xs text-secondary mt-1">
+              {totalValue > 0 ? 'Realtidspriser' : 'Väntar på data'}
             </div>
           </Card>
 
@@ -309,6 +329,9 @@ const PortfolioPage = () => {
             </div>
             <div className="text-sm text-muted-foreground">
               Olika kryptovalutor
+            </div>
+            <div className="text-xs text-secondary mt-1">
+              {holdings.length > 0 ? 'Live balancer' : 'Ingen data än'}
             </div>
           </Card>
         </div>
@@ -402,12 +425,33 @@ const PortfolioPage = () => {
                   <Wallet className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="font-semibold text-lg mb-2">Inga holdings hittades</h3>
                   <p className="text-muted-foreground mb-6">
-                    Dina anslutna wallets verkar vara tomma eller så använder vi inte stödda tokens ännu
+                    {solBalance === null && evmBalances?.length === 0 ? 
+                      'Det verkar som att dina wallets inte har några balanser, eller så har vi problem att hämta data från blockchain-nätverket.' :
+                      'Dina anslutna wallets verkar vara tomma eller så använder vi inte stödda tokens ännu'
+                    }
                   </p>
-                  <Button onClick={() => navigate('/meme')} className="bg-gradient-primary">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Börja handla
-                  </Button>
+                  
+                  {/* Debug info for development */}
+                  <div className="text-xs text-muted-foreground mb-4 space-y-2">
+                    <div>Debug info:</div>
+                    <div>SOL Balance: {solBalance !== null ? `${solBalance} SOL` : 'Laddar...'}</div>
+                    <div>ETH Balances: {evmBalances?.length || 0} found</div>
+                    <div>Crypto Prices: {cryptoPrices?.length || 0} loaded</div>
+                    <div>Auth Status: SOL={authedSol ? '✓' : '✗'}, ETH={authedEvm ? '✓' : '✗'}</div>
+                  </div>
+                  
+                  <div className="flex gap-3 justify-center">
+                    <Button onClick={() => navigate('/meme')} className="bg-gradient-primary">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Börja handla
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => window.location.reload()}
+                    >
+                      Ladda om
+                    </Button>
+                  </div>
                 </Card>
               )}
             </div>
