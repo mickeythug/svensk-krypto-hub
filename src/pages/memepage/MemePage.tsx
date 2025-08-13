@@ -51,42 +51,34 @@ const MemePage: React.FC = () => {
     document.head.appendChild(ld);
   }, []);
   return (
-    <div className="meme-page font-inter">
-      <main className={`min-h-screen bg-gradient-to-br from-background via-mute to-background relative overflow-hidden ${isMobile ? 'pb-20' : ''}`}>
-        {/* Animated background elements */}
-        <div className="fixed inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full animate-float"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 bg-accent rounded-full animate-bounce"></div>
-          <div className="absolute bottom-32 left-32 w-28 h-28 bg-secondary rounded-full animate-pulse-glow"></div>
-          <div className="absolute bottom-20 right-10 w-20 h-20 bg-primary-glow rounded-full animate-spin"></div>
+    <div className="meme-page font-orbitron bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
+      {/* Full Screen Gaming Background */}
+      <div className="fixed inset-0 bg-gradient-casino-rainbow opacity-5 animate-shimmer pointer-events-none"></div>
+      <div className="fixed inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
+      
+      <main className="relative z-10 w-full min-h-screen overflow-x-hidden">
+        {/* Full Width Hero Section */}
+        <div className="w-full">
+          <MemeHeroNew />
         </div>
 
-        {/* Hero Section */}
-        <MemeHeroNew />
+        {/* Full Screen Top Tokens Section */}
+        <div className="w-full">
+          <MemeTopCoins />
+        </div>
 
-        {/* Top Meme Coins with Large Images */}
-        <section className={`${isMobile ? 'py-12 px-4' : 'py-20 px-6'}`}>
-          <div className="container mx-auto max-w-7xl">
-            <div className="text-center mb-12">
-              <h2 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-4xl md:text-6xl'} font-black mb-4 bg-gradient-neon bg-clip-text text-transparent`}>
-                🏆 Top 6 Meme Tokens
-              </h2>
-              <p className={`text-muted-foreground ${isMobile ? 'text-base' : 'text-lg'} font-medium max-w-2xl mx-auto`}>
-                De hetaste och mest populära meme tokens just nu med stora bilder och detaljerad information
-              </p>
-            </div>
-            <MemeTopCoins />
-          </div>
-        </section>
+        {/* Enhanced Stats Banner */}
+        <div className="w-full bg-gradient-casino-gold/20 border-y-4 border-yellow-400/30">
+          <MemeStatsBanner />
+        </div>
 
-        {/* Stats Banner */}
-        <MemeStatsBanner />
-
-        {/* Explore Tabs */}
-        <MemeZoneTabs />
+        {/* Full Screen Explore Section */}
+        <div className="w-full">
+          <MemeZoneTabs />
+        </div>
       </main>
       
-      {/* Custom Navigation for Meme Zone */}
+      {/* Mobile Navigation */}
       {isMobile && <MemeZoneBottomNavigation />}
     </div>
   );

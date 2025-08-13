@@ -69,63 +69,72 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
 
   return (
     <div className="space-y-8">
-      {/* Modern Grid with Large Images */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Ultra Large Gaming Grid - Full Screen */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-6 md:gap-8">
         {tokens.map((t, index) => {
           const positive = t.change24h > 0;
           const isTop = index < 3;
+          const isTop1 = index === 0;
           
           return (
             <Card 
               key={t.id} 
-              className={`group relative overflow-hidden border-2 transition-all duration-500 hover:scale-105 hover:shadow-glow-rainbow cursor-pointer ${
-                isTop ? 'border-primary bg-gradient-to-br from-card via-card/90 to-primary/10 shadow-glow-primary' : 'border-border/50 bg-card hover:border-primary/50'
+              className={`group relative overflow-hidden border-4 transition-all duration-500 hover:scale-105 hover:shadow-glow-rainbow cursor-pointer rounded-2xl ${
+                isTop1 ? 'border-yellow-400 bg-gradient-to-br from-card via-yellow-900/30 to-yellow-400/20 shadow-glow-gold animate-pulse' :
+                isTop ? 'border-primary bg-gradient-to-br from-card via-primary/20 to-primary/10 shadow-glow-primary' : 
+                'border-border/50 bg-card/90 hover:border-primary/50'
               }`}
               onClick={() => navigate(`/meme/token/${t.symbol.toLowerCase()}?address=${encodeURIComponent(t.id)}`)}
             >
-              {/* Top Rank Badge */}
+              {/* Enhanced Gaming Rank Badge */}
               {isTop && (
-                <div className="absolute top-4 left-4 z-20">
-                  <Badge className={`text-sm font-bold ${
-                    index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black' :
+                <div className="absolute top-3 left-3 z-20">
+                  <Badge className={`text-sm font-orbitron font-black px-3 py-2 shadow-lg ${
+                    index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' :
                     index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
                     'bg-gradient-to-r from-orange-400 to-orange-600 text-black'
                   }`}>
-                    {index === 0 && <Crown className="w-3 h-3 mr-1" />}
+                    {index === 0 && <Crown className="w-4 h-4 mr-1 animate-pulse" />}
                     #{index + 1}
                   </Badge>
                 </div>
               )}
 
-              {/* HOT Badge for trending tokens */}
+              {/* Ultra Gaming HOT Badge */}
               {t.isHot && (
-                <div className="absolute top-4 right-4 z-20">
-                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-xs font-bold">
+                <div className="absolute top-3 right-3 z-20">
+                  <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white animate-pulse text-sm font-orbitron font-black px-3 py-2 shadow-glow-destructive">
                     🔥 HOT
                   </Badge>
                 </div>
               )}
 
-              {/* Large Token Image - Same size as MemeTopCoins */}
+              {/* Extra Large Token Image - Like MemeTopCoins */}
               <div className="relative overflow-hidden">
-                <AspectRatio ratio={16/10}>
+                <AspectRatio ratio={16/12}>
+                  <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
                   <OptimizedImage
                     src={t.image || '/placeholder.svg'}
                     alt={`${t.name} logo`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     fallbackSrc="/placeholder.svg"
                   />
+                  {isTop1 && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/30 to-transparent pointer-events-none animate-pulse"></div>
+                  )}
                 </AspectRatio>
               </div>
 
-              {/* Token Details with Modern Layout */}
-              <div className="p-6 space-y-5">
+              {/* Enhanced Gaming Token Details */}
+              <div className="p-4 md:p-6 space-y-4">
                 {/* Symbol and Change */}
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-2xl font-crypto font-black">{t.symbol}</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className={`font-orbitron font-black text-xl md:text-2xl ${isTop1 ? 'text-yellow-400' : 'text-foreground'} truncate`}>
+                    {t.symbol}
+                  </h3>
                   <Badge 
                     variant="outline" 
-                    className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-bold text-sm px-3 py-1`}
+                    className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-orbitron font-bold text-sm px-3 py-1.5 shadow-lg`}
                   >
                     {positive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                     {positive ? '+' : ''}{t.change24h.toFixed(2)}%
@@ -133,63 +142,65 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
                 </div>
 
                 {/* Token Name */}
-                <p className="text-muted-foreground text-sm font-crypto font-medium truncate">{t.name}</p>
+                <p className="text-muted-foreground text-sm font-orbitron font-medium truncate">{t.name}</p>
                 
-                {/* Price and Market Cap Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                {/* Enhanced Stats Grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                       <DollarSign className="w-4 h-4" />
-                      Pris
+                      PRIS
                     </div>
-                    <div className="text-lg font-crypto font-bold text-foreground">{formatPrice(t.price)}</div>
+                    <div className="text-base font-orbitron font-bold text-foreground">{formatPrice(t.price)}</div>
                   </div>
-                  <div>
+                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                       <Star className="w-4 h-4" />
-                      Market Cap
+                      MCAP
                     </div>
-                    <div className="text-lg font-crypto font-bold text-foreground">{formatCompact(t.marketCap)}</div>
+                    <div className="text-base font-orbitron font-bold text-foreground">{formatCompact(t.marketCap)}</div>
                   </div>
                 </div>
 
                 {/* Volume and Holders Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                       <BarChart3 className="w-4 h-4" />
-                      Vol 24h
+                      VOL 24H
                     </div>
-                    <div className="text-sm font-crypto font-bold text-foreground">{formatCompact(t.volume24h)}</div>
+                    <div className="text-sm font-orbitron font-bold text-foreground">{formatCompact(t.volume24h)}</div>
                   </div>
-                  <div>
+                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                       <Users className="w-4 h-4" />
-                      Holders
+                      HOLDERS
                     </div>
-                    <div className="text-sm font-crypto font-bold text-foreground">{formatCompact(t.holders)}</div>
+                    <div className="text-sm font-orbitron font-bold text-foreground">{formatCompact(t.holders)}</div>
                   </div>
                 </div>
 
-                {/* Tags */}
+                {/* Gaming Tags */}
                 {t.tags && t.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {t.tags.slice(0, 2).map((tag: string, i: number) => (
-                      <Badge key={i} variant="secondary" className="text-xs font-medium">
+                      <Badge key={i} variant="secondary" className="text-xs font-orbitron font-medium">
                         {tag}
                       </Badge>
                     ))}
                   </div>
                 )}
 
-                {/* Action Button */}
+                {/* Gaming Action Button */}
                 <Button 
-                  className="w-full font-crypto bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-full h-12 text-base"
+                  className={`w-full font-orbitron bg-gradient-primary hover:shadow-glow-primary transition-all duration-300 rounded-lg font-bold h-12 text-base ${
+                    isTop1 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' : ''
+                  }`}
                   size="lg"
                 >
-                  <Zap className="w-4 h-4 mr-2" />
+                  <Zap className="w-4 h-4 mr-2 animate-pulse" />
                   <span className="font-bold tracking-wide">
-                    VISA FULLSTÄNDIGA DETALJER
+                    HANDLA NU
                   </span>
                 </Button>
               </div>
@@ -246,16 +257,28 @@ const MemeZoneTabs: React.FC = () => {
   ];
 
   return (
-    <section className={`${isMobile ? 'py-12 px-4' : 'py-20 px-6'} bg-gradient-to-br from-meme-grid-bg/30 via-background to-meme-grid-bg/20`}>
-      <div className="container mx-auto max-w-7xl">
-        {/* Modern Header */}
-        <div className="text-center mb-12">
-          <h2 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-4xl md:text-6xl'} font-black mb-4 bg-gradient-neon bg-clip-text text-transparent`}>
-            Utforska Alla Meme Tokens
-          </h2>
-          <p className={`text-muted-foreground ${isMobile ? 'text-base' : 'text-lg'} font-medium max-w-2xl mx-auto`}>
-            Upptäck världens bästa meme tokens med live-data, stora bilder och detaljerad information
-          </p>
+    <section className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8 md:py-16">
+      {/* Gaming Background */}
+      <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-10 animate-shimmer pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-15 pointer-events-none"></div>
+      
+      <div className="relative z-10 w-full max-w-[2000px] mx-auto px-4 md:px-8">
+        {/* Ultra Gaming Header */}
+        <div className="text-center mb-12 md:mb-20">
+          <div className="bg-gradient-casino-gold rounded-3xl border-4 border-yellow-400/50 shadow-glow-gold p-8 md:p-12 mb-8">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <Crown className="w-8 h-8 md:w-12 md:h-12 text-yellow-400 animate-pulse" />
+              <h2 className={`font-orbitron font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto] ${
+                isMobile ? 'text-4xl' : 'text-6xl md:text-8xl'
+              }`}>
+                UTFORSKA ALLA TOKENS
+              </h2>
+              <Crown className="w-8 h-8 md:w-12 md:h-12 text-yellow-400 animate-pulse" />
+            </div>
+            <p className={`text-yellow-100 font-orbitron font-bold ${isMobile ? 'text-lg' : 'text-2xl'} max-w-4xl mx-auto`}>
+              🎰 STORA BILDER • LIVE DATA • GAMING UPPLEVELSE 🎰
+            </p>
+          </div>
         </div>
         <Tabs defaultValue="trending" className="w-full">
           {/* Modern Tab Navigation */}
