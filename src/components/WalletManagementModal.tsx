@@ -54,6 +54,31 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     getPrivateKey
   } = useTradingWallet();
 
+  // All hooks must be called before any conditional returns
+  const getPrivateKeyForDisplay = useCallback(async () => {
+    if (!acknowledged || !tradingWalletAddress) return;
+    
+    try {
+      const key = await getPrivateKey();
+      if (key) {
+        setShowPrivateKey(true);
+        setDisplayPrivateKey(key);
+      } else {
+        toast({
+          title: "Fel",
+          description: "Kunde inte hämta private key",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Fel", 
+        description: "Kunde inte hämta private key",
+        variant: "destructive",
+      });
+    }
+  }, [acknowledged, tradingWalletAddress, getPrivateKey, toast]);
+
   // Generate QR code for trading wallet when available
   useEffect(() => {
     if (tradingWalletAddress) {
@@ -121,6 +146,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     }
   };
 
+  // Now conditional returns can be made after all hooks
   if (loading) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -139,30 +165,6 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
       </Dialog>
     );
   }
-
-  const getPrivateKeyForDisplay = useCallback(async () => {
-    if (!acknowledged || !tradingWalletAddress) return;
-    
-    try {
-      const key = await getPrivateKey();
-      if (key) {
-        setShowPrivateKey(true);
-        setDisplayPrivateKey(key);
-      } else {
-        toast({
-          title: "Fel",
-          description: "Kunde inte hämta private key",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Fel", 
-        description: "Kunde inte hämta private key",
-        variant: "destructive",
-      });
-    }
-  }, [acknowledged, tradingWalletAddress, getPrivateKey, toast]);
 
   // Mobile rendering - keeping this after all hooks
   if (isMobile) {
