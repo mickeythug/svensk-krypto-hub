@@ -9,33 +9,33 @@ const MemeHeroNew = () => {
   const isMobile = useIsMobile();
   
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-casino-gold">
-      {/* Gaming Background Layers */}
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+      {/* Modern Background Layers */}
       <div className="absolute inset-0 z-0">
         <OptimizedImage 
           src={heroImage} 
           alt="Meme Token Universe Background" 
-          className="w-full h-full object-cover opacity-40" 
+          className="w-full h-full object-cover opacity-30" 
           fallbackSrc="/placeholder.svg" 
         />
-        <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-20 animate-shimmer"></div>
-        <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-blue-600/20 animate-pulse"></div>
+        <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-transparent to-black/40"></div>
       </div>
 
-      {/* Gaming Grid Pattern Overlay */}
+      {/* Subtle Grid Pattern Overlay */}
       <div className="absolute inset-0 z-5 opacity-10">
-        <div className="w-full h-full bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent animate-pulse"></div>
+        <div className="w-full h-full bg-gradient-to-r from-transparent via-blue-400/20 to-transparent animate-pulse"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-[2000px] mx-auto px-4 md:px-8 py-12 md:py-20">
-        <div className="text-center space-y-8 md:space-y-12">
-          {/* Ultra Gaming Badge */}
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-3 md:px-6 lg:px-8 py-8 md:py-16 lg:py-20">
+        <div className="text-center space-y-6 md:space-y-10 lg:space-y-12">
+          {/* Modern Badge */}
           <div className="flex justify-center">
-            <Badge className="font-orbitron text-lg md:text-2xl px-8 py-4 bg-gradient-casino-gold text-black shadow-glow-gold animate-pulse border-4 border-yellow-400/50 rounded-full">
-              <Crown className="w-6 h-6 mr-3 animate-bounce" />
-              MEME TOKEN CASINO
-              <Zap className="w-6 h-6 ml-3 animate-pulse" />
+            <Badge className="font-sans font-bold text-base md:text-xl lg:text-2xl px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg border-2 border-blue-400/50 rounded-full">
+              <Crown className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3" />
+              MEME TOKEN HUB
+              <Zap className="w-5 h-5 md:w-6 md:h-6 ml-2 md:ml-3" />
             </Badge>
           </div>
 

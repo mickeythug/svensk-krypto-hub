@@ -26,6 +26,7 @@ function formatCompact(n: number) {
 
 const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [page, setPage] = useState(1);
   const { tokens, loading, error, hasMore } = useMemeTokens(category, 50, page);
 
@@ -126,15 +127,15 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
               </div>
 
               {/* Enhanced Gaming Token Details */}
-              <div className="p-4 md:p-6 space-y-4">
+              <div className="p-3 md:p-4 lg:p-6 space-y-3 md:space-y-4">
                 {/* Symbol and Change */}
                 <div className="flex items-center justify-between">
-                  <h3 className={`font-orbitron font-black text-xl md:text-2xl ${isTop1 ? 'text-yellow-400' : 'text-foreground'} truncate`}>
+                  <h3 className={`font-sans font-black text-white ${isMobile ? 'text-lg' : 'text-xl md:text-2xl'} ${isTop1 ? 'text-blue-300' : ''} truncate`}>
                     {t.symbol}
                   </h3>
                   <Badge 
                     variant="outline" 
-                    className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-orbitron font-bold text-sm px-3 py-1.5 shadow-lg`}
+                    className={`${positive ? 'border-green-400 text-green-400 bg-green-400/20' : 'border-red-400 text-red-400 bg-red-400/20'} font-sans font-bold ${isMobile ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1.5'} shadow-lg`}
                   >
                     {positive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                     {positive ? '+' : ''}{t.change24h.toFixed(2)}%
@@ -142,41 +143,41 @@ const Grid: React.FC<{ category: MemeCategory }> = ({ category }) => {
                 </div>
 
                 {/* Token Name */}
-                <p className="text-muted-foreground text-sm font-orbitron font-medium truncate">{t.name}</p>
+                <p className="text-gray-300 text-sm font-sans font-medium truncate">{t.name}</p>
                 
                 {/* Enhanced Stats Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
-                    <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
-                      <DollarSign className="w-4 h-4" />
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <DollarSign className="w-3 h-3 md:w-4 md:h-4" />
                       PRIS
                     </div>
-                    <div className="text-base font-orbitron font-bold text-foreground">{formatPrice(t.price)}</div>
+                    <div className={`${isMobile ? 'text-sm' : 'text-base md:text-lg'} font-sans font-black text-white`}>{formatPrice(t.price)}</div>
                   </div>
-                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
-                    <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
-                      <Star className="w-4 h-4" />
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <Star className="w-3 h-3 md:w-4 md:h-4" />
                       MCAP
                     </div>
-                    <div className="text-base font-orbitron font-bold text-foreground">{formatCompact(t.marketCap)}</div>
+                    <div className={`${isMobile ? 'text-sm' : 'text-base md:text-lg'} font-sans font-black text-white`}>{formatCompact(t.marketCap)}</div>
                   </div>
                 </div>
 
                 {/* Volume and Holders Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
-                    <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
-                      <BarChart3 className="w-4 h-4" />
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <BarChart3 className="w-3 h-3 md:w-4 md:h-4" />
                       VOL 24H
                     </div>
-                    <div className="text-sm font-orbitron font-bold text-foreground">{formatCompact(t.volume24h)}</div>
+                    <div className={`${isMobile ? 'text-xs' : 'text-sm md:text-base'} font-sans font-black text-white`}>{formatCompact(t.volume24h)}</div>
                   </div>
-                  <div className="bg-muted/20 rounded-lg p-3 border border-border/50">
-                    <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
-                      <Users className="w-4 h-4" />
+                  <div className="bg-gray-900/60 rounded-lg p-2 md:p-3 border border-gray-700">
+                    <div className="flex items-center gap-2 text-gray-400 text-xs mb-1 md:mb-2">
+                      <Users className="w-3 h-3 md:w-4 md:h-4" />
                       HOLDERS
                     </div>
-                    <div className="text-sm font-orbitron font-bold text-foreground">{formatCompact(t.holders)}</div>
+                    <div className={`${isMobile ? 'text-xs' : 'text-sm md:text-base'} font-sans font-black text-white`}>{formatCompact(t.holders)}</div>
                   </div>
                 </div>
 
@@ -258,25 +259,25 @@ const MemeZoneTabs: React.FC = () => {
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8 md:py-16">
-      {/* Gaming Background */}
-      <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-10 animate-shimmer pointer-events-none"></div>
-      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-15 pointer-events-none"></div>
+      {/* Modern Background */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-blue-600/10 animate-pulse pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
       
-      <div className="relative z-10 w-full max-w-[2000px] mx-auto px-4 md:px-8">
-        {/* Ultra Gaming Header */}
-        <div className="text-center mb-12 md:mb-20">
-          <div className="bg-gradient-casino-gold rounded-3xl border-4 border-yellow-400/50 shadow-glow-gold p-8 md:p-12 mb-8">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Crown className="w-8 h-8 md:w-12 md:h-12 text-yellow-400 animate-pulse" />
-              <h2 className={`font-orbitron font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto] ${
-                isMobile ? 'text-4xl' : 'text-6xl md:text-8xl'
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-3 md:px-6 lg:px-8">
+        {/* Modern Header */}
+        <div className="text-center mb-8 md:mb-16">
+          <div className="bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 rounded-2xl md:rounded-3xl border-2 border-blue-400/50 shadow-lg p-6 md:p-10 mb-8">
+            <div className="flex items-center justify-center gap-3 md:gap-6 mb-4 md:mb-6">
+              <Crown className="w-6 h-6 md:w-10 md:h-10 text-blue-400" />
+              <h2 className={`font-sans font-black text-white ${
+                isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'
               }`}>
                 UTFORSKA ALLA TOKENS
               </h2>
-              <Crown className="w-8 h-8 md:w-12 md:h-12 text-yellow-400 animate-pulse" />
+              <Crown className="w-6 h-6 md:w-10 md:h-10 text-blue-400" />
             </div>
-            <p className={`text-yellow-100 font-orbitron font-bold ${isMobile ? 'text-lg' : 'text-2xl'} max-w-4xl mx-auto`}>
-              🎰 STORA BILDER • LIVE DATA • GAMING UPPLEVELSE 🎰
+            <p className={`text-blue-100 font-sans font-bold ${isMobile ? 'text-base' : 'text-xl md:text-2xl'} max-w-4xl mx-auto`}>
+              💎 STORA BILDER • LIVE DATA • PREMIUM UPPLEVELSE 💎
             </p>
           </div>
         </div>

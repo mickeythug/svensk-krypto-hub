@@ -155,40 +155,38 @@ const MemeTopCoins = () => {
       <div className="w-full h-screen p-0 md:p-2 lg:p-4 space-y-2 md:space-y-4 lg:space-y-6">
         
         {/* Ultra Gaming Header - Full Width */}
-        <div className="relative w-full bg-gradient-casino-gold rounded-none md:rounded-3xl border-0 md:border-4 border-yellow-400/50 shadow-glow-gold overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-10 animate-shimmer"></div>
-          <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20"></div>
+        <div className="relative w-full bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 rounded-none md:rounded-3xl border-0 md:border-2 border-blue-400/50 shadow-lg overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-blue-600/20 to-purple-600/20 animate-pulse"></div>
+          <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-10"></div>
           
-          <div className="relative z-10 p-4 md:p-8 text-center">
+          <div className="relative z-10 p-3 md:p-6 text-center">
             <div className="flex items-center justify-center gap-2 md:gap-4 mb-2 md:mb-4">
-              <Crown className="w-6 h-6 md:w-12 md:h-12 text-yellow-400 animate-pulse" />
-              <Gamepad2 className="w-5 h-5 md:w-8 md:h-8 text-yellow-300 animate-bounce" />
-              <h1 className="font-orbitron text-2xl md:text-5xl lg:text-7xl font-black bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400 bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">
+              <Crown className="w-5 h-5 md:w-8 md:h-8 text-blue-400 animate-pulse" />
+              <h1 className="font-sans font-black text-2xl md:text-4xl lg:text-6xl text-white drop-shadow-lg">
                 🏆 HETASTE TOKENS 🏆
               </h1>
-              <Gamepad2 className="w-5 h-5 md:w-8 md:h-8 text-yellow-300 animate-bounce" />
-              <Crown className="w-6 h-6 md:w-12 md:h-12 text-yellow-400 animate-pulse" />
+              <Crown className="w-5 h-5 md:w-8 md:h-8 text-blue-400 animate-pulse" />
             </div>
             
-            <div className="flex items-center justify-center gap-2 md:gap-4 text-sm md:text-xl font-bold text-yellow-100 mb-2 md:mb-4">
-              <Zap className="w-4 h-4 md:w-6 md:h-6 text-yellow-400 animate-pulse" />
-              <span className="text-xs md:text-base">CASINO-KVALITET • LIVE DATA • 15 TOKENS • GAMING MODE</span>
-              <Zap className="w-4 h-4 md:w-6 md:h-6 text-yellow-400 animate-pulse" />
+            <div className="flex items-center justify-center gap-2 md:gap-4 text-sm md:text-lg font-bold text-blue-100 mb-2 md:mb-4">
+              <Zap className="w-4 h-4 md:w-5 md:h-5 text-blue-400 animate-pulse" />
+              <span className="text-xs md:text-base font-sans">PREMIUM KVALITET • LIVE DATA • 15 TOKENS</span>
+              <Zap className="w-4 h-4 md:w-5 md:h-5 text-blue-400 animate-pulse" />
             </div>
 
             {/* Inline Gaming Sorter - Enhanced */}
-            <div className="flex flex-wrap justify-center gap-1 md:gap-3 mt-4">
+            <div className="flex flex-wrap justify-center gap-1 md:gap-2 mt-4">
               <Button
                 variant={getSortButtonVariant('marketCap')}
                 size={isMobile ? "sm" : "default"}
                 onClick={() => handleSort('marketCap')}
-                className={`font-orbitron font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-8' : 'text-sm px-4 py-2 h-10'} ${
+                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
                   sortBy === 'marketCap' 
-                    ? 'bg-yellow-600 text-black shadow-glow-gold border-yellow-400' 
-                    : 'bg-black/40 text-yellow-200 border-yellow-400/50 hover:bg-yellow-600/20 hover:border-yellow-400'
+                    ? 'bg-blue-600 text-white shadow-lg border-blue-400' 
+                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-blue-600/20 hover:border-blue-400'
                 }`}
               >
-                <BarChart3 className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
+                <BarChart3 className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
                 MCAP {sortBy === 'marketCap' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
@@ -196,13 +194,13 @@ const MemeTopCoins = () => {
                 variant={getSortButtonVariant('volume24h')}
                 size={isMobile ? "sm" : "default"}
                 onClick={() => handleSort('volume24h')}
-                className={`font-orbitron font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-8' : 'text-sm px-4 py-2 h-10'} ${
+                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
                   sortBy === 'volume24h' 
-                    ? 'bg-yellow-600 text-black shadow-glow-gold border-yellow-400' 
-                    : 'bg-black/40 text-yellow-200 border-yellow-400/50 hover:bg-yellow-600/20 hover:border-yellow-400'
+                    ? 'bg-blue-600 text-white shadow-lg border-blue-400' 
+                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-blue-600/20 hover:border-blue-400'
                 }`}
               >
-                <Volume2 className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
+                <Volume2 className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
                 VOLYM {sortBy === 'volume24h' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
@@ -210,13 +208,13 @@ const MemeTopCoins = () => {
                 variant={getSortButtonVariant('change24h')}
                 size={isMobile ? "sm" : "default"}
                 onClick={() => handleSort('change24h')}
-                className={`font-orbitron font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-8' : 'text-sm px-4 py-2 h-10'} ${
+                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
                   sortBy === 'change24h' 
-                    ? 'bg-yellow-600 text-black shadow-glow-gold border-yellow-400' 
-                    : 'bg-black/40 text-yellow-200 border-yellow-400/50 hover:bg-yellow-600/20 hover:border-yellow-400'
+                    ? 'bg-blue-600 text-white shadow-lg border-blue-400' 
+                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-blue-600/20 hover:border-blue-400'
                 }`}
               >
-                <TrendingUp className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
+                <TrendingUp className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
                 Δ24H {sortBy === 'change24h' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
@@ -224,13 +222,13 @@ const MemeTopCoins = () => {
                 variant={getSortButtonVariant('holders')}
                 size={isMobile ? "sm" : "default"}
                 onClick={() => handleSort('holders')}
-                className={`font-orbitron font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-8' : 'text-sm px-4 py-2 h-10'} ${
+                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
                   sortBy === 'holders' 
-                    ? 'bg-yellow-600 text-black shadow-glow-gold border-yellow-400' 
-                    : 'bg-black/40 text-yellow-200 border-yellow-400/50 hover:bg-yellow-600/20 hover:border-yellow-400'
+                    ? 'bg-blue-600 text-white shadow-lg border-blue-400' 
+                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-blue-600/20 hover:border-blue-400'
                 }`}
               >
-                <Users className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
+                <Users className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
                 HOLDERS {sortBy === 'holders' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
@@ -238,13 +236,13 @@ const MemeTopCoins = () => {
                 variant={getSortButtonVariant('price')}
                 size={isMobile ? "sm" : "default"}
                 onClick={() => handleSort('price')}
-                className={`font-orbitron font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-8' : 'text-sm px-4 py-2 h-10'} ${
+                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
                   sortBy === 'price' 
-                    ? 'bg-yellow-600 text-black shadow-glow-gold border-yellow-400' 
-                    : 'bg-black/40 text-yellow-200 border-yellow-400/50 hover:bg-yellow-600/20 hover:border-yellow-400'
+                    ? 'bg-blue-600 text-white shadow-lg border-blue-400' 
+                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-blue-600/20 hover:border-blue-400'
                 }`}
               >
-                <DollarSign className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'}`} />
+                <DollarSign className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
                 PRIS {sortBy === 'price' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
             </div>
@@ -317,12 +315,12 @@ const MemeTopCoins = () => {
                 {/* Compact Gaming Info */}
                 <div className={`${isMobile ? 'p-2 space-y-2' : 'p-3 space-y-3'}`}>
                   <div className="flex items-center justify-between">
-                    <h3 className={`font-orbitron font-black ${isMobile ? 'text-sm' : 'text-lg'} ${isTop1 ? 'text-yellow-400' : 'text-foreground'} truncate`}>
+                    <h3 className={`font-sans font-black text-white ${isMobile ? 'text-base' : 'text-xl'} ${isTop1 ? 'text-yellow-300' : ''} truncate`}>
                       {token.symbol}
                     </h3>
                     <Badge 
                       variant="outline" 
-                      className={`${positive ? 'border-success text-success bg-success/20' : 'border-destructive text-destructive bg-destructive/20'} font-bold ${isMobile ? 'text-xs px-1' : 'text-sm px-2'} ${isMobile ? 'py-0.5' : 'py-1'} shadow-lg`}
+                      className={`${positive ? 'border-green-400 text-green-400 bg-green-400/20' : 'border-red-400 text-red-400 bg-red-400/20'} font-bold ${isMobile ? 'text-xs px-1' : 'text-sm px-2'} ${isMobile ? 'py-0.5' : 'py-1'} shadow-lg`}
                     >
                       {positive ? <TrendingUp className="w-2 h-2 mr-0.5" /> : <TrendingDown className="w-2 h-2 mr-0.5" />}
                       {positive ? '+' : ''}{token.change24h.toFixed(1)}%
@@ -331,17 +329,17 @@ const MemeTopCoins = () => {
                 
                   {/* Ultra Compact Stats */}
                   <div className={`grid grid-cols-2 ${isMobile ? 'gap-1' : 'gap-2'}`}>
-                    <div className="bg-muted/20 rounded p-1.5">
-                      <div className={`${isMobile ? 'text-xs' : 'text-sm'} font-orbitron font-bold text-foreground`}>
+                    <div className="bg-gray-900/60 rounded p-1.5 border border-gray-700">
+                      <div className={`${isMobile ? 'text-sm' : 'text-lg'} font-sans font-black text-white`}>
                         {formatPrice(token.price)}
                       </div>
-                      <div className="text-xs text-muted-foreground">PRIS</div>
+                      <div className="text-xs text-gray-300 font-sans font-medium">PRIS</div>
                     </div>
-                    <div className="bg-muted/20 rounded p-1.5">
-                      <div className={`${isMobile ? 'text-xs' : 'text-sm'} font-orbitron font-bold text-foreground`}>
+                    <div className="bg-gray-900/60 rounded p-1.5 border border-gray-700">
+                      <div className={`${isMobile ? 'text-sm' : 'text-lg'} font-sans font-black text-white`}>
                         {formatMarketCap(token.marketCap)}
                       </div>
-                      <div className="text-xs text-muted-foreground">MCAP</div>
+                      <div className="text-xs text-gray-300 font-sans font-medium">MCAP</div>
                     </div>
                   </div>
 
