@@ -4,8 +4,8 @@ import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
-// Fallback to public RPC endpoint until proxy is configured properly
-const endpoint = 'https://api.mainnet-beta.solana.com';
+// Using QuickNode RPC endpoint for Solana connection
+const endpoint = 'https://responsive-sparkling-pallet.solana-mainnet.quiknode.pro/72d03aca67e738907fa91fc23c71091e1b20de38/';
 
 export default function SolanaProvider({ children }: { children: ReactNode }) {
   const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
