@@ -24,11 +24,13 @@ export function formatUsd(value?: number | null): string {
   if (abs >= 1) return `$${value.toFixed(2)}`;
   if (abs >= 0.1) return `$${value.toFixed(3)}`;
   if (abs >= 0.01) return `$${value.toFixed(4)}`;
-  if (abs >= 0.001) return `$${value.toFixed(6)}`;
-  if (abs >= 0.000001) return `$${value.toFixed(8)}`;
-  if (abs >= 0.00000001) return `$${value.toFixed(10)}`;
+  
+  // For very small values, shift by one decimal place to show meaningful digits
+  if (abs >= 0.001) return `$${(value * 10).toFixed(5)}`;
+  if (abs >= 0.000001) return `$${(value * 10).toFixed(7)}`;
+  if (abs >= 0.00000001) return `$${(value * 10).toFixed(9)}`;
 
-  return '<$0.00000001';
+  return '<$0.0000001';
 }
 
 export function formatPercent(value?: number | null, digits = 2): string {
