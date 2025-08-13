@@ -1,5 +1,5 @@
 // Supabase Edge Function: meme-catalog
-// Unified catalog with categories + pagination using DexScreener as primary source
+// Enhanced catalog using direct DexScreener API endpoints for hot tokens
 // Returns normalized MemeToken[] compatible with frontend and supports up to 50 items per page.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -25,6 +25,7 @@ interface MemeToken {
   tags: string[];
   isHot: boolean;
   description?: string;
+  trendingScore?: number;
 }
 
 type Category =
@@ -51,6 +52,105 @@ function getAdmin() {
   );
 }
 
+// Direct DexScreener API fetch with proper endpoints
+async function fetchDexScreenerTokens(sort: string, order: 'asc' | 'desc' = 'desc', limit = 50) {
+  try {
+    let url: string;
+    
+    // Use correct DexScreener API endpoints based on documentation
+    switch (sort) {
+      case 'trendingScore':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=trendingScore&limit=${limit}`;
+        break;
+      case 'priceChange':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=priceChange&limit=${limit}`;
+        break;
+      case 'priceChange5m':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=priceChange5m&limit=${limit}`;
+        break;
+      case 'priceChange1h':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=priceChange1h&limit=${limit}`;
+        break;
+      case 'priceChange6h':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=priceChange6h&limit=${limit}`;
+        break;
+      case 'volume':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=volume&limit=${limit}`;
+        break;
+      case 'marketCap':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=${order}&sort=marketCap&limit=${limit}`;
+        break;
+      case 'liquidity':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=${order}&sort=liquidity&limit=${limit}`;
+        break;
+      case 'createdAt':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=createdAt&limit=${limit}`;
+        break;
+      case 'txns':
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=txns&limit=${limit}`;
+        break;
+      case 'boosted':
+        url = `https://api.dexscreener.com/token-boosts/latest/v1/solana`;
+        break;
+      default:
+        // Default to trending
+        url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=trendingScore&limit=${limit}`;
+    }
+
+    console.log(`[meme-catalog] Fetching from DexScreener: ${url.substring(0, 100)}...`);
+    
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'CryptoNetworkSweden/1.0'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`DexScreener HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(`[meme-catalog] DexScreener response:`, { 
+      type: Array.isArray(data) ? 'array' : typeof data,
+      count: Array.isArray(data) ? data.length : 'unknown'
+    });
+    
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error(`[meme-catalog] DexScreener API error:`, error);
+    return [];
+  }
+}
+
+// Transform DexScreener data to MemeToken format
+function transformToMemeToken(profile: any, index: number, category: string): MemeToken | null {
+  try {
+    const tokenAddress = profile.tokenAddress || profile.address || profile.baseToken?.address;
+    if (!tokenAddress) return null;
+
+    return {
+      id: tokenAddress,
+      symbol: (profile.symbol || profile.baseToken?.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
+      name: profile.name || profile.baseToken?.name || profile.symbol || 'Token',
+      image: profile.imageUrl || profile.logoUrl || profile.logo || profile.baseToken?.logo || '/placeholder.svg',
+      description: profile.description || '',
+      price: parseFloat(profile.price || profile.priceUsd || '0'),
+      change24h: parseFloat(profile.priceChange24h || profile.change24h || profile.priceChange?.h24 || '0'),
+      volume24h: parseFloat(profile.volume24h || profile.volume?.h24 || '0'),
+      marketCap: parseFloat(profile.marketCap || profile.fdv || '0'),
+      holders: parseInt(profile.holders || '0'),
+      views: profile.views?.toString() || '—',
+      tags: [category],
+      isHot: category === 'trending' && index < 15,
+      trendingScore: parseFloat(profile.trendingScore || '0')
+    };
+  } catch (error) {
+    console.error(`[meme-catalog] Error transforming token:`, error);
+    return null;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -61,164 +161,96 @@ Deno.serve(async (req) => {
     const rawSize = Number(payload.pageSize ?? 50);
     const pageSize = Math.min(50, Math.max(1, isNaN(rawSize) ? 50 : rawSize));
 
-    const sb = getAdmin();
+    console.log(`[meme-catalog] Request: category=${category}, page=${page}, pageSize=${pageSize}`);
 
-    const norm = (d: any): any[] => Array.isArray(d?.results) ? d.results
-      : (Array.isArray(d?.data?.results) ? d.data.results
-      : (Array.isArray(d?.data) ? d.data
-      : (Array.isArray(d) ? d : [])));
-
-    const addrFrom = (arr: any[]): string[] => (arr || [])
-      .map((r: any) => r?.address || r?.baseToken?.address || r?.mainToken?.address || r?.token?.address)
-      .filter((a: any) => typeof a === 'string' && a.length > 0);
-
-    // Helper to fetch DexScreener profiles/pairs with a given sort
-    const fetchDexscreenerProfiles = async (sort: string, order: 'asc' | 'desc' = 'desc') => {
-      try {
-        const { data, error } = await sb.functions.invoke('dexscreener-proxy', { body: { action: 'profiles', sort, order, limit: 200 } });
-        if (error) throw error;
-        const arr = norm(data);
-        if (arr.length) return arr;
-      } catch (_) {}
-      // Fallback to pairsList if profiles unavailable
-      const { data: pairsRes } = await sb.functions.invoke('dexscreener-proxy', { body: { action: 'pairsList' } });
-      const pairs = norm(pairsRes);
-      // Local sort emulation
-      const asNum = (v: any) => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\s,]/g, '')) : 0);
-      const val = (p: any): number => {
-        switch (String(sort)) {
-          case 'priceChange': return asNum(p?.priceChange?.h24);
-          case 'priceChange5m': return asNum(p?.priceChange?.m5);
-          case 'priceChange1h': return asNum(p?.priceChange?.h1);
-          case 'priceChange6h': return asNum(p?.priceChange?.h6);
-          case 'volume': return asNum(p?.volume?.h24);
-          case 'liquidity': return asNum(p?.liquidity?.usd);
-          case 'marketCap': return asNum(p?.marketCap);
-          case 'txns': { const b = asNum(p?.txns?.h24?.buys); const s = asNum(p?.txns?.h24?.sells); return b + s; }
-          case 'createdAt': return asNum(p?.pairCreatedAt ?? p?.createdAt);
-          case 'trendingScore':
-          default: {
-            const t1 = ((asNum(p?.txns?.h1?.buys) || 0) + (asNum(p?.txns?.h1?.sells) || 0)) * 1000;
-            const pc = (asNum(p?.priceChange?.h1) || 0) * 100;
-            const liq = (asNum(p?.liquidity?.usd) || 0);
-            return t1 + pc + liq * 0.001;
-          }
-        }
-      };
-      const sorted = [...pairs].sort((a, b) => val(b) - val(a));
-      return order === 'asc' ? sorted.reverse() : sorted;
-    };
-
-    // 1) Resolve candidate addresses by category
-    let addresses: string[] = [];
+    // Determine DexScreener API parameters based on category
+    let apiSort = 'trendingScore';
+    let apiOrder: 'asc' | 'desc' = 'desc';
+    
     switch (category) {
-      case 'trending': {
-        const list = await fetchDexscreenerProfiles('trendingScore', 'desc');
-        addresses = addrFrom(list);
+      case 'trending':
+        apiSort = 'trendingScore';
         break;
-      }
-      case 'gainers': {
-        const list = await fetchDexscreenerProfiles('priceChange', 'desc');
-        addresses = addrFrom(list);
+      case 'gainers':
+        apiSort = 'priceChange';
         break;
-      }
-      case 'marketcap_high': {
-        const list = await fetchDexscreenerProfiles('marketCap', 'desc');
-        addresses = addrFrom(list);
+      case 'volume':
+        apiSort = 'volume';
         break;
-      }
-      case 'marketcap_low': {
-        const list = await fetchDexscreenerProfiles('marketCap', 'asc');
-        addresses = addrFrom(list);
+      case 'marketcap_high':
+        apiSort = 'marketCap';
+        apiOrder = 'desc';
         break;
-      }
-      case 'liquidity_high': {
-        const list = await fetchDexscreenerProfiles('liquidity', 'desc');
-        addresses = addrFrom(list);
+      case 'marketcap_low':
+        apiSort = 'marketCap';
+        apiOrder = 'asc';
         break;
-      }
-      case 'liquidity_low': {
-        const list = await fetchDexscreenerProfiles('liquidity', 'asc');
-        addresses = addrFrom(list);
+      case 'liquidity_high':
+        apiSort = 'liquidity';
+        apiOrder = 'desc';
         break;
-      }
-      case 'txns': {
-        const list = await fetchDexscreenerProfiles('txns', 'desc');
-        addresses = addrFrom(list);
+      case 'liquidity_low':
+        apiSort = 'liquidity';
+        apiOrder = 'asc';
         break;
-      }
-      case 'volume': {
-        const list = await fetchDexscreenerProfiles('volume', 'desc');
-        addresses = addrFrom(list);
+      case 'newest':
+        apiSort = 'createdAt';
         break;
-      }
-      case 'newest': {
-        const { data } = await sb.functions.invoke('dexscreener-proxy', { body: { action: 'pairsList', sort: 'createdAt', order: 'desc' } });
-        addresses = addrFrom(norm(data));
+      case 'txns':
+        apiSort = 'txns';
         break;
-      }
-      case 'boosted': {
-        const { data } = await sb.functions.invoke('dexscreener-proxy', { body: { action: 'boosted' } });
-        addresses = addrFrom(norm(data));
+      case 'boosted':
+        apiSort = 'boosted';
         break;
-      }
+      default:
+        apiSort = 'trendingScore';
     }
 
-    // Total available (best-effort). DexScreener does not give a total; we approximate by deduped list length.
-    const uniqueAddresses = Array.from(new Set(addresses));
-    const total = uniqueAddresses.length;
-
-    if (!uniqueAddresses.length) {
+    console.log(`[meme-catalog] Using API sort=${apiSort}, order=${apiOrder}`);
+    
+    // Fetch data from DexScreener API
+    const profiles = await fetchDexScreenerTokens(apiSort, apiOrder, 200);
+    
+    if (!profiles.length) {
+      console.log(`[meme-catalog] No profiles returned from DexScreener`);
       return json({ items: [], page, pageSize, total: 0 });
     }
 
-    // 2) Page the address list
-    const start = (page - 1) * pageSize;
-    const paged = uniqueAddresses.slice(start, start + pageSize);
+    console.log(`[meme-catalog] Received ${profiles.length} profiles from DexScreener`);
 
-    // 3) Fetch full details in batch via DexScreener proxy
-    const { data: batch, error: batchErr } = await sb.functions.invoke('dexscreener-proxy', {
-      body: { action: 'tokenBatch', addresses: paged }
+    // Transform and paginate
+    const allTokens: MemeToken[] = [];
+    
+    for (let i = 0; i < profiles.length; i++) {
+      const token = transformToMemeToken(profiles[i], i, category);
+      if (token) {
+        allTokens.push(token);
+      }
+    }
+
+    // Apply pagination
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedTokens = allTokens.slice(startIndex, endIndex);
+
+    console.log(`[meme-catalog] Processed ${allTokens.length} tokens, returning ${paginatedTokens.length} for page ${page}`);
+
+    return json({
+      items: paginatedTokens,
+      page,
+      pageSize,
+      total: allTokens.length
     });
-    if (batchErr) throw batchErr;
-    const items: any[] = Array.isArray(batch?.results) ? batch.results : [];
 
-    // 4) Map to MemeToken
-    const toNum = (v: any): number => {
-      if (typeof v === 'number') return isFinite(v) ? v : 0;
-      if (typeof v === 'string') { const n = Number(v.replace(/[\,\s]/g, '')); return isNaN(n) ? 0 : n; }
-      return 0;
-    };
-
-    const mapped: MemeToken[] = items
-      .filter((x: any) => x?.ok && (x?.meta?.data ?? x?.meta)?.address)
-      .map((x: any, idx: number) => {
-        const metaD = (x?.meta?.data ?? x?.meta) as any || {};
-        const priceD = (x?.price?.data ?? x?.price) as any || {};
-        const infoD = (x?.info?.data ?? x?.info) as any || {};
-        const poolD = (x?.poolPrice?.data ?? x?.poolPrice) as any || {};
-        return {
-          id: metaD.address,
-          symbol: (metaD.symbol || 'TOKEN').toString().slice(0, 12).toUpperCase(),
-          name: metaD.name || metaD.symbol || 'Token',
-          image: metaD.logo || '/placeholder.svg',
-          price: toNum(priceD.price),
-          change24h: toNum(priceD.variation24h),
-          volume24h: toNum(poolD.volume24h),
-          marketCap: toNum(infoD.mcap),
-          holders: toNum(infoD.holders),
-          views: '—',
-          emoji: undefined,
-          tags: [category],
-          isHot: category === 'trending' ? idx < 10 : false,
-          description: metaD.description,
-        } as MemeToken;
-      });
-
-    return json({ items: mapped, page, pageSize, total });
-  } catch (e: any) {
-    console.error('[meme-catalog-error]', e?.message ?? e);
-    // Fail soft with 200 to avoid client-side 502 surfacing
-    return json({ items: [], page: 1, pageSize: 50, total: 0, error: e?.message ?? String(e) }, 200);
+  } catch (error) {
+    console.error('[meme-catalog] Error:', error);
+    // Return soft error to avoid breaking frontend
+    return json({ 
+      items: [], 
+      page: 1, 
+      pageSize: 50, 
+      total: 0, 
+      error: error?.message || 'Unknown error' 
+    }, 200);
   }
 });
