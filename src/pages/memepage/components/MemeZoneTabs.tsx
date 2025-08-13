@@ -501,11 +501,11 @@ const MemeZoneTabs: React.FC = () => {
             <span className="font-bold text-lg text-foreground">TOKEN EXPLORER</span>
             <Sparkles className="w-6 h-6 text-primary" />
           </div>
-          <h1 className="font-black text-4xl md:text-6xl text-foreground mb-4">
-            UPPTÄCK <span className="text-primary">TOKENS</span>
+          <h1 className="font-black text-4xl md:text-6xl bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-4">
+            UPPTÄCK TOKENS
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Utforska tusentals meme tokens med avancerade filter och sortering
+            Utforska alla meme tokens med avancerade filter och sortering
           </p>
         </div>
 
