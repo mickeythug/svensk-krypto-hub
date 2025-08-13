@@ -184,10 +184,10 @@ const TokenGrid: React.FC<{
                 {/* Rank */}
                 <div className="flex-shrink-0 w-16 text-center">
                   <Badge className={`${
-                    index === 0 ? 'bg-gradient-to-r from-gray-400 to-gray-600 text-white text-xl font-bold px-5 py-3 animate-pulse' :
+                    index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xl font-bold px-5 py-3 animate-pulse' :
                       index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black text-lg font-bold px-5 py-3' :
                     index === 2 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black text-lg font-bold px-5 py-3' :
-                    'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-base font-bold px-4 py-2'
+                    'bg-gradient-to-r from-gray-400 to-gray-600 text-white text-base font-bold px-4 py-2'
                   }`}>
                     {index === 0 && <Crown className="w-6 h-6 mr-2 animate-pulse" />}
                     #{token.rank}
