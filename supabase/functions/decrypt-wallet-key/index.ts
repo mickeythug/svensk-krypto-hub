@@ -61,10 +61,21 @@ serve(async (req) => {
     const requestData = await req.json();
     const walletAddress = requestData.wallet_address;
     const keyType = requestData.key_type || 'private_key';
+    const solanaAddress = requestData.solanaAddress;
     
     if (!walletAddress) {
       return new Response(
         JSON.stringify({ error: 'wallet_address is required' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    if (!solanaAddress) {
+      return new Response(
+        JSON.stringify({ error: 'solanaAddress is required' }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -90,7 +101,7 @@ serve(async (req) => {
 
     // Retrieve encrypted key using the secure function
     const { data: encryptedKeyBytea, error: retrieveError } = await supabaseAdmin.rpc('get_encrypted_key', {
-      p_user_id: user.id,
+      p_user_id: solanaAddress,
       p_wallet_address: walletAddress,
       p_key_type: keyType,
     });
@@ -154,7 +165,7 @@ serve(async (req) => {
 
     const decryptedKey = await decryptString(encryptedHex);
 
-    console.log(`Successfully decrypted ${keyType} for user ${user.id}, wallet ${walletAddress}`);
+    console.log(`Successfully decrypted ${keyType} for solana address ${solanaAddress}, wallet ${walletAddress}`);
 
     return new Response(
       JSON.stringify({ 

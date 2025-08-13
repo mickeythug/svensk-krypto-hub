@@ -59,7 +59,8 @@ export function useTradingWallet() {
             const { data: keyData, error: keyError } = await supabase.functions.invoke('decrypt-wallet-key', {
               body: { 
                 wallet_address: data.wallet_address,
-                key_type: 'private_key'
+                key_type: 'private_key',
+                solanaAddress: authenticatedSolAddress
               }
             });
             
@@ -102,7 +103,8 @@ export function useTradingWallet() {
           const { data: keyData, error: keyError } = await supabase.functions.invoke('decrypt-wallet-key', {
             body: { 
               wallet_address: walletAddress,
-              key_type: 'private_key'
+              key_type: 'private_key',
+              solanaAddress: authenticatedSolAddress
             }
           });
           
@@ -234,7 +236,8 @@ export function useTradingWallet() {
       const { data: keyData, error } = await supabase.functions.invoke('decrypt-wallet-key', {
         body: { 
           wallet_address: walletAddress,
-          key_type: 'private_key'
+          key_type: 'private_key',
+          solanaAddress: authenticatedSolAddress
         }
       });
       
