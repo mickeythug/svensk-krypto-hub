@@ -154,7 +154,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto z-[100]">
         <DialogHeader className="pb-6 border-b">
           <DialogTitle className="flex items-center gap-3 text-2xl font-semibold">
             <div className="p-2 rounded-lg bg-primary/10">

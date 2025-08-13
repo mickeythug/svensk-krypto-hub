@@ -74,7 +74,7 @@ export function MobileWalletManagement({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto p-0 z-[100]">
         <div className="bg-gradient-to-br from-background to-muted/20 min-h-full">
           {/* Header */}
           <div className="p-4 border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
