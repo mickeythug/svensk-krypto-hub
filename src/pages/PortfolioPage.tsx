@@ -214,9 +214,9 @@ const PortfolioPage = () => {
     );
   }
 
-  // Show loading state with better error handling
-  if (cryptoLoading || (fullyAuthed && (solLoading || evmLoading || tradingLoading))) {
-    console.log('Portfolio: Loading state', { cryptoLoading, solLoading, evmLoading, tradingLoading });
+  // Show loading state only for essential data (not trading wallet)
+  if (cryptoLoading || (fullyAuthed && (solLoading || evmLoading))) {
+    console.log('Portfolio: Loading state', { cryptoLoading, solLoading, evmLoading });
     return (
       <div className="min-h-screen bg-background">
         {isMobile ? <MobileHeader title="PORTFÖLJ" /> : <Header />}
@@ -228,7 +228,6 @@ const PortfolioPage = () => {
                 {cryptoLoading ? 'Laddar marknadspriser...' : 
                  solLoading ? 'Laddar Solana balans...' :
                  evmLoading ? 'Laddar Ethereum balans...' :
-                 tradingLoading ? 'Laddar trading wallet...' :
                  'Laddar portföljdata...'}
               </p>
             </div>

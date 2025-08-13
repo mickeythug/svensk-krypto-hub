@@ -40,7 +40,6 @@ export function useTradingWallet() {
               console.log('Could not retrieve private key:', err);
             }
           }
-          setLoading(false);
           return;
         }
         
@@ -61,7 +60,6 @@ export function useTradingWallet() {
             setWalletAddress(lsAddr);
             setAcknowledged(lsAck);
             if (!lsAck && lsPk) setPrivateKey(lsPk);
-            setLoading(false);
             return;
           } catch (err) {
             console.error('Failed to migrate wallet to DB:', err);
@@ -92,7 +90,9 @@ export function useTradingWallet() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { 
+    load(); 
+  }, []); // Empty dependency array to run only once
 
   const createIfMissing = useCallback(async () => {
     console.log('createIfMissing called, current walletAddress:', walletAddress);
