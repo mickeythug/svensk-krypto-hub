@@ -45,6 +45,15 @@ const formatMarketCap = (cap: number): string => {
   return `$${cap.toFixed(0)}`;
 };
 
+const formatPercentage = (n: number): string => {
+  if (!isFinite(n)) return '0%';
+  const abs = Math.abs(n);
+  if (abs >= 1000) return `${(n/1000).toFixed(1)}k%`;
+  if (abs >= 100) return `${n.toFixed(0)}%`;
+  if (abs >= 10) return `${n.toFixed(1)}%`;
+  return `${n.toFixed(2)}%`;
+};
+
 type SortOption = 'marketCap' | 'price' | 'volume24h' | 'holders' | 'change24h';
 type SortDirection = 'asc' | 'desc';
 
@@ -316,18 +325,25 @@ const MemeTopCoins = () => {
 
                 {/* Compact Gaming Info */}
                 <div className={`${isMobile ? 'p-2 space-y-2' : 'p-3 space-y-3'}`}>
-                  <div className="flex items-center justify-between">
-                    <h3 className={`font-sans font-black text-white ${isMobile ? 'text-base' : 'text-xl'} ${isTop1 ? 'text-yellow-300' : ''} truncate`}>
-                      {token.symbol}
-                    </h3>
-                    <Badge 
-                      variant="outline" 
-                      className={`${positive ? 'border-green-400 text-green-400 bg-green-400/20' : 'border-red-400 text-red-400 bg-red-400/20'} font-bold ${isMobile ? 'text-xs px-1' : 'text-sm px-2'} ${isMobile ? 'py-0.5' : 'py-1'} shadow-lg`}
-                    >
-                      {positive ? <TrendingUp className="w-2 h-2 mr-0.5" /> : <TrendingDown className="w-2 h-2 mr-0.5" />}
-                      {positive ? '+' : ''}{token.change24h.toFixed(1)}%
-                    </Badge>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className={`font-sans font-black text-white ${isMobile ? 'text-base' : 'text-xl'} ${isTop1 ? 'text-yellow-300' : ''} truncate`}>
+                    {token.symbol}
+                  </h3>
+                  
+                  {/* Modern Large Percentage Display */}
+                  <div className={`flex items-center gap-1 ${isMobile ? 'text-base' : 'text-lg'} font-sans font-black ${
+                    positive ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {positive ? (
+                      <TrendingUp className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} animate-pulse`} />
+                    ) : (
+                      <TrendingDown className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} animate-pulse`} />
+                    )}
+                    <span className="drop-shadow-lg">
+                      {positive ? '+' : ''}{formatPercentage(token.change24h)}
+                    </span>
                   </div>
+                </div>
                 
                   {/* Ultra Compact Stats */}
                   <div className={`grid grid-cols-2 ${isMobile ? 'gap-1' : 'gap-2'}`}>
