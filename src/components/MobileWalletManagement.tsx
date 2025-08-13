@@ -21,7 +21,9 @@ import {
 interface MobileWalletManagementProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  walletAddress?: string;
+  authWalletAddress?: string;
+  authConnected: boolean;
+  tradingWalletAddress?: string;
   privateKey?: string;
   acknowledged: boolean;
   loading: boolean;
@@ -39,7 +41,9 @@ interface MobileWalletManagementProps {
 export function MobileWalletManagement({
   open,
   onOpenChange,
-  walletAddress,
+  authWalletAddress,
+  authConnected,
+  tradingWalletAddress,
   privateKey,
   acknowledged,
   loading,
@@ -90,7 +94,47 @@ export function MobileWalletManagement({
           </div>
 
           <div className="p-4 space-y-4">
-            {walletAddress ? (
+            {/* Autheriserings Wallet */}
+            {authConnected && authWalletAddress && (
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+                <div className="p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 rounded-2xl bg-blue-500/10">
+                        <Shield className="h-6 w-6 text-blue-500" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Autheriserings Wallet</h3>
+                        <p className="text-sm text-muted-foreground">Phantom anslutning</p>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="px-2 py-1 text-xs bg-blue-500/10 text-blue-500 border-blue-500/20">
+                      Ansluten
+                    </Badge>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Public Key</label>
+                    <div className="relative">
+                      <div className="p-3 bg-white/50 dark:bg-black/20 rounded-lg font-mono text-xs break-all border">
+                        {authWalletAddress}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => copyToClipboard(authWalletAddress || '', 'Autheriserings wallet address')}
+                        className="absolute right-1 top-1 h-8 w-8"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            )}
+
+            {/* Trading Wallet */}
+            {tradingWalletAddress ? (
               <>
                 {/* Wallet Card - App Store Style */}
                 <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-card to-card/50">
@@ -101,11 +145,11 @@ export function MobileWalletManagement({
                         <div className="p-3 rounded-2xl bg-primary/10">
                           <Wallet className="h-6 w-6 text-primary" />
                         </div>
-                        <div>
-                          <h3 className="font-semibold">Trading Wallet</h3>
-                          <p className="text-sm text-muted-foreground">Auto-genererad</p>
-                        </div>
+                      <div>
+                        <h3 className="font-semibold">Trading Wallet</h3>
+                        <p className="text-sm text-muted-foreground">Auto-genererad</p>
                       </div>
+                    </div>
                       <Badge variant="secondary" className="px-2 py-1 text-xs">
                         Aktiv
                       </Badge>
@@ -113,15 +157,15 @@ export function MobileWalletManagement({
 
                     {/* Wallet Address */}
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Wallet Address</label>
+                      <label className="text-sm font-medium">Trading Wallet Address</label>
                       <div className="relative">
                         <div className="p-3 bg-muted/50 rounded-lg font-mono text-xs break-all border">
-                          {walletAddress}
+                          {tradingWalletAddress}
                         </div>
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => copyToClipboard(walletAddress || '', 'Wallet address')}
+                          onClick={() => copyToClipboard(tradingWalletAddress || '', 'Trading wallet address')}
                           className="absolute right-1 top-1 h-8 w-8"
                         >
                           <Copy className="h-3 w-3" />
@@ -141,7 +185,7 @@ export function MobileWalletManagement({
                         QR-kod
                       </Button>
                       <Button
-                        onClick={() => copyToClipboard(walletAddress || '', 'Wallet address')}
+                        onClick={() => copyToClipboard(tradingWalletAddress || '', 'Trading wallet address')}
                         variant="outline"
                         size="sm"
                         className="h-10"
@@ -166,7 +210,7 @@ export function MobileWalletManagement({
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Skanna med din wallet för att skicka SOL
+                        Skanna med din wallet för att skicka SOL till trading wallet
                       </p>
                       <div className="flex gap-2">
                         <Button
@@ -306,9 +350,9 @@ export function MobileWalletManagement({
                 {/* Funding Actions */}
                 <Card className="border-0 shadow-lg">
                   <div className="p-4 space-y-3">
-                    <h4 className="font-medium">Fyll på Konto</h4>
+                    <h4 className="font-medium">Fyll på Trading Wallet</h4>
                     <p className="text-sm text-muted-foreground">
-                      Skicka SOL för att börja handla
+                      Skicka SOL till trading wallet för att börja handla
                     </p>
                     <Button
                       onClick={() => window.open(`https://phantom.app/`, '_blank')}
@@ -336,15 +380,30 @@ export function MobileWalletManagement({
                   </div>
                 </Card>
               </>
-            ) : (
-              /* No Wallet - Create Card */
+            ) : !authConnected ? (
+              /* No Auth Wallet */
               <Card className="border-0 shadow-lg text-center">
                 <div className="p-6 space-y-4">
                   <div className="p-4 rounded-2xl bg-muted/20 w-fit mx-auto">
                     <Wallet className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">Ingen Trading Wallet</h3>
+                    <h3 className="font-semibold mb-2">Ingen Wallet Ansluten</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Anslut din Phantom wallet för att börja
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            ) : (
+              /* Auth Connected but No Trading Wallet */
+              <Card className="border-0 shadow-lg text-center">
+                <div className="p-6 space-y-4">
+                  <div className="p-4 rounded-2xl bg-muted/20 w-fit mx-auto">
+                    <Wallet className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-2">Skapa Trading Wallet</h3>
                     <p className="text-sm text-muted-foreground">
                       Skapa en trading wallet för att börja handla
                     </p>

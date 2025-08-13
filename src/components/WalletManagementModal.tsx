@@ -22,6 +22,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useTradingWallet } from "@/hooks/useTradingWallet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { MobileWalletManagement } from "./MobileWalletManagement";
 import QRCode from 'qrcode';
 
@@ -37,8 +38,13 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
   const [showQrCode, setShowQrCode] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
   
+  // Solana wallet connection (för autherisering)
+  const { publicKey: authWalletKey, connected: authConnected } = useWallet();
+  const authWalletAddress = authWalletKey?.toBase58();
+  
+  // Trading wallet (auto-genererad)
   const { 
-    walletAddress, 
+    walletAddress: tradingWalletAddress, 
     privateKey, 
     acknowledged, 
     confirmBackup, 
@@ -46,10 +52,10 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     createIfMissing 
   } = useTradingWallet();
 
-  // Generate QR code when wallet address is available
+  // Generate QR code for trading wallet when available
   useEffect(() => {
-    if (walletAddress) {
-      QRCode.toDataURL(walletAddress, {
+    if (tradingWalletAddress) {
+      QRCode.toDataURL(tradingWalletAddress, {
         width: isMobile ? 250 : 320,
         margin: 3,
         color: {
@@ -59,7 +65,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
         errorCorrectionLevel: 'H'
       }).then(setQrCodeDataUrl).catch(console.error);
     }
-  }, [walletAddress, isMobile]);
+  }, [tradingWalletAddress, isMobile]);
 
   const copyToClipboard = async (text: string, label: string) => {
     try {
@@ -81,7 +87,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     if (qrCodeDataUrl) {
       const link = document.createElement('a');
       link.href = qrCodeDataUrl;
-      link.download = `wallet-qr-${walletAddress?.slice(0, 8)}.png`;
+      link.download = `wallet-qr-${tradingWalletAddress?.slice(0, 8)}.png`;
       link.click();
     }
   };
@@ -136,7 +142,9 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     return <MobileWalletManagement 
       open={open} 
       onOpenChange={onOpenChange}
-      walletAddress={walletAddress}
+      authWalletAddress={authWalletAddress}
+      authConnected={authConnected}
+      tradingWalletAddress={tradingWalletAddress}
       privateKey={privateKey}
       acknowledged={acknowledged}
       loading={loading}
@@ -168,7 +176,50 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
         </DialogHeader>
 
         <div className="space-y-6 pt-6">
-          {walletAddress ? (
+          {/* Autheriserings Wallet Card */}
+          {authConnected && authWalletAddress && (
+            <Card className="overflow-hidden border border-primary/20">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-blue-500/10">
+                      <Shield className="h-6 w-6 text-blue-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold">Autheriserings Wallet</h3>
+                      <p className="text-muted-foreground">Ansluten via Phantom</p>
+                    </div>
+                  </div>
+                  <Badge variant="secondary" className="px-3 py-1 bg-blue-500/10 text-blue-500 border-blue-500/20">
+                    Ansluten
+                  </Badge>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    Wallet Address (Public Key)
+                  </label>
+                  <div className="relative group">
+                    <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all min-h-[50px] flex items-center">
+                      {authWalletAddress}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyToClipboard(authWalletAddress || '', 'Autheriserings wallet address')}
+                      className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* Trading Wallet Card */}
+          {tradingWalletAddress ? (
             <Card className="overflow-hidden border">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -178,7 +229,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold">Trading Wallet</h3>
-                      <p className="text-muted-foreground">Auto-genererad för plattformen</p>
+                      <p className="text-muted-foreground">Auto-genererad för trading</p>
                     </div>
                   </div>
                   <Badge variant="secondary" className="px-3 py-1">
@@ -195,12 +246,12 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                       </label>
                       <div className="relative group">
                         <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all min-h-[50px] flex items-center">
-                          {walletAddress}
+                          {tradingWalletAddress}
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => copyToClipboard(walletAddress || '', 'Wallet address')}
+                          onClick={() => copyToClipboard(tradingWalletAddress || '', 'Trading wallet address')}
                           className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <Copy className="h-4 w-4" />
@@ -345,10 +396,10 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                           </div>
                           <div className="space-y-2">
                             <p className="text-sm text-muted-foreground">
-                              Skanna med din wallet för att skicka SOL
+                              Skanna med din wallet för att skicka SOL till trading wallet
                             </p>
                             <p className="text-xs text-muted-foreground font-mono">
-                              {walletAddress?.slice(0, 20)}...{walletAddress?.slice(-10)}
+                              {tradingWalletAddress?.slice(0, 20)}...{tradingWalletAddress?.slice(-10)}
                             </p>
                           </div>
                           <div className="flex gap-2 justify-center">
@@ -390,12 +441,12 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                         </p>
                         <div className="space-y-2">
                           <Button
-                            onClick={() => copyToClipboard(walletAddress || '', 'Wallet address')}
+                            onClick={() => copyToClipboard(tradingWalletAddress || '', 'Trading wallet address')}
                             variant="outline"
                             className="w-full"
                           >
                             <Copy className="h-4 w-4 mr-2" />
-                            Kopiera Wallet Address
+                            Kopiera Trading Wallet Address
                           </Button>
                           <Button
                             onClick={() => window.open(`https://phantom.app/`, '_blank')}
@@ -440,14 +491,32 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                 </Card>
               </div>
             </Card>
-          ) : (
+          )}
+
+          {!authConnected && !tradingWalletAddress && (
             <Card className="p-8 text-center">
               <div className="space-y-4 max-w-md mx-auto">
                 <div className="p-4 rounded-lg bg-muted/20 w-fit mx-auto">
                   <Wallet className="h-12 w-12 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Ingen Trading Wallet</h3>
+                  <h3 className="text-xl font-semibold mb-2">Ingen Wallet Ansluten</h3>
+                  <p className="text-muted-foreground">
+                    Anslut din Phantom wallet för att börja använda plattformen.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {authConnected && !tradingWalletAddress && (
+            <Card className="p-8 text-center">
+              <div className="space-y-4 max-w-md mx-auto">
+                <div className="p-4 rounded-lg bg-muted/20 w-fit mx-auto">
+                  <Wallet className="h-12 w-12 text-muted-foreground" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Skapa Trading Wallet</h3>
                   <p className="text-muted-foreground">
                     Du har ingen trading wallet ännu. Skapa en för att börja handla på plattformen.
                   </p>
