@@ -27,6 +27,7 @@ function toHex(bytes: Uint8Array) {
 }
 
 export default function ConnectWalletButton() {
+  // All hooks must be called at the top level, always in the same order
   const { address, isConnected } = useAccount();
   const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
@@ -36,20 +37,25 @@ export default function ConnectWalletButton() {
   const { switchChainAsync } = useSwitchChain();
   const { connection: solConnection } = useConnection();
 
-  // Solana wallet
+  // Solana wallet - all hooks must be called consistently
   const { connected: solConnected, connect: connectSol, disconnect: disconnectSol, publicKey, signMessage: signMessageSol, select, wallets, wallet } = useWallet();
   const { setVisible: setWalletModalVisible } = useWalletModal();
   const solAddress = publicKey?.toBase58();
   const { balance: solBalance } = useSolBalance();
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
-  const { walletAddress: twAddress, privateKey: twPk, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
+  
+  // Always call these hooks
   const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
   const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(1);
   const [isAuthed, setIsAuthed] = useState(false);
   const [nonce, setNonce] = useState<string>('');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  
+  // These hooks must always be called
   const { data: balances } = useWalletBalances(address as Address | undefined);
+  const { walletAddress: twAddress, privateKey: twPk, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
+  
+  // Computed values
   const selectedChainBalance = useMemo(() => balances.find?.((b) => b.chainId === selectedEvmChainId), [balances, selectedEvmChainId]);
   const authedSol = useMemo(() => {
     const verified = sessionStorage.getItem('siws_verified') === 'true';

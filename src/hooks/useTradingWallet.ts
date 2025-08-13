@@ -150,9 +150,11 @@ export function useTradingWallet() {
     
     try {
       // Create wallet via secure edge function
+      console.log('Calling pump-create-wallet with solanaAddress:', authenticatedSolAddress);
       const { data, error } = await supabase.functions.invoke('pump-create-wallet', {
         body: { solanaAddress: authenticatedSolAddress }
       });
+      console.log('pump-create-wallet response:', { data, error });
       
       if (error) {
         console.error('Error creating wallet:', error);
@@ -207,6 +209,7 @@ export function useTradingWallet() {
         .eq('user_id', authenticatedSolAddress)
         .eq('wallet_address', walletAddress);
         
+      
       if (error) {
         console.error('Error acknowledging backup:', error);
         return false;
@@ -251,7 +254,7 @@ export function useTradingWallet() {
       console.error('Error fetching private key:', error);
       return null;
     }
-  }, [walletAddress, acknowledged]);
+  }, [walletAddress, acknowledged, authenticatedSolAddress]);
 
   return { 
     loading, 

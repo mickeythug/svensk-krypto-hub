@@ -12,16 +12,23 @@ serve(async (req) => {
   }
 
   try {
+    console.log('pump-create-wallet function called');
+    
     // Get the Solana address from the request body
     const requestBody = await req.json();
+    console.log('Request body:', requestBody);
+    
     const { solanaAddress } = requestBody;
     
     if (!solanaAddress) {
+      console.error('Missing solanaAddress in request');
       return new Response(JSON.stringify({ error: "Solana address required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    
+    console.log('Creating wallet for Solana address:', solanaAddress);
     
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -29,9 +36,12 @@ serve(async (req) => {
     );
 
     // Call PumpPortal to create wallet
+    console.log('Calling PumpPortal API...');
     const res = await fetch("https://pumpportal.fun/api/create-wallet", { method: "GET" });
+    console.log('PumpPortal response status:', res.status);
     if (!res.ok) {
       const txt = await res.text();
+      console.error('PumpPortal API failed:', txt);
       return new Response(JSON.stringify({ error: "PumpPortal wallet creation failed", details: txt }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -39,6 +49,7 @@ serve(async (req) => {
     }
 
     const responseBody = await res.json();
+    console.log('PumpPortal response body:', responseBody);
     // Try common field names
     const walletAddress = responseBody.walletAddress || responseBody.publicKey || responseBody.address || responseBody.pubkey;
     const privateKey = responseBody.privateKey || responseBody.secretKey || responseBody.sk;
@@ -120,6 +131,7 @@ serve(async (req) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
+    console.error('Unexpected error in pump-create-wallet:', e);
     return new Response(JSON.stringify({ error: "Unexpected error", details: String(e) }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
