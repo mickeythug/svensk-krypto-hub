@@ -3,6 +3,36 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useWallet } from '@solana/wallet-adapter-react';
 
+// Helper function to call the public trading wallet API
+const callTradingWalletAPI = async (method: 'GET' | 'POST', params?: any) => {
+  const url = new URL(`https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/trading-wallet-public`);
+  
+  if (method === 'GET' && params?.user_id) {
+    url.searchParams.set('user_id', params.user_id);
+  }
+
+  const options: RequestInit = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U`
+    }
+  };
+
+  if (method === 'POST' && params) {
+    options.body = JSON.stringify(params);
+  }
+
+  const response = await fetch(url.toString(), options);
+  const result = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(result.error || 'API call failed');
+  }
+  
+  return result.data;
+};
+
 export function useTradingWallet() {
   const { toast } = useToast();
   const { connected: authConnected, publicKey } = useWallet();
@@ -36,17 +66,9 @@ export function useTradingWallet() {
     try {
       console.log('Loading trading wallet for address:', authenticatedSolAddress);
       
-      // Check if trading wallet exists for this address
-      const { data, error } = await supabase
-        .from('trading_wallets')
-        .select('wallet_address, acknowledged_backup, user_id')
-        .eq('user_id', authenticatedSolAddress) // Use Solana address as user_id
-        .maybeSingle();
-        
-      if (error) {
-        console.error('Error fetching trading wallet:', error);
-        return;
-      }
+      // Check if trading wallet exists for this address using the public API
+      const data = await callTradingWalletAPI('GET', { user_id: authenticatedSolAddress });
+      console.log('API response data:', data);
 
       if (data) {
         console.log('Found existing trading wallet:', data.wallet_address);
@@ -131,13 +153,9 @@ export function useTradingWallet() {
       return { walletAddress: null, privateKey: null };
     }
     
-    // Double-check database before creating new wallet
-    const { data: existingWallet } = await supabase
-      .from('trading_wallets')
-      .select('wallet_address, acknowledged_backup')
-      .eq('user_id', authenticatedSolAddress)
-      .maybeSingle();
-      
+    // Double-check database before creating new wallet using public API
+    const existingWallet = await callTradingWalletAPI('GET', { user_id: authenticatedSolAddress });
+    
     if (existingWallet) {
       console.log('Found existing wallet in DB during create check:', existingWallet.wallet_address);
       setWalletAddress(existingWallet.wallet_address);
@@ -203,17 +221,13 @@ export function useTradingWallet() {
     }
     
     try {
-      const { error } = await supabase
-        .from('trading_wallets')
-        .update({ acknowledged_backup: true })
-        .eq('user_id', authenticatedSolAddress)
-        .eq('wallet_address', walletAddress);
-        
+      await callTradingWalletAPI('POST', {
+        user_id: authenticatedSolAddress,
+        wallet_address: walletAddress,
+        acknowledged_backup: true
+      });
       
-      if (error) {
-        console.error('Error acknowledging backup:', error);
-        return false;
-      }
+      console.log('Successfully updated acknowledged_backup to true');
       
       setAcknowledged(true);
       setPrivateKey(null); // Clear private key after acknowledgment
