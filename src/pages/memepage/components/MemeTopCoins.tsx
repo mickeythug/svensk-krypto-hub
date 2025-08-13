@@ -162,218 +162,199 @@ const MemeTopCoins = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background/95 to-muted/20 overflow-hidden">
-      <div className="w-full h-screen p-0 md:p-2 lg:p-4 space-y-2 md:space-y-4 lg:space-y-6">
+    <div className="min-h-screen w-full bg-background">
+      <div className="w-full h-screen p-4 space-y-6">
         
-        {/* Ultra Gaming Header - Full Width */}
-        <div className="relative w-full bg-gradient-casino-royal rounded-none md:rounded-3xl border-0 md:border-2 border-yellow-400/50 shadow-glow-gold overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-casino-gold opacity-20 animate-shimmer"></div>
-          <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-15"></div>
-          
-          <div className="relative z-10 p-3 md:p-6 text-center">
-            <div className="flex items-center justify-center gap-2 md:gap-4 mb-2 md:mb-4">
-              <Crown className="w-5 h-5 md:w-8 md:h-8 text-yellow-400 animate-pulse" />
-              <h1 className="font-sans font-black text-2xl md:text-4xl lg:text-6xl text-white drop-shadow-lg">
-                🏆 HETASTE TOKENS 🏆
-              </h1>
-              <Crown className="w-5 h-5 md:w-8 md:h-8 text-yellow-400 animate-pulse" />
-            </div>
-            
-            <div className="flex items-center justify-center gap-2 md:gap-4 text-sm md:text-lg font-bold text-yellow-100 mb-2 md:mb-4">
-              <Zap className="w-4 h-4 md:w-5 md:h-5 text-yellow-400 animate-pulse" />
-              <span className="text-xs md:text-base font-sans">PREMIUM KVALITET • LIVE DATA • 15 TOKENS</span>
-              <Zap className="w-4 h-4 md:w-5 md:h-5 text-yellow-400 animate-pulse" />
+        {/* Modern Professional Header with Navigation */}
+        <div className="relative w-full bg-card/50 border border-border/40 rounded-2xl overflow-hidden backdrop-blur-sm">
+          <div className="relative z-10 p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/20 p-3 rounded-xl border border-primary/30">
+                  <Crown className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="font-sans font-bold text-2xl md:text-3xl text-foreground">
+                    Hetaste Tokens
+                  </h1>
+                  <p className="text-muted-foreground text-sm">15 tokens sorterade efter popularitet</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Activity className="w-4 h-4" />
+                  Live Data
+                </Button>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <BarChart3 className="w-4 h-4" />
+                  Analytics
+                </Button>
+              </div>
             </div>
 
-            {/* Inline Gaming Sorter - Enhanced */}
-            <div className="flex flex-wrap justify-center gap-1 md:gap-2 mt-4">
+            {/* Professional Sort Navigation */}
+            <div className="flex flex-wrap gap-2">
               <Button
                 variant={getSortButtonVariant('marketCap')}
-                size={isMobile ? "sm" : "default"}
+                size="sm"
                 onClick={() => handleSort('marketCap')}
-                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
+                className={`gap-2 ${
                   sortBy === 'marketCap' 
-                    ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
-                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-yellow-400/20 hover:border-yellow-400'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
-                <BarChart3 className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
-                MCAP {sortBy === 'marketCap' && (sortDirection === 'desc' ? '↓' : '↑')}
+                <BarChart3 className="w-4 h-4" />
+                Market Cap {sortBy === 'marketCap' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
               <Button
                 variant={getSortButtonVariant('volume24h')}
-                size={isMobile ? "sm" : "default"}
+                size="sm"
                 onClick={() => handleSort('volume24h')}
-                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
+                className={`gap-2 ${
                   sortBy === 'volume24h' 
-                    ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
-                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-yellow-400/20 hover:border-yellow-400'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
-                <Volume2 className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
-                VOLYM {sortBy === 'volume24h' && (sortDirection === 'desc' ? '↓' : '↑')}
+                <Volume2 className="w-4 h-4" />
+                Volume {sortBy === 'volume24h' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
               <Button
                 variant={getSortButtonVariant('change24h')}
-                size={isMobile ? "sm" : "default"}
+                size="sm"
                 onClick={() => handleSort('change24h')}
-                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
+                className={`gap-2 ${
                   sortBy === 'change24h' 
-                    ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
-                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-yellow-400/20 hover:border-yellow-400'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
-                <TrendingUp className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
-                Δ24H {sortBy === 'change24h' && (sortDirection === 'desc' ? '↓' : '↑')}
+                <TrendingUp className="w-4 h-4" />
+                24h Change {sortBy === 'change24h' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
               <Button
                 variant={getSortButtonVariant('holders')}
-                size={isMobile ? "sm" : "default"}
+                size="sm"
                 onClick={() => handleSort('holders')}
-                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
+                className={`gap-2 ${
                   sortBy === 'holders' 
-                    ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
-                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-yellow-400/20 hover:border-yellow-400'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
-                <Users className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
-                HOLDERS {sortBy === 'holders' && (sortDirection === 'desc' ? '↓' : '↑')}
+                <Users className="w-4 h-4" />
+                Holders {sortBy === 'holders' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
               
               <Button
                 variant={getSortButtonVariant('price')}
-                size={isMobile ? "sm" : "default"}
+                size="sm"
                 onClick={() => handleSort('price')}
-                className={`font-sans font-bold transition-all duration-300 rounded-full ${isMobile ? 'text-xs px-2 py-1 h-7' : 'text-sm px-3 py-2 h-9'} ${
+                className={`gap-2 ${
                   sortBy === 'price' 
-                    ? 'bg-gradient-casino-gold text-black shadow-glow-gold' 
-                    : 'bg-gray-700/80 text-gray-200 border-gray-600 hover:bg-yellow-400/20 hover:border-yellow-400'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted hover:bg-muted/80'
                 }`}
               >
-                <DollarSign className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-1'}`} />
-                PRIS {sortBy === 'price' && (sortDirection === 'desc' ? '↓' : '↑')}
+                <DollarSign className="w-4 h-4" />
+                Price {sortBy === 'price' && (sortDirection === 'desc' ? '↓' : '↑')}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Full Screen Gaming Grid - No Margins */}
-        <div className="flex-1 overflow-y-auto scrollbar-modern px-2 md:px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-2 md:gap-3 lg:gap-4 pb-4">
+        {/* Professional Token Grid */}
+        <div className="flex-1 overflow-y-auto scrollbar-modern">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6 pb-4">
             {processedTokens.map((token, index) => {
               const positive = token.change24h > 0;
               const isTop3 = index < 3;
               const isTop1 = index === 0;
-              const isTop5 = index < 5;
             
             return (
               <Card 
                 key={token.id} 
-                className={`group relative overflow-hidden border-2 transition-all duration-500 hover:scale-105 hover:shadow-glow-rainbow cursor-pointer ${
-                  isTop1 ? 'border-yellow-400 bg-gradient-to-br from-card via-yellow-900/30 to-yellow-400/20 shadow-glow-gold animate-pulse' :
-                  isTop3 ? 'border-primary bg-gradient-to-br from-card via-primary/20 to-primary/10 shadow-glow-primary' : 
-                  isTop5 ? 'border-orange-400/70 bg-gradient-to-br from-card via-orange-900/20 to-card hover:border-orange-400' :
-                  'border-border/50 bg-card/80 hover:border-primary/50'
-                } ${isMobile ? 'rounded-lg' : 'rounded-xl'}`}
+                className={`group relative overflow-hidden border-2 transition-all duration-300 hover:scale-[1.02] cursor-pointer ${
+                  isTop1 ? 'border-primary/50 bg-card shadow-glow-primary' :
+                  isTop3 ? 'border-primary/30 bg-card hover:border-primary/50' : 
+                  'border-border/50 bg-card/80 hover:border-primary/30'
+                } rounded-xl`}
                 onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)}
               >
-                {/* Enhanced Rank Badge - Gaming Style */}
-                <div className="absolute top-1 left-1 z-20">
-                  <Badge className={`${isMobile ? 'text-xs px-2 py-1' : 'text-sm px-3 py-1.5'} font-bold shadow-lg ${
-                    index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-glow-gold animate-pulse' :
-                    index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
-                    index === 2 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black' :
-                    isTop5 ? 'bg-gradient-to-r from-purple-500 to-purple-700 text-white' :
-                    'bg-primary text-primary-foreground shadow-glow-primary'
+                {/* Professional Rank Badge */}
+                <div className="absolute top-3 left-3 z-20">
+                  <Badge className={`text-sm px-3 py-1.5 font-bold ${
+                    index === 0 ? 'bg-primary text-primary-foreground shadow-glow-primary' :
+                    index === 1 ? 'bg-muted-foreground text-background' :
+                    index === 2 ? 'bg-orange-500 text-white' :
+                    'bg-muted text-muted-foreground'
                   }`}>
-                    {index === 0 && <Crown className="w-3 h-3 mr-1 animate-pulse" />}
+                    {index === 0 && <Crown className="w-3 h-3 mr-1" />}
                     #{token.rank}
                   </Badge>
                 </div>
 
-                {/* Ultra Gaming HOT Badge */}
-                {isTop5 && (
-                  <div className="absolute top-1 right-1 z-20">
-                    <Badge className={`${isMobile ? 'text-xs px-2 py-1' : 'text-sm px-2 py-1'} bg-gradient-to-r text-white animate-pulse shadow-lg ${
-                      isTop1 ? 'from-yellow-500 to-red-500' : 
-                      isTop3 ? 'from-red-500 to-orange-500' :
-                      'from-purple-500 to-pink-500'
-                    }`}>
-                      {isTop1 ? '👑' : isTop3 ? '🔥' : '⭐'}
+                {/* HOT Badge for top performers */}
+                {isTop3 && (
+                  <div className="absolute top-3 right-3 z-20">
+                    <Badge className="text-sm bg-destructive text-destructive-foreground">
+                      {isTop1 ? '👑' : '🔥'}
                     </Badge>
                   </div>
                 )}
 
-                {/* Gaming Token Image */}
+                {/* Token Image - Same as other sections */}
                 <div className="relative overflow-hidden">
-                  <AspectRatio ratio={isMobile ? 16/12 : 16/10}>
-                    <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                  <AspectRatio ratio={4/5}>
                     <OptimizedImage
                       src={token.image}
                       alt={`${token.name} token`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       fallbackSrc="/placeholder.svg"
                     />
-                    {isTop1 && (
-                      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/30 to-transparent pointer-events-none animate-pulse"></div>
-                    )}
                   </AspectRatio>
                 </div>
 
-                {/* Compact Gaming Info */}
-                <div className={`${isMobile ? 'p-2 space-y-2' : 'p-3 space-y-3'}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className={`font-sans font-black text-white ${isMobile ? 'text-base' : 'text-xl'} ${isTop1 ? 'text-yellow-300' : ''} truncate`}>
-                    {token.symbol}
-                  </h3>
-                  
-                  {/* Modern Large Percentage Display */}
-                  <div className={`flex items-center gap-1 ${isMobile ? 'text-base' : 'text-lg'} font-sans font-black ${
-                    positive ? 'text-green-400' : 'text-red-400'
-                  }`}>
-                    {positive ? (
-                      <TrendingUp className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} animate-pulse`} />
-                    ) : (
-                      <TrendingDown className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'} animate-pulse`} />
-                    )}
-                    <span className="drop-shadow-lg">
-                      {positive ? '+' : ''}{formatPercentage(token.change24h)}
-                    </span>
+                {/* Token Info - Same layout as other sections */}
+                <div className="p-3 md:p-4">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <div className="min-w-0">
+                      <h3 className="truncate font-extrabold text-lg md:text-xl">{token.emoji} {token.symbol}</h3>
+                      <p className="truncate text-xs md:text-sm text-muted-foreground">{token.name}</p>
+                    </div>
+                    
+                    {/* Large Percentage Display */}
+                    <div className={`flex items-center gap-1 text-2xl font-black drop-shadow-lg ${
+                      positive ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {positive ? (
+                        <TrendingUp className="w-5 h-5 animate-pulse" />
+                      ) : (
+                        <TrendingDown className="w-5 h-5 animate-pulse" />
+                      )}
+                      <span>
+                        {positive ? '+' : ''}{formatPercentage(token.change24h)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                
-                  {/* Ultra Compact Stats */}
-                  <div className={`grid grid-cols-2 ${isMobile ? 'gap-1' : 'gap-2'}`}>
-                    <div className="bg-gray-900/60 rounded p-1.5 border border-gray-700">
-                      <div className={`${isMobile ? 'text-sm' : 'text-lg'} font-sans font-black text-white`}>
-                        {formatPrice(token.price)}
-                      </div>
-                      <div className="text-xs text-gray-300 font-sans font-medium">PRIS</div>
-                    </div>
-                    <div className="bg-gray-900/60 rounded p-1.5 border border-gray-700">
-                      <div className={`${isMobile ? 'text-sm' : 'text-lg'} font-sans font-black text-white`}>
-                        {formatMarketCap(token.marketCap)}
-                      </div>
-                      <div className="text-xs text-gray-300 font-sans font-medium">MCAP</div>
-                    </div>
+                  
+                  <div className="mt-2 flex items-center justify-between text-sm">
+                    <span className="tabular-nums font-bold text-lg">{formatPrice(token.price)}</span>
+                    <span className="text-muted-foreground font-medium">{formatMarketCap(token.marketCap)}</span>
                   </div>
 
-                  {/* Gaming Action Button */}
+                  {/* Professional Action Button */}
                   <Button 
-                  className={`w-full font-sans bg-gradient-casino-gold text-black hover:shadow-glow-gold transition-all duration-300 rounded-lg font-bold ${
-                    isMobile ? 'h-8 text-xs px-2' : 'h-10 text-sm px-4'
-                  } ${
-                    isTop1 ? 'animate-pulse shadow-glow-gold' : ''
-                    }`}
-                    size={isMobile ? "sm" : "default"}
+                    className="w-full mt-3 bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
+                    size="sm"
                   >
-                    <Target className={`${isMobile ? 'w-3 h-3 mr-1' : 'w-4 h-4 mr-2'} animate-pulse`} />
-                    <span className={`${isMobile ? 'text-xs' : 'text-sm'} font-bold tracking-wide`}>
-                      {isMobile ? 'BUY' : 'HANDLA'}
-                    </span>
+                    <Target className="w-4 h-4 mr-2" />
+                    Handla
                   </Button>
                 </div>
               </Card>
