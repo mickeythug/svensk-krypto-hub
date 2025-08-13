@@ -15,10 +15,14 @@ import {
   Plus,
   Download,
   Key,
-  ExternalLink
+  ExternalLink,
+  Smartphone,
+  Monitor
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTradingWallet } from "@/hooks/useTradingWallet";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileWalletManagement } from "./MobileWalletManagement";
 import QRCode from 'qrcode';
 
 interface WalletManagementModalProps {
@@ -28,6 +32,7 @@ interface WalletManagementModalProps {
 
 export function WalletManagementModal({ open, onOpenChange }: WalletManagementModalProps) {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [showPrivateKey, setShowPrivateKey] = useState(false);
   const [showQrCode, setShowQrCode] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
@@ -45,27 +50,27 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
   useEffect(() => {
     if (walletAddress) {
       QRCode.toDataURL(walletAddress, {
-        width: 300,
-        margin: 2,
+        width: isMobile ? 250 : 320,
+        margin: 3,
         color: {
           dark: '#000000',
           light: '#FFFFFF'
         },
-        errorCorrectionLevel: 'M'
+        errorCorrectionLevel: 'H'
       }).then(setQrCodeDataUrl).catch(console.error);
     }
-  }, [walletAddress]);
+  }, [walletAddress, isMobile]);
 
   const copyToClipboard = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
       toast({
-        title: "✅ Kopierat!",
+        title: "Kopierat",
         description: `${label} har kopierats till urklipp`,
       });
     } catch (err) {
       toast({
-        title: "❌ Fel",
+        title: "Fel",
         description: "Kunde inte kopiera till urklipp",
         variant: "destructive",
       });
@@ -85,7 +90,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     const success = await confirmBackup();
     if (success) {
       toast({
-        title: "🔒 Backup bekräftad",
+        title: "Backup bekräftad",
         description: "Din private key är nu säkrad och dold",
       });
       setShowPrivateKey(false);
@@ -96,12 +101,12 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     try {
       await createIfMissing();
       toast({
-        title: "🎉 Wallet skapad!",
+        title: "Wallet skapad",
         description: "Din trading wallet har skapats framgångsrikt",
       });
     } catch (error) {
       toast({
-        title: "❌ Fel",
+        title: "Fel",
         description: "Kunde inte skapa trading wallet",
         variant: "destructive",
       });
@@ -118,7 +123,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
               <Wallet className="h-6 w-6 text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
             </div>
             <div className="text-center">
-              <h3 className="font-crypto text-lg font-semibold mb-2">Laddar Wallet</h3>
+              <h3 className="text-lg font-semibold mb-2">Laddar Wallet</h3>
               <p className="text-muted-foreground">Hämtar din wallet-information...</p>
             </div>
           </div>
@@ -127,98 +132,106 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     );
   }
 
+  if (isMobile) {
+    return <MobileWalletManagement 
+      open={open} 
+      onOpenChange={onOpenChange}
+      walletAddress={walletAddress}
+      privateKey={privateKey}
+      acknowledged={acknowledged}
+      loading={loading}
+      showPrivateKey={showPrivateKey}
+      setShowPrivateKey={setShowPrivateKey}
+      showQrCode={showQrCode}
+      setShowQrCode={setShowQrCode}
+      qrCodeDataUrl={qrCodeDataUrl}
+      copyToClipboard={copyToClipboard}
+      downloadQrCode={downloadQrCode}
+      handleBackupConfirmed={handleBackupConfirmed}
+      handleCreateWallet={handleCreateWallet}
+    />;
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto bg-gradient-to-br from-background via-background to-primary/5">
-        <DialogHeader className="pb-6 border-b border-border/50">
-          <DialogTitle className="flex items-center gap-3 text-3xl font-crypto tracking-wider">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-secondary">
-              <Wallet className="h-8 w-8 text-white" />
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="pb-6 border-b">
+          <DialogTitle className="flex items-center gap-3 text-2xl font-semibold">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Wallet className="h-6 w-6 text-primary" />
             </div>
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              MINA WALLETS
-            </span>
+            Wallet Management
           </DialogTitle>
-          <p className="text-muted-foreground text-lg mt-2">
+          <p className="text-muted-foreground">
             Hantera dina trading wallets och säkerhetsinställningar
           </p>
         </DialogHeader>
 
-        <div className="space-y-8 pt-6">
-          {/* Trading Wallet Card */}
+        <div className="space-y-6 pt-6">
           {walletAddress ? (
-            <Card className="overflow-hidden bg-gradient-to-br from-card via-card to-primary/5 border-primary/20 shadow-2xl">
-              <div className="p-8">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 ring-2 ring-primary/10">
-                      <Wallet className="h-8 w-8 text-primary" />
+            <Card className="overflow-hidden border">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Wallet className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-crypto font-bold text-foreground">Trading Wallet</h3>
-                      <p className="text-muted-foreground text-lg">Auto-genererad för plattformen</p>
+                      <h3 className="text-xl font-semibold">Trading Wallet</h3>
+                      <p className="text-muted-foreground">Auto-genererad för plattformen</p>
                     </div>
                   </div>
-                  <Badge 
-                    variant="default" 
-                    className="bg-gradient-to-r from-success to-success/80 text-white border-none px-4 py-2 text-sm font-semibold shadow-lg"
-                  >
-                    ✨ AKTIV
+                  <Badge variant="secondary" className="px-3 py-1">
+                    Aktiv
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Left Column - Address & Private Key */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-6">
-                    {/* Wallet Address */}
                     <div className="space-y-3">
-                      <label className="text-base font-semibold text-foreground flex items-center gap-2">
+                      <label className="text-sm font-medium flex items-center gap-2">
                         <Wallet className="h-4 w-4" />
                         Wallet Address
                       </label>
                       <div className="relative group">
-                        <div className="p-4 bg-secondary/30 hover:bg-secondary/40 transition-colors rounded-xl border border-border/50 font-mono text-sm break-all leading-relaxed min-h-[60px] flex items-center">
+                        <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all min-h-[50px] flex items-center">
                           {walletAddress}
                         </div>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => copyToClipboard(walletAddress || '', 'Wallet address')}
-                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
+                          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
 
-                    {/* Private Key Section */}
                     {!acknowledged && privateKey && (
-                      <div className="bg-gradient-to-r from-destructive/10 to-destructive/5 border border-destructive/30 rounded-xl p-6 space-y-4">
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 rounded-lg bg-destructive/20">
-                            <AlertTriangle className="h-6 w-6 text-destructive" />
-                          </div>
+                      <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <AlertTriangle className="h-5 w-5 text-destructive" />
                           <div>
-                            <h4 className="font-crypto text-lg font-bold text-destructive">🔐 Säkra din Private Key</h4>
+                            <h4 className="font-semibold text-destructive">Säkra din Private Key</h4>
                             <p className="text-sm text-muted-foreground">Kritiskt viktigt för wallet-säkerhet</p>
                           </div>
                         </div>
                         
-                        <div className="bg-background/50 rounded-lg p-4 border border-destructive/20">
-                          <p className="text-sm text-muted-foreground leading-relaxed">
-                            ⚠️ <strong>Din private key visas endast en gång.</strong> Spara den på ett säkert ställe och bekräfta sedan att du har säkrat den.
+                        <div className="bg-background rounded-lg p-3 border">
+                          <p className="text-sm text-muted-foreground">
+                            <strong>Din private key visas endast en gång.</strong> Spara den på ett säkert ställe och bekräfta sedan att du har säkrat den.
                           </p>
                         </div>
                         
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           <div>
-                            <label className="text-base font-semibold text-foreground flex items-center gap-2 mb-3">
+                            <label className="text-sm font-medium flex items-center gap-2 mb-2">
                               <Key className="h-4 w-4" />
                               Private Key
                             </label>
                             <div className="relative group">
-                              <div className="p-4 bg-secondary/30 hover:bg-secondary/40 transition-colors rounded-xl border border-border/50 font-mono text-sm break-all leading-relaxed min-h-[60px] flex items-center">
+                              <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all min-h-[50px] flex items-center">
                                 {showPrivateKey ? privateKey : '•'.repeat(64)}
                               </div>
                               <div className="absolute right-2 top-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -226,7 +239,6 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                                   size="sm"
                                   variant="outline"
                                   onClick={() => setShowPrivateKey(!showPrivateKey)}
-                                  className="bg-background/80 backdrop-blur-sm"
                                 >
                                   {showPrivateKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </Button>
@@ -235,7 +247,6 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                                     size="sm"
                                     variant="outline"
                                     onClick={() => copyToClipboard(privateKey, 'Private key')}
-                                    className="bg-background/80 backdrop-blur-sm"
                                   >
                                     <Copy className="h-4 w-4" />
                                   </Button>
@@ -246,40 +257,37 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
 
                           <Button 
                             onClick={handleBackupConfirmed}
-                            className="w-full bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70 text-white font-semibold py-3 text-base shadow-lg"
+                            className="w-full"
                           >
-                            <CheckCircle className="h-5 w-5 mr-2" />
-                            ✅ Bekräfta att jag har säkrat min private key
+                            <CheckCircle className="h-4 w-4 mr-2" />
+                            Bekräfta att jag har säkrat min private key
                           </Button>
                         </div>
                       </div>
                     )}
 
                     {acknowledged && (
-                      <div className="bg-gradient-to-r from-success/10 to-success/5 border border-success/30 rounded-xl p-6">
+                      <div className="bg-success/5 border border-success/20 rounded-lg p-4">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-success/20">
-                            <Shield className="h-6 w-6 text-success" />
-                          </div>
+                          <Shield className="h-5 w-5 text-success" />
                           <div>
-                            <span className="text-success font-crypto text-lg font-bold">🔒 Private Key Säkrad</span>
+                            <span className="text-success font-semibold">Private Key Säkrad</span>
                             <p className="text-sm text-muted-foreground">Din private key är dold och skyddad</p>
                           </div>
                         </div>
                       </div>
                     )}
 
-                    {/* Show Private Key Button (after acknowledgment) */}
                     {acknowledged && (
-                      <Card className="p-4 bg-muted/30">
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <Card className="p-4">
+                        <h4 className="font-medium mb-3 flex items-center gap-2">
                           <Key className="h-4 w-4" />
                           Private Key Åtkomst
                         </h4>
                         <div className="space-y-3">
                           {showPrivateKey ? (
                             <div className="space-y-3">
-                              <div className="p-4 bg-secondary/30 rounded-xl border border-border/50 font-mono text-sm break-all leading-relaxed">
+                              <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all">
                                 {privateKey || 'Private key ej tillgänglig'}
                               </div>
                               <div className="flex gap-2">
@@ -309,7 +317,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                             <Button
                               onClick={() => setShowPrivateKey(true)}
                               variant="outline"
-                              className="w-full bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10"
+                              className="w-full"
                             >
                               <Eye className="h-4 w-4 mr-2" />
                               Visa Private Key
@@ -320,26 +328,24 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                     )}
                   </div>
 
-                  {/* Right Column - QR Code & Funding */}
                   <div className="space-y-6">
-                    {/* QR Code Section */}
-                    <Card className="p-6 bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20">
-                      <h4 className="font-crypto text-xl font-bold mb-4 flex items-center gap-2">
-                        <QrCode className="h-5 w-5" />
-                        📱 QR-kod för Insättning
+                    <Card className="p-4">
+                      <h4 className="font-medium mb-4 flex items-center gap-2">
+                        <QrCode className="h-4 w-4" />
+                        QR-kod för Insättning
                       </h4>
                       {showQrCode && qrCodeDataUrl ? (
                         <div className="text-center space-y-4">
-                          <div className="inline-block p-4 bg-white rounded-2xl shadow-lg">
+                          <div className="inline-block p-4 bg-white rounded-lg border mx-auto">
                             <img 
                               src={qrCodeDataUrl} 
                               alt="Wallet QR Code"
-                              className="w-60 h-60 mx-auto"
+                              className="w-80 h-80 mx-auto"
                             />
                           </div>
                           <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                              📱 Skanna med din wallet för att skicka SOL
+                            <p className="text-sm text-muted-foreground">
+                              Skanna med din wallet för att skicka SOL
                             </p>
                             <p className="text-xs text-muted-foreground font-mono">
                               {walletAddress?.slice(0, 20)}...{walletAddress?.slice(-10)}
@@ -368,36 +374,35 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                         <Button
                           onClick={() => setShowQrCode(true)}
                           variant="outline"
-                          className="w-full h-16 bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 text-base"
+                          className="w-full h-14"
                         >
-                          <QrCode className="h-6 w-6 mr-2" />
+                          <QrCode className="h-5 w-5 mr-2" />
                           Visa QR-kod
                         </Button>
                       )}
                     </Card>
 
-                    {/* Funding Section */}
-                    <Card className="p-6 bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20">
-                      <h4 className="font-crypto text-xl font-bold mb-4">💰 Fyll på Konto</h4>
+                    <Card className="p-4">
+                      <h4 className="font-medium mb-4">Fyll på Konto</h4>
                       <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-sm text-muted-foreground">
                           Skicka SOL till denna adress för att fylla på din trading wallet och börja handla.
                         </p>
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           <Button
                             onClick={() => copyToClipboard(walletAddress || '', 'Wallet address')}
                             variant="outline"
-                            className="w-full h-12 bg-gradient-to-r from-secondary/20 to-secondary/10 hover:from-secondary/30 hover:to-secondary/20"
+                            className="w-full"
                           >
-                            <Copy className="h-5 w-5 mr-2" />
-                            📋 Kopiera Wallet Address
+                            <Copy className="h-4 w-4 mr-2" />
+                            Kopiera Wallet Address
                           </Button>
                           <Button
                             onClick={() => window.open(`https://phantom.app/`, '_blank')}
-                            className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold shadow-lg"
+                            className="w-full"
                           >
-                            <ExternalLink className="h-5 w-5 mr-2" />
-                            👻 Öppna Phantom Wallet
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Öppna Phantom Wallet
                           </Button>
                         </div>
                       </div>
@@ -405,11 +410,10 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                   </div>
                 </div>
 
-                {/* Security Notes */}
-                <Card className="mt-8 p-6 bg-gradient-to-r from-muted/20 to-muted/10 border border-muted/30">
-                  <h4 className="font-crypto text-lg font-bold mb-4 flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    🛡️ Säkerhetsinfo
+                <Card className="mt-6 p-4 bg-muted/20">
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Shield className="h-4 w-4" />
+                    Säkerhetsinfo
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
                     <ul className="space-y-2">
@@ -437,32 +441,31 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
               </div>
             </Card>
           ) : (
-            // No Trading Wallet - Show Create Button
-            <Card className="p-12 bg-gradient-to-br from-muted/10 to-secondary/10 border-muted/30 text-center">
-              <div className="space-y-6 max-w-md mx-auto">
-                <div className="p-6 rounded-full bg-gradient-to-br from-muted/20 to-muted/10 w-fit mx-auto">
-                  <Wallet className="h-16 w-16 text-muted-foreground" />
+            <Card className="p-8 text-center">
+              <div className="space-y-4 max-w-md mx-auto">
+                <div className="p-4 rounded-lg bg-muted/20 w-fit mx-auto">
+                  <Wallet className="h-12 w-12 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="font-crypto text-2xl font-bold mb-3">Ingen Trading Wallet</h3>
-                  <p className="text-muted-foreground text-lg leading-relaxed">
+                  <h3 className="text-xl font-semibold mb-2">Ingen Trading Wallet</h3>
+                  <p className="text-muted-foreground">
                     Du har ingen trading wallet ännu. Skapa en för att börja handla på plattformen.
                   </p>
                 </div>
                 <Button 
                   onClick={handleCreateWallet}
                   disabled={loading}
-                  className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold py-4 px-8 text-lg shadow-xl h-auto"
+                  className="w-full"
                 >
                   {loading ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white mr-3"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white mr-2"></div>
                       Skapar wallet...
                     </>
                   ) : (
                     <>
-                      <Plus className="h-5 w-5 mr-2" />
-                      ✨ Skapa Trading Wallet
+                      <Plus className="h-4 w-4 mr-2" />
+                      Skapa Trading Wallet
                     </>
                   )}
                 </Button>
