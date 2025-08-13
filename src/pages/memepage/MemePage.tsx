@@ -51,7 +51,7 @@ const MemePage: React.FC = () => {
     document.head.appendChild(ld);
   }, []);
   return (
-    <div className="meme-page font-orbitron bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
+    <div className="meme-page font-sans bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
       {/* Full Screen Gaming Background */}
       <div className="fixed inset-0 bg-gradient-casino-rainbow opacity-5 animate-shimmer pointer-events-none"></div>
       <div className="fixed inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
