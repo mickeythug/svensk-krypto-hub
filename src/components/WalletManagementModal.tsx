@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,6 +37,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
   const [showPrivateKey, setShowPrivateKey] = useState(false);
   const [showQrCode, setShowQrCode] = useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string>('');
+  const [displayPrivateKey, setDisplayPrivateKey] = useState<string | null>(null);
   
   // Solana wallet connection (för autherisering)
   const { publicKey: authWalletKey, connected: authConnected } = useWallet();
@@ -49,7 +50,8 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     acknowledged, 
     confirmBackup, 
     loading,
-    createIfMissing 
+    createIfMissing,
+    getPrivateKey
   } = useTradingWallet();
 
   // Generate QR code for trading wallet when available
@@ -138,6 +140,30 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
     );
   }
 
+  const getPrivateKeyForDisplay = useCallback(async () => {
+    if (!acknowledged || !tradingWalletAddress) return;
+    
+    try {
+      const key = await getPrivateKey();
+      if (key) {
+        setShowPrivateKey(true);
+        setDisplayPrivateKey(key);
+      } else {
+        toast({
+          title: "Fel",
+          description: "Kunde inte hämta private key",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Fel", 
+        description: "Kunde inte hämta private key",
+        variant: "destructive",
+      });
+    }
+  }, [acknowledged, tradingWalletAddress, getPrivateKey, toast]);
+
   if (isMobile) {
     return <MobileWalletManagement 
       open={open} 
@@ -157,9 +183,9 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
       downloadQrCode={downloadQrCode}
       handleBackupConfirmed={handleBackupConfirmed}
       handleCreateWallet={handleCreateWallet}
+      getPrivateKeyForDisplay={getPrivateKeyForDisplay}
     />;
   }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">{/* z-index redan satt i dialog.tsx */}
@@ -337,10 +363,10 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                         </h4>
                         <div className="space-y-3">
                           {showPrivateKey ? (
-                            <div className="space-y-3">
-                              <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all">
-                                {privateKey || 'Private key ej tillgänglig'}
-                              </div>
+                             <div className="space-y-3">
+                               <div className="p-3 bg-muted rounded-lg font-mono text-sm break-all">
+                                 {displayPrivateKey || 'Hämtar private key...'}
+                               </div>
                               <div className="flex gap-2">
                                 <Button
                                   size="sm"
@@ -351,13 +377,13 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                                   <EyeOff className="h-4 w-4 mr-2" />
                                   Dölj
                                 </Button>
-                                {privateKey && (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => copyToClipboard(privateKey, 'Private key')}
-                                    className="flex-1"
-                                  >
+                                 {displayPrivateKey && (
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     onClick={() => copyToClipboard(displayPrivateKey, 'Private key')}
+                                     className="flex-1"
+                                   >
                                     <Copy className="h-4 w-4 mr-2" />
                                     Kopiera
                                   </Button>
@@ -366,7 +392,7 @@ export function WalletManagementModal({ open, onOpenChange }: WalletManagementMo
                             </div>
                           ) : (
                             <Button
-                              onClick={() => setShowPrivateKey(true)}
+                              onClick={getPrivateKeyForDisplay}
                               variant="outline"
                               className="w-full"
                             >

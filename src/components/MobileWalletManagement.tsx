@@ -36,6 +36,7 @@ interface MobileWalletManagementProps {
   downloadQrCode: () => void;
   handleBackupConfirmed: () => void;
   handleCreateWallet: () => void;
+  getPrivateKeyForDisplay?: () => void;
 }
 
 export function MobileWalletManagement({
@@ -55,7 +56,8 @@ export function MobileWalletManagement({
   copyToClipboard,
   downloadQrCode,
   handleBackupConfirmed,
-  handleCreateWallet
+  handleCreateWallet,
+  getPrivateKeyForDisplay
 }: MobileWalletManagementProps) {
   if (loading) {
     return (
@@ -332,17 +334,17 @@ export function MobileWalletManagement({
                             )}
                           </div>
                         </div>
-                      ) : (
-                        <Button
-                          onClick={() => setShowPrivateKey(true)}
-                          variant="outline"
-                          className="w-full"
-                          size="sm"
-                        >
-                          <Eye className="h-3 w-3 mr-2" />
-                          Visa Private Key
-                        </Button>
-                      )}
+                        ) : (
+                          <Button
+                            onClick={getPrivateKeyForDisplay || (() => setShowPrivateKey(true))}
+                            variant="outline"
+                            className="w-full"
+                            size="sm"
+                          >
+                            <Eye className="h-3 w-3 mr-2" />
+                            Visa Private Key
+                          </Button>
+                        )}
                     </div>
                   </Card>
                 )}
