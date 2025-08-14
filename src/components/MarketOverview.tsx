@@ -53,27 +53,28 @@ const EXCLUDED_STAKED = new Set(['STETH','WSTETH','RETH','CBETH','FRXETH','ANKRE
 
 function AIMarkets() {
   const { data, isLoading, error } = useAIMarketIntel();
+  const { t } = useLanguage();
   if (error) return null;
   return (
     <Card className="p-4 bg-card/80 border-border mb-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="font-crypto text-sm text-muted-foreground">AI-MARKNADSANALYS (OpenAI)</span>
+        <span className="font-crypto text-sm text-muted-foreground">{t('market.aiMarketAnalysis')} (OpenAI)</span>
         <Badge className={`${data?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : data?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'}`}>
           {data?.trend ?? 'Neutral'}
         </Badge>
       </div>
       <p className="text-sm font-display mb-3">
-        {isLoading ? 'Laddar AI-analys…' : (data?.summary || 'AI sammanfattning otillgänglig just nu.')}
+        {isLoading ? t('market.loadingAI') : (data?.summary || t('market.aiSummaryUnavailable'))}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <div className="font-display text-success mb-1">Positiva</div>
+          <div className="font-display text-success mb-1">{t('market.positives')}</div>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
             {(data?.positives ?? []).slice(0,5).map((p, i) => (<li key={`ai-pos-${i}`}>{p}</li>))}
           </ul>
         </div>
         <div>
-          <div className="font-display text-warning mb-1">Att Bevaka</div>
+          <div className="font-display text-warning mb-1">{t('market.toWatch')}</div>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
             {(data?.negatives ?? []).slice(0,5).map((n, i) => (<li key={`ai-neg-${i}`}>{n}</li>))}
           </ul>
@@ -101,7 +102,7 @@ const MarketOverview = () => {
   };
 
   const extractMarketCap = (summary: string): number | null => {
-    const match = summary.match(/Marknadsvärde:\s*([\d.]+)([TBM])/);
+    const match = summary.match(/(?:Market Cap|Marknadsvärde):\s*([\d.]+)([TBM])/);
     if (!match) return null;
     const value = parseFloat(match[1]);
     const unit = match[2];
@@ -239,7 +240,7 @@ const MarketOverview = () => {
                     <div className={`${isMobile ? 'h-8 w-8' : 'h-12 w-12'} rounded-xl border border-border bg-muted ring-1 ring-border/50 shadow-sm flex items-center justify-center overflow-hidden`}>
                       <OptimizedImage
                         src={COIN_LOGOS[coin.symbol] || '/placeholder.svg'}
-                        alt={`${coin.name} logotyp`}
+                        alt={`${coin.name} logo`}
                         className={`${isMobile ? 'h-6 w-6' : 'h-10 w-10'} object-contain`}
                         fallbackSrc="/placeholder.svg"
                         loading="lazy"
@@ -263,7 +264,7 @@ const MarketOverview = () => {
                       </div>
                       {!isMobile && (
                         <span className="text-xs text-muted-foreground">
-                          Cap: {coin.cap} USD
+                          {t('market.cap')}: {coin.cap} USD
                         </span>
                       )}
                     </div>
@@ -293,7 +294,7 @@ const MarketOverview = () => {
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
             <div className={`flex items-center justify-between ${isMobile ? 'mb-4' : 'mb-6'}`}>
               <h3 className={`font-crypto ${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary`}>{t('market.marketAnalysis').toUpperCase()}</h3>
-              {!isMobile && <Button variant="outline" size="sm" onClick={() => setOpenDetails(true)}>Detaljerad info</Button>}
+              {!isMobile && <Button variant="outline" size="sm" onClick={() => setOpenDetails(true)}>{t('market.detailedInfo')}</Button>}
             </div>
             <div 
               className={`rounded-lg overflow-hidden ${isMobile ? 'mb-3 h-32' : 'mb-4 h-48'} bg-cover bg-center`}
@@ -306,29 +307,29 @@ const MarketOverview = () => {
                       <div className="flex items-center space-x-2">
                         <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
                         <Badge className="bg-primary text-primary-foreground animate-pulse">
-                          AI Research Pågår
+                          {t('market.aiResearchInProgress')}
                         </Badge>
                       </div>
                       <div className="space-y-2">
                         <p className="text-sm font-display font-semibold text-primary">
-                          OpenAI researchmodellen analyserar marknaden...
+                          {t('market.openAIAnalyzing')}
                         </p>
                         <div className="text-xs text-muted-foreground space-y-1">
-                          <p>• Hämtar realtidsdata från 10+ källor</p>
-                          <p>• Analyserar tekniska indikatorer (RSI, MACD, MA)</p>
-                          <p>• Beräknar exakta stöd- och motståndsnivåer</p>
-                          <p>• Identifierar breakout/breakdown-möjligheter</p>
-                          <p>• Verifierar sentimentdata från sociala medier</p>
+                          <p>• {t('market.fetchingRealTimeData')}</p>
+                          <p>• {t('market.analyzingTechnicalIndicators')}</p>
+                          <p>• {t('market.calculatingSupportResistance')}</p>
+                          <p>• {t('market.identifyingBreakouts')}</p>
+                          <p>• {t('market.verifyingSentiment')}</p>
                         </div>
                       </div>
                     </div>
                   ) : (
                     <div>
                       <Badge className={`${aiIntel?.trend === 'Bearish' ? 'bg-destructive text-destructive-foreground' : aiIntel?.trend === 'Bullish' ? 'bg-success text-success-foreground' : 'bg-warning text-warning-foreground'} mb-2`}>
-                        {(aiIntel?.trend ?? 'Neutral')} Trend
+                        {(aiIntel?.trend ?? 'Neutral')} {t('market.trend')}
                       </Badge>
                       <p className="text-sm font-display">
-                        {aiIntel?.summary || 'AI-marknadsanalys från OpenAI researchmodellen med realtidsdata'}
+                        {aiIntel?.summary || t('market.aiMarketAnalysisDefault')}
                       </p>
                     </div>
                   )}
@@ -341,7 +342,7 @@ const MarketOverview = () => {
                 <div className="p-4 rounded-lg bg-success/10 border border-success/20">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="animate-spin h-4 w-4 border-2 border-success border-t-transparent rounded-full"></div>
-                    <span className="font-display font-semibold text-success">Analyserar Positiva Signaler</span>
+                    <span className="font-display font-semibold text-success">{t('market.analyzingPositiveSignals')}</span>
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-success/20 rounded animate-pulse"></div>
@@ -352,7 +353,7 @@ const MarketOverview = () => {
                 <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="animate-spin h-4 w-4 border-2 border-warning border-t-transparent rounded-full"></div>
-                    <span className="font-display font-semibold text-warning">Analyserar Riskfaktorer</span>
+                    <span className="font-display font-semibold text-warning">{t('market.analyzingRiskFactors')}</span>
                   </div>
                   <div className="space-y-2">
                     <div className="h-3 bg-warning/20 rounded animate-pulse"></div>
@@ -364,7 +365,7 @@ const MarketOverview = () => {
                 <div className="md:col-span-2 mt-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
-                    <h4 className="font-crypto text-sm text-primary font-semibold">Beräknar Tekniska Nivåer med Realtidsdata</h4>
+                    <h4 className="font-crypto text-sm text-primary font-semibold">{t('market.calculatingTechnicalLevels')}</h4>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {(['BTC', 'ETH'] as const).map((asset) => (
@@ -373,21 +374,21 @@ const MarketOverview = () => {
                           <span className="font-crypto font-semibold text-primary">{asset}</span>
                           <div className="flex items-center space-x-1">
                             <div className="animate-spin h-3 w-3 border border-primary border-t-transparent rounded-full"></div>
-                            <Badge variant="outline" className="text-xs">Beräknar...</Badge>
+                            <Badge variant="outline" className="text-xs">{t('market.calculating')}</Badge>
                           </div>
                         </div>
                         <div className="space-y-3">
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">Aktuellt pris:</span>
+                            <span className="text-muted-foreground">{t('market.currentPrice')}:</span>
                             <div className="h-4 bg-secondary/50 rounded animate-pulse w-20"></div>
                           </div>
                           <div className="space-y-2">
                             <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
-                              <span className="text-sm text-destructive">Nästa stöd:</span>
+                              <span className="text-sm text-destructive">{t('market.nextSupport')}:</span>
                               <div className="h-4 bg-destructive/20 rounded animate-pulse w-16"></div>
                             </div>
                             <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
-                              <span className="text-sm text-success">Nästa motstånd:</span>
+                              <span className="text-sm text-success">{t('market.nextResistance')}:</span>
                               <div className="h-4 bg-success/20 rounded animate-pulse w-16"></div>
                             </div>
                             <div className="p-2 rounded border bg-warning/10 border-warning/20">
@@ -405,7 +406,7 @@ const MarketOverview = () => {
                 <div className="p-4 rounded-lg bg-success/10 border border-success/20">
                   <div className="flex items-center space-x-2 mb-2">
                     <TrendingUp className="h-4 w-4 text-success" />
-                    <span className="font-display font-semibold text-success">Positiva Signaler (AI)</span>
+                    <span className="font-display font-semibold text-success">{t('market.positiveSignalsAI')}</span>
                   </div>
                   {aiIntel?.positives?.length ? (
                     <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
@@ -414,13 +415,13 @@ const MarketOverview = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Inga starka positiva signaler just nu.</p>
+                    <p className="text-sm text-muted-foreground">{t('market.noPositiveSignals')}</p>
                   )}
                 </div>
                 <div className="p-4 rounded-lg bg-warning/10 border border-warning/20">
                   <div className="flex items-center space-x-2 mb-2">
                     <Activity className="h-4 w-4 text-warning" />
-                    <span className="font-display font-semibold text-warning">Att Bevaka (AI)</span>
+                    <span className="font-display font-semibold text-warning">{t('market.toWatchAI')}</span>
                   </div>
                   {aiIntel?.negatives?.length ? (
                     <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
@@ -429,13 +430,13 @@ const MarketOverview = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Inga större riskfaktorer identifierade.</p>
+                    <p className="text-sm text-muted-foreground">{t('market.noRiskFactors')}</p>
                   )}
                 </div>
 
                 {aiIntel?.technicalLevels ? (
                   <div className="md:col-span-2 mt-4">
-                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">Tekniska Nivåer (AI-Research med Realtidsdata)</h4>
+                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">{t('market.technicalLevelsAI')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {(['btc', 'eth'] as const).map((asset) => {
                         const levels = aiIntel.technicalLevels?.[asset];
@@ -446,22 +447,22 @@ const MarketOverview = () => {
                           <Card key={asset} className="p-4 bg-card/70 border-border">
                             <div className="flex items-center justify-between mb-3">
                               <span className="font-crypto font-semibold text-primary">{label}</span>
-                              <Badge variant="outline" className="text-xs">Realtids AI</Badge>
+                              <Badge variant="outline" className="text-xs">{t('market.realtimeAI')}</Badge>
                             </div>
                             <div className="space-y-3">
 <div className="flex justify-between items-center text-sm">
-  <span className="text-muted-foreground">Aktuellt pris:</span>
+  <span className="text-muted-foreground">{t('market.currentPrice')}:</span>
   <span className="font-numbers font-bold">{(typeof levels.currentPrice === 'number' && isFinite(levels.currentPrice) && levels.currentPrice > 0) ? `$${Math.round(levels.currentPrice).toLocaleString()}` : '—'}</span>
 </div>
  
 <div className="space-y-2">
   <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
-    <span className="text-sm text-destructive">Nästa stöd:</span>
+    <span className="text-sm text-destructive">{t('market.nextSupport')}:</span>
     <span className="font-numbers text-sm text-destructive font-bold">{(typeof levels.nextSupport?.price === 'number' && isFinite(levels.nextSupport.price) && levels.nextSupport.price > 0) ? `$${Math.round(levels.nextSupport.price).toLocaleString()}` : '—'}</span>
   </div>
   
   <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
-    <span className="text-sm text-success">Nästa motstånd:</span>
+    <span className="text-sm text-success">{t('market.nextResistance')}:</span>
     <span className="font-numbers text-sm text-success font-bold">{(typeof levels.nextResistance?.price === 'number' && isFinite(levels.nextResistance.price) && levels.nextResistance.price > 0) ? `$${Math.round(levels.nextResistance.price).toLocaleString()}` : '—'}</span>
   </div>
                                 
@@ -491,7 +492,7 @@ const MarketOverview = () => {
 
                 {aiIntel?.ta ? (
                   <div className="md:col-span-2 mt-2">
-                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (AI-verifierad med webbsökning)</h4>
+                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">{t('market.technicalAnalysisAI')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {(['btc','eth'] as const).map((asset) => {
                         const set = aiIntel.ta?.[asset];
@@ -513,7 +514,7 @@ const MarketOverview = () => {
                             <Card key={asset} className="p-4 bg-card/70 border-border">
                               <div className="flex items-center justify-between mb-3">
                                 <span className="font-crypto font-semibold text-primary">{label}</span>
-                                <Badge variant="outline" className="text-xs">AI-verifierad</Badge>
+                                <Badge variant="outline" className="text-xs">{t('market.aiVerified')}</Badge>
                               </div>
                               <div className="space-y-2">
                                 {row('d1','1D')}
@@ -586,9 +587,9 @@ const MarketOverview = () => {
           <Dialog open={openDetails} onOpenChange={setOpenDetails}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Detaljerad AI-research</DialogTitle>
+                <DialogTitle>{t('market.detailedAIResearch')}</DialogTitle>
                 <DialogDescription>
-                  Senaste uppdatering: {aiIntel?.generatedAt ? new Date(aiIntel.generatedAt).toLocaleString() : '—'}
+                  {t('market.lastUpdate')}: {aiIntel?.generatedAt ? new Date(aiIntel.generatedAt).toLocaleString() : '—'}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
@@ -613,7 +614,7 @@ const MarketOverview = () => {
                 </div>
                 {Array.isArray(aiIntel?.sources) && aiIntel?.sources?.length ? (
                   <div className="text-xs text-muted-foreground">
-                    Källor: {(aiIntel?.sources as string[]).join(', ')}
+                    {t('market.sources')}: {(aiIntel?.sources as string[]).join(', ')}
                   </div>
                 ) : null}
               </div>
