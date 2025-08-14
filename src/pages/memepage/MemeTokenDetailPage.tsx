@@ -44,11 +44,17 @@ const MemeTokenDetailPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { tokens } = useMemeTokens('all');
+  const { toast } = useToast();
+  
+  // Resolve address from query and fetch full details
+  const [searchParams] = useSearchParams();
+  const address = searchParams.get('address') || undefined;
+  const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
+  
+  // ALL STATE HOOKS FIRST
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
-
-  // Enhanced Trading State Management
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
   const [orderType, setOrderType] = useState<'market' | 'limit' | 'stop'>('market');
   const [customAmount, setCustomAmount] = useState('');
@@ -61,21 +67,49 @@ const MemeTokenDetailPage = () => {
   const [autoSlippage, setAutoSlippage] = useState(true);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
-
-  // Price alerts and limits
   const [limitPrice, setLimitPrice] = useState('');
   const [stopPrice, setStopPrice] = useState('');
   const [priceAlert, setPriceAlert] = useState('');
-
-  // Wallet balances (mock data)
   const [solBalance] = useState(2.45);
   const [tokenBalance] = useState(1234567);
 
-  // Resolve address from query and fetch full details
-  const [searchParams] = useSearchParams();
-  const address = searchParams.get('address') || undefined;
-  const { data: details, loading: detailsLoading } = useMemeTokenDetails(address);
-  const { toast } = useToast();
+  // ALL CUSTOM HOOKS SECOND
+  const { trade, loading: tradeLoading } = usePumpTrade();
+  const { createIfMissing } = useTradingWallet();
+
+  // ALL useCallback HOOKS THIRD
+  const handleAmountSelect = useCallback((amount: number) => {
+    setSelectedAmount(amount);
+    setCustomAmount(amount.toString());
+  }, []);
+
+  const handleCustomAmountChange = useCallback((value: string) => {
+    setCustomAmount(value);
+    setSelectedAmount(null);
+  }, []);
+
+  const calculateSellPercentage = useCallback((percentage: number) => {
+    const amount = tokenBalance * percentage / 100;
+    setCustomAmount(amount.toString());
+    setSelectedAmount(null);
+  }, [tokenBalance]);
+
+  const getPriorityFee = useCallback(() => {
+    switch (priority) {
+      case 'low':
+        return '0.0001 SOL';
+      case 'medium':
+        return '0.0005 SOL';
+      case 'high':
+        return '0.001 SOL';
+      default:
+        return '0.0005 SOL';
+    }
+  }, [priority]);
+
+  const getEstimatedGas = useCallback(() => {
+    return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
+  }, [orderType]);
 
   // Find fallback token by symbol
   const found = tokens.find(t => t.symbol.toLowerCase() === (symbol ?? '').toLowerCase());
@@ -114,32 +148,9 @@ const MemeTokenDetailPage = () => {
     } : {}),
   } as any;
 
-  // Derived data from DEXTools pool price for volumes and token address
+  // Derived data
   const poolPrice = (details as any)?.raw?.poolPrice?.data ?? (details as any)?.raw?.poolPrice ?? null;
-  const volume1h = typeof poolPrice?.volume1h === 'number' ? poolPrice.volume1h : undefined;
-  const volume6h = typeof poolPrice?.volume6h === 'number' ? poolPrice.volume6h : undefined;
-  const volume24hDerived = typeof poolPrice?.volume24h === 'number' ? poolPrice.volume24h : undefined;
   const tokenAddress = details?.address || address || (token as any)?.id || '';
-
-// Removed Birdeye market-data fetching to respect rate limits; using central hook instead
-
-  // ALL HOOKS MUST BE CALLED BEFORE ANY EARLY RETURNS
-  useEffect(() => {
-    if (!token && tokens.length > 0 && !address) {
-      navigate('/meme');
-    }
-  }, [token, tokens, navigate, address]);
-
-  // Enhanced Trading Functions - ALL useCallback hooks must be before early returns
-  const handleAmountSelect = useCallback((amount: number) => {
-    setSelectedAmount(amount);
-    setCustomAmount(amount.toString());
-  }, []);
-
-  const handleCustomAmountChange = useCallback((value: string) => {
-    setCustomAmount(value);
-    setSelectedAmount(null);
-  }, []);
 
   const calculateTradeValue = useCallback(() => {
     if (!token) return 0;
@@ -147,24 +158,14 @@ const MemeTokenDetailPage = () => {
     if (tradeType === 'buy') {
       return amount * token.price;
     } else {
-      return amount; // For sell, amount is in tokens
+      return amount;
     }
   }, [selectedAmount, customAmount, tradeType, token]);
-
-  const calculateSellPercentage = useCallback((percentage: number) => {
-    const amount = tokenBalance * percentage / 100;
-    setCustomAmount(amount.toString());
-    setSelectedAmount(null);
-  }, [tokenBalance]);
-  
-  const { trade, loading: tradeLoading } = usePumpTrade();
-  const { createIfMissing } = useTradingWallet();
   
   const handleTrade = useCallback(async () => {
     if (!token) return;
     setIsTrading(true);
     try {
-      // Ensure trading wallet exists (saved with API key)
       await createIfMissing();
 
       const isBuy = tradeType === 'buy';
@@ -173,7 +174,6 @@ const MemeTokenDetailPage = () => {
         throw new Error('Ogiltigt belopp');
       }
 
-      // Map UI -> PumpPortal params
       const prioMap: Record<typeof priority, number> = { low: 0.0001, medium: 0.0005, high: 0.001 } as const;
       const prio = prioMap[priority];
       const slip = autoSlippage ? 10 : Math.max(0, Number(slippage) || 10);
@@ -192,7 +192,6 @@ const MemeTokenDetailPage = () => {
       const res = await trade(params);
       if (res?.status !== 200) throw new Error('Trade misslyckades');
 
-      // Reset UI on success
       setCustomAmount('');
       setSelectedAmount(null);
     } catch (error: any) {
@@ -202,24 +201,12 @@ const MemeTokenDetailPage = () => {
     }
   }, [token, tradeType, selectedAmount, customAmount, priority, autoSlippage, slippage, mevProtection, tokenAddress, createIfMissing, trade]);
 
-  const getPriorityFee = useCallback(() => {
-    switch (priority) {
-      case 'low':
-        return '0.0001 SOL';
-      case 'medium':
-        return '0.0005 SOL';
-      case 'high':
-        return '0.001 SOL';
-      default:
-        return '0.0005 SOL';
+  // useEffect HOOKS LAST
+  useEffect(() => {
+    if (!token && tokens.length > 0 && !address) {
+      navigate('/meme');
     }
-  }, [priority]);
-
-  const getEstimatedGas = useCallback(() => {
-    return orderType === 'market' ? '0.002 SOL' : '0.003 SOL';
-  }, [orderType]);
-
-// Removed extra OHLCV polling to respect rate limits; volumes are shown in the market section
+  }, [token, tokens, navigate, address]);
 
   // Helper functions (non-hooks)
   const formatPrice = (price: number): string => {
