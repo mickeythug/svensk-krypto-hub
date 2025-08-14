@@ -12,6 +12,7 @@ import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigati
 import { useTradingWallet } from '@/hooks/useTradingWallet';
 import { usePumpTrade } from '@/hooks/usePumpTrade';
 import TradingWalletOnboardingModal from './components/TradingWalletOnboardingModal';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const BuyTokenPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,14 +23,15 @@ const BuyTokenPage = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const { walletAddress, privateKey, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
   const { loading: tradeLoading, trade } = usePumpTrade();
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    const title = 'Köp Meme Tokens - Crypto Network Sweden';
-    const description = 'Köp och sälj meme tokens med avancerad analys och realtidsdata';
+    const title = t('meme.buyToken.title') + ' - Crypto Network Sweden';
+    const description = t('meme.buyToken.description');
     document.title = title;
     
     const ensureTag = (selector: string, create: () => HTMLElement) => {
@@ -46,7 +48,7 @@ const BuyTokenPage = () => {
       return m;
     });
     md.setAttribute('content', description);
-  }, []);
+  }, [t]);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -89,10 +91,10 @@ const BuyTokenPage = () => {
         risk: d?.audit?.isHoneypot === 'yes' ? 'High' : 'Low',
         socials: { twitter: socials.twitter || '', telegram: socials.telegram || '', website: socials.website || '' },
       });
-      toast({ title: 'Token hittad', description: `${(d?.meta?.symbol || 'TOKEN')} — ${mint.slice(0,8)}...` });
+      toast({ title: t('meme.buyToken.tokenFound'), description: `${(d?.meta?.symbol || 'TOKEN')} — ${mint.slice(0,8)}...` });
     } catch (e: any) {
       console.error('DEXTools token fetch failed', e);
-      toast({ title: 'Misslyckades att hämta token', description: 'Kontrollera adressen och försök igen.', variant: 'destructive' });
+      toast({ title: t('meme.buyToken.fetchFailed'), description: t('meme.buyToken.checkAddress'), variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -101,21 +103,21 @@ const BuyTokenPage = () => {
   const handleBuy = () => {
     if (!amount || parseFloat(amount) <= 0) {
       toast({
-        title: "Ogiltigt belopp",
+        title: t('meme.buyToken.invalidAmount'),
         description: "Ange ett giltigt belopp att köpa för.",
         variant: "destructive",
       });
       return;
     }
     toast({
-      title: "Köp initierat",
+      title: t('meme.buyToken.buyInitiated'),
       description: `Öppnar wallet för att köpa ${amount} SOL av ${selectedToken?.symbol}`,
     });
   };
 
   const handleSell = () => {
     toast({
-      title: "Sälj initierat", 
+      title: t('meme.buyToken.sellInitiated'), 
       description: `Öppnar wallet för att sälja ${selectedToken?.symbol}`,
     });
   };
@@ -136,7 +138,7 @@ const BuyTokenPage = () => {
             </Button>
             <div className="flex-1">
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Köp Meme Tokens
+                {t('meme.buyToken.title')}
               </h1>
             </div>
           </div>
@@ -146,13 +148,13 @@ const BuyTokenPage = () => {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Search className="h-5 w-5 text-primary" />
-              Sök Token
+              {t('common.search')} Token
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="relative">
               <Input
-                placeholder="Sök token adress"
+                placeholder={t('meme.buyToken.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
