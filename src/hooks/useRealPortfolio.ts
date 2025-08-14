@@ -37,7 +37,7 @@ interface WalletTransaction {
   value: number;
 }
 
-const HELIUS_API_KEY = 'c5fb7dc1-05c9-4bcc-89a7-a8fdaeb30871'; // Replace with your actual API key
+const HELIUS_API_KEY = 'your-helius-api-key'; // This will be replaced with proper API calls
 
 export function useRealPortfolio(walletAddress?: string) {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
@@ -45,7 +45,8 @@ export function useRealPortfolio(walletAddress?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const { wsManager, isConnected } = useHeliusWebSocket(HELIUS_API_KEY);
+  // Don't use WebSocket for now due to API key issues
+  const wsConnected = false;
 
   // Fetch initial portfolio data
   const fetchPortfolioData = useCallback(async (address: string) => {
@@ -53,10 +54,13 @@ export function useRealPortfolio(walletAddress?: string) {
       setIsLoading(true);
       setError(null);
 
-      // Fetch SOL balance
-      const solResponse = await fetch(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+      // Use Supabase RPC proxy for Solana calls
+      const solResponse = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+        },
         body: JSON.stringify({
           jsonrpc: '2.0',
           id: 1,
@@ -65,13 +69,20 @@ export function useRealPortfolio(walletAddress?: string) {
         }),
       });
 
+      if (!solResponse.ok) {
+        throw new Error('Failed to fetch SOL balance');
+      }
+
       const solData = await solResponse.json();
       const solBalance = solData.result?.value / 1e9 || 0;
 
-      // Fetch token accounts
-      const tokenResponse = await fetch(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+      // Fetch token accounts using RPC proxy
+      const tokenResponse = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+        },
         body: JSON.stringify({
           jsonrpc: '2.0',
           id: 2,
@@ -83,6 +94,10 @@ export function useRealPortfolio(walletAddress?: string) {
           ],
         }),
       });
+
+      if (!tokenResponse.ok) {
+        throw new Error('Failed to fetch token accounts');
+      }
 
       const tokenData = await tokenResponse.json();
       const tokenAccounts = tokenData.result?.value || [];
@@ -175,10 +190,13 @@ export function useRealPortfolio(walletAddress?: string) {
         };
       }
 
-      // Fallback to Helius metadata API
-      const response = await fetch(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+      // Fallback to Helius metadata API via RPC proxy
+      const response = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+        },
         body: JSON.stringify({
           jsonrpc: '2.0',
           id: 1,
@@ -186,6 +204,10 @@ export function useRealPortfolio(walletAddress?: string) {
           params: { id: mint },
         }),
       });
+
+      if (!response.ok) {
+        return { symbol: '', name: '', image: '', price: 0 };
+      }
 
       const data = await response.json();
       const metadata = data.result;
@@ -204,9 +226,12 @@ export function useRealPortfolio(walletAddress?: string) {
   // Fetch transaction history
   const fetchTransactionHistory = async (address: string) => {
     try {
-      const response = await fetch(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+      const response = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+        },
         body: JSON.stringify({
           jsonrpc: '2.0',
           id: 1,
@@ -215,6 +240,10 @@ export function useRealPortfolio(walletAddress?: string) {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to fetch transaction signatures');
+      }
+
       const data = await response.json();
       const signatures = data.result || [];
 
@@ -222,9 +251,12 @@ export function useRealPortfolio(walletAddress?: string) {
       const recentTransactions: WalletTransaction[] = [];
       
       for (const sig of signatures.slice(0, 20)) { // Limit to recent 20
-        const txResponse = await fetch(`https://mainnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+        const txResponse = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          },
           body: JSON.stringify({
             jsonrpc: '2.0',
             id: 1,
@@ -232,6 +264,8 @@ export function useRealPortfolio(walletAddress?: string) {
             params: [sig.signature, { encoding: 'jsonParsed' }],
           }),
         });
+
+        if (!txResponse.ok) continue;
 
         const txData = await txResponse.json();
         const transaction = txData.result;
@@ -254,58 +288,11 @@ export function useRealPortfolio(walletAddress?: string) {
     }
   };
 
-  // Subscribe to real-time updates
+  // Simplified without WebSocket for now
   useEffect(() => {
-    if (!wsManager || !isConnected || !walletAddress) return;
-
-    // Subscribe to SOL balance changes
-    const solSubscription = wsManager.subscribe(
-      'accountSubscribe',
-      [walletAddress, { commitment: 'confirmed' }],
-      (data) => {
-        const newBalance = data.value.lamports / 1e9;
-        setPortfolioData(prev => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            solBalance: {
-              ...prev.solBalance,
-              balance: newBalance,
-              value: newBalance * prev.solBalance.price,
-            },
-            totalValue: (newBalance * prev.solBalance.price) + 
-              prev.tokenBalances.reduce((sum, token) => sum + (token.value || 0), 0),
-            lastUpdated: new Date(),
-          };
-        });
-      }
-    );
-
-    // Subscribe to token account changes
-    const tokenSubscription = wsManager.subscribe(
-      'programSubscribe',
-      [
-        'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA',
-        {
-          encoding: 'jsonParsed',
-          commitment: 'confirmed',
-          filters: [
-            { memcmp: { offset: 32, bytes: walletAddress } }
-          ]
-        }
-      ],
-      (data) => {
-        // Handle token balance updates
-        console.log('Token account updated:', data);
-        // Would need to update specific token balance
-      }
-    );
-
-    return () => {
-      wsManager.unsubscribe(solSubscription);
-      wsManager.unsubscribe(tokenSubscription);
-    };
-  }, [wsManager, isConnected, walletAddress]);
+    // WebSocket functionality disabled due to API key issues
+    // Would implement real-time updates here when properly configured
+  }, [walletAddress]);
 
   // Initial data fetch
   useEffect(() => {
@@ -335,7 +322,7 @@ export function useRealPortfolio(walletAddress?: string) {
     transactions,
     isLoading,
     error,
-    isConnected,
+    isConnected: wsConnected,
     pnl: calculatePnL(),
     refreshPortfolio: () => walletAddress && fetchPortfolioData(walletAddress),
   };
