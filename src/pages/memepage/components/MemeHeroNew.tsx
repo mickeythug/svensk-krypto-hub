@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Rocket, Zap, TrendingUp, TrendingDown, Star, Crown, Flame, Sparkles, Target, DollarSign, Users, BarChart3 } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
-import heroImage from '@/assets/meme-hero.jpg';
 import hexPattern from '@/assets/hex-pattern.jpg';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMemeTokens } from '../hooks/useMemeTokens';
@@ -55,12 +54,7 @@ const MemeHeroNew = () => {
     <section className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-yellow-900/30 to-gray-900 pt-32 pb-16">
       {/* Modern Background Layers */}
       <div className="absolute inset-0 z-0">
-        <OptimizedImage 
-          src={heroImage} 
-          alt="Meme Token Universe Background" 
-          className="w-full h-full object-cover opacity-30" 
-          fallbackSrc="/placeholder.svg" 
-        />
+        <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 opacity-80"></div>
         <div className="absolute inset-0 bg-gradient-casino-gold opacity-20 animate-shimmer"></div>
         <div className={`absolute inset-0 bg-[url('${hexPattern}')] opacity-20`}></div>
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-transparent to-black/40"></div>
