@@ -88,34 +88,32 @@ const PremiumTokenListItem = ({
               </div>
             </div>
 
-            {/* Token Info */}
+            {/* Enhanced Token Info with better text handling */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-base text-white truncate font-sans">
+                <div className="min-w-0 flex-1 pr-2">
+                  <h3 className="font-bold text-base text-white text-truncate-1 max-w-[120px]">
                     {token.symbol}
                   </h3>
-                  <p className="text-white/50 text-xs truncate font-medium font-sans">{token.name}</p>
+                  <p className="text-white/50 text-xs text-truncate-1 font-medium max-w-[120px]">{token.name}</p>
                 </div>
                 
-                {/* Price Change */}
-                <div className={`flex items-center gap-1 text-sm font-bold font-sans ${
-                  positive ? 'text-green-400' : 'text-red-400'
-                }`}>
+                {/* Clean Price Change display */}
+                <div className={`flex items-center gap-1 text-sm font-bold transition-colors duration-300 btn-feedback ${positive ? 'text-green-400' : 'text-red-400'}`}>
                   {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                   <span className="text-xs font-numbers">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
                 </div>
               </div>
 
-              {/* Stats */}
+              {/* Enhanced Stats with truncation */}
               <div className="flex items-center gap-4 mt-1">
                 <div className="flex items-center gap-1">
                   <BarChart3 className="w-3 h-3 text-blue-400" />
-                  <span className="text-white text-xs font-medium font-numbers">{formatCompact(token.marketCap)}</span>
+                  <span className="text-white text-xs font-medium font-numbers text-truncate-1">{formatCompact(token.marketCap)}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="w-3 h-3 text-green-400" />
-                  <span className="text-white/70 text-xs font-numbers">{formatCompact(token.volume24h)}</span>
+                  <span className="text-white/70 text-xs font-numbers text-truncate-1">{formatCompact(token.volume24h)}</span>
                 </div>
               </div>
             </div>
