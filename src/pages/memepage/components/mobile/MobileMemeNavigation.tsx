@@ -31,12 +31,6 @@ const MobileMemeNavigation = () => {
     icon: Wallet,
     path: '/portfolio',
     badge: null
-  }, {
-    id: 'profile',
-    label: 'Profile',
-    icon: User,
-    path: '/profile',
-    badge: null
   }];
   const handleNavClick = (item: typeof navItems[0]) => {
     setActiveTab(item.id);
