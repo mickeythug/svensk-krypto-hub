@@ -60,7 +60,7 @@ export const MobileWalletConnect = ({ onBack }: MobileWalletConnectProps) => {
 
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground text-center mb-6">
-            Välj vilken blockchain du vill ansluta till
+            Choose which blockchain you want to connect to
           </p>
 
           <Button

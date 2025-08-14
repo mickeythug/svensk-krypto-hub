@@ -50,7 +50,7 @@ const MemeHeader = memo(() => {
         </div>
         
         <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-8">
-          🎉 Välkommen till den vildaste delen av krypto! Upptäck trending meme tokens,
+          🎉 Welcome to the wildest part of crypto! Discover trending meme tokens,
           småcap-gems och community-drivna coins som tar internet med storm!
         </p>
 

@@ -79,7 +79,7 @@ const MobileOrderBook = ({ symbol, currentPrice, coinGeckoId }: MobileOrderBookP
         
         {/* Column Headers */}
         <div className="grid grid-cols-3 text-xs text-muted-foreground mt-3 px-1">
-          <span>Pris ({symbol})</span>
+          <span>Price ({symbol})</span>
           <span className="text-right">Storlek</span>
           <span className="text-right">Total</span>
         </div>

@@ -250,7 +250,7 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
             <div className="absolute inset-0 flex items-center justify-center bg-[#0f0f23] z-20 rounded">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-3"></div>
-                <p className="text-muted-foreground text-sm">Laddar TradingView chart...</p>
+                <p className="text-muted-foreground text-sm">Loading TradingView chart...</p>
                 <p className="text-muted-foreground text-xs mt-1">{symbol}/USDT</p>
               </div>
             </div>
@@ -288,9 +288,9 @@ const SimpleMobileChart = ({ symbol, currentPrice, coinGeckoId }: SimpleMobileCh
                 <div className="fallback-content absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
-                    <p className="text-muted-foreground text-sm">Laddar TradingView chart...</p>
+                    <p className="text-muted-foreground text-sm">Loading TradingView chart...</p>
                     <div className="mt-2 text-xs text-muted-foreground">
-                      {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+                      {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView loaded, initializing...' : 'Loading TradingView script...'}
                     </div>
                   </div>
                 </div>

@@ -354,7 +354,7 @@ const MemeTopCoins = () => {
                     size="sm"
                   >
                     <Target className="w-4 h-4 mr-2" />
-                    Handla
+                    Trade
                   </Button>
                 </div>
               </Card>

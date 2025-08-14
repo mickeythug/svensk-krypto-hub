@@ -83,7 +83,7 @@ const ModernMobileTradingPanel = ({
             )}
             <div>
               <h3 className="font-bold text-lg">{symbol.toUpperCase()}/USDT</h3>
-              <p className="text-sm text-muted-foreground">Aktuellt pris: {formatUsd(currentPrice)}</p>
+              <p className="text-sm text-muted-foreground">Current price: {formatUsd(currentPrice)}</p>
             </div>
           </div>
         </div>
@@ -162,7 +162,7 @@ const ModernMobileTradingPanel = ({
 
           <TabsContent value="limit" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Pris (USDT)</label>
+              <label className="text-sm font-medium">Price (USDT)</label>
               <Input
                 type="number"
                 value={price}
@@ -193,7 +193,7 @@ const ModernMobileTradingPanel = ({
 
           <TabsContent value="stop" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Stop Pris (USDT)</label>
+              <label className="text-sm font-medium">Stop Price (USDT)</label>
               <Input
                 type="number"
                 value={stopPrice}
@@ -204,7 +204,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Limit Pris (USDT)</label>
+              <label className="text-sm font-medium">Limit Price (USDT)</label>
               <Input
                 type="number"
                 value={price}
@@ -267,7 +267,7 @@ const ModernMobileTradingPanel = ({
         
         <div className="space-y-2 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Handelsavgift:</span>
+            <span className="text-muted-foreground">Trading fee:</span>
             <span className="font-mono">0.1%</span>
           </div>
           <div className="flex justify-between">
@@ -289,7 +289,7 @@ const ModernMobileTradingPanel = ({
       {/* TRADE BUTTON */}
       {!connected ? (
         <Button className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90">
-          Anslut plånbok för att handla
+          Connect wallet to trade
         </Button>
       ) : (
         <Button 
@@ -311,11 +311,11 @@ const ModernMobileTradingPanel = ({
           <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
             <h4 className="font-semibold text-sm text-amber-600 dark:text-amber-400">
-              Handelsvarning
+              Trading Warning
             </h4>
             <p className="text-xs text-amber-600/80 dark:text-amber-400/80 leading-relaxed">
-              Kryptovalutahandel innebär höga risker och du kan förlora hela ditt investerade kapital. 
-              Handel endast med medel du har råd att förlora.
+              Cryptocurrency trading involves high risks and you may lose your entire invested capital. 
+              Trade only with funds you can afford to lose.
             </p>
           </div>
         </div>

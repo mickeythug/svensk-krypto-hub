@@ -102,7 +102,7 @@ const MemeTokenSection = () => {
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             Håll koll på de roligaste och mest volatila meme-tokens på marknaden. 
-            Från klassiska som DOGE till nya sensationer som PEPE!
+            From classics like DOGE to new sensations like PEPE!
           </p>
         </div>
 
@@ -211,7 +211,7 @@ const MemeTokenSection = () => {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Meme-tokens är extremt volatila och spekulativa. Investera aldrig mer än du har råd att förlora. 
-                  DYOR (Do Your Own Research) och handelenbart på egen risk.
+                  DYOR (Do Your Own Research) and trade at your own risk.
                 </p>
               </div>
             </Card>

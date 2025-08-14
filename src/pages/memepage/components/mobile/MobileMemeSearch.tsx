@@ -93,7 +93,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Sök efter tokens..."
+            placeholder="Search for tokens..."
             className="pl-10 pr-4 py-3 bg-white/10 border-white/20 text-white placeholder:text-white/60 rounded-full focus:bg-white/15 transition-all duration-300"
             autoFocus
           />
@@ -124,7 +124,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-white/60" />
-                <h3 className="text-white font-semibold">Senaste sökningar</h3>
+                <h3 className="text-white font-semibold">Recent searches</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {recentSearches.map((search, index) => (
@@ -181,7 +181,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-3">
-                <h3 className="text-white font-semibold mb-4">Sökresultat för "{query}"</h3>
+                <h3 className="text-white font-semibold mb-4">Search results for "{query}"</h3>
                 {results.map((result) => (
                   <Card
                     key={result.id}

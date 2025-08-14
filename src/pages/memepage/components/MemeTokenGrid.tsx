@@ -91,9 +91,9 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
   if (error) {
     return (
       <Card className="p-8 text-center">
-        <div className="text-destructive mb-4">⚠️ Fel vid laddning av tokens</div>
+        <div className="text-destructive mb-4">⚠️ Error loading tokens</div>
         <Button variant="outline" onClick={() => window.location.reload()} className="font-crypto">
-          FÖRSÖK IGEN
+          TRY AGAIN
         </Button>
       </Card>
     );

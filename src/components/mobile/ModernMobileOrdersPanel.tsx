@@ -148,7 +148,7 @@ const ModernMobileOrdersPanel = ({ symbol, currentPrice }: ModernMobileOrdersPan
         <Wallet className="h-16 w-16 text-muted-foreground/50" />
         <h3 className="text-xl font-semibold">Anslut din plånbok</h3>
         <p className="text-muted-foreground max-w-sm">
-          Anslut din plånbok för att se dina positioner, ordrar och handelshistorik.
+          Connect your wallet to see your positions, orders and trading history.
         </p>
         <Button className="mt-4">
           Anslut plånbok
@@ -275,7 +275,7 @@ const ModernMobileOrdersPanel = ({ symbol, currentPrice }: ModernMobileOrdersPan
                     <span className="font-mono">{order.amount}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Pris: </span>
+                    <span className="text-muted-foreground">Price: </span>
                     <span className="font-mono">${order.price}</span>
                   </div>
                 </div>
@@ -331,7 +331,7 @@ const ModernMobileOrdersPanel = ({ symbol, currentPrice }: ModernMobileOrdersPan
                   <span className="font-mono">{order.amount}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Pris: </span>
+                  <span className="text-muted-foreground">Price: </span>
                   <span className="font-mono">${order.price}</span>
                 </div>
               </div>

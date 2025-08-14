@@ -18,7 +18,7 @@ const MemePageHeader = () => {
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="w-5 h-5 mr-3" />
-            TILLBAKA
+            BACK
           </Button>
           <div className="flex items-center gap-6">
           {/* Connect Wallet */}

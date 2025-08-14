@@ -161,11 +161,11 @@ const handleRetry = () => {
           <div className="flex items-center justify-center h-full bg-background/90">
             <div className="text-center">
               <AlertCircle className="mx-auto h-12 w-12 text-destructive mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Kunde inte ladda chart</h3>
-              <p className="text-muted-foreground mb-4">Det uppstod ett fel vid laddning av TradingView chart</p>
+              <h3 className="text-lg font-semibold mb-2">Could not load chart</h3>
+              <p className="text-muted-foreground mb-4">Error loading TradingView chart</p>
               <Button onClick={handleRetry} variant="outline">
                 <RefreshCw className="h-4 w-4 mr-2" />
-                Försök igen
+                Try again
               </Button>
             </div>
           </div>
@@ -173,8 +173,8 @@ const handleRetry = () => {
           <div className="flex items-center justify-center h-full bg-background/90">
             <div className="text-center">
               <div className="animate-spin mx-auto h-12 w-12 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
-              <h3 className="text-lg font-semibold mb-2">Laddar TradingView Chart</h3>
-              <p className="text-muted-foreground">Hämtar live data från TradingView...</p>
+              <h3 className="text-lg font-semibold mb-2">Loading TradingView Chart</h3>
+              <p className="text-muted-foreground">Fetching live data from TradingView...</p>
               <div className="mt-2 text-xs text-success">
                 Symbol: {tvSymbol} {exchange ? `• ${exchange}` : ''}
               </div>

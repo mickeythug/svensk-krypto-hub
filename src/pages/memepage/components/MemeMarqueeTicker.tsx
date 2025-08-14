@@ -32,7 +32,7 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image }: any) => {
 
 const MemeMarqueeTicker = () => {
   const { tokens, loading, error } = useMemeTokens('trending', 12);
-  const list = useMemo(() => (loading ? Array.from({ length: 12 }).map((_, i) => ({ id: i, symbol: '...', name: 'Laddar', price: 0, change24h: 0 })) : tokens), [loading, tokens]);
+  const list = useMemo(() => (loading ? Array.from({ length: 12 }).map((_, i) => ({ id: i, symbol: '...', name: 'Loading', price: 0, change24h: 0 })) : tokens), [loading, tokens]);
 
   if (error) return null;
 

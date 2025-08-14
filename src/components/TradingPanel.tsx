@@ -61,9 +61,9 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
         // Simple fallback UI instead of external widget for now
         const fallbackHTML = `
           <div class="p-6 text-center space-y-4">
-            <div class="text-lg font-semibold">DEX Trading kommer snart</div>
+            <div class="text-lg font-semibold">DEX Trading Coming Soon</div>
             <p class="text-sm text-muted-foreground">
-              Vi integrerar Li.Fi för säker cross-chain trading
+              We are integrating Li.Fi for secure cross-chain trading
             </p>
             <div class="grid grid-cols-2 gap-2 mt-4">
               <div class="p-3 bg-secondary/20 rounded-lg">
@@ -86,7 +86,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
           console.error('Error initializing trading widget:', error);
           toast({
             title: "Widget Error",
-            description: "Kunde inte ladda trading widget. Försök igen senare.",
+            description: "Could not load trading widget. Try again later.",
             variant: "destructive"
           });
         }
@@ -115,16 +115,16 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
     setFromAmount(amount);
     setActiveTab("swap");
     toast({
-      title: "Snabbköp aktiverat",
-      description: `Köp ${amount} USDT värde av ${symbol}`,
+      title: "Quick buy activated",
+      description: `Buy ${amount} USDT worth of ${symbol}`,
     });
   };
 
   const handleSwap = () => {
     setIsLoading(true);
     toast({
-      title: "Swap initierad",
-      description: `Swappar ${fromAmount} ${fromToken} till ${symbol}`,
+      title: "Swap initiated",
+      description: `Swapping ${fromAmount} ${fromToken} to ${symbol}`,
     });
     
     // Li.Fi widget will handle the actual swap
@@ -156,7 +156,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Handla {symbol}
+            Trade {symbol}
           </CardTitle>
           <Badge variant="secondary" className="flex items-center gap-1">
             <ShieldCheck className="h-3 w-3" />
@@ -165,7 +165,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
         </div>
         
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Aktuellt pris:</span>
+          <span className="text-muted-foreground">Current price:</span>
           <div className="flex items-center gap-2">
             <span className="font-semibold">{formatPrice(currentPrice)}</span>
             <Badge variant={priceChange24h >= 0 ? "default" : "destructive"} className="text-xs">
@@ -200,14 +200,14 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
             </TabsTrigger>
             <TabsTrigger value="advanced" className="flex items-center gap-1">
               <Zap className="h-4 w-4" />
-              Avancerat
+              Advanced
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="swap" className="space-y-4 mt-4">
             {/* From Token Input */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Från</Label>
+              <Label className="text-sm font-medium">From</Label>
               <div className="flex gap-2">
                 <div className="flex-1">
                   <Input
@@ -248,7 +248,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
 
             {/* To Token Input */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Till</Label>
+              <Label className="text-sm font-medium">To</Label>
               <div className="flex gap-2">
                 <div className="flex-1">
                   <Input
@@ -271,7 +271,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
 
             {/* Slippage Settings */}
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Slippage tolerans:</span>
+              <span className="text-muted-foreground">Slippage tolerance:</span>
               <div className="flex gap-1">
                 {["0.1", "0.5", "1.0"].map((slip) => (
                   <Button
@@ -287,12 +287,12 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
               </div>
             </div>
 
-            {/* Säker trading widget utan DOM-manipulation */}
+            {/* Secure trading widget without DOM manipulation */}
             <div className="min-h-[200px] rounded-lg bg-secondary/20 border border-primary/20 p-6">
               <div className="text-center space-y-4">
                 <div className="text-lg font-semibold">DEX Trading</div>
                 <p className="text-sm text-muted-foreground">
-                  Li.Fi integration för säker cross-chain trading
+                  Li.Fi integration for secure cross-chain trading
                 </p>
                 <div className="grid grid-cols-2 gap-2 mt-4">
                   <div className="p-3 bg-secondary/20 rounded-lg">
@@ -314,11 +314,11 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
               className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold py-3"
             >
               {isLoading ? (
-                "Genomför swap..."
+                "Processing swap..."
               ) : (
                 <span className="flex items-center gap-2">
                   <Wallet className="h-4 w-4" />
-                  Swappa {fromToken} → {symbol}
+                  Swap {fromToken} → {symbol}
                 </span>
               )}
             </Button>
@@ -332,7 +332,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
                   Cross-Chain Trading
                 </h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Handla {symbol} från olika blockkedjor med Li.Fi's cross-chain teknologi.
+                  Trade {symbol} from different blockchains with Li.Fi's cross-chain technology.
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <Badge variant="outline" className="justify-center">Ethereum</Badge>
@@ -343,9 +343,9 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-warning">Riskvarning</h4>
+                    <h4 className="font-semibold text-warning">Risk Warning</h4>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Kryptovalutor är volatila investeringar. Investera endast vad du har råd att förlora.
+                      Cryptocurrencies are volatile investments. Only invest what you can afford to lose.
                     </p>
                   </div>
                 </div>
@@ -364,7 +364,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
 
               <Button variant="outline" className="w-full border-primary/20">
                 <Info className="h-4 w-4 mr-2" />
-                Se avancerade inställningar
+                View advanced settings
               </Button>
             </div>
           </TabsContent>
@@ -376,7 +376,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
             <ShieldCheck className="h-3 w-3" />
             Powered by Li.Fi & CryptoNetwork Sweden
           </div>
-          <p>Säker cross-chain DEX-aggregator med bästa priser</p>
+          <p>Secure cross-chain DEX aggregator with best prices</p>
         </div>
       </CardContent>
     </Card>

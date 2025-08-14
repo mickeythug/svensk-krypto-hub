@@ -145,7 +145,7 @@ const TradingForm = ({
       {orderType === "limit" && (
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">
-            Pris (USDT)
+            Price (USDT)
           </label>
           <Input
             type="number"

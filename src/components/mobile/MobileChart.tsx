@@ -177,7 +177,7 @@ const MobileChart = ({ symbol, currentPrice }: MobileChartProps) => {
               <div className="absolute inset-0 flex items-center justify-center bg-[#1a1b23] z-10">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-3"></div>
-                  <p className="text-muted-foreground text-sm">Laddar chart...</p>
+                  <p className="text-muted-foreground text-sm">Loading chart...</p>
                 </div>
               </div>
             )}

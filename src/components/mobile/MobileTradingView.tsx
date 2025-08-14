@@ -124,7 +124,7 @@ const MobileTradingView = ({
             <div className="relative z-[65]">
               <TokenSearchBar 
                 currentSymbol={symbol}
-                placeholder="Sök token..."
+                placeholder="Search token..."
                 className="w-full h-12 rounded-xl bg-background/80 border-border/50 backdrop-blur-sm"
               />
             </div>
@@ -185,7 +185,7 @@ const MobileTradingView = ({
             <div className="mx-4 mb-4">
               <Card className="border-amber-500/40 bg-amber-500/10 p-3 backdrop-blur-sm">
                 <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                  ⚠️ Denna token stöds inte av Solana‑kedjan. Växla till EVM för handel.
+                  ⚠️ This token is not supported by the Solana chain. Switch to EVM for trading.
                 </p>
               </Card>
             </div>
@@ -219,7 +219,7 @@ const MobileTradingView = ({
                   className="text-xs font-bold data-[state=active]:bg-card data-[state=active]:shadow-lg data-[state=active]:border data-[state=active]:border-border/50 rounded-xl transition-all duration-200 flex flex-col items-center gap-1 py-2"
                 >
                   <TrendingUp className="h-4 w-4" />
-                  <span>Handel</span>
+                  <span>Trade</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="info" 
@@ -300,7 +300,7 @@ const MobileTradingView = ({
                       </div>
                     </Card>
                     <Card className="p-4 bg-background/50 backdrop-blur-sm border-border/40 rounded-xl">
-                      <div className="text-muted-foreground text-sm mb-2 font-medium">Max tillgång</div>
+                      <div className="text-muted-foreground text-sm mb-2 font-medium">Max supply</div>
                       <div className="font-mono font-semibold text-foreground text-sm">
                         {crypto?.maxSupply ? Number(crypto.maxSupply).toLocaleString() : 'Obegränsad'}
                       </div>
@@ -308,7 +308,7 @@ const MobileTradingView = ({
                   </div>
                   
                   <div className="pt-4 border-t border-border/40">
-                    <div className="text-muted-foreground text-sm mb-3 font-medium">Handelspar</div>
+                    <div className="text-muted-foreground text-sm mb-3 font-medium">Trading pairs</div>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="outline" className="text-xs bg-primary/15 border-primary/40 text-primary font-semibold px-3 py-1">
                         {symbol}/USDT

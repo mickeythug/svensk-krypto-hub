@@ -87,7 +87,7 @@ const ModernMobileTokenInfo = ({
       <Card className="p-4">
         <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          Prisstatistik (24h)
+          Price statistics (24h)
         </h3>
         
         <div className="grid grid-cols-2 gap-4">
@@ -158,26 +158,26 @@ const ModernMobileTokenInfo = ({
       <Card className="p-4">
         <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
           <Coins className="h-5 w-5 text-primary" />
-          Tillgångsinformation
+          Supply information
         </h3>
         
         <div className="space-y-4">
           <div className="flex justify-between items-center py-2 border-b border-border/50">
-            <span className="text-muted-foreground">Cirkulerande tillgång</span>
+            <span className="text-muted-foreground">Circulating supply</span>
             <span className="font-mono font-bold">
               {formatSupply(crypto?.circulatingSupply)}
             </span>
           </div>
           
           <div className="flex justify-between items-center py-2 border-b border-border/50">
-            <span className="text-muted-foreground">Total tillgång</span>
+            <span className="text-muted-foreground">Total supply</span>
             <span className="font-mono font-bold">
               {formatSupply(crypto?.totalSupply) || 'N/A'}
             </span>
           </div>
           
           <div className="flex justify-between items-center py-2">
-            <span className="text-muted-foreground">Max tillgång</span>
+            <span className="text-muted-foreground">Max supply</span>
             <span className="font-mono font-bold">
               {crypto?.maxSupply ? formatSupply(crypto.maxSupply) : 'Obegränsad'}
             </span>
@@ -189,7 +189,7 @@ const ModernMobileTokenInfo = ({
       <Card className="p-4">
         <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
           <Calendar className="h-5 w-5 text-primary" />
-          Tillgängliga handelspar
+          Available trading pairs
         </h3>
         
         <div className="flex flex-wrap gap-2">

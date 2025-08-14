@@ -113,7 +113,7 @@ const TrendingMemeTokens = () => {
 
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Pris</span>
+                  <span className="text-sm text-muted-foreground">Price</span>
                   <span className="font-bold font-numbers tabular-nums">{formatPrice(token.price)}</span>
                 </div>
 

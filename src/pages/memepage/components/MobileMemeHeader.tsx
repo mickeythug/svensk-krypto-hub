@@ -13,7 +13,7 @@ const MobileMemeHeader = () => {
     { path: "/", icon: TrendingUp, label: "Hem" },
     { path: "/marknad", icon: TrendingUp, label: "Marknad" },
     { path: "/meme", icon: Zap, label: "Meme Zone" },
-    { path: "/crypto/btc", icon: Wallet, label: "Handel" },
+    { path: "/crypto/btc", icon: Wallet, label: "Trade" },
     { path: "/nyheter", icon: Newspaper, label: "Nyheter" }
   ];
 

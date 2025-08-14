@@ -237,9 +237,9 @@ const TradingViewChart = ({
           <div className="fallback-content absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
-              <p className="text-muted-foreground">Laddar TradingView chart...</p>
+              <p className="text-muted-foreground">Loading TradingView chart...</p>
               <div className="mt-2 text-xs text-muted-foreground">
-                {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView laddat, initialiserar...' : 'Laddar TradingView script...'}
+                {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView loaded, initializing...' : 'Loading TradingView script...'}
               </div>
             </div>
           </div>

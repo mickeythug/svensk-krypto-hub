@@ -80,7 +80,7 @@ const MemeLiveTicker = () => {
   const isMobile = useIsMobile();
   const { tokens, loading, error } = useMemeTokens('trending', 15);
   const list = useMemo(() => (loading ? Array.from({ length: 15 }).map((_, i) => ({ 
-    id: i, symbol: '...', name: 'Laddar', marketCap: 0, change24h: 0 
+    id: i, symbol: '...', name: 'Loading', marketCap: 0, change24h: 0 
   })) : tokens), [loading, tokens]);
 
   if (error) return null;

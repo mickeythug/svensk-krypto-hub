@@ -105,7 +105,7 @@ const MobileMemeTokenGrid: React.FC<Props> = ({ category }) => {
           variant="outline"
           className="bg-white/10 border-white/20 text-white hover:bg-white/20"
         >
-          Försök igen
+          Try again
         </Button>
       </div>
     );
@@ -209,7 +209,7 @@ const MobileMemeTokenGrid: React.FC<Props> = ({ category }) => {
                     }`}
                   >
                     <Target className="w-4 h-4 mr-2" />
-                    HANDLA NU
+                    TRADE NOW
                   </Button>
                 </div>
               </div>
@@ -238,7 +238,7 @@ const MobileMemeTokenGrid: React.FC<Props> = ({ category }) => {
             {isLoadingMore ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Laddar fler...
+                Loading more...
               </div>
             ) : (
               'Ladda fler tokens'

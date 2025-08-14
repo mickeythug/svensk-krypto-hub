@@ -160,7 +160,7 @@ const TokenGrid: React.FC<{
       <div className="text-center py-12">
         <p className="text-destructive text-lg mb-4">{error}</p>
         <Button onClick={() => window.location.reload()} variant="outline">
-          Försök igen
+          Try again
         </Button>
       </div>
     );
@@ -221,7 +221,7 @@ const TokenGrid: React.FC<{
                 {/* Stats Grid */}
                 <div className="hidden md:flex items-center gap-8">
                   <div className="text-center">
-                    <p className="text-base font-bold text-muted-foreground">PRIS</p>
+                    <p className="text-base font-bold text-muted-foreground">PRICE</p>
                     <p className="font-black text-xl">{formatPrice(token.price)}</p>
                   </div>
                   <div className="text-center">
@@ -368,7 +368,7 @@ const TokenGrid: React.FC<{
                   <div className="bg-muted/50 rounded-lg p-4 border">
                     <div className="flex items-center gap-2 text-muted-foreground text-sm font-bold mb-3">
                       <DollarSign className="w-5 h-5" />
-                      PRIS
+                      PRICE
                     </div>
                     <div className="text-xl font-black text-foreground">{formatPrice(token.price)}</div>
                   </div>
@@ -417,7 +417,7 @@ const TokenGrid: React.FC<{
                   }`}
                 >
                   <Target className="w-6 h-6 mr-3" />
-                  HANDLA NU
+                  TRADE NOW
                 </Button>
               </div>
             </Card>
