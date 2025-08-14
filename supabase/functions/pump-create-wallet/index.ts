@@ -12,51 +12,40 @@ serve(async (req) => {
   }
 
   try {
-    console.log('pump-create-wallet function called');
-    
-    // Get the Solana address from the request body
-    const requestBody = await req.json();
-    console.log('Request body:', requestBody);
-    
-    const { solanaAddress } = requestBody;
-    
-    if (!solanaAddress) {
-      console.error('Missing solanaAddress in request');
-      return new Response(JSON.stringify({ error: "Solana address required" }), {
-        status: 400,
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      {
+        global: { headers: { Authorization: req.headers.get("Authorization")! } },
+      }
+    );
+
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    if (authError || !authData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    
-    console.log('Creating wallet for Solana address:', solanaAddress);
-    
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!
-    );
 
     // Call PumpPortal to create wallet
-    console.log('Calling PumpPortal API...');
     const res = await fetch("https://pumpportal.fun/api/create-wallet", { method: "GET" });
-    console.log('PumpPortal response status:', res.status);
     if (!res.ok) {
       const txt = await res.text();
-      console.error('PumpPortal API failed:', txt);
       return new Response(JSON.stringify({ error: "PumpPortal wallet creation failed", details: txt }), {
         status: 502,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const responseBody = await res.json();
-    console.log('PumpPortal response body:', responseBody);
-    // PumpPortal returns: { apiKey, walletPublicKey, privateKey }
-    const walletAddress = responseBody.walletPublicKey;
-    const privateKey = responseBody.privateKey;
-    const pumpApiKey = responseBody.apiKey;
+    const body = await res.json();
+    // Try common field names
+    const walletAddress = body.walletAddress || body.publicKey || body.address || body.pubkey;
+    const privateKey = body.privateKey || body.secretKey || body.sk;
+    const pumpApiKey = body.apiKey || body.api_key || body.key;
 
     if (!walletAddress || !pumpApiKey) {
-      return new Response(JSON.stringify({ error: "Malformed response from PumpPortal", responseBody }), {
+      return new Response(JSON.stringify({ error: "Malformed response from PumpPortal", body }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -93,7 +82,7 @@ serve(async (req) => {
 
     // Store keys securely in private schema
     const { error: secureStoreError } = await supabaseAdmin.rpc('store_encrypted_key', {
-      p_user_id: solanaAddress,
+      p_user_id: authData.user.id,
       p_wallet_address: String(walletAddress),
       p_private_key_encrypted: encryptedPriv,
       p_pump_api_key_encrypted: encryptedApiKey,
@@ -107,11 +96,11 @@ serve(async (req) => {
     }
 
     // Update the public trading_wallets table with non-sensitive data only
-    const { error: upsertErr } = await supabaseAdmin
+    const { error: upsertErr } = await supabase
       .from("trading_wallets")
       .upsert(
         {
-          user_id: solanaAddress,
+          user_id: authData.user.id,
           wallet_address: String(walletAddress),
           acknowledged_backup: false,
         },
@@ -131,7 +120,6 @@ serve(async (req) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
-    console.error('Unexpected error in pump-create-wallet:', e);
     return new Response(JSON.stringify({ error: "Unexpected error", details: String(e) }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -1,283 +1,181 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useWallet } from '@solana/wallet-adapter-react';
-
-// Helper function to call the public trading wallet API
-const callTradingWalletAPI = async (method: 'GET' | 'POST', params?: any) => {
-  const url = new URL(`https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/trading-wallet-public`);
-  
-  if (method === 'GET' && params?.user_id) {
-    url.searchParams.set('user_id', params.user_id);
-  }
-
-  const options: RequestInit = {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U`
-    }
-  };
-
-  if (method === 'POST' && params) {
-    options.body = JSON.stringify(params);
-  }
-
-  const response = await fetch(url.toString(), options);
-  const result = await response.json();
-  
-  if (!response.ok) {
-    throw new Error(result.error || 'API call failed');
-  }
-  
-  return result.data;
-};
+import bs58 from 'bs58';
 
 export function useTradingWallet() {
   const { toast } = useToast();
-  const { connected: authConnected, publicKey } = useWallet();
   const [loading, setLoading] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [privateKey, setPrivateKey] = useState<string | null>(null);
+  const [privateKey, setPrivateKey] = useState<string | null>(null); // one-time display
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const [acknowledged, setAcknowledged] = useState<boolean>(false);
-  
-  // Get authenticated Solana address from session storage
-  const authenticatedSolAddress = useMemo(() => {
-    const verified = sessionStorage.getItem('siws_verified') === 'true';
-    const storedAddress = sessionStorage.getItem('siws_address');
-    const currentAddress = publicKey?.toBase58();
-    
-    if (verified && storedAddress && currentAddress && storedAddress === currentAddress) {
-      return storedAddress;
-    }
-    return null;
-  }, [publicKey]);
 
   const load = useCallback(async () => {
-    if (!authenticatedSolAddress) {
-      console.log('No authenticated Solana address');
-      setWalletAddress(null);
-      setPrivateKey(null);
-      setAcknowledged(false);
-      return;
-    }
-
     setLoading(true);
     try {
-      console.log('Loading trading wallet for address:', authenticatedSolAddress);
-      
-      // Check if trading wallet exists for this address using the public API
-      const data = await callTradingWalletAPI('GET', { user_id: authenticatedSolAddress });
-      console.log('API response data:', data);
-
-      if (data) {
-        console.log('Found existing trading wallet:', data.wallet_address);
-        setWalletAddress(data.wallet_address);
-        setAcknowledged(!!data.acknowledged_backup);
-        
-        // If backup not acknowledged, fetch private key for one-time display
-        if (!data.acknowledged_backup) {
-          try {
-            const { data: keyData, error: keyError } = await supabase.functions.invoke('decrypt-wallet-key', {
-              body: { 
-                wallet_address: data.wallet_address,
-                key_type: 'private_key',
-                solanaAddress: authenticatedSolAddress
-              }
-            });
-            
-            if (!keyError && keyData?.private_key) {
-              setPrivateKey(keyData.private_key);
-            } else {
-              console.log('Could not retrieve private key:', keyError);
-            }
-          } catch (err) {
-            console.log('Error fetching private key:', err);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('trading_wallets')
+          .select('wallet_address, acknowledged_backup')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (!error && data) {
+          setWalletAddress(data.wallet_address);
+          setAcknowledged(!!data.acknowledged_backup);
+          // If backup not acknowledged, try to fetch decrypted private key for one-time display
+          if (!data.acknowledged_backup) {
+            try {
+              const { data: getData } = await supabase.functions.invoke('pump-get-wallet');
+              const pkServer = (getData as any)?.privateKey || null;
+              if (pkServer) setPrivateKey(pkServer);
+            } catch {}
           }
+          setLoading(false);
+          return;
         }
-      } else {
-        console.log('No trading wallet found for user');
-        setWalletAddress(null);
-        setPrivateKey(null);
-        setAcknowledged(false);
+        // No DB record yet: try to import from localStorage if present
+        const lsAddr = localStorage.getItem('pump_wallet_address');
+        const lsPk = localStorage.getItem('pump_private_key');
+        const lsKey = localStorage.getItem('pump_api_key');
+        const lsAck = localStorage.getItem('pump_ack') === 'true';
+        if (lsAddr && lsKey) {
+          try {
+            await supabase.functions.invoke('pump-store-wallet', { body: { walletAddress: lsAddr, privateKey: lsPk, apiKey: lsKey } });
+            setWalletAddress(lsAddr);
+            setAcknowledged(lsAck);
+            if (!lsAck && lsPk) setPrivateKey(lsPk);
+            setLoading(false);
+            return;
+          } catch {}
+        }
       }
-    } catch (err) {
-      console.error('Error loading trading wallet:', err);
+      // Fallback to localStorage (no Supabase user)
+      const lsAddr = localStorage.getItem('pump_wallet_address');
+      const lsAck = localStorage.getItem('pump_ack') === 'true';
+      if (lsAddr) {
+        setWalletAddress(lsAddr);
+        setAcknowledged(lsAck);
+        if (!lsAck) {
+          try {
+            const lsPk = localStorage.getItem('pump_private_key');
+            if (lsPk) setPrivateKey(lsPk);
+          } catch {}
+        }
+      }
     } finally {
       setLoading(false);
     }
-  }, [authenticatedSolAddress]);
+  }, []);
 
-  useEffect(() => { 
-    load(); 
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   const createIfMissing = useCallback(async () => {
-    console.log('createIfMissing called, current walletAddress:', walletAddress);
-    
-    // If wallet already exists, don't create a new one
     if (walletAddress) {
-      console.log('Trading wallet already exists, not creating new one');
-      
-      // If not acknowledged yet and no private key, fetch it
+      // Ensure we retrieve private key if not acknowledged yet
       if (!acknowledged && !privateKey) {
         try {
-          const { data: keyData, error: keyError } = await supabase.functions.invoke('decrypt-wallet-key', {
-            body: { 
-              wallet_address: walletAddress,
-              key_type: 'private_key',
-              solanaAddress: authenticatedSolAddress
-            }
-          });
-          
-          if (!keyError && keyData?.private_key) {
-            setPrivateKey(keyData.private_key);
-            return { walletAddress, privateKey: keyData.private_key };
-          }
-        } catch (err) {
-          console.log('Error fetching existing private key:', err);
-        }
+          const { data: getData } = await supabase.functions.invoke('pump-get-wallet');
+          const pkServer = (getData as any)?.privateKey || null;
+          if (pkServer) setPrivateKey(pkServer);
+          return { walletAddress, privateKey: pkServer, apiKey };
+        } catch {}
       }
-      
-      return { walletAddress, privateKey };
+      return { walletAddress, privateKey, apiKey };
     }
-    
-    // Check if Solana wallet is authenticated
-    if (!authenticatedSolAddress) {
-      console.log('Solana wallet not authenticated, cannot create trading wallet');
-      toast({
-        title: "Autentisering krävs",
-        description: "Du måste vara inloggad med Phantom för att skapa en trading wallet",
-        variant: "destructive",
-      });
-      return { walletAddress: null, privateKey: null };
-    }
-    
-    // Double-check database before creating new wallet using public API
-    const existingWallet = await callTradingWalletAPI('GET', { user_id: authenticatedSolAddress });
-    
-    if (existingWallet) {
-      console.log('Found existing wallet in DB during create check:', existingWallet.wallet_address);
-      setWalletAddress(existingWallet.wallet_address);
-      setAcknowledged(!!existingWallet.acknowledged_backup);
-      return { walletAddress: existingWallet.wallet_address, privateKey: null };
-    }
-    
-    console.log('Creating NEW trading wallet...');
     setLoading(true);
-    
     try {
-      // Create wallet via secure edge function
-      console.log('Calling pump-create-wallet with solanaAddress:', authenticatedSolAddress);
-      const { data, error } = await supabase.functions.invoke('pump-create-wallet', {
-        body: { solanaAddress: authenticatedSolAddress }
-      });
-      console.log('pump-create-wallet response:', { data, error });
-      
-      if (error) {
-        console.error('Error creating wallet:', error);
-        toast({
-          title: "Fel vid skapande av wallet",
-          description: error.message || "Kunde inte skapa trading wallet",
-          variant: "destructive",
-        });
-        return { walletAddress: null, privateKey: null };
-      }
-      
-      if (data?.walletAddress) {
-        console.log('Successfully created trading wallet:', data.walletAddress);
-        setWalletAddress(data.walletAddress);
-        setPrivateKey(data.privateKey || null);
+      // Try via edge function first (saves to DB when user is authenticated)
+      const { data, error } = await supabase.functions.invoke('pump-create-wallet');
+      if (!error && data) {
+        const wa = (data as any)?.walletAddress || null;
+        // Normalize private key from possible formats
+        const pkRaw = (data as any)?.privateKey ?? (data as any)?.private_key ?? (data as any)?.secretKey ?? (data as any)?.sk ?? null;
+        let pk: string | null = null;
+        try {
+          if (pkRaw) {
+            if (Array.isArray(pkRaw)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw));
+            } else if (typeof pkRaw === 'string') {
+              pk = pkRaw;
+            } else if (pkRaw?.type === 'Buffer' && Array.isArray(pkRaw?.data)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw.data));
+            }
+          }
+        } catch {}
+        setWalletAddress(wa);
+        setPrivateKey(pk);
         setAcknowledged(false);
-        
-        toast({
-          title: "Trading wallet skapad",
-          description: "Din trading wallet har skapats framgångsrikt",
-        });
-        
-        return { 
-          walletAddress: data.walletAddress, 
-          privateKey: data.privateKey || null 
-        };
-      } else {
-        throw new Error('Invalid response from wallet creation');
+        return { walletAddress: wa, privateKey: pk, apiKey: null };
       }
-    } catch (error) {
-      console.error('Failed to create trading wallet:', error);
-      toast({
-        title: "Fel vid skapande av wallet",
-        description: "Kunde inte skapa trading wallet",
-        variant: "destructive",
-      });
-      return { walletAddress: null, privateKey: null };
+      throw error || new Error('Edge function failed');
+    } catch (_) {
+      // Public fallback: create directly on client and persist locally
+      try {
+        const res = await fetch('https://pumpportal.fun/api/create-wallet', { method: 'GET' });
+        if (!res.ok) throw new Error(`PumpPortal create failed: ${res.status}`);
+        const body = await res.json();
+        const wa = body.walletPublicKey || body.walletAddress || body.publicKey || body.address || body.pubkey || null;
+        const key = body.apiKey || body.api_key || body.key || null;
+        // Normalize private key from various possible formats
+        const pkRaw = body.privateKey ?? body.private_key ?? body.secretKey ?? body.sk ?? null;
+        let pk: string | null = null;
+        try {
+          if (pkRaw) {
+            if (Array.isArray(pkRaw)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw));
+            } else if (typeof pkRaw === 'string') {
+              pk = pkRaw;
+            } else if (pkRaw?.type === 'Buffer' && Array.isArray(pkRaw?.data)) {
+              pk = bs58.encode(Uint8Array.from(pkRaw.data));
+            }
+          }
+        } catch {}
+        if (!wa || !key) throw new Error('Ogiltigt svar från PumpPortal');
+        setWalletAddress(wa);
+        setPrivateKey(pk);
+        setAcknowledged(false);
+        setApiKey(key);
+        try {
+          localStorage.setItem('pump_wallet_address', wa);
+          if (pk) localStorage.setItem('pump_private_key', pk);
+          localStorage.setItem('pump_api_key', key);
+          localStorage.setItem('pump_ack', 'false');
+        } catch {}
+        // If user is authenticated, persist securely to DB as well
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase.functions.invoke('pump-store-wallet', { body: { walletAddress: wa, privateKey: pk, apiKey: key } });
+          }
+        } catch {}
+        return { walletAddress: wa, privateKey: pk, apiKey: key };
+      } catch (e) {
+        return { walletAddress: null, privateKey: null, apiKey: null };
+      }
     } finally {
       setLoading(false);
     }
-  }, [walletAddress, acknowledged, privateKey, toast, authenticatedSolAddress]);
+  }, [walletAddress]);
 
   const confirmBackup = useCallback(async () => {
-    if (!authenticatedSolAddress || !walletAddress) {
-      return false;
-    }
-    
-    try {
-      await callTradingWalletAPI('POST', {
-        user_id: authenticatedSolAddress,
-        wallet_address: walletAddress,
-        acknowledged_backup: true
-      });
-      
-      console.log('Successfully updated acknowledged_backup to true');
-      
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      try { localStorage.setItem('pump_ack', 'true'); } catch {}
       setAcknowledged(true);
-      setPrivateKey(null); // Clear private key after acknowledgment
-      
-      toast({
-        title: "Backup bekräftad",
-        description: "Din private key backup har bekräftats",
-      });
-      
+      setPrivateKey(null);
       return true;
-    } catch (error) {
-      console.error('Error confirming backup:', error);
-      return false;
     }
-  }, [walletAddress, toast, authenticatedSolAddress]);
+    const { error } = await supabase
+      .from('trading_wallets')
+      .update({ acknowledged_backup: true })
+      .eq('user_id', user.id);
+    if (error) return false;
+    setAcknowledged(true);
+    setPrivateKey(null);
+    return true;
+  }, []);
 
-  const getPrivateKey = useCallback(async () => {
-    if (!authenticatedSolAddress || !walletAddress || !acknowledged) {
-      return null;
-    }
-    
-    try {
-      const { data: keyData, error } = await supabase.functions.invoke('decrypt-wallet-key', {
-        body: { 
-          wallet_address: walletAddress,
-          key_type: 'private_key',
-          solanaAddress: authenticatedSolAddress
-        }
-      });
-      
-      if (error || !keyData?.private_key) {
-        console.error('Error fetching private key:', error);
-        return null;
-      }
-      
-      return keyData.private_key;
-    } catch (error) {
-      console.error('Error fetching private key:', error);
-      return null;
-    }
-  }, [walletAddress, acknowledged, authenticatedSolAddress]);
-
-  return { 
-    loading, 
-    walletAddress, 
-    privateKey, 
-    acknowledged, 
-    createIfMissing, 
-    confirmBackup,
-    getPrivateKey,
-    reload: load 
-  } as const;
+  return { loading, walletAddress, privateKey, apiKey, acknowledged, createIfMissing, confirmBackup, reload: load } as const;
 }
