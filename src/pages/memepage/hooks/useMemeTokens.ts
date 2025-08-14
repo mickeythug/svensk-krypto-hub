@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
-
 
 export interface MemeToken {
   id: string; // mint address
@@ -24,15 +22,6 @@ export interface MemeToken {
 }
 
 export type MemeCategory = 'trending' | 'new' | 'gainer' | 'volume' | 'newest' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'liquidity' | 'liquidity_high' | 'liquidity_low' | 'marketcap' | 'marketcap_high' | 'marketcap_low' | 'txns' | 'boosted';
-
-const preloadImage = (src?: string) =>
-  new Promise<boolean>((resolve) => {
-    if (!src) return resolve(false);
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
 
 export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: number = 1) => {
   const [tokens, setTokens] = useState<MemeToken[]>([]);
@@ -78,14 +67,12 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
     setError(null);
     
     try {
-      console.log('[useMemeTokens] Fetching category:', category);
-      
       const unifiedCategory = mapCategory(category);
-      console.log('[useMemeTokens] Mapped to unified category:', unifiedCategory);
+      console.log(`[useMemeTokens] 🚀 UNIFIED SERVICE CALL - Category: ${category} -> ${unifiedCategory}`);
       
       let allTokens: MemeToken[] = [];
       
-      // Use unified-meme-data service that combines DEXTools + DEXScreener
+      // ONLY use unified-meme-data service that combines DEXTools + DEXScreener
       const { data: res, error: supabaseError } = await supabase.functions.invoke('unified-meme-data', {
         body: { 
           category: unifiedCategory,
@@ -93,24 +80,35 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
         }
       });
 
-      console.log('[useMemeTokens] Unified service response:', { res, supabaseError });
+      console.log('[useMemeTokens] 📊 Unified service response:', { 
+        success: res?.success, 
+        error: supabaseError,
+        dataLength: res?.data?.length,
+        sources: res?.sources 
+      });
 
       if (supabaseError) {
         console.error('[useMemeTokens] Supabase error:', supabaseError);
         throw new Error(supabaseError.message || 'Supabase error');
       }
 
+      if (!res?.success) {
+        console.error('[useMemeTokens] Unified service returned error:', res?.error);
+        throw new Error(res?.error || 'Unified service error');
+      }
+
       if (res?.data && Array.isArray(res.data)) {
-        console.log('[useMemeTokens] Processing unified data array of length:', res.data.length);
-        console.log('[useMemeTokens] Sources:', res.sources);
+        console.log(`[useMemeTokens] ✅ Processing unified data: ${res.data.length} tokens from sources:`, res.sources);
         
         // Transform unified service response to our format
         allTokens = res.data.map((item: any, index: number) => {
-          console.log(`[useMemeTokens] Processing unified item ${index}:`, {
+          console.log(`[useMemeTokens] Processing token ${index + 1}:`, {
             address: item.address,
             symbol: item.symbol,
             name: item.name,
-            source: item.source
+            source: item.source,
+            price: item.price,
+            marketCap: item.marketCap
           });
           
           return {
@@ -133,52 +131,21 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
           };
         });
         
-        console.log('[useMemeTokens] Transformed tokens:', allTokens.slice(0, 3));
+        console.log(`[useMemeTokens] 🎯 Transformed ${allTokens.length} tokens successfully`);
       } else {
-        console.log('[useMemeTokens] No valid data from unified service, using fallback');
-        
-        // Fallback to dexscreener-proxy for compatibility
-        const { data: fallbackRes, error: fallbackError } = await supabase.functions.invoke('dexscreener-proxy', {
-          body: { 
-            action: 'profiles',
-            sort: 'trendingScore',
-            order: 'desc',
-            chainId: 'solana',
-            limit: 200
-          }
-        });
-        
-        console.log('[useMemeTokens] Fallback response:', { fallbackRes, fallbackError });
-
-        if (fallbackRes?.data && Array.isArray(fallbackRes.data)) {
-          allTokens = fallbackRes.data.slice(0, 200).map((item: any, index: number) => ({
-            id: item.tokenAddress || item.address || item.baseToken?.address || `token-${index}`,
-            symbol: item.symbol || item.baseToken?.symbol || `TOK${index}`,
-            name: item.name || item.baseToken?.name || `Token ${index}`,
-            image: item.image || item.icon || '',
-            price: parseFloat(item.priceUsd || item.price || '0'),
-            change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || '0'),
-            volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
-            marketCap: parseFloat(item.marketCap || item.fdv || '0'),
-            holders: parseInt(item.holders || '0'),
-            views: '0',
-            tags: [],
-            isHot: false,
-            description: '',
-            source: 'dexscreener' as const
-          }));
-        }
+        console.warn('[useMemeTokens] ⚠️ No valid data from unified service');
+        throw new Error('No data returned from unified service');
       }
       
-      console.log('[useMemeTokens] Final tokens count:', allTokens.length);
+      console.log(`[useMemeTokens] 📈 Final tokens count: ${allTokens.length}`);
       
       setTokens(allTokens);
       setHasMore(allTokens.length >= 200 && page < 10); // Max 10 pages
       setLastUpdated(new Date());
       
     } catch (e: any) {
-      console.error('[useMemeTokens] Error fetching tokens:', e);
-      setError('Kunde inte hämta token data');
+      console.error('[useMemeTokens] ❌ Error fetching tokens:', e);
+      setError('Kunde inte hämta token data från unified service');
     } finally {
       setLoading(false);
     }
@@ -202,7 +169,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
     }
   }, [category]);
 
-  // Pagination logic - show 20 tokens per page
+  // Pagination logic - show tokens per page
   const indexOfLastToken = page * limit;
   const indexOfFirstToken = indexOfLastToken - limit;
   const currentTokens = tokens.slice(indexOfFirstToken, indexOfLastToken);
