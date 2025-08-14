@@ -103,7 +103,7 @@ const PremiumTokenListItem = ({
                   positive ? 'text-green-400' : 'text-red-400'
                 }`}>
                   {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                  <span className="text-xs">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
+                  <span className="text-xs font-numbers">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
                 </div>
               </div>
 
@@ -111,11 +111,11 @@ const PremiumTokenListItem = ({
               <div className="flex items-center gap-4 mt-1">
                 <div className="flex items-center gap-1">
                   <BarChart3 className="w-3 h-3 text-blue-400" />
-                  <span className="text-white text-xs font-medium">{formatCompact(token.marketCap)}</span>
+                  <span className="text-white text-xs font-medium font-numbers">{formatCompact(token.marketCap)}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="w-3 h-3 text-green-400" />
-                  <span className="text-white/70 text-xs">{formatCompact(token.volume24h)}</span>
+                  <span className="text-white/70 text-xs font-numbers">{formatCompact(token.volume24h)}</span>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ const PremiumTokenCard = ({
                 {/* Clean Price Change display */}
                 <div className={`flex items-center gap-1 text-sm font-bold transition-colors duration-300 pl-2 no-fancy-effects font-sans ${positive ? 'text-green-400' : 'text-red-400'}`}>
                   {positive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                  <span className="truncate max-w-[60px] text-clean">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
+                  <span className="truncate max-w-[60px] text-clean font-numbers">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
                 </div>
               </div>
 
@@ -216,7 +216,7 @@ const PremiumTokenCard = ({
                       <stat.icon className={`w-3 h-3 ${stat.color}`} />
                       {stat.label}
                     </div>
-                    <div className="text-white font-bold text-base text-clean text-container font-sans truncate">
+                    <div className="text-white font-bold text-base text-clean text-container font-numbers truncate">
                       {stat.value}
                     </div>
                   </div>)}
