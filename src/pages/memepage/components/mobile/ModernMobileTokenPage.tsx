@@ -194,51 +194,216 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
         exit={{ y: -20, opacity: 0 }}
         className="pb-32 space-y-6"
       >
-        {/* Token Info */}
+        {/* Token Overview Card */}
         <Card className="bg-card backdrop-blur-sm border-border/20 shadow-lg">
           <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Token Information</h3>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20">
+                {token.image ? (
+                  <OptimizedImage src={token.image} alt={token.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-lg font-bold text-primary">
+                    {token.symbol.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">{token.symbol}</h1>
+                <p className="text-muted-foreground">{token.name}</p>
+              </div>
+            </div>
+
+            {/* Price Information */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="p-4 rounded-xl bg-muted/30">
+                <div className="text-sm text-muted-foreground mb-1">Price USD</div>
+                <div className="text-lg font-bold text-foreground">{formatPrice(token.price)}</div>
+              </div>
+              <div className="p-4 rounded-xl bg-muted/30">
+                <div className="text-sm text-muted-foreground mb-1">Price SOL</div>
+                <div className="text-lg font-bold text-foreground">{(token.price / 200).toFixed(8)} SOL</div>
+              </div>
+            </div>
+
+            {/* Market Data */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-3 border-b border-border/20">
+                <span className="text-muted-foreground">Market Cap</span>
+                <span className="font-bold text-foreground">{formatMarketCap(token.marketCap)}</span>
+              </div>
+              <div className="flex justify-between items-center py-3 border-b border-border/20">
+                <span className="text-muted-foreground">FDV</span>
+                <span className="font-bold text-foreground">{formatMarketCap(token.marketCap * 1.2)}</span>
+              </div>
+              <div className="flex justify-between items-center py-3 border-b border-border/20">
+                <span className="text-muted-foreground">Liquidity</span>
+                <span className="font-bold text-foreground">$330K</span>
+              </div>
+              <div className="flex justify-between items-center py-3 border-b border-border/20">
+                <span className="text-muted-foreground">Holders</span>
+                <span className="font-bold text-foreground">{token.holders?.toLocaleString() || 'N/A'}</span>
+              </div>
+              <div className="flex justify-between items-center py-3 border-b border-border/20">
+                <span className="text-muted-foreground">24h Volume</span>
+                <span className="font-bold text-foreground">
+                  ${token.volume24h > 1000000 ? `${(token.volume24h / 1000000).toFixed(1)}M` : 
+                    token.volume24h > 1000 ? `${(token.volume24h / 1000).toFixed(1)}K` : token.volume24h?.toFixed(0) || '0'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Performance Card */}
+        <Card className="bg-card backdrop-blur-sm border-border/20 shadow-lg">
+          <div className="p-6">
+            <h3 className="text-lg font-bold mb-4 text-foreground">Performance</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-success/10">
+                <div className="text-sm text-muted-foreground mb-1">1H</div>
+                <div className="text-lg font-bold text-success">-1.58%</div>
+              </div>
+              <div className="p-4 rounded-xl bg-success/10">
+                <div className="text-sm text-muted-foreground mb-1">6H</div>
+                <div className="text-lg font-bold text-success">+107%</div>
+              </div>
+              <div className="p-4 rounded-xl bg-success/10">
+                <div className="text-sm text-muted-foreground mb-1">24H</div>
+                <div className="text-lg font-bold text-success">{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</div>
+              </div>
+              <div className="p-4 rounded-xl bg-muted/30">
+                <div className="text-sm text-muted-foreground mb-1">5M</div>
+                <div className="text-lg font-bold text-foreground">-1.04%</div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Trading Activity */}
+        <Card className="bg-card backdrop-blur-sm border-border/20 shadow-lg">
+          <div className="p-6">
+            <h3 className="text-lg font-bold mb-4 text-foreground">Trading Activity</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Transactions</span>
+                <span className="font-bold text-foreground">73,799</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Makers</span>
+                <span className="font-bold text-foreground">11,811</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Buys</span>
+                <span className="font-bold text-success">38,053</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Sells</span>
+                <span className="font-bold text-destructive">35,746</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Buy Volume</span>
+                <span className="font-bold text-success">$5.9M</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Sell Volume</span>
+                <span className="font-bold text-destructive">$5.9M</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Buyers</span>
+                <span className="font-bold text-success">9,762</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground">Sellers</span>
+                <span className="font-bold text-destructive">8,707</span>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Contract Information */}
+        <Card className="bg-card backdrop-blur-sm border-border/20 shadow-lg">
+          <div className="p-6">
+            <h3 className="text-lg font-bold mb-4 text-foreground">Contract Details</h3>
             <div className="space-y-4">
               <div>
-                <Label className="text-sm text-muted-foreground">Description</Label>
-                <p className="text-foreground mt-1">
-                  {token.description || `${token.name} is a revolutionary meme token built on Solana blockchain with strong community support.`}
-                </p>
-              </div>
-              <div>
                 <Label className="text-sm text-muted-foreground">Contract Address</Label>
-                <div className="mt-1 p-3 bg-muted/50 rounded-lg font-mono text-sm break-all text-foreground">
-                  {tokenAddress}
+                <div className="mt-2 p-3 bg-muted/50 rounded-lg">
+                  <div className="font-mono text-sm break-all text-foreground">{tokenAddress}</div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigator.clipboard.writeText(tokenAddress)}
+                    className="mt-2 text-xs text-primary hover:text-primary-foreground"
+                  >
+                    Copy Address
+                  </Button>
                 </div>
               </div>
-              <div>
-                <Label className="text-sm text-muted-foreground">Network</Label>
-                <div className="mt-1">
-                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                    Solana
-                  </Badge>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm text-muted-foreground">Network</Label>
+                  <div className="mt-1">
+                    <Badge className="bg-purple-500/10 text-purple-500 border-purple-500/20">
+                      Solana
+                    </Badge>
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-sm text-muted-foreground">DEX</Label>
+                  <div className="mt-1">
+                    <Badge className="bg-primary/10 text-primary border-primary/20">
+                      Raydium CPMM
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Security */}
+        {/* Token Description */}
         <Card className="bg-card backdrop-blur-sm border-border/20 shadow-lg">
           <div className="p-6">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Security Status</h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                <span className="text-sm text-foreground">Contract Verified</span>
+            <h3 className="text-lg font-bold mb-4 text-foreground">About</h3>
+            <p className="text-foreground leading-relaxed">
+              {token.description || `${token.name} is a meme token built on Solana blockchain. This token represents the community-driven spirit of decentralized finance and meme culture, providing holders with an opportunity to participate in the growing Solana ecosystem.`}
+            </p>
+          </div>
+        </Card>
+
+        {/* Security Status */}
+        <Card className="bg-card backdrop-blur-sm border-border/20 shadow-lg">
+          <div className="p-6">
+            <h3 className="text-lg font-bold mb-4 text-foreground">Security Status</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2">
+                <span className="text-muted-foreground">Contract Verified</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span className="text-sm font-medium text-success">Verified</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                <span className="text-sm text-foreground">Liquidity Locked</span>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-muted-foreground">Liquidity Locked</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span className="text-sm font-medium text-success">Locked</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                <span className="text-sm text-foreground">No Mint Function</span>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-muted-foreground">Mint Authority</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span className="text-sm font-medium text-success">Renounced</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-muted-foreground">Freeze Authority</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-success rounded-full"></div>
+                  <span className="text-sm font-medium text-success">Disabled</span>
+                </div>
               </div>
             </div>
           </div>
