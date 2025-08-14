@@ -29,6 +29,8 @@ interface UnifiedRequest {
 }
 
 Deno.serve(async (req: Request) => {
+  console.log('[unified-meme-data] 🚀 FUNCTION CALLED - NEW VERSION ACTIVE');
+  
   // Add CORS headers
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -41,35 +43,49 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { category, limit = 50 }: UnifiedRequest = body;
 
-    console.log(`[unified-meme-data] Fetching ${category} data from both sources`);
+    console.log(`[unified-meme-data] 📊 Fetching ${category} data from both sources (limit: ${limit})`);
+
+    // Get current Supabase environment variables
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('[unified-meme-data] Missing Supabase environment variables');
+      throw new Error('Missing Supabase configuration');
+    }
+
+    console.log(`[unified-meme-data] Using Supabase URL: ${supabaseUrl}`);
 
     // Fetch data from both sources in parallel
     const [dextoolsResponse, dexscreenerResponse] = await Promise.allSettled([
-      fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/dextools-proxy`, {
+      fetch(`${supabaseUrl}/functions/v1/dextools-proxy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+          'Authorization': `Bearer ${supabaseAnonKey}`,
         },
         body: JSON.stringify({ category, limit }),
       }),
-      fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/dexscreener-proxy`, {
+      fetch(`${supabaseUrl}/functions/v1/dexscreener-proxy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+          'Authorization': `Bearer ${supabaseAnonKey}`,
         },
         body: JSON.stringify(getDexscreenerParams(category, limit)),
       }),
     ]);
 
+    console.log('[unified-meme-data] API calls completed');
+
     // Process DEXTools data
     let dextoolsData: TokenData[] = [];
     if (dextoolsResponse.status === 'fulfilled' && dextoolsResponse.value.ok) {
       const dextoolsResult = await dextoolsResponse.value.json();
+      console.log('[unified-meme-data] DEXTools response success:', dextoolsResult.success);
       dextoolsData = (dextoolsResult.data || []).map((token: any) => ({
         address: token.address,
         name: token.name,
@@ -91,8 +107,9 @@ Deno.serve(async (req: Request) => {
     let dexscreenerData: TokenData[] = [];
     if (dexscreenerResponse.status === 'fulfilled' && dexscreenerResponse.value.ok) {
       const dexscreenerResult = await dexscreenerResponse.value.json();
+      console.log('[unified-meme-data] DEXScreener response success:', dexscreenerResult.success);
       dexscreenerData = (dexscreenerResult.data || []).map((token: any) => ({
-        address: token.baseToken?.address || token.address,
+        address: token.baseToken?.address || token.address || token.tokenAddress,
         name: token.baseToken?.name || token.name,
         symbol: token.baseToken?.symbol || token.symbol,
         price: parseFloat(token.priceUsd || token.price || '0'),
@@ -110,7 +127,7 @@ Deno.serve(async (req: Request) => {
       console.warn('[unified-meme-data] DEXScreener request failed:', dexscreenerResponse);
     }
 
-    console.log(`[unified-meme-data] DEXTools: ${dextoolsData.length} tokens, DEXScreener: ${dexscreenerData.length} tokens`);
+    console.log(`[unified-meme-data] 📈 DEXTools: ${dextoolsData.length} tokens, DEXScreener: ${dexscreenerData.length} tokens`);
 
     // Deduplicate tokens by address (prefer DEXTools data as it's more detailed)
     const addressMap = new Map<string, TokenData>();
@@ -131,13 +148,20 @@ Deno.serve(async (req: Request) => {
 
     let combinedData = Array.from(addressMap.values());
 
+    // Filter out tokens without essential data
+    combinedData = combinedData.filter(token => 
+      token.address && 
+      token.symbol && 
+      token.name
+    );
+
     // Sort based on category
     combinedData = sortTokensByCategory(combinedData, category);
 
     // Limit results
     combinedData = combinedData.slice(0, limit);
 
-    console.log(`[unified-meme-data] Returning ${combinedData.length} deduplicated tokens for ${category}`);
+    console.log(`[unified-meme-data] ✅ Returning ${combinedData.length} deduplicated tokens for ${category}`);
 
     return new Response(
       JSON.stringify({
@@ -148,6 +172,8 @@ Deno.serve(async (req: Request) => {
           dexscreener: dexscreenerData.length,
           combined: combinedData.length,
         },
+        category: category,
+        timestamp: new Date().toISOString(),
       }),
       {
         headers: {
@@ -158,11 +184,12 @@ Deno.serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error('[unified-meme-data] Error:', error);
+    console.error('[unified-meme-data] ❌ Error:', error);
     return new Response(
       JSON.stringify({
         success: false,
         error: error.message,
+        timestamp: new Date().toISOString(),
       }),
       {
         status: 500,
