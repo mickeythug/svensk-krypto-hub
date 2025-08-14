@@ -2,11 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Hexagon, Users, TrendingUp, BookOpen } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 import hexPattern from "@/assets/hex-pattern.jpg";
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   return (
     <section className={`relative ${isMobile ? 'min-h-[80vh] pt-8' : 'min-h-screen'} flex items-center justify-center overflow-hidden`}>
@@ -56,8 +58,7 @@ const HeroSection = () => {
 
           {/* Description */}
           <p className={`font-display ${isMobile ? 'text-base px-2' : 'text-xl md:text-2xl'} text-muted-foreground ${isMobile ? 'mb-6' : 'mb-8'} leading-relaxed animate-fade-in`} style={{ animationDelay: '0.3s' }}>
-            Vårt mål är att bli Sveriges ledande krypto community där du lär dig om kryptovalutor, 
-            följer marknaden i realtid och träffar nya vänner med samma passion för Web3
+            {t('hero.subtitle')}
           </p>
 
           {/* CTA Buttons */}
@@ -69,7 +70,7 @@ const HeroSection = () => {
               className="block"
             >
               <Button size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-105`}>
-                Gå med i Communityn
+                {t('hero.cta')}
               </Button>
             </a>
             <Button
@@ -83,7 +84,7 @@ const HeroSection = () => {
               size={isMobile ? "default" : "lg"}
               className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}
             >
-              Lär dig mer
+              {t('hero.exploreMarket')}
             </Button>
           </div>
 
@@ -92,19 +93,19 @@ const HeroSection = () => {
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <Users className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary mx-auto mb-3`} />
               <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>5000+</h3>
-              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Aktiva Medlemmar</p>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('common.members')}</p>
             </Card>
             
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <TrendingUp className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-success mx-auto mb-3`} />
               <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>24/7</h3>
-              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Marknadsanalys</p>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('hero.realTimeData')}</p>
             </Card>
             
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <BookOpen className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-accent mx-auto mb-3`} />
               <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>100+</h3>
-              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Utbildningsresurser</p>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('common.resources')}</p>
             </Card>
           </div>
         </div>

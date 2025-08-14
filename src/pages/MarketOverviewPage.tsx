@@ -123,11 +123,11 @@ const MarketOverviewPage = () => {
   const totalVolume = formatCurrencyCompact(intel?.overview.totalVolume24h);
   const trend24 = Number(((intel?.sentiment.trend24hPct ?? 0)).toFixed(1));
   const fearGreed = Math.round(intel?.sentiment.fearGreedIndex ?? 0);
-  const greedLabel = fearGreed >= 60 ? 'Greed' : fearGreed <= 40 ? 'Fear' : 'Neutral';
+  const greedLabel = fearGreed >= 60 ? t('market.greed') : fearGreed <= 40 ? t('market.fear') : t('market.neutral');
   const btcDom = Number(((intel?.overview.btcDominance ?? 0)).toFixed(1));
   // Simple proxy for Alt Season (no free official API): inverse of BTC dominance
   const altSeason = Math.max(0, Math.min(100, Math.round(100 - (intel?.overview.btcDominance ?? 50))));
-  const altSeasonLabel = altSeason >= 60 ? 'Alt Season' : altSeason <= 40 ? 'BTC Season' : 'Neutral';
+  const altSeasonLabel = altSeason >= 60 ? t('market.altSeason') : altSeason <= 40 ? t('market.btcSeason') : t('market.neutral');
 
   const getCurrentData = () => {
     // Använd riktig top 100 data från CoinGecko API
@@ -307,7 +307,7 @@ const MarketOverviewPage = () => {
                 {/* Total Market Cap Card */}
                 <div className="bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-primary/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">Total Market Cap</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.totalMarketCap')}</h3>
                     <DollarSign className="h-5 w-5 text-primary" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-primary mb-2">{totalMarketCap}</div>
@@ -317,7 +317,7 @@ const MarketOverviewPage = () => {
                 {/* Fear & Greed Index */}
                 <div className="bg-gradient-to-br from-success/10 to-warning/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-success/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">Fear & Greed Index</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.fearGreed')}</h3>
                     <Activity className="h-5 w-5 text-success" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-success mb-2">{fearGreed}</div>
@@ -333,7 +333,7 @@ const MarketOverviewPage = () => {
                 {/* Alt Season Index */}
                 <div className="bg-gradient-to-br from-accent/10 to-secondary/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-accent/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">Alt Season Index</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.altSeasonIndex')}</h3>
                     <BarChart3 className="h-5 w-5 text-accent" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-accent mb-2">{altSeason}</div>
@@ -349,7 +349,7 @@ const MarketOverviewPage = () => {
                 {/* BTC Dominance */}
                 <div className="bg-gradient-to-br from-warning/10 to-destructive/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-warning/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">BTC Dominance</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.btcDominance')}</h3>
                     <Bitcoin className="h-5 w-5 text-warning" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-warning mb-2">{btcDom}%</div>
@@ -359,7 +359,7 @@ const MarketOverviewPage = () => {
                       style={{ width: `${btcDom}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-warning font-medium">BTC Season</div>
+                  <div className="text-sm text-warning font-medium">{t('market.btcSeason')}</div>
                 </div>
               </div>
             </div>
@@ -373,10 +373,10 @@ const MarketOverviewPage = () => {
                 {/* Title */}
                 <div>
                   <h2 className="font-crypto text-2xl font-bold text-primary mb-1">
-                    KRYPTOVALUTOR
+                    {t('market.cryptocurrencies').toUpperCase()}
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Visar {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length} kryptovalutor
+                    {t('market.showing')} {startIndex + 1}-{Math.min(endIndex, filteredData.length)} {t('market.of')} {filteredData.length} {t('market.cryptocurrencies').toLowerCase()}
                   </p>
                 </div>
                 
@@ -410,7 +410,7 @@ const MarketOverviewPage = () => {
                     </Button>
                     <Button variant="outline" className="h-11 px-6 border-border/50 hover:border-primary">
                       <Star className="h-4 w-4 mr-2" />
-                      Favoriter
+                      {t('market.favorites')}
                     </Button>
                   </div>
                 </div>
@@ -425,42 +425,42 @@ const MarketOverviewPage = () => {
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <Trophy className="h-4 w-4" />
-                      <span>TOP 10</span>
+                      <span>{t('market.top10')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="trending" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <Flame className="h-4 w-4" />
-                      <span>Trending</span>
+                      <span>{t('market.trending')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="meme" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <Target className="h-4 w-4" />
-                      <span>Meme</span>
+                      <span>{t('market.meme')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="gainers" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <TrendingUp className="h-4 w-4" />
-                      <span>Toppar</span>
+                      <span>{t('market.gainersShort')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="losers" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <TrendingDown className="h-4 w-4" />
-                      <span>Fallande</span>
+                      <span>{t('market.losersShort')}</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="all" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <BarChart3 className="h-4 w-4" />
-                      <span>Alla</span>
+                      <span>{t('market.allShort')}</span>
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>

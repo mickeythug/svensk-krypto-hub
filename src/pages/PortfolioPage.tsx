@@ -62,12 +62,12 @@ const PortfolioPage = () => {
   // Handle wallet connection errors
   const handleWalletError = () => {
     if (!primaryWallet) {
-      toast.error("Ingen plånbok ansluten", {
-        description: "Anslut en Solana-plånbok för att se din portfolio",
+      toast.error(t('portfolio.noWallet'), {
+        description: t('portfolio.connectWallet'),
       });
     } else if (portfolioError) {
-      toast.error("Fel vid hämtning av portfoliodata", {
-        description: "Försök igen om en stund",
+      toast.error(t('portfolio.error'), {
+        description: t('portfolio.tryAgain'),
       });
     }
   };
@@ -79,9 +79,9 @@ const PortfolioPage = () => {
         refreshPortfolio(),
         refreshPrices(),
       ]);
-      toast.success("Data uppdaterad");
+      toast.success(t('portfolio.updated'));
     } catch (error) {
-      toast.error("Kunde inte uppdatera data");
+      toast.error(t('portfolio.updateFailed'));
     }
   };
 
@@ -115,7 +115,7 @@ const PortfolioPage = () => {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Laddar portfolio...</p>
+              <p className="text-muted-foreground">{t('common.loading')}</p>
             </div>
           </div>
         </div>
@@ -125,7 +125,7 @@ const PortfolioPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {isMobile ? <MobileHeader title="PORTFÖLJ" /> : <Header />}
+      {isMobile ? <MobileHeader title={t('portfolio.title').toUpperCase()} /> : <Header />}
       {/* Removed duplicate ticker - keeping only main header ticker */}
       
       <main className={`container mx-auto px-4 ${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-20'}`}>
@@ -133,12 +133,12 @@ const PortfolioPage = () => {
         <div className={`${isMobile ? 'flex flex-col space-y-4 mb-6' : 'flex items-center justify-between mb-8'}`}>
           <div>
             <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3`}>
-              <span className="text-brand-turquoise">MIN</span>
-              <span className="text-brand-white"> PORT</span>
-              <span className="text-brand-turquoise">FÖLJ</span>
+              <span className="text-brand-turquoise">{t('portfolio.title').split(' ')[0]}</span>
+              <span className="text-brand-white"> {t('portfolio.title').split(' ')[1] || 'PORT'}</span>
+              <span className="text-brand-turquoise">{t('portfolio.title').split(' ')[2] || 'FÖLJ'}</span>
             </h1>
             <p className={`font-display ${isMobile ? 'text-sm' : 'text-lg'} text-muted-foreground`}>
-              Spåra dina krypto-investeringar
+              {t('portfolio.overview')}
             </p>
           </div>
           
@@ -159,7 +159,7 @@ const PortfolioPage = () => {
               disabled={isLoading}
             >
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              {!isMobile && "Uppdatera"}
+              {!isMobile && t('portfolio.refresh')}
             </Button>
             
             <Button
@@ -169,7 +169,7 @@ const PortfolioPage = () => {
               className="flex items-center gap-2"
             >
               {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-              {!isMobile && (showValues ? "Dölj" : "Visa")}
+              {!isMobile && (showValues ? t('portfolio.hideValues') : t('portfolio.showValues'))}
             </Button>
             
             {!primaryWallet && (
@@ -178,7 +178,7 @@ const PortfolioPage = () => {
                 className={`flex items-center gap-2 bg-gradient-primary ${isMobile ? 'px-3' : ''}`}
               >
                 <Plus className="h-4 w-4" />
-                {!isMobile && "Anslut plånbok"}
+                {!isMobile && t('wallet.connect')}
               </Button>
             )}
           </div>
@@ -188,20 +188,20 @@ const PortfolioPage = () => {
         <div className={`${isMobile ? 'grid grid-cols-1 gap-4 mb-6' : 'grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'}`}>
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-primary/10 to-accent/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-muted-foreground">Totalt värde</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">{t('portfolio.totalValue')}</h3>
               <Wallet className="h-5 w-5 text-primary" />
             </div>
             <div className="text-3xl font-bold text-primary mb-2">
               {formatCurrency(totalValue)}
             </div>
             <div className="text-sm text-muted-foreground">
-              Portfolio balans
+              {t('portfolio.overview')}
             </div>
           </Card>
 
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-success/10 to-warning/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-muted-foreground">Vinst/Förlust</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">{t('portfolio.totalPnL')}</h3>
               {totalPnL >= 0 ? 
                 <TrendingUp className="h-5 w-5 text-success" /> : 
                 <TrendingDown className="h-5 w-5 text-destructive" />
@@ -217,14 +217,14 @@ const PortfolioPage = () => {
 
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-accent/10 to-secondary/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-muted-foreground">Holdings</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">{t('portfolio.holdings')}</h3>
               <PieChart className="h-5 w-5 text-accent" />
             </div>
             <div className="text-3xl font-bold text-accent mb-2">
               {holdingsCount}
             </div>
             <div className="text-sm text-muted-foreground">
-              Olika kryptovalutor
+              {t('common.cryptocurrencies')}
             </div>
           </Card>
         </div>
