@@ -171,7 +171,7 @@ export function useHeliusWebSocket(apiKey: string) {
   const wsManager = useRef<HeliusWebSocketManager | null>(null);
 
   useEffect(() => {
-    const endpoint = `wss://mainnet.helius-rpc.com/?api-key=${apiKey}`;
+    const endpoint = `wss://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/helius-websocket-proxy`;
     wsManager.current = new HeliusWebSocketManager(endpoint);
 
     wsManager.current.connect()

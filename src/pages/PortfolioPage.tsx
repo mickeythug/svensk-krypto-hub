@@ -25,7 +25,7 @@ import Header from "@/components/Header";
 import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useSimplePortfolio } from "@/hooks/useSimplePortfolio";
+import { useRealPortfolio } from "@/hooks/useRealPortfolio";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useRealWatchlist } from "@/hooks/useRealWatchlist";
 import { toast } from "sonner";
@@ -45,7 +45,7 @@ const PortfolioPage = () => {
     isConnected: wsConnected,
     pnl,
     refreshPortfolio 
-  } = useSimplePortfolio(primaryWallet || undefined);
+  } = useRealPortfolio(primaryWallet || undefined);
   
   const { 
     watchlist, 

@@ -45,8 +45,8 @@ export function useRealPortfolio(walletAddress?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Don't use WebSocket for now due to API key issues
-  const wsConnected = false;
+  // Use WebSocket for real-time updates
+  const { wsManager, isConnected: wsConnected } = useHeliusWebSocket('placeholder');
 
   // Fetch initial portfolio data
   const fetchPortfolioData = useCallback(async (address: string) => {
@@ -55,11 +55,11 @@ export function useRealPortfolio(walletAddress?: string) {
       setError(null);
 
       // Use Supabase RPC proxy for Solana calls
-      const solResponse = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
+      const solResponse = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -77,11 +77,11 @@ export function useRealPortfolio(walletAddress?: string) {
       const solBalance = solData.result?.value / 1e9 || 0;
 
       // Fetch token accounts using RPC proxy
-      const tokenResponse = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
+      const tokenResponse = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -191,11 +191,11 @@ export function useRealPortfolio(walletAddress?: string) {
       }
 
       // Fallback to Helius metadata API via RPC proxy
-      const response = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
+      const response = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -226,11 +226,11 @@ export function useRealPortfolio(walletAddress?: string) {
   // Fetch transaction history
   const fetchTransactionHistory = async (address: string) => {
     try {
-      const response = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
+      const response = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -251,11 +251,11 @@ export function useRealPortfolio(walletAddress?: string) {
       const recentTransactions: WalletTransaction[] = [];
       
       for (const sig of signatures.slice(0, 20)) { // Limit to recent 20
-        const txResponse = await fetch('/api/supabase/functions/v1/solana-rpc-proxy', {
+        const txResponse = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
           },
           body: JSON.stringify({
             jsonrpc: '2.0',
