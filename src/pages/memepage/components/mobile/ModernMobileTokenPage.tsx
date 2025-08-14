@@ -36,18 +36,18 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
   const quickAmounts = [10, 25, 50, 100, 250, 500];
   const isPositive = token.change24h > 0;
 
-  const formatPrice = (price: number): string => {
-    if (price < 0.000001) return `$${price.toExponential(2)}`;
-    if (price < 0.01) return `$${price.toFixed(6)}`;
-    if (price < 1) return `$${price.toFixed(4)}`;
-    return `$${price.toFixed(2)}`;
-  };
+   const formatPrice = (price: number): string => {
+     if (price < 0.000001) return `$${price.toExponential(2)}`;
+     if (price < 0.01) return `$${price.toFixed(6)}`;
+     if (price < 1) return `$${price.toFixed(4)}`;
+     return `$${price.toFixed(2)}`;
+   };
 
-  const formatMarketCap = (marketCap: number): string => {
-    if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
-    if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
-    if (marketCap >= 1e3) return `$${(marketCap / 1e3).toFixed(2)}K`;
-    return `$${marketCap.toFixed(2)}`;
+   const formatMarketCap = (marketCap: number): string => {
+     if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
+     if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
+     if (marketCap >= 1e3) return `$${(marketCap / 1e3).toFixed(2)}K`;
+     return `$${marketCap.toFixed(2)}`;
   };
 
   const handleQuickAmount = useCallback((value: number) => {
@@ -139,8 +139,8 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             />
             <div className="mt-4 text-sm text-muted-foreground">
               {tradeType === 'buy' 
-                ? `You will receive approximately ${amount ? Math.floor(parseFloat(amount) / token.price).toLocaleString() : '0'} ${token.symbol}`
-                : `You will receive approximately $${amount ? (parseFloat(amount) * token.price).toFixed(2) : '0.00'}`
+                ? `You will receive approximately <span class="font-numbers">${amount ? Math.floor(parseFloat(amount) / token.price).toLocaleString() : '0'}</span> ${token.symbol}`
+                : `You will receive approximately $<span class="font-numbers">${amount ? (parseFloat(amount) * token.price).toFixed(2) : '0.00'}</span>`
               }
             </div>
           </div>
@@ -153,15 +153,15 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Token Price</span>
-                <span className="font-semibold text-foreground">{formatPrice(token.price)}</span>
+                <span className="font-semibold text-foreground font-numbers">{formatPrice(token.price)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Network Fee</span>
-                <span className="font-semibold text-success">~$0.50</span>
+                <span className="font-semibold text-success font-numbers">~$0.50</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Slippage</span>
-                <span className="font-semibold text-foreground">1%</span>
+                <span className="font-semibold text-foreground font-numbers">1%</span>
               </div>
             </div>
           </div>
@@ -217,11 +217,11 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="p-4 rounded-xl bg-muted/30">
                 <div className="text-sm text-muted-foreground mb-1">Price USD</div>
-                <div className="text-lg font-bold text-foreground">{formatPrice(token.price)}</div>
+                <div className="text-lg font-bold text-foreground font-numbers">{formatPrice(token.price)}</div>
               </div>
               <div className="p-4 rounded-xl bg-muted/30">
                 <div className="text-sm text-muted-foreground mb-1">Price SOL</div>
-                <div className="text-lg font-bold text-foreground">{(token.price / 200).toFixed(8)} SOL</div>
+                <div className="text-lg font-bold text-foreground font-numbers">{(token.price / 200).toFixed(8)} SOL</div>
               </div>
             </div>
 
@@ -229,26 +229,26 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             <div className="space-y-4">
               <div className="flex justify-between items-center py-3 border-b border-border/20">
                 <span className="text-muted-foreground">Market Cap</span>
-                <span className="font-bold text-foreground">{formatMarketCap(token.marketCap)}</span>
+                <span className="font-bold text-foreground font-numbers">{formatMarketCap(token.marketCap)}</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-border/20">
                 <span className="text-muted-foreground">FDV</span>
-                <span className="font-bold text-foreground">{formatMarketCap(token.marketCap * 1.2)}</span>
+                <span className="font-bold text-foreground font-numbers">{formatMarketCap(token.marketCap * 1.2)}</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-border/20">
                 <span className="text-muted-foreground">Liquidity</span>
-                <span className="font-bold text-foreground">$330K</span>
+                <span className="font-bold text-foreground font-numbers">$330K</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-border/20">
                 <span className="text-muted-foreground">Holders</span>
-                <span className="font-bold text-foreground">{token.holders?.toLocaleString() || 'N/A'}</span>
+                <span className="font-bold text-foreground font-numbers">{token.holders?.toLocaleString() || 'N/A'}</span>
               </div>
               <div className="flex justify-between items-center py-3 border-b border-border/20">
                 <span className="text-muted-foreground">24h Volume</span>
-                <span className="font-bold text-foreground">
-                  ${token.volume24h > 1000000 ? `${(token.volume24h / 1000000).toFixed(1)}M` : 
-                    token.volume24h > 1000 ? `${(token.volume24h / 1000).toFixed(1)}K` : token.volume24h?.toFixed(0) || '0'}
-                </span>
+                 <span className="font-bold text-foreground font-numbers">
+                   ${token.volume24h > 1000000 ? `${(token.volume24h / 1000000).toFixed(1)}M` : 
+                     token.volume24h > 1000 ? `${(token.volume24h / 1000).toFixed(1)}K` : token.volume24h?.toFixed(0) || '0'}
+                 </span>
               </div>
             </div>
           </div>
@@ -261,19 +261,19 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             <div className="grid grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-success/10">
                 <div className="text-sm text-muted-foreground mb-1">1H</div>
-                <div className="text-lg font-bold text-success">-1.58%</div>
+                <div className="text-lg font-bold text-success font-numbers">-1.58%</div>
               </div>
               <div className="p-4 rounded-xl bg-success/10">
                 <div className="text-sm text-muted-foreground mb-1">6H</div>
-                <div className="text-lg font-bold text-success">+107%</div>
+                <div className="text-lg font-bold text-success font-numbers">+107%</div>
               </div>
               <div className="p-4 rounded-xl bg-success/10">
                 <div className="text-sm text-muted-foreground mb-1">24H</div>
-                <div className="text-lg font-bold text-success">{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</div>
+                <div className="text-lg font-bold text-success font-numbers">{isPositive ? '+' : ''}{token.change24h.toFixed(2)}%</div>
               </div>
               <div className="p-4 rounded-xl bg-muted/30">
                 <div className="text-sm text-muted-foreground mb-1">5M</div>
-                <div className="text-lg font-bold text-foreground">-1.04%</div>
+                <div className="text-lg font-bold text-foreground font-numbers">-1.04%</div>
               </div>
             </div>
           </div>
@@ -284,38 +284,38 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
           <div className="p-6">
             <h3 className="text-lg font-bold mb-4 text-foreground">Trading Activity</h3>
             <div className="space-y-4">
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Transactions</span>
-                <span className="font-bold text-foreground">73,799</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Makers</span>
-                <span className="font-bold text-foreground">11,811</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Buys</span>
-                <span className="font-bold text-success">38,053</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Sells</span>
-                <span className="font-bold text-destructive">35,746</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Buy Volume</span>
-                <span className="font-bold text-success">$5.9M</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Sell Volume</span>
-                <span className="font-bold text-destructive">$5.9M</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Buyers</span>
-                <span className="font-bold text-success">9,762</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-muted-foreground">Sellers</span>
-                <span className="font-bold text-destructive">8,707</span>
-              </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Transactions</span>
+                 <span className="font-bold text-foreground font-numbers">73,799</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Makers</span>
+                 <span className="font-bold text-foreground font-numbers">11,811</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Buys</span>
+                 <span className="font-bold text-success font-numbers">38,053</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Sells</span>
+                 <span className="font-bold text-destructive font-numbers">35,746</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Buy Volume</span>
+                 <span className="font-bold text-success font-numbers">$5.9M</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Sell Volume</span>
+                 <span className="font-bold text-destructive font-numbers">$5.9M</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Buyers</span>
+                 <span className="font-bold text-success font-numbers">9,762</span>
+               </div>
+               <div className="flex justify-between items-center py-2">
+                 <span className="text-muted-foreground">Sellers</span>
+                 <span className="font-bold text-destructive font-numbers">8,707</span>
+               </div>
             </div>
           </div>
         </Card>
@@ -467,13 +467,13 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             <p className="text-muted-foreground text-sm mb-2">{token.name}</p>
             
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold text-foreground">{formatPrice(token.price)}</span>
+              <span className="text-xl font-bold text-foreground font-numbers">{formatPrice(token.price)}</span>
               <Badge 
                 variant={isPositive ? "default" : "destructive"} 
                 className={`${isPositive ? 'bg-success text-white' : 'bg-destructive text-white'} font-medium`}
               >
                 {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
+                 {isPositive ? '+' : ''}<span className="font-numbers">{token.change24h.toFixed(2)}%</span>
               </Badge>
             </div>
           </div>
@@ -483,20 +483,20 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
         <div className="grid grid-cols-3 gap-4 mt-6">
           <div className="text-center p-3 rounded-xl bg-muted/30">
             <div className="text-xs text-muted-foreground mb-1">Market Cap</div>
-            <div className="font-bold text-sm text-foreground">{formatMarketCap(token.marketCap)}</div>
+            <div className="font-bold text-sm text-foreground font-numbers">{formatMarketCap(token.marketCap)}</div>
           </div>
           <div className="text-center p-3 rounded-xl bg-muted/30">
             <div className="text-xs text-muted-foreground mb-1">Holders</div>
-            <div className="font-bold text-sm text-foreground">
-              {token.holders > 1000 ? `${Math.floor(token.holders / 1000)}K` : token.holders}
-            </div>
+             <div className="font-bold text-sm text-foreground font-numbers">
+               {token.holders > 1000 ? `${Math.floor(token.holders / 1000)}K` : token.holders}
+             </div>
           </div>
           <div className="text-center p-3 rounded-xl bg-muted/30">
             <div className="text-xs text-muted-foreground mb-1">24h Vol</div>
-            <div className="font-bold text-sm text-foreground">
-              ${token.volume24h > 1000000 ? `${(token.volume24h / 1000000).toFixed(1)}M` : 
-                token.volume24h > 1000 ? `${(token.volume24h / 1000).toFixed(1)}K` : token.volume24h.toFixed(0)}
-            </div>
+             <div className="font-bold text-sm text-foreground font-numbers">
+               ${token.volume24h > 1000000 ? `${(token.volume24h / 1000000).toFixed(1)}M` : 
+                 token.volume24h > 1000 ? `${(token.volume24h / 1000).toFixed(1)}K` : token.volume24h.toFixed(0)}
+             </div>
           </div>
         </div>
       </div>

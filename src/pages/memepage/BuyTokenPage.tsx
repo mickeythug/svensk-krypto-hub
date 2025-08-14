@@ -205,7 +205,7 @@ const BuyTokenPage = () => {
                     </div>
                     <p className="text-muted-foreground text-sm">{selectedToken.symbol} • Supply: {selectedToken.supply}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xl font-bold">{selectedToken.price}</span>
+                      <span className="text-xl font-bold font-numbers">{selectedToken.price}</span>
                       <Badge variant="secondary" className={`${
                         selectedToken.change24h.startsWith('+') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                       } animate-pulse`}>
@@ -221,21 +221,21 @@ const BuyTokenPage = () => {
                       <TrendingUp className="h-4 w-4 text-primary" />
                       <span className="text-xs font-medium">Market Cap</span>
                     </div>
-                    <p className="font-bold text-sm">{selectedToken.marketCap}</p>
+                    <p className="font-bold text-sm font-numbers">{selectedToken.marketCap}</p>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
                     <div className="flex items-center justify-center gap-1 mb-2">
                       <Users className="h-4 w-4 text-primary" />
                       <span className="text-xs font-medium">Holders</span>
                     </div>
-                    <p className="font-bold text-sm">{selectedToken.holders}</p>
+                    <p className="font-bold text-sm font-numbers">{selectedToken.holders}</p>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
                     <div className="flex items-center justify-center gap-1 mb-2">
                       <BarChart3 className="h-4 w-4 text-primary" />
                       <span className="text-xs font-medium">24h Volume</span>
                     </div>
-                    <p className="font-bold text-sm">{selectedToken.volume24h}</p>
+                    <p className="font-bold text-sm font-numbers">{selectedToken.volume24h}</p>
                   </div>
                 </div>
 
@@ -282,7 +282,7 @@ const BuyTokenPage = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <span className="text-muted-foreground text-sm">Total Supply</span>
-                        <p className="font-bold">{selectedToken.supply}</p>
+                        <p className="font-bold font-numbers">{selectedToken.supply}</p>
                       </div>
                       <div className="space-y-2">
                         <span className="text-muted-foreground text-sm">Verified</span>
