@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getCache, getCacheStaleOk, setCache } from '@/lib/cache';
+
 
 export interface MemeToken {
   id: string; // mint address
@@ -16,12 +18,18 @@ export interface MemeToken {
   tags: string[];
   isHot: boolean;
   description?: string;
-  source?: 'dextools' | 'dexscreener';
-  liquidity?: number;
-  created?: string;
 }
 
 export type MemeCategory = 'trending' | 'new' | 'gainer' | 'volume' | 'newest' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'liquidity' | 'liquidity_high' | 'liquidity_low' | 'marketcap' | 'marketcap_high' | 'marketcap_low' | 'txns' | 'boosted';
+
+const preloadImage = (src?: string) =>
+  new Promise<boolean>((resolve) => {
+    if (!src) return resolve(false);
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
 
 export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: number = 1) => {
   const [tokens, setTokens] = useState<MemeToken[]>([]);
@@ -30,36 +38,48 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
   const [hasMore, setHasMore] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
-  // Map frontend categories to unified service categories
-  const mapCategory = (cat: MemeCategory): string => {
-    switch (cat) {
-      case 'trending':
-      case 'new':
-      case 'newest':
-        return 'trending';
-      case 'gainer':
-      case 'gainers':
-        return 'gainers';
-      case 'losers':
-        return 'losers';
-      case 'volume':
-        return 'volume';
-      case 'marketcap':
-      case 'marketcap_high':
-        return 'marketcap_high';
-      case 'marketcap_low':
-        return 'marketcap_low';
-      case 'liquidity':
-      case 'liquidity_high':
-        return 'marketcap_high'; // Use marketcap as proxy for liquidity
-      case 'liquidity_low':
-        return 'marketcap_low';
-      case 'potential':
-      case 'under1m':
-        return 'newest';
-      default:
-        return 'trending';
-    }
+  // DexScreener proxy actions for each category
+  const dexscreenerActions = {
+    trending: 'profiles',
+    new: 'profiles', 
+    gainer: 'profiles',
+    volume: 'profiles',
+    newest: 'profiles',
+    potential: 'profiles',
+    all: 'pairsList',
+    under1m: 'pairsList',
+    gainers: 'profiles',
+    losers: 'profiles',
+    liquidity: 'pairsList',
+    liquidity_high: 'pairsList',
+    liquidity_low: 'pairsList',
+    marketcap: 'pairsList',
+    marketcap_high: 'pairsList',
+    marketcap_low: 'pairsList',
+    txns: 'profiles',
+    boosted: 'boosted'
+  };
+
+  // Sort parameters for each category
+  const sortParams = {
+    trending: { sort: 'trendingScore', order: 'desc' },
+    new: { sort: 'createdAt', order: 'desc' },
+    gainer: { sort: 'priceChange', order: 'desc' },
+    volume: { sort: 'volume', order: 'desc' },
+    newest: { sort: 'createdAt', order: 'desc' },
+    potential: { sort: 'createdAt', order: 'desc' },
+    all: { sort: 'volume', order: 'desc' },
+    under1m: { sort: 'volume', order: 'desc' },
+    gainers: { sort: 'priceChange', order: 'desc' },
+    losers: { sort: 'priceChange', order: 'asc' },
+    liquidity: { sort: 'liquidity', order: 'desc' },
+    liquidity_high: { sort: 'liquidity', order: 'desc' },
+    liquidity_low: { sort: 'liquidity', order: 'asc' },
+    marketcap: { sort: 'marketCap', order: 'desc' },
+    marketcap_high: { sort: 'marketCap', order: 'desc' },
+    marketcap_low: { sort: 'marketCap', order: 'asc' },
+    txns: { sort: 'txns', order: 'desc' },
+    boosted: { sort: 'trendingScore', order: 'desc' }
   };
 
   const fetchTokens = async () => {
@@ -67,85 +87,92 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
     setError(null);
     
     try {
-      const unifiedCategory = mapCategory(category);
-      console.log(`[useMemeTokens] 🚀 UNIFIED SERVICE CALL - Category: ${category} -> ${unifiedCategory}`);
+      console.log('[useMemeTokens] Fetching category:', category);
+      
+      const action = dexscreenerActions[category];
+      const sortParam = sortParams[category];
+      
+      console.log('[useMemeTokens] Using action:', action, 'with params:', sortParam);
       
       let allTokens: MemeToken[] = [];
       
-      // ONLY use unified-meme-data service that combines DEXTools + DEXScreener
-      const { data: res, error: supabaseError } = await supabase.functions.invoke('unified-meme-data', {
+      // Use dexscreener-proxy for all categories
+      const { data: res, error: supabaseError } = await supabase.functions.invoke('dexscreener-proxy', {
         body: { 
-          category: unifiedCategory,
+          action,
+          ...sortParam,
+          chainId: 'solana',
           limit: 200
         }
       });
 
-      console.log('[useMemeTokens] 📊 Unified service response:', { 
-        success: res?.success, 
-        error: supabaseError,
-        dataLength: res?.data?.length,
-        sources: res?.sources 
-      });
+      console.log('[useMemeTokens] Supabase response:', { res, supabaseError });
 
       if (supabaseError) {
         console.error('[useMemeTokens] Supabase error:', supabaseError);
         throw new Error(supabaseError.message || 'Supabase error');
       }
 
-      if (!res?.success) {
-        console.error('[useMemeTokens] Unified service returned error:', res?.error);
-        throw new Error(res?.error || 'Unified service error');
-      }
-
       if (res?.data && Array.isArray(res.data)) {
-        console.log(`[useMemeTokens] ✅ Processing unified data: ${res.data.length} tokens from sources:`, res.sources);
+        console.log('[useMemeTokens] Processing data array of length:', res.data.length);
         
-        // Transform unified service response to our format
-        allTokens = res.data.map((item: any, index: number) => {
-          console.log(`[useMemeTokens] Processing token ${index + 1}:`, {
+        // Transform dexscreener proxy response to our format
+        allTokens = res.data.slice(0, 200).map((item: any, index: number) => {
+          console.log(`[useMemeTokens] Processing item ${index}:`, {
+            tokenAddress: item.tokenAddress,
             address: item.address,
-            symbol: item.symbol,
-            name: item.name,
-            source: item.source,
-            price: item.price,
-            marketCap: item.marketCap
+            symbol: item.symbol || item.baseToken?.symbol,
+            name: item.name || item.baseToken?.name
           });
           
           return {
-            id: item.address || `token-${index}`,
-            symbol: item.symbol || `TOK${index}`,
-            name: item.name || `Token ${index}`,
-            image: item.image || '',
-            price: item.price || 0,
-            change24h: item.priceChange24h || 0,
-            volume24h: item.volume24h || 0,
-            marketCap: item.marketCap || 0,
-            holders: item.holders || 0,
-            views: '0',
-            tags: [],
-            isHot: (item.priceChange24h || 0) > 10,
-            description: '',
-            source: item.source,
-            liquidity: item.liquidity || 0,
-            created: item.created
+            id: item.tokenAddress || item.address || item.baseToken?.address || item.id || `token-${index}`,
+            symbol: item.symbol || item.baseToken?.symbol || item.token?.symbol || `TOK${index}`,
+            name: item.name || item.baseToken?.name || item.token?.name || `Token ${index}`,
+            image: item.image || item.icon || item.info?.imageUrl || item.token?.image || '',
+            price: parseFloat(item.priceUsd || item.price || '0'),
+            change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || item.change24h || '0'),
+            volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
+            marketCap: parseFloat(item.marketCap || item.fdv || '0'),
+            holders: parseInt(item.holders || '0'),
+            views: item.views || '0',
+            tags: item.tags || [],
+            isHot: item.isHot || false,
+            description: item.description || ''
           };
         });
         
-        console.log(`[useMemeTokens] 🎯 Transformed ${allTokens.length} tokens successfully`);
+        console.log('[useMemeTokens] Transformed tokens:', allTokens.slice(0, 3));
       } else {
-        console.warn('[useMemeTokens] ⚠️ No valid data from unified service');
-        throw new Error('No data returned from unified service');
+        console.log('[useMemeTokens] No valid data, using fallback to meme-catalog');
+        
+        // Fallback to meme-catalog for compatibility
+        const backendCategory = (
+          category === 'marketcap' ? 'marketcap_high' :
+          category === 'liquidity' ? 'liquidity_high' :
+          category === 'potential' ? 'newest' :
+          category === 'gainers' ? 'gainers' :
+          category
+        ) as any;
+
+        const { data: fallbackRes, error: fallbackError } = await supabase.functions.invoke('meme-catalog', {
+          body: { category: backendCategory, page: 1, pageSize: 200 }
+        });
+        
+        console.log('[useMemeTokens] Fallback response:', { fallbackRes, fallbackError });
+
+        allTokens = Array.isArray(fallbackRes?.items) ? (fallbackRes.items as MemeToken[]) : [];
       }
       
-      console.log(`[useMemeTokens] 📈 Final tokens count: ${allTokens.length}`);
+      console.log('[useMemeTokens] Final tokens count:', allTokens.length);
       
       setTokens(allTokens);
       setHasMore(allTokens.length >= 200 && page < 10); // Max 10 pages
       setLastUpdated(new Date());
       
     } catch (e: any) {
-      console.error('[useMemeTokens] ❌ Error fetching tokens:', e);
-      setError('Kunde inte hämta token data från unified service');
+      console.error('[useMemeTokens] Error fetching tokens:', e);
+      setError('Kunde inte hämta token data');
     } finally {
       setLoading(false);
     }
@@ -169,11 +196,11 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
     }
   }, [category]);
 
-  // Pagination logic - show tokens per page
+  // Pagination logic - show 20 tokens per page
   const indexOfLastToken = page * limit;
   const indexOfFirstToken = indexOfLastToken - limit;
   const currentTokens = tokens.slice(indexOfFirstToken, indexOfLastToken);
-  const totalPages = Math.ceil(Math.min(tokens.length, 200) / limit);
+  const totalPages = Math.ceil(200 / limit); // Always 10 pages (200 tokens / 20 per page)
   
   return { 
     tokens: currentTokens, 

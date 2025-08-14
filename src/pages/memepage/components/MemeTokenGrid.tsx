@@ -48,22 +48,18 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
     cover: covers[index % covers.length]
   }));
 
-  const formatPrice = (price: number | string): string => {
-    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-    if (isNaN(numPrice) || numPrice === 0) return '$0.00';
-    if (numPrice < 0.000001) return `$${numPrice.toExponential(2)}`;
-    if (numPrice < 0.01) return `$${numPrice.toFixed(6)}`;
-    if (numPrice < 1) return `$${numPrice.toFixed(4)}`;
-    return `$${numPrice.toFixed(2)}`;
+  const formatPrice = (price: number): string => {
+    if (price < 0.000001) return `$${price.toExponential(2)}`;
+    if (price < 0.01) return `$${price.toFixed(6)}`;
+    if (price < 1) return `$${price.toFixed(4)}`;
+    return `$${price.toFixed(2)}`;
   };
 
-  const formatMarketCap = (marketCap: number | string): string => {
-    const numMarketCap = typeof marketCap === 'string' ? parseFloat(marketCap) : marketCap;
-    if (isNaN(numMarketCap) || numMarketCap === 0) return '$0';
-    if (numMarketCap >= 1e9) return `$${(numMarketCap / 1e9).toFixed(2)}B`;
-    if (numMarketCap >= 1e6) return `$${(numMarketCap / 1e6).toFixed(2)}M`;
-    if (numMarketCap >= 1e3) return `$${(numMarketCap / 1e3).toFixed(2)}K`;
-    return `$${numMarketCap.toFixed(2)}`;
+  const formatMarketCap = (marketCap: number): string => {
+    if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(2)}B`;
+    if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(2)}M`;
+    if (marketCap >= 1e3) return `$${(marketCap / 1e3).toFixed(2)}K`;
+    return `$${marketCap.toFixed(2)}`;
   };
 
   const getTrendColor = (change: number): string => {
@@ -126,10 +122,10 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
             
             <AspectRatio ratio={4/5}>
               <OptimizedImage
-                src={token.image || tokenImages[token.symbol.toLowerCase()] || token.cover || 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/generic.png'}
+                src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
                 alt={`${token.name} – logotyp / omslagsbild`}
                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                fallbackSrc={token.cover || 'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/generic.png'}
+                fallbackSrc="/placeholder.svg"
               />
             </AspectRatio>
             
@@ -155,12 +151,12 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
                  <span className={`tabular-nums font-numbers font-black ${isMobile ? 'text-lg' : 'text-xl'} group-hover:text-primary transition-colors`}>
                    {formatPrice(token.price)}
                  </span>
-                 <div className={`flex items-center gap-1 ${getTrendColor(typeof token.change24h === 'string' ? parseFloat(token.change24h) : token.change24h)}`}>
-                   {getTrendIcon(typeof token.change24h === 'string' ? parseFloat(token.change24h) : token.change24h)}
-                    <span className={`font-numbers font-bold tabular-nums ${isMobile ? 'text-sm' : 'text-base'} group-hover:scale-110 transition-transform`}>
-                      {(typeof token.change24h === 'string' ? parseFloat(token.change24h) : token.change24h) > 0 ? '+' : ''}{(typeof token.change24h === 'string' ? parseFloat(token.change24h) : token.change24h).toFixed(2)}%
-                    </span>
-                 </div>
+                <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
+                  {getTrendIcon(token.change24h)}
+                   <span className={`font-numbers font-bold tabular-nums ${isMobile ? 'text-sm' : 'text-base'} group-hover:scale-110 transition-transform`}>
+                     {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
+                   </span>
+                </div>
               </div>
               
               <div className={`flex items-center justify-between ${isMobile ? 'text-xs' : 'text-sm md:text-base'} text-muted-foreground mb-3`}>

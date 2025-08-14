@@ -138,9 +138,7 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    // Read request body only once
-    const body = await req.json().catch(() => ({}));
-    const { action, address, pairAddress } = body;
+    const { action, address, pairAddress } = await req.json().catch(() => ({}));
 
     if (!action) {
       return new Response(JSON.stringify({ error: 'Missing action' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -151,73 +149,69 @@ serve(async (req) => {
     const TTL_TRADES = 5_000;
 
     if (action === 'profiles') {
-      // Since profiles endpoint doesn't exist, use token-boosts for trending tokens
-      console.log(`[dexscreener-proxy] Profiles action - using token-boosts endpoint`);
-      
+      // DexScreener token-profiles using the CORRECT working endpoints
+      const body: any = await req.json().catch(() => ({}));
+      const sortKey = body.sort || 'trendingScore';
+      const order: 'asc' | 'desc' = (body.order === 'asc' ? 'asc' : 'desc');
+      const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
+      const minLiquidity = body.minLiquidity;
+      const minMarketCap = body.minMarketCap;
+
+      console.log(`[dexscreener-proxy] Processing profiles request: sort=${sortKey}, order=${order}, limit=${limit}`);
+
       try {
-        const url = `https://api.dexscreener.com/token-boosts/latest/v1`;
+        // Use the CORRECT DexScreener API endpoints that actually work
+        const qs = new URLSearchParams({ 
+          chainIds: 'solana', 
+          order: String(order), 
+          sort: String(sortKey)
+        });
+        
+        if (minLiquidity) qs.set('minLiquidity', String(minLiquidity));
+        if (minMarketCap) qs.set('minMarketCap', String(minMarketCap));
+        
+        const url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?${qs.toString()}`;
         console.log(`[dexscreener-proxy] Fetching from URL: ${url}`);
         
         const json = await fetchJsonCached(url, TTL_TOKEN);
-        console.log(`[dexscreener-proxy] Raw boosts response:`, JSON.stringify(json).substring(0, 500));
+        console.log(`[dexscreener-proxy] Raw response:`, JSON.stringify(json).substring(0, 500));
         
-        // Filter for Solana tokens only
-        let solanaBoosts = [];
+        // Check for the actual response structure from DexScreener
+        let tokens = [];
         if (Array.isArray(json)) {
-          solanaBoosts = json.filter((boost: any) => boost?.chainId === 'solana');
+          tokens = json;
+        } else if (json && Array.isArray(json.tokens)) {
+          tokens = json.tokens;
+        } else if (json && Array.isArray(json.data)) {
+          tokens = json.data;
+        } else if (json && Array.isArray(json.pairs)) {
+          tokens = json.pairs;
         }
         
-        console.log(`[dexscreener-proxy] Found ${solanaBoosts.length} Solana boosted tokens`);
+        console.log(`[dexscreener-proxy] Found ${tokens.length} tokens`);
         
-        if (solanaBoosts.length > 0) {
-          // Transform boosted tokens to pairs-like structure
-          const transformedTokens = await Promise.all(
-            solanaBoosts.slice(0, body.limit || 50).map(async (boost: any) => {
-              try {
-                // Get token data for each boosted token
-                const tokenUrl = `https://api.dexscreener.com/tokens/v1/solana/${boost.tokenAddress}`;
-                const tokenData = await fetchJsonCached(tokenUrl, TTL_TOKEN);
-                
-                if (Array.isArray(tokenData) && tokenData.length > 0) {
-                  return tokenData[0]; // Return the first (best) pair for this token
-                }
-                return null;
-              } catch (e) {
-                console.error(`[dexscreener-proxy] Error fetching token data for ${boost.tokenAddress}:`, e);
-                return null;
-              }
-            })
-          );
-          
-          const validTokens = transformedTokens.filter(Boolean);
-          console.log(`[dexscreener-proxy] Returning ${validTokens.length} transformed tokens`);
-          
-          return new Response(JSON.stringify({ data: validTokens }), { 
+        if (tokens.length > 0) {
+          const limitedTokens = tokens.slice(0, limit);
+          console.log(`[dexscreener-proxy] Returning ${limitedTokens.length} tokens`);
+          return new Response(JSON.stringify({ data: limitedTokens }), { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           });
         }
         
-        console.log(`[dexscreener-proxy] No Solana tokens found in boosts, trying search fallback`);
+        console.log(`[dexscreener-proxy] No tokens found in response, falling back to pairs`);
         
       } catch (e) {
-        console.error('[dexscreener-proxy] Token-boosts endpoint failed:', e);
+        console.error('[dexscreener-proxy] Token-profiles endpoint failed:', e);
       }
 
-      // Fallback: use search endpoint to get some popular Solana tokens
+      // Fallback: use pairs endpoint and transform the data
       try {
-        console.log(`[dexscreener-proxy] Using search fallback for Solana tokens`);
-        const searchUrl = `https://api.dexscreener.com/latest/dex/search/?q=solana`;
-        const searchJson = await fetchJsonCached(searchUrl, TTL_TOKEN);
+        console.log(`[dexscreener-proxy] Using fallback pairs endpoint`);
+        const pairsUrl = `https://api.dexscreener.com/latest/dex/pairs/solana`;
+        const pairsJson = await fetchJsonCached(pairsUrl, TTL_TOKEN);
         
-        let pairs: any[] = Array.isArray(searchJson?.pairs) ? searchJson.pairs : [];
-        console.log(`[dexscreener-proxy] Found ${pairs.length} pairs from search fallback`);
-        
-        // Filter for Solana chain only
-        pairs = pairs.filter((p: any) => p?.chainId === 'solana');
-        
-        // Apply filters if specified
-        const minLiquidity = body.minLiquidity;
-        const minMarketCap = body.minMarketCap;
+        let pairs: any[] = Array.isArray(pairsJson?.pairs) ? pairsJson.pairs : [];
+        console.log(`[dexscreener-proxy] Found ${pairs.length} pairs from fallback`);
         
         if (minLiquidity) {
           pairs = pairs.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
@@ -226,26 +220,66 @@ serve(async (req) => {
           pairs = pairs.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
         }
         
-        // Sort by volume for trending effect
+        // Sort pairs according to the requested sort key
         const sortedPairs = pairs.sort((a, b) => {
-          const volA = asNum(a?.volume?.h24) ?? 0;
-          const volB = asNum(b?.volume?.h24) ?? 0;
-          return volB - volA;
+          let valA = 0, valB = 0;
+          
+          switch (String(sortKey)) {
+            case 'priceChange':
+              valA = asNum(a?.priceChange?.h24) ?? 0;
+              valB = asNum(b?.priceChange?.h24) ?? 0;
+              break;
+            case 'volume':
+              valA = asNum(a?.volume?.h24) ?? 0;
+              valB = asNum(b?.volume?.h24) ?? 0;
+              break;
+            case 'liquidity':
+              valA = asNum(a?.liquidity?.usd) ?? 0;
+              valB = asNum(b?.liquidity?.usd) ?? 0;
+              break;
+            case 'marketCap':
+              valA = asNum(a?.marketCap) ?? 0;
+              valB = asNum(b?.marketCap) ?? 0;
+              break;
+            case 'txns':
+              valA = (asNum(a?.txns?.h24?.buys) ?? 0) + (asNum(a?.txns?.h24?.sells) ?? 0);
+              valB = (asNum(b?.txns?.h24?.buys) ?? 0) + (asNum(b?.txns?.h24?.sells) ?? 0);
+              break;
+            case 'createdAt':
+              valA = asNum(a?.pairCreatedAt) ?? 0;
+              valB = asNum(b?.pairCreatedAt) ?? 0;
+              break;
+            case 'trendingScore':
+            default:
+              // Trending score approximation
+              const t1A = ((asNum(a?.txns?.h1?.buys) ?? 0) + (asNum(a?.txns?.h1?.sells) ?? 0)) * 1000;
+              const pcA = (asNum(a?.priceChange?.h1) ?? 0) * 100;
+              const liqA = (asNum(a?.liquidity?.usd) ?? 0) * 0.001;
+              valA = t1A + pcA + liqA;
+              
+              const t1B = ((asNum(b?.txns?.h1?.buys) ?? 0) + (asNum(b?.txns?.h1?.sells) ?? 0)) * 1000;
+              const pcB = (asNum(b?.priceChange?.h1) ?? 0) * 100;
+              const liqB = (asNum(b?.liquidity?.usd) ?? 0) * 0.001;
+              valB = t1B + pcB + liqB;
+              break;
+          }
+          
+          return order === 'asc' ? valA - valB : valB - valA;
         });
         
-        const finalTokens = sortedPairs.slice(0, body.limit || 50);
-        console.log(`[dexscreener-proxy] Returning ${finalTokens.length} tokens from search fallback`);
+        const finalTokens = sortedPairs.slice(0, limit);
+        console.log(`[dexscreener-proxy] Returning ${finalTokens.length} tokens from fallback`);
         
         return new Response(JSON.stringify({ data: finalTokens }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
         
       } catch (e) {
-        console.error('[dexscreener-proxy] Search fallback also failed:', e);
+        console.error('[dexscreener-proxy] Fallback also failed:', e);
         return new Response(JSON.stringify({ 
           data: [], 
-          error: 'All endpoints failed',
-          notice: 'profiles_all_endpoints_failed' 
+          error: 'Both primary and fallback endpoints failed',
+          notice: 'profiles_fallback_failed' 
         }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
@@ -253,44 +287,41 @@ serve(async (req) => {
     }
 
     if (action === 'pairsList') {
-      // Use search to get pairs since /latest/dex/pairs/solana doesn't exist
-      const searchUrl = `https://api.dexscreener.com/latest/dex/search/?q=solana`;
-      const json = await fetchJsonCached(searchUrl, TTL_TOKEN);
-      let list = Array.isArray(json?.pairs) ? json.pairs : [];
-      list = list.filter((p: any) => p?.chainId === 'solana');
+      // DexScreener latest pairs list for Solana (e.g., sort=createdAt)
+      const body: any = await req.json().catch(() => ({}));
+      const sortKey = body.sort || undefined; // e.g., 'createdAt'
+      const order = body.order || 'desc';
       const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
+      const qs = new URLSearchParams();
+      if (sortKey) qs.set('sort', String(sortKey));
+      if (order) qs.set('order', String(order));
+      const base = `https://api.dexscreener.com/latest/dex/pairs/solana`;
+      const url = qs.toString() ? `${base}?${qs.toString()}` : base;
+      const json = await fetchJsonCached(url, TTL_TOKEN);
+      const list = Array.isArray(json?.pairs) ? json.pairs : [];
       return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     if (action === 'boosted') {
       console.log(`[dexscreener-proxy] Fetching boosted tokens`);
       try {
-        const url = `https://api.dexscreener.com/token-boosts/latest/v1`;
+        const url = `https://api.dexscreener.com/token-boosts/latest/v1/solana`;
         console.log(`[dexscreener-proxy] Boosted URL: ${url}`);
         const json = await fetchJsonCached(url, TTL_TOKEN);
         console.log(`[dexscreener-proxy] Boosted response:`, JSON.stringify(json).substring(0, 500));
         
-        // Filter for Solana tokens and return in expected format
+        // Handle different response structures
         let tokens = [];
         if (Array.isArray(json)) {
-          tokens = json.filter((boost: any) => boost?.chainId === 'solana');
+          tokens = json;
+        } else if (json && Array.isArray(json.tokens)) {
+          tokens = json.tokens;
+        } else if (json && Array.isArray(json.data)) {
+          tokens = json.data;
         }
         
-        console.log(`[dexscreener-proxy] Found ${tokens.length} Solana boosted tokens`);
-        
-        // Transform tokens to include image data properly
-        const transformedTokens = tokens.map((boost: any) => ({
-          ...boost,
-          image: boost.icon || boost.openGraph || boost.url,
-          baseToken: {
-            address: boost.tokenAddress,
-            symbol: boost.symbol || 'TOKEN',
-            name: boost.name || boost.symbol || 'Token'
-          }
-        }));
-        
-        console.log(`[dexscreener-proxy] Returning ${transformedTokens.length} transformed tokens`);
-        return new Response(JSON.stringify({ data: transformedTokens }), { 
+        console.log(`[dexscreener-proxy] Found ${tokens.length} boosted tokens`);
+        return new Response(JSON.stringify({ data: tokens }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
       } catch (e) {
@@ -302,6 +333,7 @@ serve(async (req) => {
     }
 
     if (action === 'tokenBatch') {
+      const body: any = await req.json().catch(() => ({}));
       const addresses: string[] = Array.isArray(body.addresses) ? body.addresses.filter(Boolean) : [];
       const unique = Array.from(new Set(addresses)).slice(0, 60);
       const concurrency = 6;
@@ -312,10 +344,9 @@ serve(async (req) => {
           const idx = i++;
           const addr = unique[idx];
           try {
-            // Use the new tokens endpoint
-            const url = `https://api.dexscreener.com/tokens/v1/solana/${addr}`;
+            const url = `https://api.dexscreener.com/latest/dex/tokens/${addr}`;
             const json = await fetchJsonCached(url, TTL_TOKEN);
-            const pairs: any[] = Array.isArray(json) ? json : [];
+            const pairs: any[] = Array.isArray(json?.pairs) ? json.pairs : [];
             const best = pickBestPair(pairs);
             if (!best) { results.push({ ok: false, address: addr, error: 'no_pairs' }); continue; }
             const mapped = mapToDexToolsLike(best);
@@ -332,10 +363,9 @@ serve(async (req) => {
 
     if (action === 'tokenFull') {
       if (!address) return new Response(JSON.stringify({ error: 'Missing address' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      // Use the new tokens endpoint
-      const url = `https://api.dexscreener.com/tokens/v1/solana/${address}`;
+      const url = `https://api.dexscreener.com/latest/dex/tokens/${address}`;
       const json = await fetchJsonCached(url, TTL_TOKEN);
-      const pairs: any[] = Array.isArray(json) ? json : [];
+      const pairs: any[] = Array.isArray(json?.pairs) ? json.pairs : [];
       const best = pickBestPair(pairs);
 
       // Diagnostic log
@@ -380,7 +410,6 @@ serve(async (req) => {
 
     if (action === 'trades') {
       if (!pairAddress) return new Response(JSON.stringify({ error: 'Missing pairAddress' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      // This endpoint might still work for trades
       const url = `https://api.dexscreener.com/latest/dex/trades/${pairAddress}`;
       const json = await fetchJsonCached(url, TTL_TRADES);
       // Pass-through trades with CORS + small normalization
