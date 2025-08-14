@@ -18,7 +18,7 @@ const MobileMemeNavigation = () => {
     label: 'Meme Zone',
     icon: TrendingUp,
     path: '/meme',
-    badge: 'HOT'
+    badge: null
   }, {
     id: 'create',
     label: 'Create',
