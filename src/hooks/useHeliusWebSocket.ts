@@ -166,7 +166,7 @@ export class HeliusWebSocketManager {
   }
 }
 
-export function useHeliusWebSocket(apiKey: string) {
+export function useHeliusWebSocket(apiKey?: string) {
   const [isConnected, setIsConnected] = useState(false);
   const wsManager = useRef<HeliusWebSocketManager | null>(null);
 

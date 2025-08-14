@@ -37,7 +37,7 @@ interface WalletTransaction {
   value: number;
 }
 
-const HELIUS_API_KEY = 'your-helius-api-key'; // This will be replaced with proper API calls
+const HELIUS_API_KEY = '8abd09a9-730e-4bd6-8d24-b67216d33f20'; // Use from the provided key
 
 export function useRealPortfolio(walletAddress?: string) {
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
@@ -46,7 +46,7 @@ export function useRealPortfolio(walletAddress?: string) {
   const [error, setError] = useState<string | null>(null);
   
   // Use WebSocket for real-time updates
-  const { wsManager, isConnected: wsConnected } = useHeliusWebSocket('placeholder');
+  const { wsManager, isConnected: wsConnected } = useHeliusWebSocket();
 
   // Fetch initial portfolio data
   const fetchPortfolioData = useCallback(async (address: string) => {
@@ -288,11 +288,27 @@ export function useRealPortfolio(walletAddress?: string) {
     }
   };
 
-  // Simplified without WebSocket for now
+  // WebSocket connection with fallback
   useEffect(() => {
-    // WebSocket functionality disabled due to API key issues
-    // Would implement real-time updates here when properly configured
-  }, [walletAddress]);
+    if (wsManager && walletAddress) {
+      // Subscribe to account changes for real-time updates
+      const subscriptionId = wsManager.subscribe(
+        'accountSubscribe',
+        [walletAddress, { encoding: 'jsonParsed' }],
+        (data) => {
+          console.log('Account updated:', data);
+          // Refresh portfolio when account changes
+          fetchPortfolioData(walletAddress);
+        }
+      );
+
+      return () => {
+        if (subscriptionId) {
+          wsManager.unsubscribe(subscriptionId);
+        }
+      };
+    }
+  }, [wsManager, walletAddress, fetchPortfolioData]);
 
   // Initial data fetch
   useEffect(() => {

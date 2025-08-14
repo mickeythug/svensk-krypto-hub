@@ -22,7 +22,10 @@ serve(async (req) => {
   
   if (!heliusApiKey) {
     console.error('HELIUS_RPC_API_KEY not found in environment');
-    return new Response("WebSocket service unavailable", { status: 500 });
+    return new Response("API key not configured", { 
+      status: 500,
+      headers: corsHeaders 
+    });
   }
 
   const { socket, response } = Deno.upgradeWebSocket(req);
