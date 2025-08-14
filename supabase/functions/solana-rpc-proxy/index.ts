@@ -18,17 +18,53 @@ serve(async (req) => {
     console.log('Solana RPC Proxy request:', req.method, req.url);
     console.log('Headers:', Object.fromEntries(req.headers.entries()));
     
+    // Debug environment variables
+    console.log('Available env vars:', Object.keys(Deno.env.toObject()));
+    
     const heliusApiKey = Deno.env.get('HELIUS_RPC_API_KEY');
     
     if (!heliusApiKey) {
       console.error('HELIUS_RPC_API_KEY not found in environment');
-      return new Response(
-        JSON.stringify({ error: 'RPC service unavailable', code: 500 }),
-        { 
-          status: 500, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      );
+      console.error('All env vars:', Deno.env.toObject());
+      
+      // Use public RPC endpoint as fallback
+      const publicEndpoint = 'https://api.mainnet-beta.solana.com';
+      console.log('Falling back to public Solana RPC:', publicEndpoint);
+      
+      try {
+        const requestBody = req.method !== 'GET' ? await req.text() : '';
+        console.log('Request body:', requestBody);
+        
+        const rpcResponse = await fetch(publicEndpoint, {
+          method: req.method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: req.method !== 'GET' ? requestBody : undefined,
+        });
+
+        const responseText = await rpcResponse.text();
+        console.log('Public RPC Response status:', rpcResponse.status);
+        console.log('Public RPC Response:', responseText.substring(0, 500));
+        
+        return new Response(responseText, {
+          status: rpcResponse.status,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+          },
+        });
+      } catch (fallbackError) {
+        console.error('Public RPC also failed:', fallbackError);
+        return new Response(
+          JSON.stringify({ error: 'All RPC endpoints unavailable', code: 500 }),
+          { 
+            status: 500, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        );
+      }
     }
 
     const rpcEndpoint = `https://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`;
