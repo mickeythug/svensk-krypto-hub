@@ -164,9 +164,9 @@ const MobileHeader = ({
         </div>
       </div>
       
-      {/* Crypto Ticker - Integrated into mobile header */}
-      {shouldShowTicker && <div className="border-t border-border/30">
-          {isMemeZone ? <MemeLiveTicker /> : <CryptoPriceTicker />}
+      {/* Crypto Ticker - Only show on non-meme pages */}
+      {shouldShowTicker && !isMemeZone && <div className="border-t border-border/30">
+          <CryptoPriceTicker />
         </div>}
     </div>;
 };

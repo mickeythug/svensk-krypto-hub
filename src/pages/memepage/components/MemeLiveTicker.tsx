@@ -33,12 +33,12 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any)
         
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <span className="font-bold text-xs text-foreground">{symbol}</span>
-            <span className={`font-bold text-sm ${positive ? 'text-green-400' : 'text-red-400'}`}>
+            <span className="font-bold text-xs text-foreground font-sans">{symbol}</span>
+            <span className={`font-bold text-sm font-sans ${positive ? 'text-green-400' : 'text-red-400'}`}>
               {positive ? '+' : ''}{Math.abs(change24h).toFixed(1)}%
             </span>
           </div>
-          <span className="tabular-nums font-bold text-[10px] text-accent">{formatCompactUsd(marketCap)}</span>
+          <span className="font-bold text-[10px] text-accent font-sans">{formatCompactUsd(marketCap)}</span>
         </div>
       </div>
     );
@@ -62,14 +62,14 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any)
       
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-3">
-          <span className="font-black text-lg text-foreground">{symbol}</span>
-          <span className={`font-bold text-lg ${positive ? 'text-green-400' : 'text-red-400'}`}>
+          <span className="font-bold text-lg text-foreground font-sans">{symbol}</span>
+          <span className={`font-bold text-lg font-sans ${positive ? 'text-green-400' : 'text-red-400'}`}>
             {positive ? '+' : ''}{change24h.toFixed(2)}%
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground truncate max-w-[120px]">{name}</span>
-          <span className="tabular-nums font-bold text-accent">{formatCompactUsd(marketCap)}</span>
+          <span className="text-sm text-muted-foreground truncate max-w-[120px] font-sans">{name}</span>
+          <span className="font-bold text-accent font-sans">{formatCompactUsd(marketCap)}</span>
         </div>
       </div>
     </div>
