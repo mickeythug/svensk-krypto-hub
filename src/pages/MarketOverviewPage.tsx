@@ -77,21 +77,21 @@ const MarketOverviewPage = () => {
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
-  const itemsPerPage = 15; // 15 tokens per sida som begärt
+  const itemsPerPage = 15; // 15 tokens per page as requested
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
   const queryClient = useQueryClient();
   const { toggleWatchlist, isInWatchlist } = useWatchlist();
   const { t } = useLanguage();
 
-  // Använd riktiga logo bilder från CoinGecko API
+  // Use real logo images from CoinGecko API
   const getCryptoLogo = (crypto: any) => {
-    // Använd riktig bild från API om tillgänglig, annars fallback till lokal bild
+    // Use real image from API if available, otherwise fallback to local image
     if (crypto.image) {
       return crypto.image;
     }
     
-    // Fallback till lokala bilder för vanliga tokens
+    // Fallback to local images for common tokens
     const logoMap: { [key: string]: string } = {
       'BTC': btcLogo,
       'ETH': ethLogo,
@@ -130,15 +130,15 @@ const MarketOverviewPage = () => {
   const altSeasonLabel = altSeason >= 60 ? t('market.altSeason') : altSeason <= 40 ? t('market.btcSeason') : t('market.neutral');
 
   const getCurrentData = () => {
-    // Använd riktig top 100 data från CoinGecko API
+    // Use real top 100 data from CoinGecko API
     if (!cryptoPrices || cryptoPrices.length === 0) return [];
     
-    // Filtrera bort wrapped tokens och staked tokens
+    // Filter out wrapped tokens and staked tokens
     const filteredCryptoPrices = cryptoPrices.filter(crypto => {
       const nameToCheck = crypto.name.toLowerCase();
       const symbolToCheck = crypto.symbol.toLowerCase();
       
-      // Lista över tokens att filtrera bort
+      // List of tokens to filter out
       const excludedKeywords = [
         'wrapped',
         'staked',
@@ -165,7 +165,7 @@ const MarketOverviewPage = () => {
       );
     });
     
-    // Konvertera riktig data till rätt format för tabellen
+    // Convert real data to the right format for the table
     const formattedCrypto = filteredCryptoPrices.map(crypto => ({
       rank: crypto.rank || 1,
       name: crypto.name,
@@ -178,37 +178,37 @@ const MarketOverviewPage = () => {
       marketCap: crypto.marketCap || "0",
       volume: crypto.volume || "0",
       supply: `${crypto.supply || "0"} ${crypto.symbol}`,
-      image: crypto.image // Inkludera riktig bild URL
+      image: crypto.image // Include real image URL
     }));
 
     switch (activeTab) {
       case "trending":
-        // Sortera efter högst positiv 24h förändring (trending up)
+        // Sort by highest positive 24h change (trending up)
         return formattedCrypto
-          .filter(crypto => crypto.change24h > 5) // Bara tokens med >5% ökning
+          .filter(crypto => crypto.change24h > 5) // Only tokens with >5% increase
           .sort((a, b) => b.change24h - a.change24h)
           .slice(0, 50);
       case "meme":
-        // Visa populära meme tokens
+        // Show popular meme tokens
         return formattedCrypto.filter(crypto => 
           ['DOGE', 'SHIB', 'PEPE', 'BONK', 'FLOKI'].includes(crypto.symbol)
         );
       case "gainers":
-        // Sortera efter högst positiv förändring
+        // Sort by highest positive change
         return formattedCrypto
           .filter(crypto => crypto.change24h > 0)
           .sort((a, b) => b.change24h - a.change24h)
           .slice(0, 50);
       case "losers":
-        // Sortera efter lägst negativ förändring
+        // Sort by lowest negative change
         return formattedCrypto
           .filter(crypto => crypto.change24h < 0)
           .sort((a, b) => a.change24h - b.change24h)
           .slice(0, 50);
       case "all":
-        return formattedCrypto.sort((a, b) => a.rank - b.rank); // Sortera efter market cap rank
+        return formattedCrypto.sort((a, b) => a.rank - b.rank); // Sort by market cap rank
       default:
-        // Top 10 sorterat efter market cap rank
+        // Top 10 sorted by market cap rank
         return formattedCrypto
           .sort((a, b) => a.rank - b.rank)
           .slice(0, 10);
@@ -479,13 +479,13 @@ const MarketOverviewPage = () => {
                     <TableHeader>
                       <TableRow className="hover:bg-transparent border-b border-border bg-muted/30">
                         <TableHead className="text-center font-semibold py-4 px-6 text-muted-foreground w-16">#</TableHead>
-                        <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">Namn</TableHead>
-                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Pris</TableHead>
+                        <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">{t('market.name')}</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">{t('market.price')}</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">1h %</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">24h %</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">7d %</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-40">Market Cap</TableHead>
-                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Volym (24h)</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">{t('market.volume')} (24h)</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -645,7 +645,7 @@ const MarketOverviewPage = () => {
                        
                        <div className="space-y-3">
                          <div className="flex justify-between items-center">
-                           <span className="text-white/80">Pris</span>
+                           <span className="text-white/80">{t('market.price')}</span>
                            <span className="font-numbers font-semibold text-lg text-white">{formatPrice(crypto.price)}</span>
                          </div>
                          
@@ -696,7 +696,7 @@ const MarketOverviewPage = () => {
               <div className="bg-card border border-border border-t-0 rounded-b-xl px-6 py-4 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    Visar <span className="font-medium text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredData.length)}</span> av <span className="font-medium text-foreground">{filteredData.length}</span> kryptovalutor
+                    {t('market.showing')} <span className="font-medium text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredData.length)}</span> {t('market.of')} <span className="font-medium text-foreground">{filteredData.length}</span> {t('market.cryptocurrencies')}
                   </div>
                   
                   <Pagination>
@@ -756,9 +756,9 @@ const MarketOverviewPage = () => {
           <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 p-4 border-b border-border/20">
             <div className="text-center mb-4">
               <h1 className="font-crypto text-4xl font-bold mb-2 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                MARKNAD
+                {t('market.title').toUpperCase()}
               </h1>
-              <p className="text-muted-foreground font-medium">Live kryptodata och marknadsanalys</p>
+              <p className="text-muted-foreground font-medium">{t('market.liveCryptoData')}</p>
             </div>
           </div>
 
@@ -863,7 +863,7 @@ const MarketOverviewPage = () => {
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder="Sök kryptovaluta..."
+                  placeholder={t('market.search')}
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10 bg-background/80 border-border/50 h-11 text-sm font-medium rounded-xl focus:border-primary/50 transition-colors"
@@ -877,9 +877,9 @@ const MarketOverviewPage = () => {
                   <TabsTrigger value="meme" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Meme</TabsTrigger>
                 </TabsList>
                 <TabsList className="grid grid-cols-3 h-11 p-1 bg-card/80 border border-border/30 rounded-xl w-full mt-2 backdrop-blur-sm">
-                  <TabsTrigger value="gainers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Toppar</TabsTrigger>
-                  <TabsTrigger value="losers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Fallande</TabsTrigger>
-                  <TabsTrigger value="all" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Alla</TabsTrigger>
+                  <TabsTrigger value="gainers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">{t('market.gainersShort')}</TabsTrigger>
+                  <TabsTrigger value="losers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">{t('market.losersShort')}</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">{t('market.allShort')}</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -959,7 +959,7 @@ const MarketOverviewPage = () => {
             <div className="pt-8 pb-20">
               <div className="flex items-center justify-between max-w-sm mx-auto px-4 py-4 bg-card/80 backdrop-blur-sm rounded-xl border border-border/30 shadow-sm">
                 <span className="text-xs text-muted-foreground font-medium">
-                  {startIndex + 1}-{Math.min(endIndex, filteredData.length)} av {filteredData.length}
+                  {t('market.showing')} {startIndex + 1}-{Math.min(endIndex, filteredData.length)} {t('market.of')} {filteredData.length}
                 </span>
                 
                 <div className="flex items-center space-x-3">
