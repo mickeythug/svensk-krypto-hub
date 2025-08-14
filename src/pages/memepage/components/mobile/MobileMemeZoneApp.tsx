@@ -154,11 +154,11 @@ const MobileMemeZoneApp = () => {
             </TabsContent>
             
             <TabsContent value="new" className="mt-0">
-              <WorldClassMobileMemeTokenGrid category="newest" viewMode={viewMode} />
+              <WorldClassMobileMemeTokenGrid category="new" viewMode={viewMode} />
             </TabsContent>
             
             <TabsContent value="gainers" className="mt-0">
-              <WorldClassMobileMemeTokenGrid category="gainers" viewMode={viewMode} />
+              <WorldClassMobileMemeTokenGrid category="gainer" viewMode={viewMode} />
             </TabsContent>
             
             <TabsContent value="volume" className="mt-0">

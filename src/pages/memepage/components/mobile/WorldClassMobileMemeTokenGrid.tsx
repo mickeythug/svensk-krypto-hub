@@ -254,19 +254,21 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
     tokens,
     loading,
     error,
-    hasMore
-  } = useMemeTokens(category, 20, page); // Max 20 per page
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+    hasMore,
+    lastUpdated,
+    totalPages,
+    currentPage,
+    totalTokens
+  } = useMemeTokens(category, 20, page); // Fixed 20 per page
+  
+  // Reset page when category changes
   useEffect(() => {
     setPage(1);
   }, [category]);
-  const loadMore = async () => {
-    if (hasMore && !loading && !isLoadingMore) {
-      setIsLoadingMore(true);
-      setPage(p => p + 1);
-      setTimeout(() => {
-        setIsLoadingMore(false);
-      }, 500);
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= (totalPages || 10)) {
+      setPage(newPage);
     }
   };
   if (loading && tokens.length === 0) {
@@ -328,6 +330,15 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
   }
   return (
     <div className="space-y-4">
+      {/* Real-time update indicator */}
+      {lastUpdated && (
+        <div className="text-center py-2">
+          <span className="text-xs text-white/60 font-medium">
+            Senast uppdaterad: {new Date(lastUpdated).toLocaleTimeString('sv-SE')}
+          </span>
+        </div>
+      )}
+
       {tokens.map((token, index) => 
         viewMode === 'list' ? (
           <PremiumTokenListItem 
@@ -346,8 +357,15 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
         )
       )}
 
-      {/* Enhanced Pagination with proper controls */}
-      <MobilePagination currentPage={page} hasMore={hasMore} onPageChange={setPage} loading={loading} />
+      {/* Enhanced Pagination with page numbers */}
+      <MobilePagination 
+        currentPage={page} 
+        hasMore={hasMore} 
+        onPageChange={handlePageChange} 
+        loading={loading}
+        totalPages={totalPages || 10}
+        totalTokens={totalTokens}
+      />
     </div>
   );
 };

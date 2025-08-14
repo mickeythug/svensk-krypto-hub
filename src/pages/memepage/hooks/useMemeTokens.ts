@@ -20,7 +20,7 @@ export interface MemeToken {
   description?: string;
 }
 
-export type MemeCategory = 'newest' | 'trending' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'volume' | 'liquidity' | 'liquidity_high' | 'liquidity_low' | 'marketcap' | 'marketcap_high' | 'marketcap_low' | 'txns' | 'boosted';
+export type MemeCategory = 'trending' | 'new' | 'gainer' | 'volume' | 'newest' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'liquidity' | 'liquidity_high' | 'liquidity_low' | 'marketcap' | 'marketcap_high' | 'marketcap_low' | 'txns' | 'boosted';
 
 const preloadImage = (src?: string) =>
   new Promise<boolean>((resolve) => {
@@ -31,204 +31,125 @@ const preloadImage = (src?: string) =>
     img.src = src;
   });
 
-export const useMemeTokens = (category: MemeCategory, limit: number = 30, page?: number) => {
-  const pageKey = typeof page === 'number' && page > 0 ? `:p${page}` : '';
-  const [tokens, setTokens] = useState<MemeToken[]>(() => {
-    const k = `memeTokens:${category}:v2${pageKey}`;
-    const boot = getCacheStaleOk<MemeToken[]>(k);
-    return Array.isArray(boot) ? boot.slice(0, limit) : [];
-  });
-  const [loading, setLoading] = useState(() => {
-    const k = `memeTokens:${category}:v2${pageKey}`;
-    const boot = getCacheStaleOk<MemeToken[]>(k);
-    return !(Array.isArray(boot) && boot.length);
-  });
+export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: number = 1) => {
+  const [tokens, setTokens] = useState<MemeToken[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  
+  // Direct API endpoints for each category
+  const endpoints = {
+    trending: 'https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=trendingScore',
+    new: 'https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=createdAt',
+    gainer: 'https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=priceChange',
+    volume: 'https://api.dexscreener.com/token-profiles/latest/v1/latest?chainIds=solana&order=desc&sort=volume',
+    // Fallback to existing endpoints for other categories
+    newest: 'meme-catalog',
+    potential: 'meme-catalog',
+    all: 'meme-catalog',
+    under1m: 'meme-catalog',
+    gainers: 'meme-catalog',
+    losers: 'meme-catalog',
+    liquidity: 'meme-catalog',
+    liquidity_high: 'meme-catalog',
+    liquidity_low: 'meme-catalog',
+    marketcap: 'meme-catalog',
+    marketcap_high: 'meme-catalog',
+    marketcap_low: 'meme-catalog',
+    txns: 'meme-catalog',
+    boosted: 'meme-catalog'
+  };
 
-  useEffect(() => {
-    let mounted = true;
+  const fetchTokens = async () => {
     setLoading(true);
     setError(null);
-    console.log('[useMemeTokens] start', { category, limit, page });
+    
+    try {
+      const endpoint = endpoints[category];
+      let allTokens: MemeToken[] = [];
+      
+      if (endpoint === 'meme-catalog') {
+        // Use existing backend for other categories
+        const backendCategory = (
+          category === 'marketcap' ? 'marketcap_high' :
+          category === 'liquidity' ? 'liquidity_high' :
+          category === 'potential' ? 'newest' :
+          category === 'gainers' ? 'gainers' :
+          category
+        ) as any;
 
-    const cacheKey = `memeTokens:${category}:v2${pageKey}`;
+        const { data: res } = await supabase.functions.invoke('meme-catalog', {
+          body: { category: backendCategory, page: 1, pageSize: 200 }
+        });
 
-    // Prefer fresh cache (no network, instant paint)
-    const freshEntry = getCache<MemeToken[]>(cacheKey);
-    if (freshEntry?.data?.length && mounted) {
-      setTokens(freshEntry.data.slice(0, limit));
-      if (freshEntry.fresh) {
-        // If cache is fresh, skip loading state to avoid skeletons
-        setLoading(false);
+        allTokens = Array.isArray(res?.items) ? (res.items as MemeToken[]) : [];
+      } else {
+        // Direct API call for main categories
+        const response = await fetch(endpoint);
+        const data = await response.json();
+        
+        // Transform dexscreener data to our format
+        allTokens = (data?.data || []).slice(0, 200).map((item: any) => ({
+          id: item.tokenAddress || item.address || '',
+          symbol: item.token?.symbol || item.symbol || '',
+          name: item.token?.name || item.name || '',
+          image: item.token?.image || item.image || item.icon || '',
+          price: parseFloat(item.priceUsd || item.price || '0'),
+          change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || '0'),
+          volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
+          marketCap: parseFloat(item.marketCap || '0'),
+          holders: parseInt(item.holders || '0'),
+          views: '0',
+          tags: [],
+          isHot: false
+        }));
       }
-    }
-
-    // Immediate bootstrap from stale cache as fallback (SWR)
-    const bootstrap = getCacheStaleOk<MemeToken[]>(cacheKey);
-    if (!freshEntry?.data?.length && bootstrap && bootstrap.length && mounted) {
-      setTokens(bootstrap.slice(0, limit));
-      // Show cached data immediately while background refresh happens
+      
+      setTokens(allTokens);
+      setHasMore(allTokens.length >= 200 && page < 10); // Max 10 pages
+      setLastUpdated(new Date());
+      
+    } catch (e: any) {
+      console.error('Error fetching tokens:', e);
+      setError('Kunde inte hämta token data');
+    } finally {
       setLoading(false);
     }
+  };
 
-    const normalize = (d: any): any[] => {
-      if (!d) return [];
-      if (Array.isArray(d)) return d;
-      const r = Array.isArray(d?.results) ? d.results
-        : Array.isArray(d?.data?.results) ? d.data.results
-        : Array.isArray(d?.data) ? d.data
-        : [];
-      return Array.isArray(r) ? r : [];
-    };
-
-    const load = async () => {
-      try {
-        // 0) Centralized cache bootstrap and refresh trigger
-        try {
-          const { data: row } = await supabase
-            .from('meme_tokens_cache')
-            .select('data, updated_at')
-            .eq('category', category)
-            .maybeSingle();
-          if (row?.data && mounted) {
-            const freshEnough = row.updated_at
-              ? Date.now() - new Date(row.updated_at as any).getTime() <= 30 * 60 * 1000
-              : false;
-            const arr = Array.isArray(row.data) ? (row.data as unknown as MemeToken[]) : [];
-            if (arr.length) {
-              setTokens(arr.slice(0, limit));
-            }
-            if (!freshEnough) {
-              // Trigger refresh in background (non-blocking)
-              supabase.functions.invoke('meme-cache-refresh', { body: { categories: [category] } }).catch(() => {});
-            }
-          }
-        } catch {}
-
-        // 1) Backend aggregated catalog with pagination (meme-catalog)
-        try {
-          const backendCategory = (
-            category === 'marketcap' ? 'marketcap_high' :
-            category === 'liquidity' ? 'liquidity_high' :
-            category === 'marketcap_high' ? 'marketcap_high' :
-            category === 'marketcap_low' ? 'marketcap_low' :
-            category === 'liquidity_high' ? 'liquidity_high' :
-            category === 'liquidity_low' ? 'liquidity_low' :
-            category === 'potential' ? 'newest' :
-            category
-          ) as any;
-
-          const { data: res } = await supabase.functions.invoke('meme-catalog', {
-            body: { category: backendCategory, page: page ?? 1, pageSize: limit }
-          });
-
-          const items = Array.isArray(res?.items) ? (res.items as MemeToken[]) : [];
-          const total = Number(res?.total ?? 0);
-          const pg = Number(res?.page ?? (page ?? 1));
-          const sz = Number(res?.pageSize ?? limit);
-          if (mounted) setHasMore(pg * sz < total);
-
-          if (items.length) {
-            await Promise.all(items.map((t) => preloadImage(t.image)));
-            if (!mounted) return;
-            setCache(cacheKey, items, { ttlMs: 2 * 60 * 1000 });
-            setTokens(items);
-            return; // success path
-          }
-        } catch (_) {}
-
-        // 2) Legacy fallback is disabled to reduce rate limits and avoid 502s.
-        // Preserve existing tokens on failure.
-        return;
-
-      } catch (e: any) {
-        // On error, try centralized cache, then local stale cache
-        try {
-          const { data: row } = await supabase
-            .from('meme_tokens_cache')
-            .select('data')
-            .eq('category', category)
-            .maybeSingle();
-          const arr = Array.isArray(row?.data) ? (row!.data as unknown as MemeToken[]) : [];
-          if (mounted && arr.length) {
-            setTokens(arr.slice(0, limit));
-            setError(null);
-          } else {
-            const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
-            if (mounted && cached && cached.length) {
-              setTokens(cached.slice(0, limit));
-              setError(null);
-            } else if (mounted) {
-              setError(e?.message || 'Kunde inte hämta data från DEXTools');
-            }
-          }
-        } catch {
-          const cached = getCacheStaleOk<MemeToken[]>(cacheKey);
-          if (mounted && cached && cached.length) {
-            setTokens(cached.slice(0, limit));
-            setError(null);
-          } else if (mounted) {
-            setError(e?.message || 'Kunde inte hämta data från DEXTools');
-          }
-        }
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-
-    if (!freshEntry?.fresh) {
-      load();
-    } else {
-      // Fresh cache present; skip heavy fetch to respect rate limits
-    }
-    return () => {
-      mounted = false;
-    };
-  }, [category, limit, page]);
-
-  // Persist the latest tokens to localStorage so refresh/navigation is instant
+  // Initial fetch
   useEffect(() => {
-    const cacheKey = `memeTokens:${category}:v2${pageKey}`;
-    if (tokens && tokens.length) {
-      setCache(cacheKey, tokens, { ttlMs: 2 * 60 * 1000 });
-    }
-  }, [category, tokens, page]);
+    fetchTokens();
+  }, [category]);
 
-  // Background monitor: keep enriching tokens that still miss data (no filtering)
-  const enrichAttempts = useRef<Record<string, number>>({});
+  // Auto-refresh every 30 seconds
   useEffect(() => {
-    const toNum = (v: any): number => typeof v === 'number' ? v : (typeof v === 'string' ? Number(v.replace(/[\,\s]/g, '')) : 0);
-    const pending = tokens.filter(t => (t.marketCap <= 0 || t.holders <= 0 || t.volume24h <= 0) && (enrichAttempts.current[t.id] ?? 0) < 5);
-    if (!pending.length) return;
-    let cancelled = false;
-    const run = async () => {
-      const batch = pending.slice(0, 5);
-      const res = await Promise.all(batch.map(async (t) => {
-        try {
-          enrichAttempts.current[t.id] = (enrichAttempts.current[t.id] ?? 0) + 1;
-          const { data: full } = await supabase.functions.invoke('dexscreener-proxy', { body: { action: 'tokenFull', address: t.id } });
-          const infoD = (full?.info?.data ?? full?.info) as any || {};
-          const poolD = (full?.poolPrice?.data ?? full?.poolPrice) as any || {};
-          return { id: t.id, marketCap: toNum(infoD.mcap), holders: toNum(infoD.holders), volume24h: toNum(poolD.volume24h) };
-        } catch { return { id: t.id }; }
-      }));
-      if (cancelled) return;
-      setTokens(prev => prev.map(p => {
-        const u = res.find(r => r.id === p.id);
-        if (!u) return p;
-        return { ...p, marketCap: u.marketCap ?? p.marketCap, holders: u.holders ?? p.holders, volume24h: u.volume24h ?? p.volume24h };
-      }));
-    };
-    // run once immediately and then every 20s
-    run();
-    const id = setInterval(run, 20000);
-    return () => { cancelled = true; clearInterval(id); };
-  }, [tokens]);
+    const interval = setInterval(fetchTokens, 30000);
+    return () => clearInterval(interval);
+  }, [category]);
 
-  // Removed PumpPortal real-time feed per requirements
-  // Future: could poll DexScreener lists periodically if needed
-  const sorted = useMemo(() => tokens, [tokens]);
+  // Reset page when category changes
+  useEffect(() => {
+    if (page !== 1) {
+      // This will be handled by the parent component
+    }
+  }, [category]);
+
+  // Pagination logic - show 20 tokens per page
+  const indexOfLastToken = page * limit;
+  const indexOfFirstToken = indexOfLastToken - limit;
+  const currentTokens = tokens.slice(indexOfFirstToken, indexOfLastToken);
+  const totalPages = Math.ceil(200 / limit); // Always 10 pages (200 tokens / 20 per page)
   
-  return { tokens: sorted, loading, error, hasMore };
+  return { 
+    tokens: currentTokens, 
+    loading, 
+    error, 
+    hasMore: page < totalPages,
+    lastUpdated,
+    totalPages,
+    currentPage: page,
+    totalTokens: Math.min(tokens.length, 200)
+  };
 };
