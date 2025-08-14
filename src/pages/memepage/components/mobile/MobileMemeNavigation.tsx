@@ -53,7 +53,7 @@ const MobileMemeNavigation = () => {
       </div>
       
       <div className="container-padding pb-6 pt-3">
-        <div className="flex items-center justify-around max-w-sm mx-auto">
+        <div className="flex items-center justify-between w-full px-2">
           {navItems.map(item => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path || 
@@ -64,7 +64,7 @@ const MobileMemeNavigation = () => {
                 key={item.id} 
                 variant="ghost" 
                 onClick={() => handleNavClick(item)} 
-                className={`flex flex-col items-center gap-1 p-3 h-auto relative transition-all duration-300 btn-feedback ${
+                className={`flex flex-col items-center gap-1 p-2 px-3 h-auto relative transition-all duration-300 btn-feedback min-w-0 flex-1 ${
                   isActive 
                     ? 'text-primary bg-primary/10' 
                     : 'text-white/70 hover:text-white hover:bg-white/5'
@@ -84,8 +84,8 @@ const MobileMemeNavigation = () => {
                   )}
                 </div>
                 
-                {/* Label with text truncation */}
-                <span className={`text-xs font-semibold transition-all duration-300 text-truncate-1 max-w-16 text-center ${
+                {/* Label with proper spacing and no truncation */}
+                <span className={`text-xs font-semibold transition-all duration-300 text-center whitespace-nowrap ${
                   isActive ? 'text-primary' : ''
                 }`}>
                   {item.label}

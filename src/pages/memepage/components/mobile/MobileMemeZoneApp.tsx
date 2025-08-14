@@ -115,34 +115,34 @@ const MobileMemeZoneApp = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="relative mb-6">
               <div className="bg-gradient-to-r from-black/30 via-black/20 to-black/30 backdrop-blur-2xl rounded-3xl p-3 border border-white/20 shadow-2xl shadow-purple-500/10">
-                <TabsList className="grid w-full grid-cols-4 bg-transparent gap-2">
+                <TabsList className="grid w-full grid-cols-4 bg-transparent gap-1">
                   <TabsTrigger 
                     value="trending" 
-                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/25 data-[state=active]:to-pink-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-purple-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-purple-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2 btn-feedback"
+                    className="rounded-2xl py-3 px-2 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/25 data-[state=active]:to-pink-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-purple-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-purple-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-1 btn-feedback min-w-0"
                   >
                     <TrendingUp className="w-4 h-4" />
-                    <span className="text-xs font-semibold text-truncate-1">Trending</span>
+                    <span className="text-xs font-semibold whitespace-nowrap">Trending</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="new" 
-                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/25 data-[state=active]:to-cyan-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-blue-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-blue-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2 btn-feedback"
+                    className="rounded-2xl py-3 px-2 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/25 data-[state=active]:to-cyan-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-blue-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-blue-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-1 btn-feedback min-w-0"
                   >
                     <Sparkles className="w-4 h-4" />
-                    <span className="text-xs font-semibold text-truncate-1">New</span>
+                    <span className="text-xs font-semibold whitespace-nowrap">New</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="gainers" 
-                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500/25 data-[state=active]:to-emerald-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-green-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-green-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2 btn-feedback"
+                    className="rounded-2xl py-3 px-2 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500/25 data-[state=active]:to-emerald-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-green-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-green-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-1 btn-feedback min-w-0"
                   >
                     <Rocket className="w-4 h-4" />
-                    <span className="text-xs font-semibold text-truncate-1">Gainers</span>
+                    <span className="text-xs font-semibold whitespace-nowrap">Gainers</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="volume" 
-                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/25 data-[state=active]:to-yellow-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-orange-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-orange-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2 btn-feedback"
+                    className="rounded-2xl py-3 px-2 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/25 data-[state=active]:to-yellow-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-orange-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-orange-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-1 btn-feedback min-w-0"
                   >
                     <BarChart3 className="w-4 h-4" />
-                    <span className="text-xs font-semibold text-truncate-1">Volume</span>
+                    <span className="text-xs font-semibold whitespace-nowrap">Volume</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
