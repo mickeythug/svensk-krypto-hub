@@ -295,7 +295,7 @@ const MemeTopCoins = () => {
                     'bg-muted text-muted-foreground'
                   }`}>
                     {index === 0 && <Crown className="w-3 h-3 mr-1" />}
-                    #{token.rank}
+                    <span className="font-numbers">#{token.rank}</span>
                   </Badge>
                 </div>
 
@@ -337,15 +337,15 @@ const MemeTopCoins = () => {
                       ) : (
                         <TrendingDown className="w-5 h-5 animate-pulse" />
                       )}
-                      <span>
-                        {positive ? '+' : ''}{formatPercentage(token.change24h)}
-                      </span>
+                       <span className="font-numbers">
+                         {positive ? '+' : ''}{formatPercentage(token.change24h)}
+                       </span>
                     </div>
                   </div>
                   
                   <div className="mt-2 flex items-center justify-between text-sm">
-                    <span className="tabular-nums font-bold text-lg">{formatPrice(token.price)}</span>
-                    <span className="text-muted-foreground font-medium">{formatMarketCap(token.marketCap)}</span>
+                    <span className="tabular-nums font-bold text-lg font-numbers">{formatPrice(token.price)}</span>
+                    <span className="text-muted-foreground font-medium font-numbers">{formatMarketCap(token.marketCap)}</span>
                   </div>
 
                   {/* Professional Action Button */}

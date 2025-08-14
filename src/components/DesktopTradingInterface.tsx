@@ -202,15 +202,15 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 )}
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-2xl font-bold font-mono text-foreground">
-                      {formatUsd(currentPrice)}
-                    </h1>
+                     <h1 className="text-2xl font-bold font-numbers text-foreground">
+                       {formatUsd(currentPrice)}
+                     </h1>
                     <Badge 
                       variant={priceChange24h >= 0 ? "default" : "destructive"}
                       className="px-2 py-1"
                     >
                       {priceChange24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                      {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
+                      <span className="font-numbers">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
                     </Badge>
                   </div>
                   <div className="text-sm text-muted-foreground flex items-center gap-2">
@@ -262,35 +262,35 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           <div className="flex items-center gap-8 mt-4 text-sm">
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h High</span>
-              <span className="font-mono font-semibold text-success">
-                {Number.isFinite(ticker?.high24h as any) ? formatUsd(ticker!.high24h!) : '—'}
-              </span>
+               <span className="font-numbers font-semibold text-success">
+                 {Number.isFinite(ticker?.high24h as any) ? formatUsd(ticker!.high24h!) : '—'}
+               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h Low</span>
-              <span className="font-mono font-semibold text-destructive">
-                {Number.isFinite(ticker?.low24h as any) ? formatUsd(ticker!.low24h!) : '—'}
-              </span>
+               <span className="font-numbers font-semibold text-destructive">
+                 {Number.isFinite(ticker?.low24h as any) ? formatUsd(ticker!.low24h!) : '—'}
+               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">24h Volume</span>
-              <span className="font-mono font-semibold">
-                {Number.isFinite(ticker?.volumeQuote as any)
-                  ? `$${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(ticker!.volumeQuote!)}`
-                  : (crypto?.volume ? `$${crypto.volume}` : '—')}
+               <span className="font-numbers font-semibold">
+                 {Number.isFinite(ticker?.volumeQuote as any)
+                   ? `$${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(ticker!.volumeQuote!)}`
+                   : (crypto?.volume ? `$${crypto.volume}` : '—')}
               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">Market Cap</span>
-              <span className="font-mono font-semibold">
-                {crypto?.marketCap ? `$${crypto.marketCap}` : '—'}
-              </span>
+               <span className="font-numbers font-semibold">
+                 {crypto?.marketCap ? `$${crypto.marketCap}` : '—'}
+               </span>
             </div>
             <div className="flex flex-col">
               <span className="text-muted-foreground">Spread</span>
-              <span className="font-mono font-semibold">
-                {calculateSpread()}%
-              </span>
+               <span className="font-numbers font-semibold">
+                 {calculateSpread()}%
+               </span>
             </div>
           </div>
         </div>
@@ -348,15 +348,15 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-border/50">
                     <span className="font-medium">USDC</span>
-                    <span className="font-mono text-success">2,450.00</span>
+                    <span className="font-numbers text-success">2,450.00</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-border/50">
                     <span className="font-medium">{symbol}</span>
-                    <span className="font-mono">0.000000</span>
+                    <span className="font-numbers">0.000000</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-border/50">
                     <span className="font-medium">SOL</span>
-                    <span className="font-mono">{(solBalance || 0).toFixed(4)}</span>
+                    <span className="font-numbers">{(solBalance || 0).toFixed(4)}</span>
                   </div>
                 </div>
               </Card>

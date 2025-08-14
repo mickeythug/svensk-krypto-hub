@@ -214,22 +214,22 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
               <div className="space-y-3">
                 <div className="text-center">
                   <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">TOTAL</div>
-                  <div className="text-lg font-black text-foreground">
-                    $1.7M
-                  </div>
+                   <div className="text-lg font-black font-numbers text-foreground">
+                     $1.7M
+                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="text-center min-w-0">
                     <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">BUY VOL</div>
-                    <div className="text-sm font-black text-success break-words">$882K</div>
+                    <div className="text-sm font-black font-numbers text-success break-words">$882K</div>
                     <div className="w-full bg-muted/30 rounded-full h-1.5 mt-1">
                       <div className="bg-success h-1.5 rounded-full" style={{ width: '51%' }}></div>
                     </div>
                   </div>
                   <div className="text-center min-w-0">
                     <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1 truncate">SELL VOL</div>
-                    <div className="text-sm font-black text-destructive break-words">$854K</div>
+                    <div className="text-sm font-black font-numbers text-destructive break-words">$854K</div>
                     <div className="w-full bg-muted/30 rounded-full h-1.5 mt-1">
                       <div className="bg-destructive h-1.5 rounded-full" style={{ width: '49%' }}></div>
                     </div>

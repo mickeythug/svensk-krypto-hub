@@ -143,7 +143,7 @@ const MemeHeroNew = () => {
                       'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground'
                     }`}>
                       {index === 0 && <Crown className="w-5 h-5 mr-2 animate-pulse" />}
-                      #{index + 1}
+                      <span className="font-numbers">#{index + 1}</span>
                     </Badge>
                   </div>
 
@@ -188,7 +188,7 @@ const MemeHeroNew = () => {
                         ) : (
                           <TrendingDown className="w-5 h-5 animate-pulse" />
                         )}
-                        <span className="text-lg">
+                        <span className="text-lg font-numbers">
                           {positive ? '+' : ''}{formatPercentage(token.change24h)}
                         </span>
                       </div>
@@ -204,14 +204,14 @@ const MemeHeroNew = () => {
                           <DollarSign className="w-4 h-4" />
                           <span className="font-bold">PRIS</span>
                         </div>
-                        <div className="text-xl font-black text-foreground">{formatPrice(token.price)}</div>
+                        <div className="text-xl font-black text-foreground font-numbers">{formatPrice(token.price)}</div>
                       </div>
                       <div className="bg-muted/60 rounded-xl p-4 border-2 border-white/10">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                           <Star className="w-4 h-4" />
                           <span className="font-bold">MCAP</span>
                         </div>
-                        <div className="text-xl font-black text-foreground">{formatCompact(token.marketCap)}</div>
+                        <div className="text-xl font-black text-foreground font-numbers">{formatCompact(token.marketCap)}</div>
                       </div>
                     </div>
 

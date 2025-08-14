@@ -83,12 +83,12 @@ const MobileMemeStats = () => {
                   ) : (
                     <TrendingDown className="w-3 h-3" />
                   )}
-                  {stat.change}
+                  <span className="font-numbers">{stat.change}</span>
                 </div>
               </div>
               
               <div>
-                <div className="text-xl font-black text-white mb-1">{stat.value}</div>
+                <div className="text-xl font-black font-numbers text-white mb-1">{stat.value}</div>
                 <div className="text-white/60 text-xs font-medium">{stat.label}</div>
               </div>
             </Card>
@@ -104,10 +104,10 @@ const MobileMemeStats = () => {
               <Crown className="w-4 h-4 text-yellow-400" />
               <span className="text-sm font-semibold text-white">Market Sentiment</span>
             </div>
-            <div className="text-2xl font-black text-green-400">Extremely Bullish</div>
+             <div className="text-2xl font-black text-green-400">Extremely Bullish</div>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-black text-green-400 mb-1">92%</div>
+            <div className="text-3xl font-black font-numbers text-green-400 mb-1">92%</div>
             <div className="text-xs text-white/70">Bull/Bear Ratio</div>
           </div>
         </div>

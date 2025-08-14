@@ -114,24 +114,24 @@ const TrendingMemeTokens = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Pris</span>
-                  <span className="font-bold tabular-nums">{formatPrice(token.price)}</span>
+                  <span className="font-bold font-numbers tabular-nums">{formatPrice(token.price)}</span>
                 </div>
 
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">24h</span>
                   <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                     {getTrendIcon(token.change24h, index)}
-                    <span className="font-semibold tabular-nums">
-                      {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
-                    </span>
+                     <span className="font-semibold font-numbers tabular-nums">
+                       {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
+                     </span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Volym 24h</span>
-                  <span className="font-semibold text-sm">
-                    ${(token.volume24h / 1e6).toFixed(2)}M
-                  </span>
+                   <span className="font-semibold font-numbers text-sm">
+                     ${(token.volume24h / 1e6).toFixed(2)}M
+                   </span>
                 </div>
               </div>
 

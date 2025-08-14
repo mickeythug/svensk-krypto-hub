@@ -73,12 +73,12 @@ const MobileTradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }:
             </div>
           </div>
           <div className="text-right">
-            <div className="font-bold text-lg">{formatPrice(currentPrice)}</div>
+            <div className="font-bold font-numbers text-lg">{formatPrice(currentPrice)}</div>
             <div className={`flex items-center gap-1 text-sm ${
               priceChange24h >= 0 ? 'text-success' : 'text-destructive'
             }`}>
               {priceChange24h >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-              {Math.abs(priceChange24h).toFixed(2)}%
+              <span className="font-numbers">{Math.abs(priceChange24h).toFixed(2)}%</span>
             </div>
           </div>
         </div>

@@ -153,7 +153,7 @@ export const AdvancedTradingSettings = ({
               handleAmountSelect(amount);
             }
           }} className={`text-sm font-bold h-10 rounded-lg ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
-                {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount}`}
+                 <span className="font-numbers">{tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount}`}</span>
               </Button>)}
           </div>
 
@@ -165,7 +165,7 @@ export const AdvancedTradingSettings = ({
               handleAmountSelect(amount);
             }
           }} className={`text-sm font-bold h-10 rounded-lg ${selectedAmount === amount ? 'bg-primary text-primary-foreground border-0 shadow-md' : 'bg-background text-foreground border-2 border-border hover:bg-muted hover:border-primary'}`}>
-                {tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount}`}
+                 <span className="font-numbers">{tradeType === 'sell' && amount <= 100 ? `${amount}%` : `${amount}`}</span>
               </Button>)}
           </div>
 

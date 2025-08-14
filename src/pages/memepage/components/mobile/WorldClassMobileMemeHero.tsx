@@ -125,9 +125,9 @@ const WorldClassMobileMemeHero = () => {
         animationDelay: `${index * 200}ms`
       }}>
             <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-3 text-center mobile-backdrop hover:bg-black/30 hover:border-white/20 transition-all duration-300 group">
-              <div className={`text-lg font-bold mb-1 ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
-                <AnimatedNumber value={stat.value} />
-              </div>
+               <div className={`text-lg font-bold font-numbers mb-1 ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
+                 <AnimatedNumber value={stat.value} />
+               </div>
               <div className="text-white/70 text-xs font-medium text-center">
                 {stat.label}
               </div>

@@ -108,17 +108,17 @@ const MobileMemeHero = () => {
       {/* Quick stats */}
       <div className="grid grid-cols-3 gap-4 mt-6">
         <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-4 text-center">
-          <div className="text-2xl font-black text-white mb-1">1,247</div>
+          <div className="text-2xl font-black font-numbers text-white mb-1">1,247</div>
           <div className="text-white/70 text-xs font-medium">Active Tokens</div>
         </Card>
         
         <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-4 text-center">
-          <div className="text-2xl font-black text-green-400 mb-1">+84%</div>
+          <div className="text-2xl font-black font-numbers text-green-400 mb-1">+84%</div>
           <div className="text-white/70 text-xs font-medium">Avg Gain 24h</div>
         </Card>
         
         <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-4 text-center">
-          <div className="text-2xl font-black text-yellow-400 mb-1">$2.4M</div>
+          <div className="text-2xl font-black font-numbers text-yellow-400 mb-1">$2.4M</div>
           <div className="text-white/70 text-xs font-medium">Total Volume</div>
         </Card>
       </div>

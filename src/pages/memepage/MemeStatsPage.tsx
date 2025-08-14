@@ -49,7 +49,7 @@ const MemeStatsPage = () => {
           <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30">
             <CardContent className="p-4 text-center">
               <DollarSign className="h-6 w-6 text-primary mx-auto mb-2" />
-              <p className="text-2xl font-bold">{stats.totalMarketCap}</p>
+              <p className="text-2xl font-bold font-numbers">{stats.totalMarketCap}</p>
               <p className="text-sm text-muted-foreground">Market Cap</p>
             </CardContent>
           </Card>
@@ -57,7 +57,7 @@ const MemeStatsPage = () => {
           <Card className="bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/30">
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-6 w-6 text-green-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold">{stats.activeTokens}</p>
+              <p className="text-2xl font-bold font-numbers">{stats.activeTokens}</p>
               <p className="text-sm text-muted-foreground">Active Tokens</p>
             </CardContent>
           </Card>
@@ -65,7 +65,7 @@ const MemeStatsPage = () => {
           <Card className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-blue-500/30">
             <CardContent className="p-4 text-center">
               <Zap className="h-6 w-6 text-blue-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold">{stats.dailyVolume}</p>
+              <p className="text-2xl font-bold font-numbers">{stats.dailyVolume}</p>
               <p className="text-sm text-muted-foreground">24h Volume</p>
             </CardContent>
           </Card>
@@ -73,7 +73,7 @@ const MemeStatsPage = () => {
           <Card className="bg-gradient-to-br from-yellow-500/10 to-yellow-500/5 border-yellow-500/30">
             <CardContent className="p-4 text-center">
               <Star className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold">{stats.topGainerChange}</p>
+              <p className="text-2xl font-bold font-numbers">{stats.topGainerChange}</p>
               <p className="text-sm text-muted-foreground">Top Gainer</p>
             </CardContent>
           </Card>
@@ -91,9 +91,9 @@ const MemeStatsPage = () => {
             {topPerformers.map((token, index) => (
               <div key={token.symbol} className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-bold">
-                    #{token.rank}
-                  </div>
+                   <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-sm font-bold font-numbers">
+                     #{token.rank}
+                   </div>
                   <div>
                     <p className="font-semibold">{token.symbol}</p>
                     <p className="text-sm text-muted-foreground">{token.name}</p>
@@ -101,10 +101,10 @@ const MemeStatsPage = () => {
                 </div>
                 <div className="flex-1" />
                 <div className="text-right">
-                  <Badge className="bg-green-500/20 text-green-400 mb-1">
-                    {token.change}
-                  </Badge>
-                  <p className="text-sm text-muted-foreground">{token.volume}</p>
+                   <Badge className="bg-green-500/20 text-green-400 mb-1 font-numbers">
+                     {token.change}
+                   </Badge>
+                  <p className="text-sm text-muted-foreground font-numbers">{token.volume}</p>
                 </div>
               </div>
             ))}
@@ -120,21 +120,21 @@ const MemeStatsPage = () => {
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-sm font-medium">Bullish Sentiment</span>
-                <span className="text-sm text-muted-foreground">78%</span>
+                <span className="text-sm text-muted-foreground font-numbers">78%</span>
               </div>
               <Progress value={78} className="h-2" />
             </div>
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-sm font-medium">Fear & Greed Index</span>
-                <span className="text-sm text-muted-foreground">65 (Greed)</span>
+                <span className="text-sm text-muted-foreground font-numbers">65 (Greed)</span>
               </div>
               <Progress value={65} className="h-2" />
             </div>
             <div>
               <div className="flex justify-between mb-2">
                 <span className="text-sm font-medium">Social Activity</span>
-                <span className="text-sm text-muted-foreground">92%</span>
+                <span className="text-sm text-muted-foreground font-numbers">92%</span>
               </div>
               <Progress value={92} className="h-2" />
             </div>
