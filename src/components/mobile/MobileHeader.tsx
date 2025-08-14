@@ -164,10 +164,12 @@ const MobileHeader = ({
         </div>
       </div>
       
-      {/* Crypto Ticker - Only show on non-meme pages */}
-      {shouldShowTicker && !isMemeZone && <div className="border-t border-border/30">
-          <CryptoPriceTicker />
-        </div>}
+      {/* Ticker - show CryptoPriceTicker on non-meme pages, MemeLiveTicker on meme pages */}
+      {shouldShowTicker && (
+        <div className="border-t border-border/30">
+          {isMemeZone ? <MemeLiveTicker /> : <CryptoPriceTicker />}
+        </div>
+      )}
     </div>;
 };
 export default MobileHeader;
