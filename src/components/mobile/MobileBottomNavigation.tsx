@@ -6,16 +6,18 @@ import {
   Wallet,
   Home
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const MobileBottomNavigation = () => {
   const location = useLocation();
+  const { t } = useLanguage();
 
   const navItems = [
-    { path: "/", icon: Home, label: "Hem" },
-    { path: "/marknad", icon: TrendingUp, label: "Marknad" },
-    { path: "/meme", icon: Zap, label: "Meme Zone" },
-    { path: "/crypto/btc", icon: Wallet, label: "Handel" },
-    { path: "/nyheter", icon: Newspaper, label: "Nyheter" }
+    { path: "/", icon: Home, label: t('mobileNav.home') },
+    { path: "/marknad", icon: TrendingUp, label: t('mobileNav.market') },
+    { path: "/meme", icon: Zap, label: t('mobileNav.memeZone') },
+    { path: "/crypto/btc", icon: Wallet, label: t('mobileNav.trading') },
+    { path: "/nyheter", icon: Newspaper, label: t('mobileNav.news') }
   ];
 
   return (

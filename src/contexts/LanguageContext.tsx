@@ -233,6 +233,47 @@ const translations = {
     'common.members': 'Aktiva Medlemmar',
     'common.resources': 'Utbildningsresurser',
     'common.cryptocurrencies': 'Olika kryptovalutor',
+
+    // Footer translations
+    'footer.followUs': 'FÖLJ OSS PÅ SOCIALA MEDIER',
+    'footer.riskWarning': 'Riskvarning:',
+    'footer.riskDescription': 'Handel med kryptovalutor är förknippat med höga risker. Investeringar kan både öka och minska i värde. Investera aldrig mer än vad du har råd att förlora. Crypto Network Sweden tillhandahåller endast utbildningsinnehåll och är inte finansiell rådgivning.',
+    'footer.privacyPolicy': 'Integritetspolicy',
+    'footer.termsOfService': 'Användarvillkor',
+    'footer.cookies': 'Cookies',
+
+    // Mobile Navigation translations
+    'mobileNav.home': 'Hem',
+    'mobileNav.market': 'Marknad',
+    'mobileNav.memeZone': 'Meme Zone',
+    'mobileNav.trading': 'Handel',
+    'mobileNav.news': 'Nyheter',
+
+    // Mobile Meme Zone translations
+    'memeZone.trending': 'Trendande',
+    'memeZone.new': 'Nya',
+    'memeZone.gainers': 'Vinnare',
+    'memeZone.volume': 'Volym',
+    'memeZone.hot': 'HET',
+    'memeZone.buyNow': 'HANDLA NU',
+    'memeZone.loadMore': 'Ladda fler tokens',
+    'memeZone.topGainer': 'TOP',
+    'memeZone.topVolume': 'Topp Volym',
+
+    // Crypto Detail Page translations
+    'crypto.backToMarket': 'Tillbaka till Marknad',
+    'crypto.watchlist': 'Bevakningslista',
+    'crypto.priceChange': 'Prisförändring',
+    'crypto.marketCap': 'Börsvärde', 
+    'crypto.volume24h': '24h Volym',
+    'crypto.supply': 'Utbud',
+    'crypto.chart': 'Diagram',
+    'crypto.orderbook': 'Orderbok',
+    'crypto.trades': 'Affärer',
+    'crypto.info': 'Info',
+    'crypto.loading': 'Laddar...',
+    'crypto.error': 'Fel vid laddning av data',
+    'crypto.retry': 'Försök igen',
     
     'nav.price': 'Pris',
     
@@ -798,6 +839,51 @@ const translations = {
     'common.for': 'for',
     'common.last24h': 'last 24h',
     'common.premium': 'Premium',
+    'common.today': 'today',
+    'common.members': 'Active Members',
+    'common.resources': 'Educational Resources',
+    'common.cryptocurrencies': 'Different cryptocurrencies',
+
+    // Footer translations
+    'footer.followUs': 'FOLLOW US ON SOCIAL MEDIA',
+    'footer.riskWarning': 'Risk Warning:',
+    'footer.riskDescription': 'Trading cryptocurrencies involves high risks. Investments can both increase and decrease in value. Never invest more than you can afford to lose. Crypto Network Sweden provides only educational content and is not financial advice.',
+    'footer.privacyPolicy': 'Privacy Policy',
+    'footer.termsOfService': 'Terms of Service',
+    'footer.cookies': 'Cookies',
+
+    // Mobile Navigation translations
+    'mobileNav.home': 'Home',
+    'mobileNav.market': 'Market',
+    'mobileNav.memeZone': 'Meme Zone',
+    'mobileNav.trading': 'Trading',
+    'mobileNav.news': 'News',
+
+    // Mobile Meme Zone translations
+    'memeZone.trending': 'Trending',
+    'memeZone.new': 'New',
+    'memeZone.gainers': 'Gainers',
+    'memeZone.volume': 'Volume',
+    'memeZone.hot': 'HOT',
+    'memeZone.buyNow': 'BUY NOW',
+    'memeZone.loadMore': 'Load more tokens',
+    'memeZone.topGainer': 'TOP',
+    'memeZone.topVolume': 'Top Volume',
+
+    // Crypto Detail Page translations
+    'crypto.backToMarket': 'Back to Market',
+    'crypto.watchlist': 'Watchlist',
+    'crypto.priceChange': 'Price Change',
+    'crypto.marketCap': 'Market Cap', 
+    'crypto.volume24h': '24h Volume',
+    'crypto.supply': 'Supply',
+    'crypto.chart': 'Chart',
+    'crypto.orderbook': 'Order Book',
+    'crypto.trades': 'Trades',
+    'crypto.info': 'Info',
+    'crypto.loading': 'Loading...',
+    'crypto.error': 'Error loading data',
+    'crypto.retry': 'Try again',
     
     'nav.price': 'Price',
     

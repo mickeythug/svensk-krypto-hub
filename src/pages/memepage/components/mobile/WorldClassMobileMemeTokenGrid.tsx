@@ -8,6 +8,7 @@ import { useMemeTokens, type MemeCategory } from '../../hooks/useMemeTokens';
 import { useNavigate } from 'react-router-dom';
 import MobilePagination from './MobilePagination';
 import { TrendingUp, TrendingDown, DollarSign, BarChart3, Users, Crown, Flame, Target, Star, Eye, Heart, Share2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 interface Props {
   category: MemeCategory;
   viewMode?: 'grid' | 'list';
@@ -39,7 +40,8 @@ function formatPercentage(n: number) {
 const PremiumTokenListItem = ({
   token,
   index,
-  onClick
+  onClick,
+  t
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const positive = token.change24h > 0;
@@ -136,7 +138,8 @@ const PremiumTokenListItem = ({
 const PremiumTokenCard = ({
   token,
   index,
-  onClick
+  onClick,
+  t
 }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [viewCount, setViewCount] = useState(Math.floor(Math.random() * 1000) + 100);
@@ -220,10 +223,10 @@ const PremiumTokenCard = ({
                   </div>)}
               </div>
 
-              {/* Action Button - Changed to KÖP */}
+              {/* Action Button */}
               <Button size="sm" className="w-full bg-gradient-to-r from-primary/80 to-primary text-black font-bold rounded-lg transition-all duration-300 mobile-backdrop hover:scale-105 hover:shadow-lg hover:shadow-primary/25 font-sans">
                 <Target className="w-4 h-4 mr-2" />
-                KÖP
+                {t('memeZone.buyNow')}
               </Button>
 
               {/* Social engagement indicators */}
@@ -233,9 +236,9 @@ const PremiumTokenCard = ({
 
           {/* Enhanced Hot Badge */}
           {isTop3 && <div className="absolute top-2 right-2 animate-fade-in">
-              <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 animate-pulse shadow-lg">
-                {isTop1 ? '🔥 HOT' : '⭐ TOP'}
-              </Badge>
+            <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 animate-pulse shadow-lg">
+              {isTop1 ? `🔥 ${t('memeZone.hot')}` : `⭐ ${t('memeZone.topGainer')}`}
+            </Badge>
             </div>}
 
           {/* Hover glow effect */}
@@ -249,6 +252,7 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
   viewMode = 'grid'
 }) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [page, setPage] = useState(1);
   const {
     tokens,
@@ -324,7 +328,7 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
     return <div className="text-center py-8 animate-fade-in">
         <p className="text-red-400 text-sm mb-4">{error}</p>
         <Button onClick={() => window.location.reload()} variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 hover:scale-105 transition-all duration-300">
-          Försök igen
+          {t('crypto.retry')}
         </Button>
       </div>;
   }
@@ -334,7 +338,7 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
       {lastUpdated && (
         <div className="text-center py-2">
           <span className="text-xs text-white/60 font-medium">
-            Senast uppdaterad: {new Date(lastUpdated).toLocaleTimeString('sv-SE')}
+            {t('common.refresh')}: {new Date(lastUpdated).toLocaleTimeString('sv-SE')}
           </span>
         </div>
       )}
@@ -346,6 +350,7 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
             token={token} 
             index={index} 
             onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)} 
+            t={t}
           />
         ) : (
           <PremiumTokenCard 
@@ -353,6 +358,7 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
             token={token} 
             index={index} 
             onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)} 
+            t={t}
           />
         )
       )}
