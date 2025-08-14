@@ -27,6 +27,7 @@ import { AdvancedTradingSettings } from '@/components/AdvancedTradingSettings';
 import { TokenInfoSection } from '@/components/TokenInfoSection';
 import { TransactionsTable } from '@/components/TransactionsTable';
 import { MarketDataToggle } from '@/components/MarketDataToggle';
+import { AppStoreMobileTokenPage } from './components/mobile/AppStoreMobileTokenPage';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -253,237 +254,22 @@ const MemeTokenDetailPage = () => {
   // Use real enhanced token data instead of mockup stats
 
   if (isMobile) {
+    // Create a new trade handler for the app store component
+    const handleMobileTrade = useCallback((type: 'buy' | 'sell', amount: string) => {
+      setTradeType(type);
+      setCustomAmount(amount);
+      handleTrade();
+    }, [handleTrade]);
+
     return (
-      <div className="min-h-screen bg-background font-inter">
-        {/* Mobile Hero Section */}
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <OptimizedImage src={coverImage} alt={`${token.name} background`} className="w-full h-full object-cover scale-110 blur-xl opacity-20" />
-            <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background" />
-          </div>
-
-          <div className="relative z-10 pt-6 pb-8">
-            <div className="container mx-auto px-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-6 h-10 w-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-
-              <Card className="bg-card/90 backdrop-blur-sm border-border/50 shadow-2xl">
-                <div className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="relative">
-                      <div className="w-24 h-24 rounded-3xl overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20 shadow-lg">
-                        {token.image ? (
-                          <OptimizedImage src={token.image} alt={token.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-primary">
-                            {token.symbol.charAt(0)}
-                          </div>
-                        )}
-                      </div>
-                      {token.isHot && (
-                        <div className="absolute -top-1 -right-1">
-                          <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1 animate-pulse">
-                            🔥
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h1 className="text-3xl font-bold">
-                          {token.emoji} {token.symbol}
-                        </h1>
-                        <Button variant="ghost" size="sm" onClick={() => setIsLiked(!isLiked)} className="h-8 w-8 rounded-full p-0">
-                          <Heart className={`h-4 w-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
-                        </Button>
-                      </div>
-                      
-                      <p className="text-lg text-muted-foreground font-medium mb-3">
-                        {token.name}
-                      </p>
-
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl font-bold">
-                          {formatPrice(token.price)}
-                        </span>
-                        <Badge variant={isPositive ? "default" : "destructive"} className={`${isPositive ? 'bg-success text-success-foreground' : ''} font-bold text-sm px-3 py-1`}>
-                          {isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                          {isPositive ? '+' : ''}{token.change24h.toFixed(2)}%
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => setIsBookmarked(!isBookmarked)} className="h-8 w-8 rounded-full p-0">
-                        <Bookmark className={`h-4 w-4 ${isBookmarked ? 'fill-primary text-primary' : ''}`} />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0">
-                        <Share2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border/50">
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground mb-1">Market Cap</div>
-                      <div className="font-bold text-sm">{formatMarketCap(token.marketCap)}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground mb-1">Holders</div>
-                      <div className="font-bold text-sm">
-                        {token.holders > 1000 ? `${Math.floor(token.holders / 1000)}K` : token.holders}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xs text-muted-foreground mb-1">Views</div>
-                      <div className="font-bold text-sm">{token.views}</div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 mt-6">
-                    <Button size="lg" className="h-14 bg-success hover:bg-success/90 text-success-foreground font-bold text-lg">
-                      <TrendingUp className="mr-2 h-5 w-5" />
-                      Buy
-                    </Button>
-                    <Button size="lg" variant="destructive" className="h-14 font-bold text-lg">
-                      <TrendingDown className="mr-2 h-5 w-5" />
-                      Sell
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Content Tabs */}
-        <div className="container mx-auto px-4 pb-8">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="chart">Chart</TabsTrigger>
-              <TabsTrigger value="trade">Trade</TabsTrigger>
-              <TabsTrigger value="info">Info</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview" className="space-y-6">
-              {/* Quick Stats */}
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-4">Quick Stats</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <DollarSign className="w-4 h-4 text-blue-500" />
-                        <span className="text-sm text-muted-foreground">Market Cap</span>
-                      </div>
-                      <div className="text-lg font-bold">{formatMarketCap(token.marketCap)}</div>
-                    </div>
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-green-600/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Volume2 className="w-4 h-4 text-green-500" />
-                        <span className="text-sm text-muted-foreground">24h Volume</span>
-                      </div>
-                      <div className="text-lg font-bold">
-                        ${typeof (volume24hDerived ?? token.volume24h) === 'number' 
-                          ? Number((volume24hDerived ?? token.volume24h)).toLocaleString() 
-                          : '—'}
-                      </div>
-                    </div>
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-indigo-500/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Users className="w-4 h-4 text-purple-500" />
-                        <span className="text-sm text-muted-foreground">Holders</span>
-                      </div>
-                      <div className="text-lg font-bold">{token.holders.toLocaleString()}</div>
-                    </div>
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Eye className="w-4 h-4 text-orange-500" />
-                        <span className="text-sm text-muted-foreground">Views</span>
-                      </div>
-                      <div className="text-lg font-bold">{token.views}</div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Tags */}
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-4">Categories</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {token.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="bg-primary/10 text-primary border border-primary/20 font-semibold">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="chart" className="space-y-6">
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="h-[400px]">
-                  <TradingViewMobileChart 
-                    symbol={tokenAddress || token.symbol}
-                    coinGeckoId={token.symbol.toLowerCase()}
-                  />
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="trade" className="space-y-6">
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-6">Trade {token.symbol}</h3>
-                  <JupiterSwapWidget />
-                </div>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="info" className="space-y-6">
-              {/* Description */}
-              {token.description && (
-                <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-4">About</h3>
-                    <p className="text-muted-foreground leading-relaxed">{token.description}</p>
-                  </div>
-                </Card>
-              )}
-
-              {/* Contract Info */}
-              <Card className="bg-card/80 backdrop-blur-sm border-border/50">
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-4">Contract Info</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Address</span>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm">{tokenAddress.slice(0, 6)}...{tokenAddress.slice(-4)}</span>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => {
-                            navigator.clipboard.writeText(tokenAddress);
-                            toast({ title: 'Copied!', description: 'Token address copied to clipboard' });
-                          }}
-                        >
-                          <Copy className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+      <AppStoreMobileTokenPage
+        token={token}
+        tokenAddress={tokenAddress}
+        coverImage={coverImage}
+        onBack={() => navigate(-1)}
+        onTrade={handleMobileTrade}
+        isTrading={isTrading}
+      />
     );
   }
 
