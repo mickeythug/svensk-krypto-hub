@@ -133,9 +133,7 @@ const PortfolioPage = () => {
         <div className={`${isMobile ? 'flex flex-col space-y-4 mb-6' : 'flex items-center justify-between mb-8'}`}>
           <div>
             <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3`}>
-              <span className="text-brand-turquoise">{t('portfolio.title').split(' ')[0]}</span>
-              <span className="text-brand-white"> {t('portfolio.title').split(' ')[1] || 'PORT'}</span>
-              <span className="text-brand-turquoise">{t('portfolio.title').split(' ')[2] || 'FÖLJ'}</span>
+              <span className="text-brand-turquoise">{t('portfolio.title')}</span>
             </h1>
             <p className={`font-display ${isMobile ? 'text-sm' : 'text-lg'} text-muted-foreground`}>
               {t('portfolio.overview')}
