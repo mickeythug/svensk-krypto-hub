@@ -3,6 +3,7 @@ import MemeHeroNew from './components/MemeHeroNew';
 import MemeZoneTabs from './components/MemeZoneTabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
+import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
 
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -52,6 +53,12 @@ const MemePage: React.FC = () => {
     document.head.appendChild(ld);
   }, []);
 
+  // Mobile app version - completely different experience
+  if (isMobile) {
+    return <MobileMemeZoneApp />;
+  }
+
+  // Desktop version - original design
   return (
     <div className="meme-page font-sans bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
       {/* Full Screen Gaming Background */}
