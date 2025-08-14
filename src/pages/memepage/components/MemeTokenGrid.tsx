@@ -122,10 +122,10 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
             
             <AspectRatio ratio={4/5}>
               <OptimizedImage
-                src={tokenImages[token.symbol.toLowerCase()] ?? token.cover}
+                src={token.image || tokenImages[token.symbol.toLowerCase()] || token.cover}
                 alt={`${token.name} – logotyp / omslagsbild`}
                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                fallbackSrc="/placeholder.svg"
+                fallbackSrc={token.cover}
               />
             </AspectRatio>
             

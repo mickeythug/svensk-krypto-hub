@@ -40,7 +40,7 @@ function transformUnifiedToken(token: any): MemeToken {
     liquidity: parseFloat(token?.liquidity || '0'),
     holders: token?.holders,
     txns24h: undefined,
-    image: token?.image || '',
+    image: token?.image || token?.logo || '',
     pairAddress: token?.pairAddress,
     chainId: 'solana',
     dexId: 'dexscreener',
@@ -133,6 +133,7 @@ async function fetchMemeTokens(category: string = 'trending'): Promise<MemeToken
         marketCap: parseFloat(token?.marketCap || token?.fdv || '0'),
         liquidity: parseFloat(token?.liquidity?.usd || token?.liquidity || '0'),
         holders: token?.holders,
+        image: token?.info?.imageUrl || token?.image || token?.logo || token?.icon || '',
         source: 'dexscreener' as const,
       })).filter(token => token.address && token.symbol).slice(0, 20);
       
@@ -207,6 +208,7 @@ export function useBoostedMemeTokens(): MemeTokensResult {
           volume24h: parseFloat(token?.volume?.h24 || '0'),
           marketCap: parseFloat(token?.marketCap || '0'),
           liquidity: parseFloat(token?.liquidity?.usd || '0'),
+          image: token?.info?.imageUrl || token?.image || token?.logo || token?.icon || '',
           source: 'dexscreener' as const,
         })).slice(0, 10);
       }

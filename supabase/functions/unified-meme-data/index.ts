@@ -4,6 +4,8 @@ interface TokenData {
   address: string;
   name: string;
   symbol: string;
+  image?: string;
+  logo?: string;
   price?: number;
   priceChange24h?: number;
   marketCap?: number;
@@ -90,6 +92,8 @@ Deno.serve(async (req: Request) => {
         address: token.address,
         name: token.name,
         symbol: token.symbol,
+        image: token.image || token.logo,
+        logo: token.logo || token.image,
         price: token.price,
         priceChange24h: token.priceChange24h,
         marketCap: token.marketCap,
@@ -112,6 +116,8 @@ Deno.serve(async (req: Request) => {
         address: token.baseToken?.address || token.address || token.tokenAddress,
         name: token.baseToken?.name || token.name,
         symbol: token.baseToken?.symbol || token.symbol,
+        image: token.info?.imageUrl || token.image || token.logo,
+        logo: token.info?.imageUrl || token.logo || token.image,
         price: parseFloat(token.priceUsd || token.price || '0'),
         priceChange24h: parseFloat(token.priceChange?.h24 || token.priceChange24h || '0'),
         marketCap: token.marketCap || token.fdv,

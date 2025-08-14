@@ -277,7 +277,20 @@ serve(async (req) => {
         }
         
         console.log(`[dexscreener-proxy] Found ${tokens.length} Solana boosted tokens`);
-        return new Response(JSON.stringify({ data: tokens }), { 
+        
+        // Transform tokens to include image data properly
+        const transformedTokens = tokens.map((boost: any) => ({
+          ...boost,
+          image: boost.icon || boost.openGraph || boost.url,
+          baseToken: {
+            address: boost.tokenAddress,
+            symbol: boost.symbol || 'TOKEN',
+            name: boost.name || boost.symbol || 'Token'
+          }
+        }));
+        
+        console.log(`[dexscreener-proxy] Returning ${transformedTokens.length} transformed tokens`);
+        return new Response(JSON.stringify({ data: transformedTokens }), { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         });
       } catch (e) {
