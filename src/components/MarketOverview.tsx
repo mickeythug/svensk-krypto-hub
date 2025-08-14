@@ -211,7 +211,7 @@ const MarketOverview = () => {
                 </div>
                 
                 <div className={`${isMobile ? 'mb-1' : 'mb-2'}`}>
-                  <span className={`font-crypto font-numbers ${isMobile ? 'text-lg' : 'text-2xl'} font-bold`}>{stat.value}</span>
+                  <span className={`font-numbers ${isMobile ? 'text-lg' : 'text-2xl'} font-bold`}>{stat.value}</span>
                   <span className={`text-muted-foreground ${isMobile ? 'text-xs ml-1' : 'ml-1'}`}>{stat.unit}</span>
                 </div>
                 
@@ -450,18 +450,18 @@ const MarketOverview = () => {
                             <div className="space-y-3">
 <div className="flex justify-between items-center text-sm">
   <span className="text-muted-foreground">Aktuellt pris:</span>
-  <span className="font-crypto font-bold">{(typeof levels.currentPrice === 'number' && isFinite(levels.currentPrice) && levels.currentPrice > 0) ? `$${Math.round(levels.currentPrice).toLocaleString()}` : '—'}</span>
+  <span className="font-numbers font-bold">{(typeof levels.currentPrice === 'number' && isFinite(levels.currentPrice) && levels.currentPrice > 0) ? `$${Math.round(levels.currentPrice).toLocaleString()}` : '—'}</span>
 </div>
  
 <div className="space-y-2">
   <div className="flex justify-between items-center p-2 rounded bg-destructive/10 border border-destructive/20">
     <span className="text-sm text-destructive">Nästa stöd:</span>
-    <span className="font-crypto text-sm text-destructive font-bold">{(typeof levels.nextSupport?.price === 'number' && isFinite(levels.nextSupport.price) && levels.nextSupport.price > 0) ? `$${Math.round(levels.nextSupport.price).toLocaleString()}` : '—'}</span>
+    <span className="font-numbers text-sm text-destructive font-bold">{(typeof levels.nextSupport?.price === 'number' && isFinite(levels.nextSupport.price) && levels.nextSupport.price > 0) ? `$${Math.round(levels.nextSupport.price).toLocaleString()}` : '—'}</span>
   </div>
   
   <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
     <span className="text-sm text-success">Nästa motstånd:</span>
-    <span className="font-crypto text-sm text-success font-bold font-numbers">{(typeof levels.nextResistance?.price === 'number' && isFinite(levels.nextResistance.price) && levels.nextResistance.price > 0) ? `$${Math.round(levels.nextResistance.price).toLocaleString()}` : '—'}</span>
+    <span className="font-numbers text-sm text-success font-bold">{(typeof levels.nextResistance?.price === 'number' && isFinite(levels.nextResistance.price) && levels.nextResistance.price > 0) ? `$${Math.round(levels.nextResistance.price).toLocaleString()}` : '—'}</span>
   </div>
                                 
                                 {levels.criticalLevel && (
@@ -559,7 +559,7 @@ const MarketOverview = () => {
                               <span className="font-display text-sm">{name}</span>
                               <div className={`font-display text-sm ${color}`}>
                                 <span className="mr-2">{t?.trend ?? '—'}</span>
-                                {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                                {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI <span className="font-numbers">{t.rsi14.toFixed(0)}</span></span>)}
                               </div>
                             </div>
                           );
@@ -603,7 +603,7 @@ const MarketOverview = () => {
                         {(['d1','d7','m1'] as const).map(tf => (
                           <div key={`${asset}-${tf}`} className="flex items-center justify-between text-sm py-1">
                             <span className="text-muted-foreground">{tf.toUpperCase()}</span>
-                            <span className="font-display">{t?.[tf]?.trend ?? '—'}{typeof t?.[tf]?.rsi14 === 'number' ? ` · RSI ${t?.[tf]?.rsi14.toFixed(0)}` : ''}</span>
+                            <span className="font-display">{t?.[tf]?.trend ?? '—'}{typeof t?.[tf]?.rsi14 === 'number' ? ` · RSI ` : ''}<span className="font-numbers">{typeof t?.[tf]?.rsi14 === 'number' ? t?.[tf]?.rsi14.toFixed(0) : ''}</span></span>
                           </div>
                         ))}
                       </Card>

@@ -91,19 +91,19 @@ const HeroSection = () => {
           <div className={`grid grid-cols-1 ${isMobile ? 'gap-4 px-4' : 'md:grid-cols-3 gap-6'} animate-fade-in`} style={{ animationDelay: '0.9s' }}>
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <Users className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary mx-auto mb-3`} />
-              <h3 className={`font-display font-semibold font-numbers ${isMobile ? 'text-lg' : 'text-xl'} mb-2`}>5000+</h3>
+              <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>5000+</h3>
               <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Aktiva Medlemmar</p>
             </Card>
             
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <TrendingUp className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-success mx-auto mb-3`} />
-              <h3 className={`font-display font-semibold font-numbers ${isMobile ? 'text-lg' : 'text-xl'} mb-2`}>24/7</h3>
+              <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>24/7</h3>
               <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Marknadsanalys</p>
             </Card>
             
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <BookOpen className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-accent mx-auto mb-3`} />
-              <h3 className={`font-display font-semibold font-numbers ${isMobile ? 'text-lg' : 'text-xl'} mb-2`}>100+</h3>
+              <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>100+</h3>
               <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Utbildningsresurser</p>
             </Card>
           </div>

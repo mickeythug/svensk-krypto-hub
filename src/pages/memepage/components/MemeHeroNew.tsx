@@ -204,7 +204,7 @@ const MemeHeroNew = () => {
                           <DollarSign className="w-4 h-4" />
                           <span className="font-bold">PRIS</span>
                         </div>
-                        <div className="text-xl font-black text-foreground font-numbers">{formatPrice(token.price)}</div>
+                         <div className="text-xl font-black text-foreground font-numbers">{formatPrice(token.price)}</div>
                       </div>
                       <div className="bg-muted/60 rounded-xl p-4 border-2 border-white/10">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">

@@ -176,7 +176,7 @@ const MemeTokenSection = () => {
                       </div>
                       
                       <div className="text-right">
-                         <div className="font-display font-semibold font-numbers text-sm">
+                         <div className="font-numbers font-semibold text-sm">
                            {formatPrice(coin.price)} SEK
                          </div>
                         <div className={`flex items-center justify-end space-x-1 text-xs ${
@@ -222,19 +222,19 @@ const MemeTokenSection = () => {
         <div className={`grid grid-cols-1 ${isMobile ? 'gap-4' : 'md:grid-cols-3 gap-6'}`}>
           <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">🚀</div>
-            <h4 className="font-crypto text-lg font-bold font-numbers text-primary mb-1">500+</h4>
+            <h4 className="font-numbers text-lg font-bold text-primary mb-1">500+</h4>
             <p className="text-muted-foreground text-sm">Aktiva Meme Tokens</p>
           </Card>
           
           <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">💎</div>
-            <h4 className="font-crypto text-lg font-bold font-numbers text-primary mb-1">50B+</h4>
+            <h4 className="font-numbers text-lg font-bold text-primary mb-1">50B+</h4>
             <p className="text-muted-foreground text-sm">Total Marknadskapital</p>
           </Card>
           
           <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">🎯</div>
-            <h4 className="font-crypto text-lg font-bold font-numbers text-primary mb-1">1000%+</h4>
+            <h4 className="font-numbers text-lg font-bold text-primary mb-1">1000%+</h4>
             <p className="text-muted-foreground text-sm">Genomsnittlig Volatilitet</p>
           </Card>
         </div>

@@ -148,12 +148,12 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
               </div>
               
               <div className={`flex items-center justify-between ${isMobile ? 'text-sm' : 'text-base md:text-lg'} mb-3`}>
-                 <span className={`tabular-nums font-crypto font-black font-numbers ${isMobile ? 'text-lg' : 'text-xl'} group-hover:text-primary transition-colors`}>
+                 <span className={`tabular-nums font-numbers font-black ${isMobile ? 'text-lg' : 'text-xl'} group-hover:text-primary transition-colors`}>
                    {formatPrice(token.price)}
                  </span>
                 <div className={`flex items-center gap-1 ${getTrendColor(token.change24h)}`}>
                   {getTrendIcon(token.change24h)}
-                   <span className={`font-crypto font-bold font-numbers tabular-nums ${isMobile ? 'text-sm' : 'text-base'} group-hover:scale-110 transition-transform`}>
+                   <span className={`font-numbers font-bold tabular-nums ${isMobile ? 'text-sm' : 'text-base'} group-hover:scale-110 transition-transform`}>
                      {token.change24h > 0 ? '+' : ''}{token.change24h.toFixed(2)}%
                    </span>
                 </div>
@@ -166,13 +166,13 @@ const MemeTokenGrid: React.FC<MemeTokenGridProps> = ({ category, limit }) => {
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1">
                     <Users className="h-4 w-4" />
-                     <span className="font-crypto font-bold font-numbers text-foreground group-hover:text-primary transition-colors">
+                      <span className="font-numbers font-bold text-foreground group-hover:text-primary transition-colors">
                        {token.holders > 1000 ? `${Math.floor(token.holders/1000)}K` : token.holders}
                      </span>
                   </span>
                   <span className="flex items-center gap-1">
                     <Eye className="h-4 w-4" />
-                     <span className="font-crypto font-bold font-numbers text-foreground group-hover:text-primary transition-colors">
+                     <span className="font-numbers font-bold text-foreground group-hover:text-primary transition-colors">
                        {token.views}
                      </span>
                   </span>
