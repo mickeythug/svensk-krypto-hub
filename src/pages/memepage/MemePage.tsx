@@ -4,6 +4,7 @@ import MemeZoneTabs from './components/MemeZoneTabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
+import hexPattern from '@/assets/hex-pattern.jpg';
 
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
@@ -63,7 +64,7 @@ const MemePage: React.FC = () => {
     <div className="meme-page font-sans bg-gradient-to-br from-background via-background/95 to-muted/20 min-h-screen">
       {/* Full Screen Gaming Background */}
       <div className="fixed inset-0 bg-gradient-casino-rainbow opacity-5 animate-shimmer pointer-events-none"></div>
-      <div className="fixed inset-0 bg-[url('/hex-pattern.jpg')] opacity-10 pointer-events-none"></div>
+      <div className={`fixed inset-0 bg-[url('${hexPattern}')] opacity-10 pointer-events-none`}></div>
       
       <main className="relative z-10 w-full min-h-screen overflow-x-hidden">
         {/* Full Width Hero Section */}

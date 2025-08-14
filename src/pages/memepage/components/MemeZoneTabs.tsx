@@ -9,6 +9,7 @@ import { useMemeTokens, type MemeCategory } from '../hooks/useMemeTokens';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
+import hexPattern from '@/assets/hex-pattern.jpg';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -491,7 +492,7 @@ const MemeZoneTabs: React.FC = () => {
     <section data-section="token-explorer" className="w-full min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/20 py-8">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-casino-gold opacity-15 animate-shimmer pointer-events-none"></div>
-      <div className="absolute inset-0 bg-[url('/hex-pattern.jpg')] opacity-20 pointer-events-none"></div>
+      <div className={`absolute inset-0 bg-[url('${hexPattern}')] opacity-20 pointer-events-none`}></div>
       
       <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 lg:px-8">
         {/* Modern Header */}
