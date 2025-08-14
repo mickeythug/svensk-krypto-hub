@@ -38,7 +38,7 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any)
               {positive ? '+' : ''}{Math.abs(change24h).toFixed(1)}%
             </span>
           </div>
-          <span className="font-bold text-[10px] text-accent font-sans">{formatCompactUsd(marketCap)}</span>
+          <span className="font-bold text-xs text-white font-sans tracking-wide">{formatCompactUsd(marketCap)}</span>
         </div>
       </div>
     );
@@ -69,7 +69,7 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any)
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground truncate max-w-[120px] font-sans">{name}</span>
-          <span className="font-bold text-accent font-sans">{formatCompactUsd(marketCap)}</span>
+          <span className="font-bold text-lg text-white font-sans tracking-wide">{formatCompactUsd(marketCap)}</span>
         </div>
       </div>
     </div>
