@@ -14,6 +14,7 @@ import {
   Filter,
   Zap
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SearchResult {
   id: string;
@@ -31,6 +32,7 @@ interface Props {
 }
 
 const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([
@@ -93,7 +95,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for tokens..."
+            placeholder={t('memeSearch.searchTokens')}
             className="pl-10 pr-4 py-3 bg-white/10 border-white/20 text-white placeholder:text-white/60 rounded-full focus:bg-white/15 transition-all duration-300"
             autoFocus
           />
@@ -113,7 +115,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
           onClick={onClose}
           className="text-white/80 hover:text-white font-semibold"
         >
-          Avbryt
+          {t('memeSearch.cancel')}
         </Button>
       </div>
 
@@ -124,7 +126,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-white/60" />
-                <h3 className="text-white font-semibold">Recent searches</h3>
+                <h3 className="text-white font-semibold">{t('memeSearch.recentSearches')}</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {recentSearches.map((search, index) => (
@@ -144,7 +146,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <TrendingUp className="w-5 h-5 text-primary" />
-                <h3 className="text-white font-semibold">Trending nu</h3>
+                <h3 className="text-white font-semibold">{t('memeSearch.trendingNow')}</h3>
               </div>
               <div className="space-y-3">
                 {trendingTokens.map((token, index) => (
@@ -160,7 +162,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
                           {index < 3 && (
                             <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1">
                               <Zap className="w-3 h-3 mr-1" />
-                              HOT
+                              {t('memeSearch.hot')}
                             </Badge>
                           )}
                         </div>
@@ -181,7 +183,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-3">
-                <h3 className="text-white font-semibold mb-4">Search results for "{query}"</h3>
+                <h3 className="text-white font-semibold mb-4">{t('memeSearch.searchResults')} "{query}"</h3>
                 {results.map((result) => (
                   <Card
                     key={result.id}
@@ -201,7 +203,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
                           <span className="text-white font-bold">{result.symbol}</span>
                           {result.isHot && (
                             <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1">
-                              HOT
+                              {t('memeSearch.hot')}
                             </Badge>
                           )}
                         </div>
@@ -221,7 +223,7 @@ const MobileMemeSearch: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <p className="text-white/60">Inga resultat för "{query}"</p>
+                <p className="text-white/60">{t('memeSearch.noResults')} "{query}"</p>
               </div>
             )}
           </div>

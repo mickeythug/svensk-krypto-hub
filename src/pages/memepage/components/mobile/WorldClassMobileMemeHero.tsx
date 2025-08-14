@@ -7,6 +7,7 @@ import { Flame, Crown, Sparkles, TrendingUp, Star, Bell, Search, Plus, Zap, Rock
 import heroImage from '@/assets/meme-hero.jpg';
 import MobileMemeSearch from './MobileMemeSearch';
 import ModernWeb3AdsCarousel from '@/components/ModernWeb3AdsCarousel';
+import { useLanguage } from '@/contexts/LanguageContext';
 const FloatingIcon = ({
   icon: Icon,
   delay = 0,
@@ -65,6 +66,7 @@ const AnimatedNumber = ({
     </span>;
 };
 const WorldClassMobileMemeHero = () => {
+  const { t } = useLanguage();
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -85,9 +87,9 @@ const WorldClassMobileMemeHero = () => {
       <div className="flex items-center justify-between mb-6 animate-fade-in">
         <div className="hover:scale-105 transition-transform duration-300 no-fancy-effects">
           <h1 className="text-2xl font-bold text-white mb-1 font-sans text-clean">
-            Meme Zone
+            {t('memeZone.title')}
           </h1>
-          <p className="text-white/70 text-sm font-medium text-clean">Upptäck hetaste tokens</p>
+          <p className="text-white/70 text-sm font-medium text-clean">{t('memeZone.discoverTokens')}</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -108,17 +110,17 @@ const WorldClassMobileMemeHero = () => {
       <div className="grid grid-cols-3 gap-4 mt-6">
         {[{
         value: "1,247",
-        label: "Active Tokens",
+        label: t('memeHero.activeTokens'),
         color: "text-white",
         gradient: "from-blue-500 to-cyan-500"
       }, {
         value: "+84%",
-        label: "Avg Gain 24h",
+        label: t('memeHero.avgGain24h'),
         color: "text-green-400",
         gradient: "from-green-500 to-emerald-500"
       }, {
         value: "$2.4M",
-        label: "Total Volume",
+        label: t('memeHero.totalVolume'),
         color: "text-yellow-400",
         gradient: "from-yellow-500 to-orange-500"
       }].map((stat, index) => <div key={index} className="hover:scale-105 hover:-translate-y-2 transition-all duration-500 ease-out" style={{

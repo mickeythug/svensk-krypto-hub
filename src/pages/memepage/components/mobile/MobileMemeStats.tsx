@@ -10,11 +10,13 @@ import {
   Zap,
   Crown
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MobileMemeStats = () => {
+  const { t } = useLanguage();
   const stats = [
     {
-      label: 'Market Cap',
+      label: t('memeStats.marketCap'),
       value: '$847.2M',
       change: '+12.4%',
       positive: true,
@@ -22,7 +24,7 @@ const MobileMemeStats = () => {
       color: 'from-green-500 to-emerald-600'
     },
     {
-      label: 'Total Volume',
+      label: t('memeStats.totalVolume'),
       value: '$124.8M',
       change: '+28.7%',
       positive: true,
@@ -30,7 +32,7 @@ const MobileMemeStats = () => {
       color: 'from-blue-500 to-cyan-600'
     },
     {
-      label: 'Active Traders',
+      label: t('memeStats.activeTraders'),
       value: '47.2K',
       change: '+5.3%',
       positive: true,
@@ -38,7 +40,7 @@ const MobileMemeStats = () => {
       color: 'from-purple-500 to-violet-600'
     },
     {
-      label: 'Hot Tokens',
+      label: t('memeStats.hotTokens'),
       value: '238',
       change: '+15.8%',
       positive: true,
@@ -53,11 +55,11 @@ const MobileMemeStats = () => {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-white flex items-center gap-2">
           <Activity className="w-5 h-5 text-primary" />
-          Market Overview
+          {t('memeStats.marketOverview')}
         </h3>
         <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
           <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-          Live
+          {t('memeStats.live')}
         </Badge>
       </div>
 
@@ -102,21 +104,21 @@ const MobileMemeStats = () => {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Crown className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-semibold text-white">Market Sentiment</span>
+              <span className="text-sm font-semibold text-white">{t('memeStats.marketSentiment')}</span>
             </div>
-             <div className="text-2xl font-black text-green-400">Extremely Bullish</div>
+             <div className="text-2xl font-black text-green-400">{t('memeStats.extremelyBullish')}</div>
           </div>
           <div className="text-right">
             <div className="text-3xl font-black font-numbers text-green-400 mb-1">92%</div>
-            <div className="text-xs text-white/70">Bull/Bear Ratio</div>
+            <div className="text-xs text-white/70">{t('memeStats.bullBearRatio')}</div>
           </div>
         </div>
         
         {/* Sentiment Bar */}
         <div className="mt-4">
           <div className="flex justify-between text-xs text-white/70 mb-2">
-            <span>Bear</span>
-            <span>Bull</span>
+            <span>{t('memeStats.bear')}</span>
+            <span>{t('memeStats.bull')}</span>
           </div>
           <div className="w-full bg-red-900/50 rounded-full h-2">
             <div 

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Shuffle, Upload, Rocket, Globe, Twitter, MessageCircle } from 'lucide-react';
 import OptimizedImage from '@/components/OptimizedImage';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Generated meme images
 import frog1 from '@/assets/meme-generated/meme-coin-frog-1.webp';
@@ -19,6 +20,7 @@ import frogpx1 from '@/assets/meme-generated/meme-coin-frog-pixel-1.webp';
 const generatedImages = [frog1, shiba1, doghat1, cat1, doglaser1, frogpx1];
 
 const MemeTokenCreator = () => {
+  const { t } = useLanguage();
   const [tokenName, setTokenName] = useState('MegaFrog Coin');
   const [tokenSymbol, setTokenSymbol] = useState('MEGA');
   const [description, setDescription] = useState('Den ultimata meme token upplevelsen! 🚀');
@@ -61,14 +63,14 @@ const MemeTokenCreator = () => {
         {/* Creator Form */}
         <Card className="p-8 border-2 border-primary/30 bg-gradient-to-br from-card/90 via-card/70 to-card/90 backdrop-blur-sm shadow-glow-rainbow">
           <h3 id="creator-title" className="font-crypto font-black text-3xl mb-8 bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
-            SKAPA DIN MEME TOKEN
+            {t('memeCreator.title')}
           </h3>
 
           <div className="space-y-6">
             {/* Token Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="name" className="font-crypto font-bold text-lg text-foreground">TOKEN NAMN</Label>
+                <Label htmlFor="name" className="font-crypto font-bold text-lg text-foreground">{t('memeCreator.tokenName')}</Label>
                 <Input 
                   id="name" 
                   value={tokenName} 
@@ -78,7 +80,7 @@ const MemeTokenCreator = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="symbol" className="font-crypto font-bold text-lg text-foreground">SYMBOL</Label>
+                <Label htmlFor="symbol" className="font-crypto font-bold text-lg text-foreground">{t('memeCreator.symbol')}</Label>
                 <Input 
                   id="symbol" 
                   value={tokenSymbol} 
@@ -91,7 +93,7 @@ const MemeTokenCreator = () => {
 
             {/* Fixed Supply */}
             <div>
-              <Label className="font-crypto font-bold text-lg text-foreground">TOTAL SUPPLY</Label>
+              <Label className="font-crypto font-bold text-lg text-foreground">{t('memeCreator.totalSupply')}</Label>
               <div className="relative mt-2">
                 <Input 
                   value="1,000,000,000 (1B)"
@@ -99,15 +101,15 @@ const MemeTokenCreator = () => {
                   className="text-lg font-sans border-primary/30 bg-muted/50 text-muted-foreground cursor-not-allowed"
                 />
                 <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <span className="text-xs font-crypto text-primary bg-primary/10 px-2 py-1 rounded">LÅST</span>
+                  <span className="text-xs font-crypto text-primary bg-primary/10 px-2 py-1 rounded">{t('memeCreator.locked')}</span>
                 </div>
               </div>
-              <p className="text-xs font-crypto text-muted-foreground mt-1">Supply är fastställd på 1 miljard tokens</p>
+              <p className="text-xs font-crypto text-muted-foreground mt-1">{t('memeCreator.supplyNote')}</p>
             </div>
 
             {/* Description */}
             <div>
-              <Label htmlFor="description" className="font-crypto font-bold text-lg text-foreground">BESKRIVNING</Label>
+              <Label htmlFor="description" className="font-crypto font-bold text-lg text-foreground">{t('memeCreator.description')}</Label>
               <Textarea
                 id="description"
                 value={description}
@@ -120,12 +122,12 @@ const MemeTokenCreator = () => {
 
             {/* Social Links */}
             <div className="space-y-4">
-              <h4 className="font-crypto font-bold text-xl text-foreground">SOCIALA LÄNKAR</h4>
+              <h4 className="font-crypto font-bold text-xl text-foreground">{t('memeCreator.socialLinks')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="twitter" className="font-crypto font-semibold text-sm text-foreground flex items-center gap-2">
                     <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                    TWITTER
+                    {t('memeCreator.twitter')}
                   </Label>
                   <Input 
                     id="twitter" 
@@ -138,7 +140,7 @@ const MemeTokenCreator = () => {
                 <div>
                   <Label htmlFor="website" className="font-crypto font-semibold text-sm text-foreground flex items-center gap-2">
                     <Globe className="w-4 h-4 text-primary" />
-                    HEMSIDA
+                    {t('memeCreator.website')}
                   </Label>
                   <Input 
                     id="website" 
@@ -151,7 +153,7 @@ const MemeTokenCreator = () => {
                 <div>
                   <Label htmlFor="telegram" className="font-crypto font-semibold text-sm text-foreground flex items-center gap-2">
                     <MessageCircle className="w-4 h-4 text-[#0088cc]" />
-                    TELEGRAM
+                    {t('memeCreator.telegram')}
                   </Label>
                   <Input 
                     id="telegram" 
@@ -166,7 +168,7 @@ const MemeTokenCreator = () => {
 
             {/* Image Selection */}
             <div>
-              <Label className="font-crypto font-bold text-lg text-foreground">TOKEN BILD</Label>
+              <Label className="font-crypto font-bold text-lg text-foreground">{t('memeCreator.tokenImage')}</Label>
               <div className="grid grid-cols-3 gap-3 mt-4">
                 {generatedImages.map((img, index) => (
                   <div
@@ -176,12 +178,7 @@ const MemeTokenCreator = () => {
                         ? 'border-primary shadow-glow-primary bg-primary/10' 
                         : 'border-border/50 hover:border-primary/70 bg-card/50'
                     }`}
-                    onClick={() => {
-                      console.log('Image clicked:', index, img);
-                      console.log('Current selectedImage:', selectedImage);
-                      setSelectedImage(img);
-                      console.log('Setting selectedImage to:', img);
-                    }}
+                    onClick={() => setSelectedImage(img)}
                   >
                     <AspectRatio ratio={1}>
                       <OptimizedImage
@@ -210,20 +207,20 @@ const MemeTokenCreator = () => {
                   className="font-crypto font-bold border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground w-full"
                 >
                   <Upload className="w-4 h-4 mr-2" />
-                  LADDA UPP EGEN BILD
+                  {t('memeCreator.uploadImage')}
                 </Button>
               </div>
             </div>
 
             <p className="text-xs font-crypto text-muted-foreground bg-muted/30 p-3 rounded border border-border/30">
-              <strong>Obs:</strong> Detta är en visuell prototyp utan blockchain-deploy. Använd för att designa och planera din token innan lansering.
+              <strong>Obs:</strong> {t('memeCreator.disclaimer')}
             </p>
           </div>
         </Card>
 
         {/* Live Preview */}
         <Card className="p-8 border-2 border-success/50 bg-gradient-to-br from-card via-card/90 to-success/10 backdrop-blur-sm shadow-glow-secondary">
-          <h4 className="font-crypto font-black text-2xl mb-6 text-success">LIVE FÖRHANDSVISNING</h4>
+          <h4 className="font-crypto font-black text-2xl mb-6 text-success">{t('memeCreator.livePreview')}</h4>
           
           <div className="space-y-6">
             {/* Token Card Preview */}

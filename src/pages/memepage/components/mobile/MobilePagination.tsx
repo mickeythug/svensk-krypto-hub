@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 interface PaginationProps {
   currentPage: number;
   hasMore: boolean;
@@ -19,6 +20,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
   totalPages = 10,
   totalTokens = 200
 }) => {
+  const { t } = useLanguage();
   // Generate page numbers (show 3 pages around current)
   const getPageNumbers = () => {
     const pages = [];
@@ -36,7 +38,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
       {/* Page indicator */}
       <div className="text-center">
         <span className="text-sm text-white/60 font-medium">
-          Sida {currentPage} av {totalPages} • {totalTokens} tokens totalt
+          {t('memePagination.page')} {currentPage} {t('memePagination.of')} {totalPages} • {totalTokens} {t('memePagination.tokensTotal')}
         </span>
       </div>
 
@@ -50,7 +52,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
           className="flex items-center gap-1 bg-white/10 border-white/20 text-white hover:bg-white/20 disabled:opacity-50 font-sans px-3 py-2"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Föregående</span>
+          <span className="hidden sm:inline">{t('memePagination.previous')}</span>
         </Button>
 
         {/* Page numbers */}
@@ -78,7 +80,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
           onClick={() => onPageChange(currentPage + 1)} 
           className="flex items-center gap-1 bg-gradient-to-r from-primary/80 to-primary text-black font-bold hover:scale-105 transition-all duration-300 disabled:opacity-50 font-sans px-3 py-2"
         >
-          <span className="hidden sm:inline">Nästa</span>
+          <span className="hidden sm:inline">{t('memePagination.next')}</span>
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
