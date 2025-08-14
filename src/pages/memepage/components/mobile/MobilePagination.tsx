@@ -38,7 +38,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
       {/* Page indicator */}
       <div className="text-center">
         <span className="text-sm text-white/60 font-medium">
-          {t('memePagination.page')} {currentPage} {t('memePagination.of')} {totalPages} • {totalTokens} {t('memePagination.tokensTotal')}
+          {t('memeZone.page')} {currentPage} {t('memeZone.of')} {totalPages} • {totalTokens} {t('memeZone.tokens')}
         </span>
       </div>
 
@@ -52,7 +52,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
           className="flex items-center gap-1 bg-white/10 border-white/20 text-white hover:bg-white/20 disabled:opacity-50 font-sans px-3 py-2"
         >
           <ChevronLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">{t('memePagination.previous')}</span>
+          <span className="hidden sm:inline">{t('memeZone.previous')}</span>
         </Button>
 
         {/* Page numbers */}
@@ -80,7 +80,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
           onClick={() => onPageChange(currentPage + 1)} 
           className="flex items-center gap-1 bg-gradient-to-r from-primary/80 to-primary text-black font-bold hover:scale-105 transition-all duration-300 disabled:opacity-50 font-sans px-3 py-2"
         >
-          <span className="hidden sm:inline">{t('memePagination.next')}</span>
+          <span className="hidden sm:inline">{t('memeZone.next')}</span>
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
