@@ -202,12 +202,36 @@ Deno.serve(async (req: Request) => {
 
     let combinedData = Array.from(addressMap.values());
 
-    // Filter out tokens without essential data
+    // Filter out tokens without essential data and ensure all have images
     combinedData = combinedData.filter(token => 
       token.address && 
       token.symbol && 
       token.name
     );
+
+    // Generate fallback images for tokens without images using a pattern
+    const fallbackImages = [
+      'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/generic.png',
+      'https://cryptologos.cc/logos/solana-sol-logo.svg',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png'
+    ];
+
+    // Ensure all tokens have images
+    combinedData = combinedData.map((token, index) => {
+      if (!token.image || token.image.length === 0) {
+        // Use a consistent fallback based on token symbol hash
+        const fallbackIndex = token.symbol.length % fallbackImages.length;
+        return {
+          ...token,
+          image: fallbackImages[fallbackIndex],
+          imageSource: 'fallback'
+        };
+      }
+      return {
+        ...token,
+        imageSource: 'api'
+      };
+    });
 
     // Count image statistics
     const tokensWithImages = combinedData.filter(token => token.image && token.image.length > 0);
