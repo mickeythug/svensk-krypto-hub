@@ -27,7 +27,7 @@ import { AdvancedTradingSettings } from '@/components/AdvancedTradingSettings';
 import { TokenInfoSection } from '@/components/TokenInfoSection';
 import { TransactionsTable } from '@/components/TransactionsTable';
 import { MarketDataToggle } from '@/components/MarketDataToggle';
-import { AppStoreMobileTokenPage } from './components/mobile/AppStoreMobileTokenPage';
+import { ModernMobileTokenPage } from './components/mobile/ModernMobileTokenPage';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -247,7 +247,7 @@ const MemeTokenDetailPage = () => {
 
   if (isMobile) {
     return (
-      <AppStoreMobileTokenPage
+      <ModernMobileTokenPage
         token={token}
         tokenAddress={tokenAddress}
         coverImage={coverImage}
