@@ -18,6 +18,9 @@ export interface MemeToken {
   tags: string[];
   isHot: boolean;
   description?: string;
+  source?: 'dextools' | 'dexscreener';
+  liquidity?: number;
+  created?: string;
 }
 
 export type MemeCategory = 'trending' | 'new' | 'gainer' | 'volume' | 'newest' | 'potential' | 'all' | 'under1m' | 'gainers' | 'losers' | 'liquidity' | 'liquidity_high' | 'liquidity_low' | 'marketcap' | 'marketcap_high' | 'marketcap_low' | 'txns' | 'boosted';
@@ -38,48 +41,36 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
   const [hasMore, setHasMore] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
-  // DexScreener proxy actions for each category
-  const dexscreenerActions = {
-    trending: 'profiles',
-    new: 'profiles', 
-    gainer: 'profiles',
-    volume: 'profiles',
-    newest: 'profiles',
-    potential: 'profiles',
-    all: 'pairsList',
-    under1m: 'pairsList',
-    gainers: 'profiles',
-    losers: 'profiles',
-    liquidity: 'pairsList',
-    liquidity_high: 'pairsList',
-    liquidity_low: 'pairsList',
-    marketcap: 'pairsList',
-    marketcap_high: 'pairsList',
-    marketcap_low: 'pairsList',
-    txns: 'profiles',
-    boosted: 'boosted'
-  };
-
-  // Sort parameters for each category
-  const sortParams = {
-    trending: { sort: 'trendingScore', order: 'desc' },
-    new: { sort: 'createdAt', order: 'desc' },
-    gainer: { sort: 'priceChange', order: 'desc' },
-    volume: { sort: 'volume', order: 'desc' },
-    newest: { sort: 'createdAt', order: 'desc' },
-    potential: { sort: 'createdAt', order: 'desc' },
-    all: { sort: 'volume', order: 'desc' },
-    under1m: { sort: 'volume', order: 'desc' },
-    gainers: { sort: 'priceChange', order: 'desc' },
-    losers: { sort: 'priceChange', order: 'asc' },
-    liquidity: { sort: 'liquidity', order: 'desc' },
-    liquidity_high: { sort: 'liquidity', order: 'desc' },
-    liquidity_low: { sort: 'liquidity', order: 'asc' },
-    marketcap: { sort: 'marketCap', order: 'desc' },
-    marketcap_high: { sort: 'marketCap', order: 'desc' },
-    marketcap_low: { sort: 'marketCap', order: 'asc' },
-    txns: { sort: 'txns', order: 'desc' },
-    boosted: { sort: 'trendingScore', order: 'desc' }
+  // Map frontend categories to unified service categories
+  const mapCategory = (cat: MemeCategory): string => {
+    switch (cat) {
+      case 'trending':
+      case 'new':
+      case 'newest':
+        return 'trending';
+      case 'gainer':
+      case 'gainers':
+        return 'gainers';
+      case 'losers':
+        return 'losers';
+      case 'volume':
+        return 'volume';
+      case 'marketcap':
+      case 'marketcap_high':
+        return 'marketcap_high';
+      case 'marketcap_low':
+        return 'marketcap_low';
+      case 'liquidity':
+      case 'liquidity_high':
+        return 'marketcap_high'; // Use marketcap as proxy for liquidity
+      case 'liquidity_low':
+        return 'marketcap_low';
+      case 'potential':
+      case 'under1m':
+        return 'newest';
+      default:
+        return 'trending';
+    }
   };
 
   const fetchTokens = async () => {
@@ -89,24 +80,20 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
     try {
       console.log('[useMemeTokens] Fetching category:', category);
       
-      const action = dexscreenerActions[category];
-      const sortParam = sortParams[category];
-      
-      console.log('[useMemeTokens] Using action:', action, 'with params:', sortParam);
+      const unifiedCategory = mapCategory(category);
+      console.log('[useMemeTokens] Mapped to unified category:', unifiedCategory);
       
       let allTokens: MemeToken[] = [];
       
-      // Use dexscreener-proxy for all categories
-      const { data: res, error: supabaseError } = await supabase.functions.invoke('dexscreener-proxy', {
+      // Use unified-meme-data service that combines DEXTools + DEXScreener
+      const { data: res, error: supabaseError } = await supabase.functions.invoke('unified-meme-data', {
         body: { 
-          action,
-          ...sortParam,
-          chainId: 'solana',
+          category: unifiedCategory,
           limit: 200
         }
       });
 
-      console.log('[useMemeTokens] Supabase response:', { res, supabaseError });
+      console.log('[useMemeTokens] Unified service response:', { res, supabaseError });
 
       if (supabaseError) {
         console.error('[useMemeTokens] Supabase error:', supabaseError);
@@ -114,54 +101,73 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
       }
 
       if (res?.data && Array.isArray(res.data)) {
-        console.log('[useMemeTokens] Processing data array of length:', res.data.length);
+        console.log('[useMemeTokens] Processing unified data array of length:', res.data.length);
+        console.log('[useMemeTokens] Sources:', res.sources);
         
-        // Transform dexscreener proxy response to our format
-        allTokens = res.data.slice(0, 200).map((item: any, index: number) => {
-          console.log(`[useMemeTokens] Processing item ${index}:`, {
-            tokenAddress: item.tokenAddress,
+        // Transform unified service response to our format
+        allTokens = res.data.map((item: any, index: number) => {
+          console.log(`[useMemeTokens] Processing unified item ${index}:`, {
             address: item.address,
-            symbol: item.symbol || item.baseToken?.symbol,
-            name: item.name || item.baseToken?.name
+            symbol: item.symbol,
+            name: item.name,
+            source: item.source
           });
           
           return {
-            id: item.tokenAddress || item.address || item.baseToken?.address || item.id || `token-${index}`,
-            symbol: item.symbol || item.baseToken?.symbol || item.token?.symbol || `TOK${index}`,
-            name: item.name || item.baseToken?.name || item.token?.name || `Token ${index}`,
-            image: item.image || item.icon || item.info?.imageUrl || item.token?.image || '',
-            price: parseFloat(item.priceUsd || item.price || '0'),
-            change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || item.change24h || '0'),
-            volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
-            marketCap: parseFloat(item.marketCap || item.fdv || '0'),
-            holders: parseInt(item.holders || '0'),
-            views: item.views || '0',
-            tags: item.tags || [],
-            isHot: item.isHot || false,
-            description: item.description || ''
+            id: item.address || `token-${index}`,
+            symbol: item.symbol || `TOK${index}`,
+            name: item.name || `Token ${index}`,
+            image: item.image || '',
+            price: item.price || 0,
+            change24h: item.priceChange24h || 0,
+            volume24h: item.volume24h || 0,
+            marketCap: item.marketCap || 0,
+            holders: item.holders || 0,
+            views: '0',
+            tags: [],
+            isHot: (item.priceChange24h || 0) > 10,
+            description: '',
+            source: item.source,
+            liquidity: item.liquidity || 0,
+            created: item.created
           };
         });
         
         console.log('[useMemeTokens] Transformed tokens:', allTokens.slice(0, 3));
       } else {
-        console.log('[useMemeTokens] No valid data, using fallback to meme-catalog');
+        console.log('[useMemeTokens] No valid data from unified service, using fallback');
         
-        // Fallback to meme-catalog for compatibility
-        const backendCategory = (
-          category === 'marketcap' ? 'marketcap_high' :
-          category === 'liquidity' ? 'liquidity_high' :
-          category === 'potential' ? 'newest' :
-          category === 'gainers' ? 'gainers' :
-          category
-        ) as any;
-
-        const { data: fallbackRes, error: fallbackError } = await supabase.functions.invoke('meme-catalog', {
-          body: { category: backendCategory, page: 1, pageSize: 200 }
+        // Fallback to dexscreener-proxy for compatibility
+        const { data: fallbackRes, error: fallbackError } = await supabase.functions.invoke('dexscreener-proxy', {
+          body: { 
+            action: 'profiles',
+            sort: 'trendingScore',
+            order: 'desc',
+            chainId: 'solana',
+            limit: 200
+          }
         });
         
         console.log('[useMemeTokens] Fallback response:', { fallbackRes, fallbackError });
 
-        allTokens = Array.isArray(fallbackRes?.items) ? (fallbackRes.items as MemeToken[]) : [];
+        if (fallbackRes?.data && Array.isArray(fallbackRes.data)) {
+          allTokens = fallbackRes.data.slice(0, 200).map((item: any, index: number) => ({
+            id: item.tokenAddress || item.address || item.baseToken?.address || `token-${index}`,
+            symbol: item.symbol || item.baseToken?.symbol || `TOK${index}`,
+            name: item.name || item.baseToken?.name || `Token ${index}`,
+            image: item.image || item.icon || '',
+            price: parseFloat(item.priceUsd || item.price || '0'),
+            change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || '0'),
+            volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
+            marketCap: parseFloat(item.marketCap || item.fdv || '0'),
+            holders: parseInt(item.holders || '0'),
+            views: '0',
+            tags: [],
+            isHot: false,
+            description: '',
+            source: 'dexscreener' as const
+          }));
+        }
       }
       
       console.log('[useMemeTokens] Final tokens count:', allTokens.length);
@@ -200,7 +206,7 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
   const indexOfLastToken = page * limit;
   const indexOfFirstToken = indexOfLastToken - limit;
   const currentTokens = tokens.slice(indexOfFirstToken, indexOfLastToken);
-  const totalPages = Math.ceil(200 / limit); // Always 10 pages (200 tokens / 20 per page)
+  const totalPages = Math.ceil(Math.min(tokens.length, 200) / limit);
   
   return { 
     tokens: currentTokens, 
