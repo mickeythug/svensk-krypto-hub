@@ -798,6 +798,14 @@ const translations = {
     'memeZoneTabs.previous': 'Föregående',
     'memeZoneTabs.next': 'Nästa',
     'memeZoneTabs.page': 'Sida',
+    'memeZoneTabs.newMemes': 'Nya Memes',
+    'memeZoneTabs.hot': 'Heta',
+    'memeZoneTabs.priceLabel': 'Pris',
+    'memeZoneTabs.mcapLabel': 'Marknadsvärde',
+    'memeZoneTabs.vol24hLabel': 'Volym 24h',
+    'memeZoneTabs.holdersLabel': 'Innehavare',
+    'memeZoneTabs.previousPage': 'Föregående sida',
+    'memeZoneTabs.nextPage': 'Nästa sida',
 
     // Trading page translations
     'trading.desktop.overview': 'Handelsöversikt',
@@ -1676,6 +1684,8 @@ const translations = {
     'memeZoneTabs.mcapLabel': 'MCAP',
     'memeZoneTabs.vol24hLabel': '24H VOL',
     'memeZoneTabs.holdersLabel': 'HOLDERS',
+    'memeZoneTabs.newMemes': 'New Memes',
+    'memeZoneTabs.hot': 'Hot',
 
     // Trading page translations
     'trading.desktop.overview': 'Trading Overview',
