@@ -31,7 +31,7 @@ interface UnifiedRequest {
 }
 
 Deno.serve(async (req: Request) => {
-  console.log('[unified-meme-data] 🚀 FUNCTION CALLED - NEW VERSION ACTIVE');
+  console.log('[unified-meme-data] 🚀 FUNCTION CALLED - NEW VERSION ACTIVE WITH IMAGES');
   
   // Add CORS headers
   const corsHeaders = {
@@ -88,21 +88,32 @@ Deno.serve(async (req: Request) => {
     if (dextoolsResponse.status === 'fulfilled' && dextoolsResponse.value.ok) {
       const dextoolsResult = await dextoolsResponse.value.json();
       console.log('[unified-meme-data] DEXTools response success:', dextoolsResult.success);
-      dextoolsData = (dextoolsResult.data || []).map((token: any) => ({
-        address: token.address,
-        name: token.name,
-        symbol: token.symbol,
-        image: token.image || token.logo,
-        logo: token.logo || token.image,
-        price: token.price,
-        priceChange24h: token.priceChange24h,
-        marketCap: token.marketCap,
-        volume24h: token.volume24h,
-        liquidity: token.liquidity,
-        holders: token.holders,
-        created: token.created,
-        source: 'dextools' as const,
-      }));
+      dextoolsData = (dextoolsResult.data || []).map((token: any) => {
+        // Extract image from DEXTools with multiple fallbacks
+        const image = token.image || 
+                     token.logo || 
+                     token.icon ||
+                     token.imageUrl ||
+                     '';
+
+        console.log(`[unified-meme-data] 🔧 DEXTools token ${token.symbol}: image fields - image: ${token.image}, logo: ${token.logo}, final: ${image}`);
+
+        return {
+          address: token.address,
+          name: token.name,
+          symbol: token.symbol,
+          image: image,
+          logo: image, // Use same image for both fields
+          price: token.price,
+          priceChange24h: token.priceChange24h,
+          marketCap: token.marketCap,
+          volume24h: token.volume24h,
+          liquidity: token.liquidity,
+          holders: token.holders,
+          created: token.created,
+          source: 'dextools' as const,
+        };
+      });
     } else {
       console.warn('[unified-meme-data] DEXTools request failed:', dextoolsResponse);
     }
@@ -112,43 +123,80 @@ Deno.serve(async (req: Request) => {
     if (dexscreenerResponse.status === 'fulfilled' && dexscreenerResponse.value.ok) {
       const dexscreenerResult = await dexscreenerResponse.value.json();
       console.log('[unified-meme-data] DEXScreener response success:', dexscreenerResult.success);
-      dexscreenerData = (dexscreenerResult.data || []).map((token: any) => ({
-        address: token.baseToken?.address || token.address || token.tokenAddress,
-        name: token.baseToken?.name || token.name,
-        symbol: token.baseToken?.symbol || token.symbol,
-        image: token.info?.imageUrl || token.image || token.logo,
-        logo: token.info?.imageUrl || token.logo || token.image,
-        price: parseFloat(token.priceUsd || token.price || '0'),
-        priceChange24h: parseFloat(token.priceChange?.h24 || token.priceChange24h || '0'),
-        marketCap: token.marketCap || token.fdv,
-        volume24h: token.volume?.h24 || token.volume24h,
-        liquidity: token.liquidity?.usd || token.liquidity,
-        pairAddress: token.pairAddress,
-        baseToken: token.baseToken,
-        quoteToken: token.quoteToken,
-        created: token.pairCreatedAt || token.created,
-        source: 'dexscreener' as const,
-      }));
+      dexscreenerData = (dexscreenerResult.data || []).map((token: any) => {
+        // Extract image from DEXScreener with comprehensive fallbacks
+        const image = token.info?.imageUrl || 
+                     token.baseToken?.image ||
+                     token.image || 
+                     token.logo ||
+                     token.icon ||
+                     token.info?.image ||
+                     token.baseToken?.logo ||
+                     token.logoURI ||
+                     '';
+
+        console.log(`[unified-meme-data] 🖼️ DEXScreener token ${token.baseToken?.symbol || token.symbol}: image fields:`, {
+          'info.imageUrl': token.info?.imageUrl,
+          'baseToken.image': token.baseToken?.image,
+          'image': token.image,
+          'logo': token.logo,
+          'icon': token.icon,
+          'final': image
+        });
+
+        return {
+          address: token.baseToken?.address || token.address || token.tokenAddress,
+          name: token.baseToken?.name || token.name,
+          symbol: token.baseToken?.symbol || token.symbol,
+          image: image,
+          logo: image, // Use same image for both fields
+          price: parseFloat(token.priceUsd || token.price || '0'),
+          priceChange24h: parseFloat(token.priceChange?.h24 || token.priceChange24h || '0'),
+          marketCap: token.marketCap || token.fdv,
+          volume24h: token.volume?.h24 || token.volume24h,
+          liquidity: token.liquidity?.usd || token.liquidity,
+          pairAddress: token.pairAddress,
+          baseToken: token.baseToken,
+          quoteToken: token.quoteToken,
+          created: token.pairCreatedAt || token.created,
+          source: 'dexscreener' as const,
+        };
+      });
     } else {
       console.warn('[unified-meme-data] DEXScreener request failed:', dexscreenerResponse);
     }
 
     console.log(`[unified-meme-data] 📈 DEXTools: ${dextoolsData.length} tokens, DEXScreener: ${dexscreenerData.length} tokens`);
 
-    // Deduplicate tokens by address (prefer DEXTools data as it's more detailed)
+    // Deduplicate tokens by address - smart image merging
     const addressMap = new Map<string, TokenData>();
     
     // Add DEXScreener data first
     dexscreenerData.forEach(token => {
       if (token.address && !addressMap.has(token.address)) {
+        console.log(`[unified-meme-data] ➕ Adding DEXScreener token: ${token.symbol} with image: ${token.image ? 'YES' : 'NO'}`);
         addressMap.set(token.address, token);
       }
     });
 
-    // Add DEXTools data, overwriting DEXScreener data for same addresses
+    // Add DEXTools data - merge intelligently
     dextoolsData.forEach(token => {
       if (token.address) {
-        addressMap.set(token.address, token);
+        const existing = addressMap.get(token.address);
+        if (existing) {
+          // Merge: Use the best available image from either source
+          const bestImage = token.image || existing.image || '';
+          const mergedToken = {
+            ...token, // DEXTools data takes priority for most fields
+            image: bestImage,
+            logo: bestImage,
+          };
+          console.log(`[unified-meme-data] 🔄 Merging token: ${token.symbol} - DEXTools img: ${token.image ? 'YES' : 'NO'}, DEXScreener img: ${existing.image ? 'YES' : 'NO'}, Final: ${bestImage ? 'YES' : 'NO'}`);
+          addressMap.set(token.address, mergedToken);
+        } else {
+          console.log(`[unified-meme-data] ➕ Adding DEXTools token: ${token.symbol} with image: ${token.image ? 'YES' : 'NO'}`);
+          addressMap.set(token.address, token);
+        }
       }
     });
 
@@ -160,6 +208,10 @@ Deno.serve(async (req: Request) => {
       token.symbol && 
       token.name
     );
+
+    // Log final image statistics
+    const tokensWithImages = combinedData.filter(token => token.image && token.image.length > 0);
+    console.log(`[unified-meme-data] 🎨 IMAGE STATS: ${tokensWithImages.length}/${combinedData.length} tokens have images (${Math.round(tokensWithImages.length/combinedData.length*100)}%)`);
 
     // Sort based on category
     combinedData = sortTokensByCategory(combinedData, category);
@@ -177,6 +229,7 @@ Deno.serve(async (req: Request) => {
           dextools: dextoolsData.length,
           dexscreener: dexscreenerData.length,
           combined: combinedData.length,
+          withImages: combinedData.filter(t => t.image && t.image.length > 0).length,
         },
         category: category,
         timestamp: new Date().toISOString(),
