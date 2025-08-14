@@ -104,21 +104,21 @@ const BuyTokenPage = () => {
     if (!amount || parseFloat(amount) <= 0) {
       toast({
         title: t('meme.buyToken.invalidAmount'),
-        description: "Ange ett giltigt belopp att köpa för.",
+        description: t('meme.buyToken.enterValidAmount'),
         variant: "destructive",
       });
       return;
     }
     toast({
       title: t('meme.buyToken.buyInitiated'),
-      description: `Öppnar wallet för att köpa ${amount} SOL av ${selectedToken?.symbol}`,
+      description: `${t('meme.buyToken.buyDescription')} ${amount} SOL ${t('common.of')} ${selectedToken?.symbol}`,
     });
   };
 
   const handleSell = () => {
     toast({
       title: t('meme.buyToken.sellInitiated'), 
-      description: `Öppnar wallet för att sälja ${selectedToken?.symbol}`,
+      description: `${t('meme.buyToken.sellDescription')} ${selectedToken?.symbol}`,
     });
   };
 
@@ -202,10 +202,10 @@ const BuyTokenPage = () => {
                     <div className="flex items-center gap-2 mb-1">
                       <h2 className="text-2xl font-bold">{selectedToken.name}</h2>
                       <Badge variant={selectedToken.risk === 'Low' ? 'default' : selectedToken.risk === 'Medium' ? 'secondary' : 'destructive'} className="text-xs">
-                        {selectedToken.risk} Risk
+                        {selectedToken.risk} {t('meme.buyToken.risk')}
                       </Badge>
                     </div>
-                    <p className="text-muted-foreground text-sm">{selectedToken.symbol} • Supply: {selectedToken.supply}</p>
+                    <p className="text-muted-foreground text-sm">{selectedToken.symbol} • {t('meme.buyToken.totalSupply')}: {selectedToken.supply}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-xl font-bold font-numbers">{selectedToken.price}</span>
                       <Badge variant="secondary" className={`${
@@ -221,21 +221,21 @@ const BuyTokenPage = () => {
                   <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
                     <div className="flex items-center justify-center gap-1 mb-2">
                       <TrendingUp className="h-4 w-4 text-primary" />
-                      <span className="text-xs font-medium">Market Cap</span>
+                      <span className="text-xs font-medium">{t('meme.buyToken.marketCap')}</span>
                     </div>
                     <p className="font-bold text-sm font-numbers">{selectedToken.marketCap}</p>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
                     <div className="flex items-center justify-center gap-1 mb-2">
                       <Users className="h-4 w-4 text-primary" />
-                      <span className="text-xs font-medium">Holders</span>
+                      <span className="text-xs font-medium">{t('meme.buyToken.holders')}</span>
                     </div>
                     <p className="font-bold text-sm font-numbers">{selectedToken.holders}</p>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-muted/80 to-muted/40 rounded-xl backdrop-blur-sm">
                     <div className="flex items-center justify-center gap-1 mb-2">
                       <BarChart3 className="h-4 w-4 text-primary" />
-                      <span className="text-xs font-medium">24h Volume</span>
+                      <span className="text-xs font-medium">{t('meme.buyToken.volume24h')}</span>
                     </div>
                     <p className="font-bold text-sm font-numbers">{selectedToken.volume24h}</p>
                   </div>
@@ -252,7 +252,7 @@ const BuyTokenPage = () => {
                     }`}
                   >
                     <Info className="h-4 w-4" />
-                    Info & Handel
+                    {t('meme.buyToken.infoTrade')}
                   </button>
                   <button
                     onClick={() => setActiveView('chart')}
@@ -263,7 +263,7 @@ const BuyTokenPage = () => {
                     }`}
                   >
                     <BarChart3 className="h-4 w-4" />
-                    Pris Chart
+                    {t('meme.buyToken.priceChart')}
                   </button>
                 </div>
               </CardContent>
@@ -277,23 +277,23 @@ const BuyTokenPage = () => {
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Info className="h-5 w-5 text-primary" />
-                      Token Information
+                      {t('meme.buyToken.tokenInformation')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <span className="text-muted-foreground text-sm">Total Supply</span>
+                        <span className="text-muted-foreground text-sm">{t('meme.buyToken.totalSupply')}</span>
                         <p className="font-bold font-numbers">{selectedToken.supply}</p>
                       </div>
                       <div className="space-y-2">
-                        <span className="text-muted-foreground text-sm">Verified</span>
-                        <p className="font-bold text-green-400">{selectedToken.verified ? 'Verified ✓' : 'Unverified'}</p>
+                        <span className="text-muted-foreground text-sm">{t('meme.buyToken.verifiedStatus')}</span>
+                        <p className="font-bold text-green-400">{selectedToken.verified ? t('meme.buyToken.verified') : t('meme.buyToken.unverified')}</p>
                       </div>
                     </div>
                     <Separator />
                     <div className="space-y-2">
-                      <span className="text-muted-foreground text-sm">Contract Address</span>
+                      <span className="text-muted-foreground text-sm">{t('meme.buyToken.contractAddress')}</span>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm bg-muted/80 px-3 py-2 rounded-lg flex-1">
                           {selectedToken.contractAddress.slice(0, 8)}...{selectedToken.contractAddress.slice(-8)}
@@ -303,16 +303,16 @@ const BuyTokenPage = () => {
                           size="sm"
                           onClick={() => {
                             navigator.clipboard.writeText(selectedToken.contractAddress);
-                            toast({ title: "Kopierad!", description: "Contract address kopierad till urklipp." });
+                            toast({ title: t('meme.buyToken.copied'), description: t('meme.buyToken.copiedDescription') });
                           }}
                         >
-                          Kopiera
+                          {t('meme.buyToken.copy')}
                         </Button>
                       </div>
                     </div>
                     <Separator />
                     <div className="space-y-3">
-                      <span className="text-muted-foreground text-sm">Sociala länkar</span>
+                      <span className="text-muted-foreground text-sm">{t('meme.buyToken.socialLinks')}</span>
                       <div className="flex flex-wrap gap-2">
                         <Badge variant="outline" className="hover:bg-blue-500/10 cursor-pointer">
                           Twitter: {selectedToken.socials.twitter}
@@ -333,12 +333,12 @@ const BuyTokenPage = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5 text-primary" />
-                      Handla {selectedToken.symbol}
+                      {t('meme.buyToken.trade')} {selectedToken.symbol}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-3">
-                      <label className="text-sm font-medium">Belopp (SOL)</label>
+                      <label className="text-sm font-medium">{t('meme.buyToken.amount')} ({t('meme.buyToken.sol')})</label>
                       <Input
                         type="number"
                         placeholder="0.00"
@@ -365,18 +365,18 @@ const BuyTokenPage = () => {
                         onClick={handleBuy}
                         className="h-12 text-lg font-semibold bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 shadow-lg"
                       >
-                        Köp Nu
+                        {t('meme.buyToken.buyNow')}
                       </Button>
                       <Button 
                         onClick={handleSell}
                         variant="outline" 
                         className="h-12 text-lg font-semibold border-red-500/50 text-red-500 hover:bg-red-500/10 hover:border-red-500"
                       >
-                        Sälj
+                        {t('meme.buyToken.sell')}
                       </Button>
                     </div>
                     <p className="text-xs text-muted-foreground text-center bg-muted/30 p-3 rounded-lg">
-                      💡 Handeln kommer att öppnas i din anslutna plånbok (Phantom, Solflare, etc.)
+                      💡 {t('meme.buyToken.tradeNote')}
                     </p>
                   </CardContent>
                 </Card>
@@ -386,19 +386,19 @@ const BuyTokenPage = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-primary" />
-                    {selectedToken.symbol} Pris Chart
+                    {selectedToken.symbol} {t('meme.buyToken.priceChart')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-80 bg-gradient-to-br from-muted/30 to-muted/10 rounded-xl flex items-center justify-center border-2 border-dashed border-primary/20">
                     <div className="text-center">
                       <BarChart3 className="h-16 w-16 text-primary/60 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">Avancerat Chart</h3>
-                      <p className="text-muted-foreground mb-1">TradingView integration kommer här</p>
-                      <p className="text-sm text-muted-foreground">Realtids prisdata och teknisk analys</p>
+                      <h3 className="text-lg font-semibold mb-2">{t('meme.buyToken.advancedChart')}</h3>
+                      <p className="text-muted-foreground mb-1">{t('meme.buyToken.tradingViewIntegration')}</p>
+                      <p className="text-sm text-muted-foreground">{t('meme.buyToken.realtimePriceData')}</p>
                       <div className="mt-4 flex justify-center gap-2">
-                        <Badge variant="secondary">Live Data</Badge>
-                        <Badge variant="secondary">Technical Analysis</Badge>
+                        <Badge variant="secondary">{t('meme.buyToken.liveData')}</Badge>
+                        <Badge variant="secondary">{t('meme.buyToken.technicalAnalysis')}</Badge>
                       </div>
                     </div>
                   </div>
@@ -416,15 +416,15 @@ const BuyTokenPage = () => {
                 <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Search className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Upptäck Meme Tokens</h3>
+                <h3 className="text-xl font-bold mb-2">{t('meme.buyToken.discoverTokens')}</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Använd sökfunktionen för att hitta och analysera meme tokens. Få detaljerad information, prisdata och handelsverktyg.
+                  {t('meme.buyToken.discoverDescription')}
                 </p>
               </div>
               <div className="flex flex-wrap justify-center gap-2 mb-6">
-                <Badge variant="outline" className="text-xs">Realtids data</Badge>
-                <Badge variant="outline" className="text-xs">Säker handel</Badge>
-                <Badge variant="outline" className="text-xs">Avancerad analys</Badge>
+                <Badge variant="outline" className="text-xs">{t('meme.buyToken.realtimeData')}</Badge>
+                <Badge variant="outline" className="text-xs">{t('meme.buyToken.secureTrade')}</Badge>
+                <Badge variant="outline" className="text-xs">{t('meme.buyToken.advancedAnalysis')}</Badge>
               </div>
             </CardContent>
           </Card>

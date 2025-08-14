@@ -5,14 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import MemeTokenCreator from './components/MemeTokenCreator';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const CreateTokenPage: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    const title = 'Skapa Din Meme Token – Token Creator | Crypto Network Sweden';
-    const description = 'Skapa din egen meme token med vår avancerade token creator. Ladda upp bilder, anpassa metadata och lansera din token på blockchain.';
+    const title = t('meme.createToken.titleFull') + ' | Crypto Network Sweden';
+    const description = t('meme.createToken.description');
     document.title = title;
 
     const ensureTag = (selector: string, create: () => HTMLElement) => {
@@ -47,12 +49,12 @@ const CreateTokenPage: React.FC = () => {
     ld.text = JSON.stringify({
       '@context': 'https://schema.org',
       '@type': 'WebPage',
-      name: 'Skapa Din Meme Token – Token Creator',
+      name: t('meme.createToken.titleFull'),
       description,
       url: `${origin}/meme/create`
     });
     document.head.appendChild(ld);
-  }, []);
+  }, [t]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/10 relative overflow-hidden font-inter">
@@ -79,14 +81,14 @@ const CreateTokenPage: React.FC = () => {
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="h-5 w-5 text-primary" />
                 <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Skapa Meme Token
+                  {t('meme.createToken.title')}
                 </h1>
               </div>
-              <p className="text-sm text-muted-foreground">Designa din egen meme cryptocurrency</p>
+              <p className="text-sm text-muted-foreground">{t('meme.createToken.designDesc')}</p>
             </div>
             <div className="hidden sm:flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
               <Coins className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Beta</span>
+              <span className="text-sm font-medium text-primary">{t('meme.createToken.beta')}</span>
             </div>
           </div>
         </div>
@@ -95,13 +97,13 @@ const CreateTokenPage: React.FC = () => {
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full text-primary font-medium text-sm">
             <Sparkles className="h-4 w-4" />
-            Advanced Creator • Blockchain Ready
+            {t('meme.createToken.advancedCreator')}
           </div>
           <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-            Skapa Din Egen Meme Token
+            {t('meme.createToken.createYourOwn')}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Designa och förhandsgranska din meme cryptocurrency med professionella verktyg, anpassningsbara metadata och modern UI.
+            {t('meme.createToken.designAndPreview')}
           </p>
         </div>
 
