@@ -29,11 +29,13 @@ import { useRealPortfolio } from "@/hooks/useRealPortfolio";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useRealWatchlist } from "@/hooks/useRealWatchlist";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const PortfolioPage = () => {
   const isMobile = useIsMobile();
   const [showValues, setShowValues] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const { t } = useLanguage();
   
   // Real portfolio data hooks
   const { connectedWallets, primaryWallet, isLoading: walletsLoading } = useWalletConnection();

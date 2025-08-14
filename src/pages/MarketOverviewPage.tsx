@@ -55,6 +55,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { prefetchTradingViewSymbols } from "@/hooks/useTradingViewSymbol";
 import { useWatchlist } from "@/hooks/useWatchlist";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
@@ -81,6 +82,7 @@ const MarketOverviewPage = () => {
   const { cryptoPrices, isLoading, error } = useCryptoData();
   const queryClient = useQueryClient();
   const { toggleWatchlist, isInWatchlist } = useWatchlist();
+  const { t } = useLanguage();
 
   // Använd riktiga logo bilder från CoinGecko API
   const getCryptoLogo = (crypto: any) => {
@@ -289,10 +291,10 @@ const MarketOverviewPage = () => {
           <div className="bg-gradient-to-r from-background via-background to-secondary/5 border-b border-border/30">
             <div className="max-w-7xl mx-auto px-6 py-8">
               <h1 className="font-crypto text-4xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                MARKNADSÖVERSIKT
+                {t('market.title').toUpperCase()}
               </h1>
               <p className="font-display text-lg text-muted-foreground">
-                Realtidsöversikt av kryptomarknaden
+                {t('market.description')}
               </p>
             </div>
           </div>
@@ -383,7 +385,7 @@ const MarketOverviewPage = () => {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
-                      placeholder="Sök kryptovaluta..."
+                      placeholder={t('market.search')}
                       value={searchTerm}
                       onChange={(e) => handleSearchChange(e.target.value)}
                       className="pl-10 w-full sm:w-80 bg-background border-border/50 focus:border-primary h-11"

@@ -7,24 +7,25 @@ import CommunitySection from "@/components/CommunitySection";
 import FooterSection from "@/components/FooterSection";
 import LazySection from "@/components/LazySection";
 import { useEffect } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
+  const { t } = useLanguage();
+  
   // SEO optimization
   useEffect(() => {
-    document.title = "Crypto Network Sweden - Din Krypto Community | Bitcoin, Ethereum & DeFi";
+    document.title = t('site.title');
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 
-        'Sveriges ledande krypto community. Lär dig om kryptovalutor, följ marknaden i realtid och träff nya vänner med samma passion för Web3. Gå med idag!'
-      );
+      metaDescription.setAttribute('content', t('site.description'));
     }
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
       canonical.setAttribute('href', 'https://cryptonetworksweden.se/');
     }
-  }, []);
+  }, [t]);
 
   return (
     <>

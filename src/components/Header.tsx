@@ -202,7 +202,7 @@ const Header = ({ showTicker = true }: HeaderProps) => {
                     </div>
                     {/* Complete Navigation Menu */}
                     <div>
-                      <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.home')}</h3>
+                      <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
                       <nav className="space-y-2">
                         {allPages.map((item) => {
                           const isActive = location.pathname === item.href || 
