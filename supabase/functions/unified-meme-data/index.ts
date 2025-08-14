@@ -31,7 +31,7 @@ interface UnifiedRequest {
 }
 
 Deno.serve(async (req: Request) => {
-  console.log('[unified-meme-data] 🚀 FUNCTION CALLED - NEW VERSION ACTIVE WITH IMAGES');
+  console.log('[unified-meme-data] 🚀 FUNCTION CALLED - DEBUGGING IMAGE EXTRACTION');
   
   // Add CORS headers
   const corsHeaders = {
@@ -59,8 +59,6 @@ Deno.serve(async (req: Request) => {
       throw new Error('Missing Supabase configuration');
     }
 
-    console.log(`[unified-meme-data] Using Supabase URL: ${supabaseUrl}`);
-
     // Fetch data from both sources in parallel
     const [dextoolsResponse, dexscreenerResponse] = await Promise.allSettled([
       fetch(`${supabaseUrl}/functions/v1/dextools-proxy`, {
@@ -87,23 +85,17 @@ Deno.serve(async (req: Request) => {
     let dextoolsData: TokenData[] = [];
     if (dextoolsResponse.status === 'fulfilled' && dextoolsResponse.value.ok) {
       const dextoolsResult = await dextoolsResponse.value.json();
-      console.log('[unified-meme-data] DEXTools response success:', dextoolsResult.success);
-      dextoolsData = (dextoolsResult.data || []).map((token: any) => {
-        // Extract image from DEXTools with multiple fallbacks
-        const image = token.image || 
-                     token.logo || 
-                     token.icon ||
-                     token.imageUrl ||
-                     '';
-
-        console.log(`[unified-meme-data] 🔧 DEXTools token ${token.symbol}: image fields - image: ${token.image}, logo: ${token.logo}, final: ${image}`);
-
+      console.log('[unified-meme-data] 🔧 DEXTools RAW response:', JSON.stringify(dextoolsResult, null, 2));
+      
+      dextoolsData = (dextoolsResult.data || []).map((token: any, index: number) => {
+        console.log(`[unified-meme-data] 🔧 DEXTools token ${index} RAW:`, JSON.stringify(token, null, 2));
+        
         return {
           address: token.address,
           name: token.name,
           symbol: token.symbol,
-          image: image,
-          logo: image, // Use same image for both fields
+          image: token.image || token.logo || '',
+          logo: token.logo || token.image || '',
           price: token.price,
           priceChange24h: token.priceChange24h,
           marketCap: token.marketCap,
@@ -122,34 +114,43 @@ Deno.serve(async (req: Request) => {
     let dexscreenerData: TokenData[] = [];
     if (dexscreenerResponse.status === 'fulfilled' && dexscreenerResponse.value.ok) {
       const dexscreenerResult = await dexscreenerResponse.value.json();
-      console.log('[unified-meme-data] DEXScreener response success:', dexscreenerResult.success);
-      dexscreenerData = (dexscreenerResult.data || []).map((token: any) => {
-        // Extract image from DEXScreener with comprehensive fallbacks
-        const image = token.info?.imageUrl || 
-                     token.baseToken?.image ||
-                     token.image || 
-                     token.logo ||
-                     token.icon ||
-                     token.info?.image ||
-                     token.baseToken?.logo ||
-                     token.logoURI ||
-                     '';
-
-        console.log(`[unified-meme-data] 🖼️ DEXScreener token ${token.baseToken?.symbol || token.symbol}: image fields:`, {
+      console.log('[unified-meme-data] 🖼️ DEXScreener RAW response:', JSON.stringify(dexscreenerResult, null, 2));
+      
+      dexscreenerData = (dexscreenerResult.data || []).map((token: any, index: number) => {
+        console.log(`[unified-meme-data] 🖼️ DEXScreener token ${index} RAW:`, JSON.stringify(token, null, 2));
+        
+        // Log all possible image fields we can find
+        console.log(`[unified-meme-data] 🖼️ DEXScreener token ${index} IMAGE FIELDS:`, {
           'info.imageUrl': token.info?.imageUrl,
           'baseToken.image': token.baseToken?.image,
           'image': token.image,
           'logo': token.logo,
           'icon': token.icon,
-          'final': image
+          'logoURI': token.logoURI,
+          'info.image': token.info?.image,
+          'baseToken.logo': token.baseToken?.logo,
+          'profile.imageUrl': token.profile?.imageUrl,
+          'profile.image': token.profile?.image
         });
+
+        const image = token.info?.imageUrl || 
+                     token.baseToken?.image ||
+                     token.image || 
+                     token.logo ||
+                     token.icon ||
+                     token.logoURI ||
+                     token.info?.image ||
+                     token.baseToken?.logo ||
+                     token.profile?.imageUrl ||
+                     token.profile?.image ||
+                     '';
 
         return {
           address: token.baseToken?.address || token.address || token.tokenAddress,
           name: token.baseToken?.name || token.name,
           symbol: token.baseToken?.symbol || token.symbol,
           image: image,
-          logo: image, // Use same image for both fields
+          logo: image,
           price: parseFloat(token.priceUsd || token.price || '0'),
           priceChange24h: parseFloat(token.priceChange?.h24 || token.priceChange24h || '0'),
           marketCap: token.marketCap || token.fdv,
@@ -168,33 +169,32 @@ Deno.serve(async (req: Request) => {
 
     console.log(`[unified-meme-data] 📈 DEXTools: ${dextoolsData.length} tokens, DEXScreener: ${dexscreenerData.length} tokens`);
 
-    // Deduplicate tokens by address - smart image merging
+    // Deduplicate tokens by address
     const addressMap = new Map<string, TokenData>();
     
     // Add DEXScreener data first
     dexscreenerData.forEach(token => {
       if (token.address && !addressMap.has(token.address)) {
-        console.log(`[unified-meme-data] ➕ Adding DEXScreener token: ${token.symbol} with image: ${token.image ? 'YES' : 'NO'}`);
+        console.log(`[unified-meme-data] ➕ Adding DEXScreener token: ${token.symbol} with image: ${token.image}`);
         addressMap.set(token.address, token);
       }
     });
 
-    // Add DEXTools data - merge intelligently
+    // Add DEXTools data
     dextoolsData.forEach(token => {
       if (token.address) {
         const existing = addressMap.get(token.address);
         if (existing) {
-          // Merge: Use the best available image from either source
           const bestImage = token.image || existing.image || '';
           const mergedToken = {
-            ...token, // DEXTools data takes priority for most fields
+            ...token,
             image: bestImage,
             logo: bestImage,
           };
-          console.log(`[unified-meme-data] 🔄 Merging token: ${token.symbol} - DEXTools img: ${token.image ? 'YES' : 'NO'}, DEXScreener img: ${existing.image ? 'YES' : 'NO'}, Final: ${bestImage ? 'YES' : 'NO'}`);
+          console.log(`[unified-meme-data] 🔄 Merging token: ${token.symbol} - Final image: ${bestImage}`);
           addressMap.set(token.address, mergedToken);
         } else {
-          console.log(`[unified-meme-data] ➕ Adding DEXTools token: ${token.symbol} with image: ${token.image ? 'YES' : 'NO'}`);
+          console.log(`[unified-meme-data] ➕ Adding DEXTools token: ${token.symbol} with image: ${token.image}`);
           addressMap.set(token.address, token);
         }
       }
@@ -209,9 +209,12 @@ Deno.serve(async (req: Request) => {
       token.name
     );
 
-    // Log final image statistics
+    // Count image statistics
     const tokensWithImages = combinedData.filter(token => token.image && token.image.length > 0);
+    const tokensWithoutImages = combinedData.filter(token => !token.image || token.image.length === 0);
+    
     console.log(`[unified-meme-data] 🎨 IMAGE STATS: ${tokensWithImages.length}/${combinedData.length} tokens have images (${Math.round(tokensWithImages.length/combinedData.length*100)}%)`);
+    console.log(`[unified-meme-data] ❌ TOKENS WITHOUT IMAGES:`, tokensWithoutImages.map(t => ({ symbol: t.symbol, source: t.source })));
 
     // Sort based on category
     combinedData = sortTokensByCategory(combinedData, category);
@@ -325,7 +328,6 @@ function getDexscreenerParams(category: string, limit: number) {
 function sortTokensByCategory(tokens: TokenData[], category: string): TokenData[] {
   switch (category) {
     case 'trending':
-      // Sort by a combination of volume and price change
       return tokens.sort((a, b) => {
         const scoreA = (a.volume24h || 0) * Math.max(1 + (a.priceChange24h || 0) / 100, 0.1);
         const scoreB = (b.volume24h || 0) * Math.max(1 + (b.priceChange24h || 0) / 100, 0.1);
