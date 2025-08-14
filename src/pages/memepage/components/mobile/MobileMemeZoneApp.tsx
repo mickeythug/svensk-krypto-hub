@@ -82,31 +82,31 @@ const MobileMemeZoneApp = () => {
                 <TabsList className="grid w-full grid-cols-4 bg-transparent gap-2">
                   <TabsTrigger 
                     value="trending" 
-                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-purple-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-purple-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform"
+                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-purple-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-purple-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
                   >
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    Trending
+                    <TrendingUp className="w-3 h-3" />
+                    <span className="text-[10px]">Trending</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="new" 
-                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/20 data-[state=active]:to-cyan-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-blue-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-blue-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform"
+                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/20 data-[state=active]:to-cyan-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-blue-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-blue-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
                   >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    New
+                    <Sparkles className="w-3 h-3" />
+                    <span className="text-[10px]">New</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="gainers" 
-                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500/20 data-[state=active]:to-emerald-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-green-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-green-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform"
+                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500/20 data-[state=active]:to-emerald-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-green-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-green-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
                   >
-                    <Rocket className="w-4 h-4 mr-2" />
-                    Gainers
+                    <Rocket className="w-3 h-3" />
+                    <span className="text-[10px]">Gainers</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="volume" 
-                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/20 data-[state=active]:to-yellow-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-orange-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform"
+                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/20 data-[state=active]:to-yellow-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-orange-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
                   >
-                    <BarChart3 className="w-4 h-4 mr-2" />
-                    Volume
+                    <BarChart3 className="w-3 h-3" />
+                    <span className="text-[10px]">Volume</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
