@@ -120,6 +120,7 @@ const TradingForm = ({
   setAmount
 }: TradingFormProps) => {
   const isBuy = side === "buy";
+  const { t } = useLanguage();
 
   return (
     <Card className="p-3 space-y-3">
