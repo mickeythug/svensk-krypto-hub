@@ -114,43 +114,38 @@ Deno.serve(async (req: Request) => {
     let dexscreenerData: TokenData[] = [];
     if (dexscreenerResponse.status === 'fulfilled' && dexscreenerResponse.value.ok) {
       const dexscreenerResult = await dexscreenerResponse.value.json();
-      console.log('[unified-meme-data] 🖼️ DEXScreener RAW response:', JSON.stringify(dexscreenerResult, null, 2));
+      console.log('[unified-meme-data] 🖼️ DEXScreener RAW response with', dexscreenerResult.data?.length || 0, 'tokens');
       
       dexscreenerData = (dexscreenerResult.data || []).map((token: any, index: number) => {
-        console.log(`[unified-meme-data] 🖼️ DEXScreener token ${index} RAW:`, JSON.stringify(token, null, 2));
-        
-        // Log all possible image fields we can find
-        console.log(`[unified-meme-data] 🖼️ DEXScreener token ${index} IMAGE FIELDS:`, {
-          'info.imageUrl': token.info?.imageUrl,
-          'baseToken.image': token.baseToken?.image,
-          'image': token.image,
-          'logo': token.logo,
-          'icon': token.icon,
-          'logoURI': token.logoURI,
-          'info.image': token.info?.image,
-          'baseToken.logo': token.baseToken?.logo,
-          'profile.imageUrl': token.profile?.imageUrl,
-          'profile.image': token.profile?.image
-        });
+        // Extract image from all possible fields in priority order
+        const imageUrl = token.info?.imageUrl || 
+                        token.baseToken?.image ||
+                        token.image || 
+                        token.logo ||
+                        token.icon ||
+                        token.logoURI ||
+                        token.info?.image ||
+                        token.baseToken?.logo ||
+                        token.profile?.imageUrl ||
+                        token.profile?.image;
 
-        const image = token.info?.imageUrl || 
-                     token.baseToken?.image ||
-                     token.image || 
-                     token.logo ||
-                     token.icon ||
-                     token.logoURI ||
-                     token.info?.image ||
-                     token.baseToken?.logo ||
-                     token.profile?.imageUrl ||
-                     token.profile?.image ||
-                     '';
+        // Get token address with fallback
+        const tokenAddress = token.baseToken?.address || token.address || token.tokenAddress;
+        
+        // Log when we don't find an image for debugging
+        if (!imageUrl) {
+          console.log(`[unified-meme-data] ⚠️ NO IMAGE found for token ${index}: ${token.baseToken?.symbol || token.symbol} (${tokenAddress})`);
+          console.log(`[unified-meme-data] Available fields:`, Object.keys(token));
+          if (token.info) console.log(`[unified-meme-data] Info fields:`, Object.keys(token.info));
+          if (token.baseToken) console.log(`[unified-meme-data] BaseToken fields:`, Object.keys(token.baseToken));
+        }
 
         return {
-          address: token.baseToken?.address || token.address || token.tokenAddress,
+          address: tokenAddress,
           name: token.baseToken?.name || token.name,
           symbol: token.baseToken?.symbol || token.symbol,
-          image: image,
-          logo: image,
+          image: imageUrl || '',
+          logo: imageUrl || '',
           price: parseFloat(token.priceUsd || token.price || '0'),
           priceChange24h: parseFloat(token.priceChange?.h24 || token.priceChange24h || '0'),
           marketCap: token.marketCap || token.fdv,
@@ -202,36 +197,51 @@ Deno.serve(async (req: Request) => {
 
     let combinedData = Array.from(addressMap.values());
 
-    // Filter out tokens without essential data and ensure all have images
+    // Filter out tokens without essential data
     combinedData = combinedData.filter(token => 
       token.address && 
       token.symbol && 
       token.name
     );
 
-    // Generate fallback images for tokens without images using a pattern
-    const fallbackImages = [
-      'https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/32/generic.png',
-      'https://cryptologos.cc/logos/solana-sol-logo.svg',
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png'
+    // Count tokens without images BEFORE adding fallbacks
+    const tokensWithoutImages = combinedData.filter(token => !token.image || token.image.length === 0);
+    console.log(`[unified-meme-data] ⚠️ ${tokensWithoutImages.length} tokens missing images:`, 
+      tokensWithoutImages.map(t => `${t.symbol} (${t.source})`));
+
+    // Generate specific crypto token images for tokens without images
+    const cryptoImageProviders = [
+      (symbol: string) => `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/${symbol.toLowerCase()}.png`,
+      (symbol: string) => `https://assets.coingecko.com/coins/images/12559/small/${symbol.toLowerCase()}.png`,
+      (symbol: string) => `https://cryptologos.cc/logos/${symbol.toLowerCase()}-logo.png`,
+      (symbol: string) => `https://s2.coinmarketcap.com/static/img/coins/64x64/${symbol.toLowerCase()}.png`
     ];
 
-    // Ensure all tokens have images
-    combinedData = combinedData.map((token, index) => {
-      if (!token.image || token.image.length === 0) {
-        // Use a consistent fallback based on token symbol hash
-        const fallbackIndex = token.symbol.length % fallbackImages.length;
-        return {
-          ...token,
-          image: fallbackImages[fallbackIndex],
-          imageSource: 'fallback'
-        };
+    // Try to get real images for tokens missing them by making additional API calls
+    const tokensToEnrich = tokensWithoutImages.slice(0, 10); // Limit to avoid too many calls
+    
+    for (const token of tokensToEnrich) {
+      try {
+        // Try to get detailed token info from dexscreener
+        const tokenDetailUrl = `https://api.dexscreener.com/latest/dex/tokens/${token.address}`;
+        const response = await fetch(tokenDetailUrl);
+        if (response.ok) {
+          const data = await response.json();
+          const pairs = data.pairs || [];
+          for (const pair of pairs) {
+            const image = pair.info?.imageUrl || pair.baseToken?.image;
+            if (image) {
+              token.image = image;
+              token.logo = image;
+              console.log(`[unified-meme-data] ✅ Found image for ${token.symbol}: ${image}`);
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        console.log(`[unified-meme-data] Failed to enrich ${token.symbol}:`, e);
       }
-      return {
-        ...token,
-        imageSource: 'api'
-      };
-    });
+    }
 
     // Count image statistics
     const tokensWithImages = combinedData.filter(token => token.image && token.image.length > 0);
