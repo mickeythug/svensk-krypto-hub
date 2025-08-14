@@ -23,6 +23,7 @@ export class HeliusWebSocketManager {
   private readonly reconnectDelay: number;
   private readonly autoReconnect: boolean;
   private requestId = 1;
+  private reconnectTimeoutId: NodeJS.Timeout | null = null;
 
   constructor(
     private endpoint: string,
@@ -30,16 +31,26 @@ export class HeliusWebSocketManager {
   ) {
     this.autoReconnect = options.autoReconnect ?? true;
     this.maxReconnectAttempts = options.maxReconnectAttempts ?? 5;
-    this.reconnectDelay = options.reconnectDelay ?? 1000;
+    this.reconnectDelay = options.reconnectDelay ?? 2000;
   }
 
   async connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
+        console.log('Connecting to WebSocket:', this.endpoint);
         this.ws = new WebSocket(this.endpoint);
 
+        const connectionTimeout = setTimeout(() => {
+          if (this.ws && this.ws.readyState === WebSocket.CONNECTING) {
+            console.error('WebSocket connection timeout');
+            this.ws.close();
+            reject(new Error('WebSocket connection timeout'));
+          }
+        }, 10000); // 10 second timeout
+
         this.ws.onopen = () => {
-          console.log('Connected to Helius WebSocket');
+          clearTimeout(connectionTimeout);
+          console.log('Connected to Helius WebSocket via proxy');
           this.isConnected = true;
           this.reconnectAttempts = 0;
           this.resubscribeAll();
@@ -47,26 +58,45 @@ export class HeliusWebSocketManager {
         };
 
         this.ws.onmessage = (event) => {
-          const data = JSON.parse(event.data);
-          this.handleMessage(data);
+          try {
+            const data = JSON.parse(event.data);
+            this.handleMessage(data);
+          } catch (e) {
+            console.error('Failed to parse WebSocket message:', e, event.data);
+          }
         };
 
-        this.ws.onclose = () => {
-          console.log('Disconnected from Helius WebSocket');
+        this.ws.onclose = (event) => {
+          clearTimeout(connectionTimeout);
+          console.log('Disconnected from Helius WebSocket:', event.code, event.reason);
           this.isConnected = false;
           
           if (this.autoReconnect && this.reconnectAttempts < this.maxReconnectAttempts) {
             this.reconnectAttempts++;
             console.log(`Reconnecting... Attempt ${this.reconnectAttempts}`);
-            setTimeout(() => this.connect(), this.reconnectDelay * this.reconnectAttempts);
+            
+            if (this.reconnectTimeoutId) {
+              clearTimeout(this.reconnectTimeoutId);
+            }
+            
+            this.reconnectTimeoutId = setTimeout(() => {
+              this.connect().catch(console.error);
+            }, this.reconnectDelay * this.reconnectAttempts);
           }
         };
 
         this.ws.onerror = (error) => {
+          clearTimeout(connectionTimeout);
           console.error('WebSocket error:', error);
-          reject(error);
+          this.isConnected = false;
+          
+          // Don't immediately reject - let onclose handle reconnection
+          if (this.reconnectAttempts === 0) {
+            reject(error);
+          }
         };
       } catch (error) {
+        console.error('Failed to create WebSocket:', error);
         reject(error);
       }
     });
@@ -91,11 +121,12 @@ export class HeliusWebSocketManager {
       if (sub?.callback) {
         sub.callback(data.params.result);
       }
+      return;
     }
 
     // Handle errors
     if (data.error) {
-      console.error('WebSocket error:', data.error);
+      console.error('WebSocket RPC error:', data.error);
     }
   }
 
@@ -118,7 +149,10 @@ export class HeliusWebSocketManager {
   }
 
   private sendSubscription(subscription: WebSocketSubscription) {
-    if (!this.ws || !this.isConnected) return;
+    if (!this.ws || !this.isConnected) {
+      console.warn('Cannot send subscription, WebSocket not connected');
+      return;
+    }
 
     const message = {
       jsonrpc: '2.0',
@@ -127,10 +161,12 @@ export class HeliusWebSocketManager {
       params: subscription.params,
     };
 
+    console.log('Sending subscription:', message);
     this.ws.send(JSON.stringify(message));
   }
 
   private resubscribeAll() {
+    console.log('Resubscribing to all subscriptions:', this.subscriptions.size);
     for (const subscription of this.subscriptions.values()) {
       subscription.subscriptionId = undefined;
       this.sendSubscription(subscription);
@@ -142,23 +178,32 @@ export class HeliusWebSocketManager {
     if (subscription?.subscriptionId && this.ws && this.isConnected) {
       // Send unsubscribe message
       const unsubMethod = subscription.method.replace('Subscribe', 'Unsubscribe');
-      this.ws.send(JSON.stringify({
+      const message = {
         jsonrpc: '2.0',
         id: this.requestId++,
         method: unsubMethod,
         params: [subscription.subscriptionId],
-      }));
+      };
+      
+      console.log('Sending unsubscribe:', message);
+      this.ws.send(JSON.stringify(message));
     }
     this.subscriptions.delete(subscriptionId);
   }
 
   disconnect() {
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
+    
     if (this.ws) {
       this.ws.close();
       this.ws = null;
     }
     this.subscriptions.clear();
     this.isConnected = false;
+    this.reconnectAttempts = 0;
   }
 
   getConnectionStatus() {
@@ -166,13 +211,18 @@ export class HeliusWebSocketManager {
   }
 }
 
-export function useHeliusWebSocket(apiKey?: string) {
+export function useHeliusWebSocket() {
   const [isConnected, setIsConnected] = useState(false);
   const wsManager = useRef<HeliusWebSocketManager | null>(null);
 
   useEffect(() => {
+    // Use our Supabase Edge Function proxy for WebSocket connections
     const endpoint = `wss://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/helius-websocket-proxy`;
-    wsManager.current = new HeliusWebSocketManager(endpoint);
+    wsManager.current = new HeliusWebSocketManager(endpoint, {
+      autoReconnect: true,
+      maxReconnectAttempts: 5,
+      reconnectDelay: 2000,
+    });
 
     wsManager.current.connect()
       .then(() => setIsConnected(true))
@@ -187,7 +237,7 @@ export function useHeliusWebSocket(apiKey?: string) {
         setIsConnected(false);
       }
     };
-  }, [apiKey]);
+  }, []);
 
   return {
     wsManager: wsManager.current,

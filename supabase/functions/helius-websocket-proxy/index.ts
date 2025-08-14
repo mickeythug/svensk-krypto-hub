@@ -28,59 +28,83 @@ serve(async (req) => {
     });
   }
 
-  const { socket, response } = Deno.upgradeWebSocket(req);
-  
-  // Connect to Helius WebSocket - use standard RPC endpoint for WebSocket
-  const heliusWs = new WebSocket(`wss://${heliusApiKey}.helius-rpc.com`);
-  
   console.log('Creating WebSocket proxy to Helius');
 
-  heliusWs.onopen = () => {
-    console.log('Connected to Helius WebSocket');
-  };
+  try {
+    const { socket, response } = Deno.upgradeWebSocket(req);
+    
+    // Connect to Helius WebSocket - include API key in URL since headers might not work
+    const heliusWsUrl = `wss://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`;
+    const heliusWs = new WebSocket(heliusWsUrl);
 
-  heliusWs.onmessage = (event) => {
-    console.log('Received from Helius:', event.data);
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(event.data);
-    }
-  };
+    heliusWs.onopen = () => {
+      console.log('Connected to Helius WebSocket');
+    };
 
-  heliusWs.onerror = (error) => {
-    console.error('Helius WebSocket error:', error);
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ error: 'Helius connection error' }));
-    }
-  };
+    heliusWs.onmessage = (event) => {
+      console.log('Received from Helius:', typeof event.data, event.data.length > 100 ? event.data.substring(0, 100) + '...' : event.data);
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(event.data);
+      }
+    };
 
-  heliusWs.onclose = () => {
-    console.log('Helius WebSocket closed');
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.close();
-    }
-  };
+    heliusWs.onerror = (error) => {
+      console.error('Helius WebSocket error:', error);
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ 
+          error: 'Helius connection error',
+          message: String(error)
+        }));
+      }
+    };
 
-  socket.onopen = () => {
-    console.log('Client WebSocket connected');
-  };
+    heliusWs.onclose = (event) => {
+      console.log('Helius WebSocket closed:', event.code, event.reason);
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.close(event.code, event.reason);
+      }
+    };
 
-  socket.onmessage = (event) => {
-    console.log('Received from client:', event.data);
-    if (heliusWs.readyState === WebSocket.OPEN) {
-      heliusWs.send(event.data);
-    }
-  };
+    socket.onopen = () => {
+      console.log('Client WebSocket connected');
+    };
 
-  socket.onerror = (error) => {
-    console.error('Client WebSocket error:', error);
-  };
+    socket.onmessage = (event) => {
+      console.log('Received from client:', typeof event.data, event.data.length > 100 ? event.data.substring(0, 100) + '...' : event.data);
+      if (heliusWs.readyState === WebSocket.OPEN) {
+        heliusWs.send(event.data);
+      } else {
+        console.warn('Helius WebSocket not ready, readyState:', heliusWs.readyState);
+        socket.send(JSON.stringify({
+          error: 'Helius WebSocket not connected',
+          readyState: heliusWs.readyState
+        }));
+      }
+    };
 
-  socket.onclose = () => {
-    console.log('Client WebSocket closed');
-    if (heliusWs.readyState === WebSocket.OPEN) {
-      heliusWs.close();
-    }
-  };
+    socket.onerror = (error) => {
+      console.error('Client WebSocket error:', error);
+    };
 
-  return response;
+    socket.onclose = (event) => {
+      console.log('Client WebSocket closed:', event.code, event.reason);
+      if (heliusWs.readyState === WebSocket.OPEN) {
+        heliusWs.close();
+      }
+    };
+
+    return response;
+  } catch (error) {
+    console.error('Failed to create WebSocket connection:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Failed to establish WebSocket connection',
+        message: String(error)
+      }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
 });

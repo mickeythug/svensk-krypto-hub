@@ -33,18 +33,40 @@ serve(async (req) => {
 
     const rpcEndpoint = `https://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`;
     
+    // Get request body
+    const requestBody = req.method !== 'GET' ? await req.text() : '';
+    console.log('Request body:', requestBody);
+    
     // Forward the request to Helius RPC
     const rpcResponse = await fetch(rpcEndpoint, {
       method: req.method,
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
-      body: req.method !== 'GET' ? await req.text() : undefined,
+      body: req.method !== 'GET' ? requestBody : undefined,
     });
 
-    const responseData = await rpcResponse.text();
+    const responseText = await rpcResponse.text();
+    console.log('RPC Response status:', rpcResponse.status);
+    console.log('RPC Response:', responseText.substring(0, 500));
     
-    return new Response(responseData, {
+    if (!rpcResponse.ok) {
+      console.error('RPC request failed:', rpcResponse.status, responseText);
+      return new Response(
+        JSON.stringify({ 
+          error: 'RPC request failed', 
+          status: rpcResponse.status,
+          message: responseText 
+        }),
+        { 
+          status: rpcResponse.status, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+    
+    return new Response(responseText, {
       status: rpcResponse.status,
       headers: {
         ...corsHeaders,
@@ -53,8 +75,13 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in solana-rpc-proxy:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return new Response(
-      JSON.stringify({ error: 'RPC proxy error' }),
+      JSON.stringify({ 
+        error: 'RPC proxy error', 
+        message: errorMessage,
+        details: String(error)
+      }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
