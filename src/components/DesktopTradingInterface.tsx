@@ -79,7 +79,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
   const { fullyAuthed } = useWalletAuthStatus();
   const { info: solInfo } = useSolanaTokenInfo(symbol);
 
-  // Öppna orders (DB + Jupiter)
+  // Open orders (DB + Jupiter)
   const { dbOrders, jupOrders } = useOpenOrders({
     symbol,
     solAddress,
@@ -87,7 +87,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     solMint: solInfo?.mint,
   });
 
-  // SOL‑pris i USD
+  // SOL price in USD
   const { cryptoPrices } = useCryptoData();
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => (c.symbol || '').toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
@@ -106,7 +106,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     console.log('OrderBook state:', { orderBook, isConnected, error });
   }, [symbol, orderBook, isConnected, error]);
 
-  // Limit‑linjer: sammanställ från DB + Jupiter (realtid)
+  // Limit lines: compile from DB + Jupiter (real-time)
   useEffect(() => {
     try {
       const db = (dbOrders || [])
@@ -137,7 +137,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
 
       setLimitLines([...db, ...jup]);
     } catch (e) {
-      console.warn('Kunde inte bygga limit‑linjer', e);
+      console.warn('Could not build limit lines', e);
     }
   }, [dbOrders, jupOrders, solInfo?.mint, solInfo?.decimals, solUsd]);
 
@@ -171,7 +171,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
     if (navigator.share) {
       navigator.share({
         title: `${tokenName} (${symbol})`,
-        text: `Kolla in ${tokenName} på Crypto Network Sweden`,
+        text: `Check out ${tokenName} on Crypto Network Sweden`,
         url: window.location.href
       });
     }
@@ -193,7 +193,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                 {crypto?.image && (
                   <img
                     src={crypto.image}
-                    alt={`${tokenName} (${symbol}) logotyp`}
+                    alt={`${tokenName} (${symbol}) logo`}
                     className="h-10 w-10 rounded-full ring-2 ring-primary/20 shadow-sm"
                     loading="lazy"
                     decoding="async"
@@ -231,7 +231,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               <div className="w-80">
                 <TokenSearchBar 
                   currentSymbol={symbol}
-                  placeholder="Sök annat token"
+                  placeholder="Search other token"
                 />
               </div>
             </div>

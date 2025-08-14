@@ -237,21 +237,21 @@ const PortfolioPage = () => {
               className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
             >
               <Wallet className="h-4 w-4" />
-              <span>Översikt</span>
+              <span>{t('portfolio.overview')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="watchlist" 
               className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
             >
               <Star className="h-4 w-4" />
-              <span>Watchlist</span>
+              <span>{t('portfolio.watchlist')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
               className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
             >
               <Target className="h-4 w-4" />
-              <span>Analys</span>
+              <span>{t('trading.analysis')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -259,25 +259,25 @@ const PortfolioPage = () => {
             {!primaryWallet ? (
               <Card className="p-12 text-center">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Ingen plånbok ansluten</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('portfolio.noWallet')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Anslut din Solana-plånbok för att se din portfolio
+                  {t('portfolio.connectWallet')}
                 </p>
                 <Button onClick={handleWalletError} className="bg-gradient-primary">
                   <Plus className="h-4 w-4 mr-2" />
-                  Anslut plånbok
+                  {t('wallet.connect')}
                 </Button>
               </Card>
             ) : portfolioError ? (
               <Card className="p-12 text-center">
                 <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Fel vid hämtning av data</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('portfolio.error')}</h3>
                 <p className="text-muted-foreground mb-6">
                   {portfolioError}
                 </p>
                 <Button onClick={refreshPortfolio} className="bg-gradient-primary">
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Försök igen
+                  {t('portfolio.tryAgain')}
                 </Button>
               </Card>
             ) : portfolioData ? (
@@ -381,9 +381,9 @@ const PortfolioPage = () => {
                 {portfolioData.tokenBalances.length === 0 && portfolioData.solBalance.balance === 0 && (
                   <Card className="p-12 text-center">
                     <Wallet className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="font-semibold text-lg mb-2">Portfolio tom</h3>
+                    <h3 className="font-semibold text-lg mb-2">{t('portfolio.noWallet')}</h3>
                     <p className="text-muted-foreground mb-6">
-                      Din anslutna plånbok har inga tokens eller SOL
+                      {t('portfolio.connectWallet')}
                     </p>
                   </Card>
                 )}
@@ -391,7 +391,7 @@ const PortfolioPage = () => {
             ) : (
               <Card className="p-12 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Laddar portfolio data...</p>
+                <p className="text-muted-foreground">{t('common.loading')}</p>
               </Card>
             )}
           </TabsContent>
@@ -401,13 +401,13 @@ const PortfolioPage = () => {
               <div className="space-y-4">
                 {/* Watchlist Table Header */}
                 <div className={`${isMobile ? 'hidden' : 'grid grid-cols-7 gap-4 p-4 bg-muted/30 rounded-lg border'}`}>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider">Namn</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Pris</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider">{t('market.name')}</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">{t('market.price')}</div>
                   <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">1h %</div>
                   <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">24h %</div>
                   <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">7d %</div>
                   <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Market Cap</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Volym(24h)</div>
+                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">{t('market.volume')}(24h)</div>
                 </div>
 
                 {/* Watchlist Items */}
@@ -454,7 +454,7 @@ const PortfolioPage = () => {
                           
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
-                              <div className="text-muted-foreground">Pris</div>
+                              <div className="text-muted-foreground">{t('market.price')}</div>
                               <div className="font-semibold">{item.price ? formatCurrency(item.price) : '—'}</div>
                             </div>
                             <div>
@@ -470,7 +470,7 @@ const PortfolioPage = () => {
                               </div>
                             </div>
                             <div>
-                              <div className="text-muted-foreground">Volym 24h</div>
+                              <div className="text-muted-foreground">{t('market.volume')} 24h</div>
                               <div className="font-semibold">
                                 {item.volume ? formatCurrency(item.volume) : '—'}
                               </div>
@@ -541,16 +541,16 @@ const PortfolioPage = () => {
             ) : (
               <Card className="p-12 text-center">
                 <Star className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Din watchlist är tom</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('portfolio.watchlist')} {t('common.empty')}</h3>
                 <p className="text-muted-foreground mb-6">
-                  Börja med att lägga till kryptovalutor genom att klicka på stjärnan
+                  {t('portfolio.startByAdding')}
                 </p>
                 <Button 
                   onClick={() => window.location.href = '/marknad'}
                   className="bg-gradient-primary"
                 >
                   <Star className="h-4 w-4 mr-2" />
-                  Utforska marknaden
+                  {t('hero.exploreMarket')}
                 </Button>
               </Card>
             )}
@@ -559,9 +559,9 @@ const PortfolioPage = () => {
           <TabsContent value="analytics" className="mt-6">
             <Card className="p-8 text-center">
               <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-semibold text-lg mb-2">Analys kommer snart</h3>
+              <h3 className="font-semibold text-lg mb-2">{t('trading.analysis')} {t('common.comingSoon')}</h3>
               <p className="text-muted-foreground">
-                Vi arbetar på avancerade analysfunktioner för din portfolio
+                {t('portfolio.workingOnAdvanced')}
               </p>
             </Card>
           </TabsContent>

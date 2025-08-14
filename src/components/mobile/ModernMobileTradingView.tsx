@@ -53,7 +53,7 @@ const ModernMobileTradingView = ({
     if (navigator.share) {
       navigator.share({
         title: `${tokenName} (${symbol})`,
-        text: `Kolla in ${tokenName} på Crypto Network Sweden`,
+        text: `Check out ${tokenName} on Crypto Network Sweden`,
         url: window.location.href
       });
     }
@@ -68,9 +68,9 @@ const ModernMobileTradingView = ({
   };
 
   const navigationTabs = [
-    { id: "chart", label: "Graf", icon: BarChart3 },
+    { id: "chart", label: "Chart", icon: BarChart3 },
     { id: "info", label: "Info", icon: Info },
-    { id: "trade", label: "Handel", icon: ArrowUpDown },
+    { id: "trade", label: "Trade", icon: ArrowUpDown },
     { id: "orders", label: "Orders", icon: Receipt }
   ];
 
@@ -85,7 +85,7 @@ const ModernMobileTradingView = ({
             <div className="px-4 py-3 bg-gradient-to-b from-background/95 to-background/80 backdrop-blur-xl border-b border-border/30">
               <TokenSearchBar 
                 currentSymbol={symbol}
-                placeholder={`Sök token (nuvarande: ${symbol})`}
+                placeholder={`Search token (current: ${symbol})`}
                 className="w-full"
               />
             </div>
@@ -218,7 +218,7 @@ const ModernMobileTradingView = ({
         <div className="fixed bottom-20 left-4 right-4 z-40">
           <Card className="border-amber-500/40 bg-amber-500/10 p-3 backdrop-blur-sm">
             <p className="text-xs text-amber-600 dark:text-amber-400 font-medium text-center">
-              ⚠️ Denna token stöds inte av Solana‑kedjan. Växla till EVM för handel.
+              ⚠️ This token is not supported by the Solana chain. Switch to EVM for trading.
             </p>
           </Card>
         </div>
