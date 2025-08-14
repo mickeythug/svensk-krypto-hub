@@ -87,12 +87,17 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
     setError(null);
     
     try {
+      console.log('[useMemeTokens] Fetching category:', category);
+      
       const action = dexscreenerActions[category];
       const sortParam = sortParams[category];
+      
+      console.log('[useMemeTokens] Using action:', action, 'with params:', sortParam);
+      
       let allTokens: MemeToken[] = [];
       
       // Use dexscreener-proxy for all categories
-      const { data: res } = await supabase.functions.invoke('dexscreener-proxy', {
+      const { data: res, error: supabaseError } = await supabase.functions.invoke('dexscreener-proxy', {
         body: { 
           action,
           ...sortParam,
@@ -101,24 +106,46 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
         }
       });
 
+      console.log('[useMemeTokens] Supabase response:', { res, supabaseError });
+
+      if (supabaseError) {
+        console.error('[useMemeTokens] Supabase error:', supabaseError);
+        throw new Error(supabaseError.message || 'Supabase error');
+      }
+
       if (res?.data && Array.isArray(res.data)) {
+        console.log('[useMemeTokens] Processing data array of length:', res.data.length);
+        
         // Transform dexscreener proxy response to our format
-        allTokens = res.data.slice(0, 200).map((item: any) => ({
-          id: item.tokenAddress || item.address || item.id || '',
-          symbol: item.token?.symbol || item.symbol || '',
-          name: item.token?.name || item.name || '',
-          image: item.token?.image || item.image || item.icon || '',
-          price: parseFloat(item.priceUsd || item.price || '0'),
-          change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || item.change24h || '0'),
-          volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
-          marketCap: parseFloat(item.marketCap || item.fdv || '0'),
-          holders: parseInt(item.holders || '0'),
-          views: item.views || '0',
-          tags: item.tags || [],
-          isHot: item.isHot || false,
-          description: item.description || ''
-        }));
+        allTokens = res.data.slice(0, 200).map((item: any, index: number) => {
+          console.log(`[useMemeTokens] Processing item ${index}:`, {
+            tokenAddress: item.tokenAddress,
+            address: item.address,
+            symbol: item.symbol || item.baseToken?.symbol,
+            name: item.name || item.baseToken?.name
+          });
+          
+          return {
+            id: item.tokenAddress || item.address || item.baseToken?.address || item.id || `token-${index}`,
+            symbol: item.symbol || item.baseToken?.symbol || item.token?.symbol || `TOK${index}`,
+            name: item.name || item.baseToken?.name || item.token?.name || `Token ${index}`,
+            image: item.image || item.icon || item.info?.imageUrl || item.token?.image || '',
+            price: parseFloat(item.priceUsd || item.price || '0'),
+            change24h: parseFloat(item.priceChange?.h24 || item.priceChange24h || item.change24h || '0'),
+            volume24h: parseFloat(item.volume?.h24 || item.volume24h || '0'),
+            marketCap: parseFloat(item.marketCap || item.fdv || '0'),
+            holders: parseInt(item.holders || '0'),
+            views: item.views || '0',
+            tags: item.tags || [],
+            isHot: item.isHot || false,
+            description: item.description || ''
+          };
+        });
+        
+        console.log('[useMemeTokens] Transformed tokens:', allTokens.slice(0, 3));
       } else {
+        console.log('[useMemeTokens] No valid data, using fallback to meme-catalog');
+        
         // Fallback to meme-catalog for compatibility
         const backendCategory = (
           category === 'marketcap' ? 'marketcap_high' :
@@ -128,19 +155,23 @@ export const useMemeTokens = (category: MemeCategory, limit: number = 20, page: 
           category
         ) as any;
 
-        const { data: fallbackRes } = await supabase.functions.invoke('meme-catalog', {
+        const { data: fallbackRes, error: fallbackError } = await supabase.functions.invoke('meme-catalog', {
           body: { category: backendCategory, page: 1, pageSize: 200 }
         });
+        
+        console.log('[useMemeTokens] Fallback response:', { fallbackRes, fallbackError });
 
         allTokens = Array.isArray(fallbackRes?.items) ? (fallbackRes.items as MemeToken[]) : [];
       }
+      
+      console.log('[useMemeTokens] Final tokens count:', allTokens.length);
       
       setTokens(allTokens);
       setHasMore(allTokens.length >= 200 && page < 10); // Max 10 pages
       setLastUpdated(new Date());
       
     } catch (e: any) {
-      console.error('Error fetching tokens:', e);
+      console.error('[useMemeTokens] Error fetching tokens:', e);
       setError('Kunde inte hämta token data');
     } finally {
       setLoading(false);
