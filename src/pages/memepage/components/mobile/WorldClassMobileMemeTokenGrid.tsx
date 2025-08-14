@@ -10,6 +10,7 @@ import MobilePagination from './MobilePagination';
 import { TrendingUp, TrendingDown, DollarSign, BarChart3, Users, Crown, Flame, Target, Star, Eye, Heart, Share2 } from 'lucide-react';
 interface Props {
   category: MemeCategory;
+  viewMode?: 'grid' | 'list';
 }
 function formatPrice(n: number) {
   if (!isFinite(n)) return '—';
@@ -35,6 +36,105 @@ function formatPercentage(n: number) {
   if (abs >= 10) return `${n.toFixed(1)}%`;
   return `${n.toFixed(2)}%`;
 }
+const PremiumTokenListItem = ({
+  token,
+  index,
+  onClick
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const positive = token.change24h > 0;
+  const isTop3 = index < 3;
+  const isTop1 = index === 0;
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), index * 50);
+    return () => clearTimeout(timer);
+  }, [index]);
+
+  return (
+    <div 
+      className={`group transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} 
+      style={{ transitionDelay: `${index * 25}ms` }}
+    >
+      <Card 
+        className={`relative overflow-hidden bg-black/15 backdrop-blur-xl border border-white/10 cursor-pointer hover:bg-black/25 hover:border-white/20 hover:scale-[1.01] transition-all duration-300 ease-out ${
+          isTop1 ? 'border-yellow-400/50 bg-gradient-to-r from-yellow-900/10 to-orange-900/10' : 
+          isTop3 ? 'border-orange-400/40 bg-gradient-to-r from-orange-900/10 to-red-900/10' : ''
+        }`}
+        onClick={onClick}
+      >
+        <div className="p-3">
+          <div className="flex items-center gap-3">
+            {/* Rank & Image */}
+            <div className="relative flex items-center gap-3">
+              {isTop3 && (
+                <Badge className={`text-xs px-1.5 py-0.5 ${
+                  index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black' : 
+                  index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' : 
+                  'bg-gradient-to-r from-orange-400 to-orange-600 text-black'
+                }`}>
+                  {index === 0 && <Crown className="w-2 h-2 mr-1" />}
+                  #{index + 1}
+                </Badge>
+              )}
+              
+              <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10 group-hover:scale-105 transition-all duration-300">
+                <OptimizedImage 
+                  src={token.image || '/placeholder.svg'} 
+                  alt={`${token.name} logo`} 
+                  className="w-full h-full object-cover" 
+                  fallbackSrc="/placeholder.svg" 
+                />
+              </div>
+            </div>
+
+            {/* Token Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-bold text-base text-white truncate font-sans">
+                    {token.symbol}
+                  </h3>
+                  <p className="text-white/50 text-xs truncate font-medium font-sans">{token.name}</p>
+                </div>
+                
+                {/* Price Change */}
+                <div className={`flex items-center gap-1 text-sm font-bold font-sans ${
+                  positive ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                  <span className="text-xs">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="flex items-center gap-4 mt-1">
+                <div className="flex items-center gap-1">
+                  <BarChart3 className="w-3 h-3 text-blue-400" />
+                  <span className="text-white text-xs font-medium">{formatCompact(token.marketCap)}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Users className="w-3 h-3 text-green-400" />
+                  <span className="text-white/70 text-xs">{formatCompact(token.volume24h)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hot Badge for top tokens */}
+            {isTop3 && (
+              <div className="animate-fade-in">
+                <Badge className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs px-2 py-1">
+                  {isTop1 ? '🔥' : '⭐'}
+                </Badge>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
 const PremiumTokenCard = ({
   token,
   index,
@@ -147,7 +247,8 @@ const PremiumTokenCard = ({
     </div>;
 };
 const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
-  category
+  category,
+  viewMode = 'grid'
 }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
@@ -171,10 +272,35 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
     }
   };
   if (loading && tokens.length === 0) {
-    return <div className="space-y-4">
-        {Array.from({
-        length: 6
-      }).map((_, i) => <Card key={i} className="bg-black/20 backdrop-blur-sm border border-white/10 p-4 animate-pulse mobile-backdrop">
+    if (viewMode === 'list') {
+      return (
+        <div className="space-y-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Card key={i} className="bg-black/20 backdrop-blur-sm border border-white/10 p-3 animate-pulse mobile-backdrop">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-12 h-12 rounded-lg bg-white/10" />
+                <div className="flex-1 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="h-4 w-16 bg-white/10" />
+                    <Skeleton className="h-3 w-12 bg-white/10" />
+                  </div>
+                  <Skeleton className="h-3 w-24 bg-white/10" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-3 w-16 bg-white/10" />
+                    <Skeleton className="h-3 w-20 bg-white/10" />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      );
+    }
+    
+    return (
+      <div className="space-y-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Card key={i} className="bg-black/20 backdrop-blur-sm border border-white/10 p-4 animate-pulse mobile-backdrop">
             <div className="flex gap-4">
               <Skeleton className="w-16 h-16 rounded-xl bg-white/10" />
               <div className="flex-1 space-y-3">
@@ -189,8 +315,10 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
                 </div>
               </div>
             </div>
-          </Card>)}
-      </div>;
+          </Card>
+        ))}
+      </div>
+    );
   }
   if (error) {
     return <div className="text-center py-8 animate-fade-in">
@@ -200,11 +328,29 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({
         </Button>
       </div>;
   }
-  return <div className="space-y-4">
-      {tokens.map((token, index) => <PremiumTokenCard key={token.id} token={token} index={index} onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)} />)}
+  return (
+    <div className="space-y-4">
+      {tokens.map((token, index) => 
+        viewMode === 'list' ? (
+          <PremiumTokenListItem 
+            key={token.id} 
+            token={token} 
+            index={index} 
+            onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)} 
+          />
+        ) : (
+          <PremiumTokenCard 
+            key={token.id} 
+            token={token} 
+            index={index} 
+            onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)} 
+          />
+        )
+      )}
 
       {/* Enhanced Pagination with proper controls */}
       <MobilePagination currentPage={page} hasMore={hasMore} onPageChange={setPage} loading={loading} />
-    </div>;
+    </div>
+  );
 };
 export default WorldClassMobileMemeTokenGrid;

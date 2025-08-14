@@ -26,7 +26,10 @@ import {
   Home,
   Wallet,
   User,
-  Settings
+  Settings,
+  Grid3X3,
+  List,
+  ArrowUp
 } from 'lucide-react';
 import WorldClassMobileMemeHero from './WorldClassMobileMemeHero';
 import WorldClassMobileMemeTokenGrid from './WorldClassMobileMemeTokenGrid';
@@ -35,6 +38,7 @@ import MobileMemeNavigation from './MobileMemeNavigation';
 
 const MobileMemeZoneApp = () => {
   const [activeTab, setActiveTab] = useState('trending');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,37 +80,69 @@ const MobileMemeZoneApp = () => {
 
         {/* Main Tabs */}
         <div className="px-4 pt-6">
+          {/* Enhanced View Toggle Button */}
+          <div className="flex justify-end mb-6">
+            <div className="bg-gradient-to-r from-black/40 via-black/30 to-black/40 backdrop-blur-2xl rounded-2xl p-1.5 border border-white/20 shadow-xl shadow-black/20">
+              <div className="flex bg-black/20 rounded-xl p-1">
+                <Button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-4 py-2.5 rounded-lg transition-all duration-500 flex items-center gap-2 font-semibold ${
+                    viewMode === 'grid' 
+                      ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-white shadow-lg shadow-purple-500/25 scale-105 border border-purple-400/30' 
+                      : 'text-white/60 hover:text-white hover:bg-white/10 hover:scale-102'
+                  }`}
+                  variant="ghost"
+                >
+                  <Grid3X3 className="w-4 h-4" />
+                  <span className="text-xs">Grid</span>
+                </Button>
+                <Button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2.5 rounded-lg transition-all duration-500 flex items-center gap-2 font-semibold ${
+                    viewMode === 'list' 
+                      ? 'bg-gradient-to-r from-blue-500/30 to-cyan-500/30 text-white shadow-lg shadow-blue-500/25 scale-105 border border-blue-400/30' 
+                      : 'text-white/60 hover:text-white hover:bg-white/10 hover:scale-102'
+                  }`}
+                  variant="ghost"
+                >
+                  <List className="w-4 h-4" />
+                  <span className="text-xs">Lista</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <div className="relative mb-6">
               <div className="bg-gradient-to-r from-black/30 via-black/20 to-black/30 backdrop-blur-2xl rounded-3xl p-3 border border-white/20 shadow-2xl shadow-purple-500/10">
                 <TabsList className="grid w-full grid-cols-4 bg-transparent gap-2">
                   <TabsTrigger 
                     value="trending" 
-                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/20 data-[state=active]:to-pink-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-purple-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-purple-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
+                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500/25 data-[state=active]:to-pink-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-purple-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-purple-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2"
                   >
-                    <TrendingUp className="w-3 h-3" />
-                    <span className="text-[10px]">Trending</span>
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-xs font-semibold">Trending</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="new" 
-                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/20 data-[state=active]:to-cyan-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-blue-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-blue-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
+                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500/25 data-[state=active]:to-cyan-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-blue-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-blue-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2"
                   >
-                    <Sparkles className="w-3 h-3" />
-                    <span className="text-[10px]">New</span>
+                    <Sparkles className="w-4 h-4" />
+                    <span className="text-xs font-semibold">New</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="gainers" 
-                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500/20 data-[state=active]:to-emerald-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-green-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-green-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
+                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500/25 data-[state=active]:to-emerald-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-green-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-green-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2"
                   >
-                    <Rocket className="w-3 h-3" />
-                    <span className="text-[10px]">Gainers</span>
+                    <Rocket className="w-4 h-4" />
+                    <span className="text-xs font-semibold">Gainers</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="volume" 
-                    className="rounded-2xl py-3 px-2 text-xs font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/20 data-[state=active]:to-yellow-500/20 data-[state=active]:text-white data-[state=active]:shadow-xl data-[state=active]:shadow-orange-500/30 data-[state=active]:scale-105 data-[state=active]:border data-[state=active]:border-orange-400/30 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-500 ease-out transform flex-col items-center gap-1"
+                    className="rounded-2xl py-4 px-3 text-sm font-bold data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500/25 data-[state=active]:to-yellow-500/25 data-[state=active]:text-white data-[state=active]:shadow-2xl data-[state=active]:shadow-orange-500/40 data-[state=active]:scale-105 data-[state=active]:border-2 data-[state=active]:border-orange-400/50 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform hover:scale-102 flex items-center justify-center gap-2"
                   >
-                    <BarChart3 className="w-3 h-3" />
-                    <span className="text-[10px]">Volume</span>
+                    <BarChart3 className="w-4 h-4" />
+                    <span className="text-xs font-semibold">Volume</span>
                   </TabsTrigger>
                 </TabsList>
               </div>
@@ -114,19 +150,19 @@ const MobileMemeZoneApp = () => {
 
             {/* Tab Content */}
             <TabsContent value="trending" className="mt-0">
-              <WorldClassMobileMemeTokenGrid category="trending" />
+              <WorldClassMobileMemeTokenGrid category="trending" viewMode={viewMode} />
             </TabsContent>
             
             <TabsContent value="new" className="mt-0">
-              <WorldClassMobileMemeTokenGrid category="newest" />
+              <WorldClassMobileMemeTokenGrid category="newest" viewMode={viewMode} />
             </TabsContent>
             
             <TabsContent value="gainers" className="mt-0">
-              <WorldClassMobileMemeTokenGrid category="gainers" />
+              <WorldClassMobileMemeTokenGrid category="gainers" viewMode={viewMode} />
             </TabsContent>
             
             <TabsContent value="volume" className="mt-0">
-              <WorldClassMobileMemeTokenGrid category="volume" />
+              <WorldClassMobileMemeTokenGrid category="volume" viewMode={viewMode} />
             </TabsContent>
           </Tabs>
         </div>
