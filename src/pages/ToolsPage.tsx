@@ -25,74 +25,106 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import JupiterSwapWidget from "@/components/web3/JupiterSwapWidget";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const ToolsPage = () => {
   const [hoveredBot, setHoveredBot] = useState<string | null>(null);
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   const telegramBots = [
     {
       id: "trading-bot",
-      name: "Trading Bot",
-      description: "Köp och sälj tokens blixtsnabbt direkt från Telegram. Automatiska order med smart routing för bästa priser.",
+      name: t('tools.tradingBot.name'),
+      description: t('tools.tradingBot.description'),
       icon: Bot,
-      features: ["Snabba transaktioner", "Smart routing", "Multi-DEX support", "Säker wallet integration"],
-      price: "Gratis att testa",
+      features: [
+        t('tools.tradingBot.features.fastTransactions'),
+        t('tools.tradingBot.features.smartRouting'),
+        t('tools.tradingBot.features.multiDEX'),
+        t('tools.tradingBot.features.walletIntegration')
+      ],
+      price: t('tools.tradingBot.price'),
       link: "https://t.me/your_trading_bot",
       popular: true,
       gradient: "from-blue-500 to-cyan-500"
     },
     {
       id: "snipe-bot",
-      name: "Snipe Bot",
-      description: "Snipea nya token launches och få försprång på marknaden. Automatisk detektering av nya listings.",
+      name: t('tools.snipeBot.name'),
+      description: t('tools.snipeBot.description'),
       icon: Target,
-      features: ["Auto-detect launches", "MEV protection", "Gas optimization", "Instant execution"],
-      price: "Premium",
+      features: [
+        t('tools.snipeBot.features.autoDetect'),
+        t('tools.snipeBot.features.mevProtection'),
+        t('tools.snipeBot.features.gasOptimization'),
+        t('tools.snipeBot.features.instantExecution')
+      ],
+      price: t('tools.snipeBot.price'),
       link: "https://t.me/your_snipe_bot",
       popular: false,
       gradient: "from-red-500 to-pink-500"
     },
     {
       id: "price-alert",
-      name: "Price Alert Bot",
-      description: "Få instant notifikationer när dina tokens når specifika prisnivåer. Aldrig missa en bra möjlighet igen.",
+      name: t('tools.priceAlertBot.name'),
+      description: t('tools.priceAlertBot.description'),
       icon: Bell,
-      features: ["Custom alerts", "Multi-token tracking", "Technical indicators", "Portfolio monitoring"],
-      price: "Gratis",
+      features: [
+        t('tools.priceAlertBot.features.customAlerts'),
+        t('tools.priceAlertBot.features.multiTokenTracking'),
+        t('tools.priceAlertBot.features.technicalIndicators'),
+        t('tools.priceAlertBot.features.portfolioMonitoring')
+      ],
+      price: t('tools.priceAlertBot.price'),
       link: "https://t.me/your_alert_bot",
       popular: false,
       gradient: "from-yellow-500 to-orange-500"
     },
     {
       id: "news-bot",
-      name: "Nyhets Bot",
-      description: "Få de senaste krypto-nyheterna direkt till Telegram. AI-filtrerade nyheter baserat på dina intressen.",
+      name: t('tools.newsBot.name'),
+      description: t('tools.newsBot.description'),
       icon: Newspaper,
-      features: ["AI-filtrerade nyheter", "Real-time alerts", "Market analysis", "Social sentiment"],
-      price: "Gratis",
+      features: [
+        t('tools.newsBot.features.aiFiltered'),
+        t('tools.newsBot.features.realTimeAlerts'),
+        t('tools.newsBot.features.marketAnalysis'),
+        t('tools.newsBot.features.socialSentiment')
+      ],
+      price: t('tools.newsBot.price'),
       link: "https://t.me/your_news_bot",
       popular: false,
       gradient: "from-green-500 to-emerald-500"
     },
     {
       id: "portfolio-bot",
-      name: "Portfolio Bot",
-      description: "Spåra din portfolio i realtid med avancerad analys och insikter. Perfect för aktiva traders.",
+      name: t('tools.portfolioBot.name'),
+      description: t('tools.portfolioBot.description'),
       icon: TrendingUp,
-      features: ["Real-time tracking", "P&L analysis", "Risk management", "Tax reporting"],
-      price: "Premium",
+      features: [
+        t('tools.portfolioBot.features.realTimeTracking'),
+        t('tools.portfolioBot.features.plAnalysis'),
+        t('tools.portfolioBot.features.riskManagement'),
+        t('tools.portfolioBot.features.taxReporting')
+      ],
+      price: t('tools.portfolioBot.price'),
       link: "https://t.me/your_portfolio_bot",
       popular: false,
       gradient: "from-purple-500 to-indigo-500"
     },
     {
       id: "security-bot",
-      name: "Security Bot",
-      description: "Skanna tokens för säkerhetsrisker innan du investerar. Skydda dig från rug pulls och scams.",
+      name: t('tools.securityBot.name'),
+      description: t('tools.securityBot.description'),
       icon: Shield,
-      features: ["Contract scanning", "Rug pull detection", "Team verification", "Risk scoring"],
-      price: "Gratis",
+      features: [
+        t('tools.securityBot.features.contractScanning'),
+        t('tools.securityBot.features.rugPullDetection'),
+        t('tools.securityBot.features.teamVerification'),
+        t('tools.securityBot.features.riskScoring')
+      ],
+      price: t('tools.securityBot.price'),
       link: "https://t.me/your_security_bot",
       popular: false,
       gradient: "from-gray-500 to-slate-500"
@@ -102,23 +134,23 @@ const ToolsPage = () => {
   const features = [
     {
       icon: Zap,
-      title: "Blixtsnabb Execution",
-      description: "Våra bots är optimerade för hastighet och kan utföra trades på millisekunder"
+      title: t('tools.features.fastExecution'),
+      description: t('tools.features.fastExecutionDesc')
     },
     {
       icon: Shield,
-      title: "Bank-nivå Säkerhet", 
-      description: "All kommunikation är krypterad och vi lagrar aldrig dina privata nycklar"
+      title: t('tools.features.bankSecurity'),
+      description: t('tools.features.bankSecurityDesc')
     },
     {
       icon: Users,
-      title: "Community Driven",
-      description: "Över 50,000+ aktiva användare som förlitar sig på våra verktyg dagligen"
+      title: t('tools.features.communityDriven'),
+      description: t('tools.features.communityDrivenDesc')
     },
     {
       icon: Clock,
-      title: "24/7 Support",
-      description: "Vårt team är alltid tillgängligt för att hjälpa dig med dina frågor"
+      title: t('tools.features.support247'),
+      description: t('tools.features.support247Desc')
     }
   ];
 
@@ -135,7 +167,7 @@ const ToolsPage = () => {
           <div className="absolute top-3 right-3 z-10">
             <Badge className="bg-success/20 text-success border-success/30 text-xs px-2 py-1">
               <Star className="w-3 h-3 mr-1" />
-              HOT
+              {t('tools.hot')}
             </Badge>
           </div>
         )}
@@ -180,7 +212,7 @@ const ToolsPage = () => {
                     className="flex items-center gap-2"
                   >
                     <Play className="w-3 h-3" />
-                    Starta
+                    {t('tools.start')}
                   </a>
                 </Button>
               </div>
@@ -211,7 +243,7 @@ const ToolsPage = () => {
           <div className="absolute top-4 right-4">
             <Badge className="bg-success/20 text-success border-success/30 text-xs">
               <Star className="w-3 h-3 mr-1" />
-              POPULÄR
+              {t('tools.popular')}
             </Badge>
           </div>
         )}
@@ -257,7 +289,7 @@ const ToolsPage = () => {
                 className="flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
-                Starta Bot
+                {t('tools.startBot')}
                 <ExternalLink className="w-3 h-3" />
               </a>
             </Button>
@@ -276,22 +308,22 @@ const ToolsPage = () => {
           {isMobile ? (
             <div className="text-center mb-8">
               <h1 className="font-crypto text-2xl sm:text-3xl font-bold mb-3">
-                <span className="text-brand-turquoise">TELEGRAM</span>
-                <span className="text-brand-white"> BOTS</span>
+                <span className="text-brand-turquoise">{t('tools.telegramBots').split(' ')[0]}</span>
+                <span className="text-brand-white"> {t('tools.telegramBots').split(' ')[1]}</span>
               </h1>
               
               <p className="font-display text-sm text-muted-foreground mb-6 leading-relaxed px-2">
-                Automatisera din kryptohandel med våra kraftfulla Telegram bots
+                {t('tools.automateTrading')}
               </p>
 
               <div className="flex flex-col gap-2 text-xs text-muted-foreground">
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span>50k+ Användare</span>
+                  <span>50k+ {t('tools.activeUsers')}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4 text-success" />
-                  <span>99.9% Uptime</span>
+                  <span>99.9% {t('tools.uptime')}</span>
                 </div>
               </div>
             </div>
@@ -301,31 +333,31 @@ const ToolsPage = () => {
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Badge className="bg-primary/20 text-primary border-primary/30 px-4 py-2">
                   <Sparkles className="w-4 h-4 mr-2" />
-                  VERKTYG
+                  {t('tools.page.title')}
                 </Badge>
               </div>
               
               <h1 className="font-crypto text-4xl md:text-6xl font-bold mb-6">
-                <span className="text-brand-turquoise">TELEGRAM</span>
-                <span className="text-brand-white"> BOTS</span>
+                <span className="text-brand-turquoise">{t('tools.telegramBots').split(' ')[0]}</span>
+                <span className="text-brand-white"> {t('tools.telegramBots').split(' ')[1]}</span>
               </h1>
               
               <p className="font-display text-xl text-muted-foreground max-w-4xl mx-auto mb-8">
-                Automatisera din kryptohandel med våra kraftfulla Telegram bots. Från snabb trading till price alerts - allt du behöver för att hålla dig steget före marknaden.
+                {t('tools.automateTrading')} Från snabb trading till price alerts - allt du behöver för att hålla dig steget före marknaden.
               </p>
 
               <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-success" />
-                  <span>50,000+ Aktiva användare</span>
+                  <span>50,000+ {t('tools.activeUsers')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-success" />
-                  <span>99.9% Uptime</span>
+                  <span>99.9% {t('tools.uptime')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-success" />
-                  <span>Säker & Pålitlig</span>
+                  <span>{t('tools.secureReliable')}</span>
                 </div>
               </div>
             </div>
@@ -349,8 +381,8 @@ const ToolsPage = () => {
           {/* Jupiter Swap - Buy/Sell (Solana) */}
           <Card className={`${isMobile ? 'p-2 mb-8' : 'p-6 mb-16'} bg-card/80 border-border`}>            
             <div className="mb-4 text-center">
-              <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-3xl'} font-bold`}>Köp/Sälj på Solana (Jupiter)</h2>
-              <p className={`font-display text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>Smidig swap via Jupiter DEX-aggregatorn</p>
+              <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-3xl'} font-bold`}>{t('tools.buySellSolana')}</h2>
+              <p className={`font-display text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'}`}>{t('tools.smoothSwap')}</p>
             </div>
             <JupiterSwapWidget height={isMobile ? 560 : 660} />
           </Card>
@@ -359,10 +391,10 @@ const ToolsPage = () => {
           <Card className={`${isMobile ? 'p-4 mb-8' : 'p-8 mb-16'} bg-gradient-secondary border-border shadow-lg`}>
             <div className="text-center mb-8">
               <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-3xl'} font-bold mb-4`}>
-                Varför Välja Våra Verktyg?
+                {t('tools.whyChoose')}
               </h2>
               <p className={`font-display text-muted-foreground ${isMobile ? 'text-sm' : 'text-lg'} max-w-2xl mx-auto`}>
-                Vi har byggt plattformen som traders behöver - snabb, säker och användarvänlig
+                {t('tools.whyChooseDesc')}
               </p>
             </div>
 
@@ -396,10 +428,10 @@ const ToolsPage = () => {
           {/* CTA Section - Responsive */}
           <Card className={`${isMobile ? 'p-4' : 'p-8'} bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20 text-center`}>
             <h2 className={`font-crypto ${isMobile ? 'text-lg' : 'text-2xl'} font-bold mb-4`}>
-              Redo att Börja?
+              {t('tools.readyToStart')}
             </h2>
             <p className={`font-display text-muted-foreground ${isMobile ? 'text-sm mb-4' : 'mb-6'} max-w-2xl mx-auto`}>
-              Gå med i tusentals traders som redan använder våra verktyg
+              {t('tools.readyToStartDesc')}
             </p>
             
             <div className={`flex ${isMobile ? 'flex-col' : 'flex-col sm:flex-row'} gap-4 justify-center`}>
@@ -415,7 +447,7 @@ const ToolsPage = () => {
                   className="flex items-center gap-2"
                 >
                   <MessageCircle className={`${isMobile ? 'w-4 h-4' : 'w-5 h-5'}`} />
-                  Gå med i Telegram
+                  {t('tools.joinTelegram')}
                   <ArrowRight className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
                 </a>
               </Button>
@@ -429,7 +461,7 @@ const ToolsPage = () => {
                   href="/marknad" 
                   className="flex items-center gap-2"
                 >
-                  Utforska Marknaden
+                  {t('tools.exploreMarket')}
                   <ArrowRight className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'}`} />
                 </a>
               </Button>
