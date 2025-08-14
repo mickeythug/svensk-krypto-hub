@@ -55,11 +55,13 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      {isMobile ? (
-        <MobileHeader title={getMobileTitle()} />
-      ) : (
-        <Header showTicker={shouldShowTicker} />
+      {/* Header - Don't show on profile page */}
+      {location.pathname !== '/profile' && (
+        isMobile ? (
+          <MobileHeader title={getMobileTitle()} />
+        ) : (
+          <Header showTicker={shouldShowTicker} />
+        )
       )}
       
       {/* Main content with proper spacing for fixed header with integrated ticker */}
