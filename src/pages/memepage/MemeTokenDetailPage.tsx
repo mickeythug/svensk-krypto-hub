@@ -208,6 +208,13 @@ const MemeTokenDetailPage = () => {
     }
   }, [token, tokens, navigate, address]);
 
+  // Mobile trade handler - defined after all other hooks
+  const handleMobileTrade = useCallback((type: 'buy' | 'sell', amount: string) => {
+    setTradeType(type);
+    setCustomAmount(amount);
+    handleTrade();
+  }, [handleTrade]);
+
   // Helper functions (non-hooks)
   const formatPrice = (price: number): string => {
     if (price < 0.000001) return `$${price.toExponential(2)}`;
@@ -238,16 +245,7 @@ const MemeTokenDetailPage = () => {
   const isPositive = token.change24h > 0;
   const coverImage = covers[Math.abs(token.symbol.charCodeAt(0)) % covers.length];
 
-  // Use real enhanced token data instead of mockup stats
-
   if (isMobile) {
-    // Create a new trade handler for the app store component
-    const handleMobileTrade = useCallback((type: 'buy' | 'sell', amount: string) => {
-      setTradeType(type);
-      setCustomAmount(amount);
-      handleTrade();
-    }, [handleTrade]);
-
     return (
       <AppStoreMobileTokenPage
         token={token}
