@@ -34,13 +34,9 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any)
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
             <span className="font-bold text-xs text-foreground">{symbol}</span>
-            <Badge 
-              variant="outline" 
-              className={`${positive ? 'border-success/60 text-success bg-success/20' : 'border-destructive/60 text-destructive bg-destructive/20'} text-[10px] px-1 py-0 h-4 font-bold`}
-            >
-              {positive ? <TrendingUp className="w-2 h-2 mr-0.5" /> : <TrendingDown className="w-2 h-2 mr-0.5" />}
+            <span className={`font-bold text-sm ${positive ? 'text-green-400' : 'text-red-400'}`}>
               {positive ? '+' : ''}{Math.abs(change24h).toFixed(1)}%
-            </Badge>
+            </span>
           </div>
           <span className="tabular-nums font-bold text-[10px] text-accent">{formatCompactUsd(marketCap)}</span>
         </div>
@@ -67,13 +63,9 @@ const TokenChip = ({ symbol, name, marketCap, change24h, image, isMobile }: any)
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-3">
           <span className="font-black text-lg text-foreground">{symbol}</span>
-          <Badge 
-            variant="outline" 
-            className={`${positive ? 'border-success text-success bg-success/10' : 'border-destructive text-destructive bg-destructive/10'} font-bold`}
-          >
-            {positive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
+          <span className={`font-bold text-lg ${positive ? 'text-green-400' : 'text-red-400'}`}>
             {positive ? '+' : ''}{change24h.toFixed(2)}%
-          </Badge>
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground truncate max-w-[120px]">{name}</span>
