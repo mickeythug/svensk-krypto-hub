@@ -38,6 +38,7 @@ import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useNavigate } from "react-router-dom";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NewsArticle {
   id: string;
@@ -79,6 +80,7 @@ interface MarketData {
 const NewsPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [filteredNews, setFilteredNews] = useState<NewsArticle[]>([]);
   const [newsCount24h, setNewsCount24h] = useState<number>(0);
@@ -137,20 +139,18 @@ const NewsPage = () => {
 
   // SEO Setup
   useEffect(() => {
-    document.title = "Krypto Nyheter | Senaste Nyheterna från Kryptovaluta-världen | Crypto Network Sweden";
+    document.title = t('news.page.title');
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 
-        'Läs de senaste krypto-nyheterna från Bitcoin, Ethereum, DeFi och mer. Expertanalys och marknadsinsikter från Sveriges ledande krypto-community.'
-      );
+      metaDescription.setAttribute('content', t('news.page.description'));
     }
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
       canonical.setAttribute('href', 'https://cryptonetworksweden.se/nyheter');
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     let active = true;
@@ -205,7 +205,7 @@ const NewsPage = () => {
             url: a.url,
             readTime: Math.max(1, Math.round(((desc).split(' ').length) / 200)),
             views: 0,
-            author: a.author || a.source || 'Okänd',
+            author: a.author || a.source || t('news.unknown'),
           } as NewsArticle;
         });
         if (!active) return;
@@ -291,12 +291,12 @@ const NewsPage = () => {
   };
 
   const categories = [
-    { id: "all", label: "ALLA" },
-    { id: "Bitcoin", label: "BTC" },
-    { id: "Ethereum", label: "ETH" },
-    { id: "Meme Tokens", label: "MEMES" },
-    { id: "Politik", label: "POLITIK" },
-    { id: "trending", label: "TRENDING" }
+    { id: "all", label: t('news.categories.all') },
+    { id: "Bitcoin", label: t('news.categories.btc') },
+    { id: "Ethereum", label: t('news.categories.eth') },
+    { id: "Meme Tokens", label: t('news.categories.memes') },
+    { id: "Politik", label: t('news.categories.politics') },
+    { id: "trending", label: t('news.categories.trending') }
   ];
 
   // Helpers for compact formatting
@@ -339,14 +339,14 @@ const NewsPage = () => {
     const date = new Date(dateString);
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInMinutes < 1) return "Just nu";
-    if (diffInMinutes < 60) return `${diffInMinutes} min sedan`;
+    if (diffInMinutes < 1) return t('news.justNow');
+    if (diffInMinutes < 60) return `${diffInMinutes} ${t('news.minutesAgo')}`;
     
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h sedan`;
+    if (diffInHours < 24) return `${diffInHours}${t('news.hoursAgo')}`;
     
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d sedan`;
+    if (diffInDays < 7) return `${diffInDays}${t('news.daysAgo')}`;
     
     return date.toLocaleDateString('sv-SE');
   };
@@ -375,32 +375,28 @@ const NewsPage = () => {
                 onClick={() => navigate('/')}
                 className="mb-8 text-muted-foreground hover:text-primary text-lg group"
               >
-                <ArrowLeft className="mr-3 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                Tillbaka till startsidan
+                 <ArrowLeft className="mr-3 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                {t('news.backToHomepage')}
               </Button>
             )}
             
             <div className={`${isMobile ? 'text-center' : 'flex flex-col lg:flex-row lg:items-start lg:justify-between'} gap-8`}>
               <div className="flex-1">
                 <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} leading-tight animate-fade-in`}>
-                  <span className="text-brand-turquoise">CRY</span>
-                  <span className="text-brand-white">PTO</span>
-                  <span className="text-brand-white"> NET</span>
-                  <span className="text-brand-turquoise">WORK</span>
-                  <span className="text-brand-white"> NYHETER</span>
+                  {t('news.page.title')}
                 </h1>
                 <p className={`text-muted-foreground font-display ${isMobile ? 'text-sm px-2' : 'text-lg md:text-xl'} leading-relaxed ${isMobile ? 'max-w-sm mx-auto' : 'max-w-3xl'} animate-fade-in`}>
-                  Sveriges mest omfattande och aktuella källa för krypto-nyheter, marknadsanalys och branschinsikter. 
-                  {!isMobile && "Håll dig uppdaterad med realtidsrapportering från våra experter."}
+                  {t('news.page.description')}
+                  {!isMobile && ` ${t('news.page.descriptionShort')}`}
                 </p>
                 <div className={`flex ${isMobile ? 'flex-col items-center gap-2 mt-4' : 'flex-col sm:flex-row items-start sm:items-center gap-4 mt-6'} ${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
                   <div className="flex items-center">
                     <Activity className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-success animate-pulse`} />
-                    <span>Live uppdateringar var 3:e minut</span>
+                    <span>{t('news.liveUpdates')}</span>
                   </div>
                   <div className="flex items-center">
                     <Star className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-warning`} />
-                    <span>Expertanalys från branschledare</span>
+                    <span>{t('news.expertAnalysis')}</span>
                   </div>
                 </div>
               </div>
@@ -413,7 +409,7 @@ const NewsPage = () => {
               <div className="flex-1 relative">
                 <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
                 <Input
-                  placeholder={isMobile ? "Sök nyheter" : "Sök nyheter, författare eller taggar..."}
+                  placeholder={isMobile ? t('news.searchPlaceholder') : t('news.searchPlaceholderLong')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={`${isMobile ? 'pl-10 h-10 text-base' : 'pl-12 h-12 text-lg'} bg-secondary/50 border-border focus:border-primary transition-all duration-300 hover:bg-secondary/70 focus:bg-background`}
@@ -427,7 +423,7 @@ const NewsPage = () => {
                     className="h-12 px-6 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300"
                   >
                     <Clock className="mr-2 h-4 w-4" />
-                    {sortBy === "date" ? "Datum" : "Påverkan"}
+                    {sortBy === "date" ? t('news.filterBy') : t('news.filterByImpact')}
                   </Button>
                   <div className="flex border border-border rounded-lg overflow-hidden bg-secondary/50 hover:bg-secondary/70 transition-colors">
                     <Button
