@@ -32,12 +32,14 @@ import ModernMobileTradingView from "@/components/mobile/ModernMobileTradingView
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const CryptoDetailPage = () => {
   const { symbol } = useParams<{ symbol: string }>();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
+  const { t } = useLanguage();
   
   const [refreshKey, setRefreshKey] = useState(0);
   const [showFullChart, setShowFullChart] = useState(false);
@@ -63,21 +65,21 @@ const CryptoDetailPage = () => {
   // SEO and Meta Tags
   useEffect(() => {
     if (crypto) {
-      document.title = `${crypto.name} (${crypto.symbol.toUpperCase()}) Pris - Live Trading | Crypto Network Sweden`;
+      document.title = `${crypto.name} (${crypto.symbol.toUpperCase()}) ${t('nav.price')} - Live Trading | Crypto Network Sweden`;
       
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute('content', 
-          `Live ${crypto.name} (${crypto.symbol.toUpperCase()}) pris: $${crypto.price.toFixed(6)}. Trading, charts och analys för ${crypto.name}. ${crypto.change24h >= 0 ? '+' : ''}${crypto.change24h.toFixed(2)}% senaste 24h.`
+          `Live ${crypto.name} (${crypto.symbol.toUpperCase()}) ${t('nav.price')}: $${crypto.price.toFixed(6)}. Trading, charts ${t('common.and')} ${t('trading.analysis')} ${t('common.for')} ${crypto.name}. ${crypto.change24h >= 0 ? '+' : ''}${crypto.change24h.toFixed(2)}% ${t('common.last24h')}.`
         );
       }
     }
-  }, [crypto]);
+  }, [crypto, t]);
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 pt-4">
-        <LoadingSpinner size="lg" text={`Laddar ${symbol?.toUpperCase() || 'kryptovaluta'} data...`} className="py-20" />
+        <LoadingSpinner size="lg" text={`${t('page.crypto.loadingCrypto')}`} className="py-20" />
       </div>
     );
   }
@@ -87,17 +89,17 @@ const CryptoDetailPage = () => {
       <div className="container mx-auto px-4 pt-4">
         <Card className="p-8 text-center border-destructive/20">
           <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-          <h1 className="font-crypto text-2xl font-bold mb-4 text-destructive">Fel vid laddning</h1>
+          <h1 className="font-crypto text-2xl font-bold mb-4 text-destructive">{t('page.crypto.loadingError')}</h1>
           <p className="text-muted-foreground mb-6">
-            Det gick inte att ladda kryptodata. Kontrollera din internetanslutning och försök igen.
+            {t('page.crypto.errorDescription')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={handleRefresh} className="flex items-center gap-2">
               <RefreshCw className="h-4 w-4" />
-              Försök igen
+              {t('page.crypto.tryAgain')}
             </Button>
             <Button variant="outline" onClick={() => navigate('/')}>
-              Tillbaka till startsidan
+              {t('page.crypto.backToHomepage')}
             </Button>
           </div>
         </Card>
@@ -110,23 +112,23 @@ const CryptoDetailPage = () => {
       <div className="container mx-auto px-4 pt-4">
         <Card className="p-8 text-center">
           <Coins className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="font-crypto text-2xl font-bold mb-4">Token ej hittad</h1>
+          <h1 className="font-crypto text-2xl font-bold mb-4">{t('page.crypto.tokenNotFound')}</h1>
           <p className="text-muted-foreground mb-6">
-            Kryptovalutan "{symbol?.toUpperCase()}" finns inte tillgänglig eller har tagits bort från vårt system.
+            {t('page.crypto.tokenNotFoundDescription')} "{symbol?.toUpperCase()}".
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={() => navigate('/marknad')} className="flex items-center gap-2">
               <Search className="h-4 w-4" />
-              Sök andra tokens
+              {t('page.crypto.searchOtherTokens')}
             </Button>
             <Button variant="outline" onClick={() => navigate('/')}>
-              Tillbaka till startsidan
+              {t('page.crypto.backToHomepage')}
             </Button>
           </div>
           
           {/* Suggested alternatives */}
           <div className="mt-8 text-left">
-            <h3 className="font-semibold mb-4">Populära alternativ:</h3>
+            <h3 className="font-semibold mb-4">{t('page.crypto.popularAlternatives')}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {['BTC', 'ETH', 'BNB', 'SOL'].map((altSymbol) => (
                 <Button

@@ -18,14 +18,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MemeHubPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    const title = 'Meme Zone Hub - Skapa, Handla & Analysera | Crypto Network Sweden';
-    const description = 'Komplett meme token ekosystem: Skapa egna tokens, handla säkert och få djupanalys av marknaden.';
+    const title = t('meme.hub.title') + ' | Crypto Network Sweden';
+    const description = t('meme.hub.description');
     document.title = title;
     
     const ensureTag = (selector: string, create: () => HTMLElement) => {
@@ -47,35 +49,35 @@ const MemeHubPage = () => {
   const hubFeatures = [
     {
       icon: Coins,
-      title: 'Skapa Token',
-      description: 'Designa din egen meme cryptocurrency med professionella verktyg',
+      title: t('meme.hub.createToken'),
+      description: t('meme.hub.createTokenDesc'),
       path: '/meme/create',
-      badge: 'New',
+      badge: t('meme.hub.new'),
       color: 'from-yellow-500/20 to-orange-500/20 border-yellow-500/30',
       iconColor: 'text-yellow-500'
     },
     {
       icon: ShoppingCart,
-      title: 'Handla Tokens',
-      description: 'Köp och sälj meme tokens med avancerad marknadsanalys',
+      title: t('meme.hub.tradeTokens'),
+      description: t('meme.hub.tradeTokensDesc'),
       path: '/meme/buy',
-      badge: 'Beta',
+      badge: t('meme.hub.beta'),
       color: 'from-green-500/20 to-emerald-500/20 border-green-500/30',
       iconColor: 'text-green-500'
     },
     {
       icon: BarChart3,
-      title: 'Marknadsstatistik',
-      description: 'Live data, trender och djupanalys av meme token marknaden',
+      title: t('meme.hub.marketStats'),
+      description: t('meme.hub.marketStatsDesc'),
       path: '/meme/stats',
-      badge: 'Live',
+      badge: t('meme.hub.live'),
       color: 'from-blue-500/20 to-cyan-500/20 border-blue-500/30',
       iconColor: 'text-blue-500'
     },
     {
       icon: Zap,
-      title: 'Token Explorer',
-      description: 'Utforska alla meme tokens med detaljerad information',
+      title: t('meme.hub.tokenExplorer'),
+      description: t('meme.hub.tokenExplorerDesc'),
       path: '/meme',
       badge: null,
       color: 'from-purple-500/20 to-pink-500/20 border-purple-500/30',
@@ -84,10 +86,10 @@ const MemeHubPage = () => {
   ];
 
   const quickStats = [
-    { label: 'Aktiva Tokens', value: '2,847', icon: TrendingUp },
-    { label: 'Total Handelsvolym', value: '$125M', icon: BarChart3 },
-    { label: 'Community', value: '150K+', icon: Users },
-    { label: 'Skapade Tokens', value: '1,234', icon: Crown }
+    { label: t('page.memeHub.activeTokens'), value: '2,847', icon: TrendingUp },
+    { label: t('page.memeHub.totalTradingVolume'), value: '$125M', icon: BarChart3 },
+    { label: t('page.memeHub.community'), value: '150K+', icon: Users },
+    { label: t('page.memeHub.createdTokens'), value: '1,234', icon: Crown }
   ];
 
   return (
@@ -95,35 +97,35 @@ const MemeHubPage = () => {
       <main className={`${isMobile ? 'pb-24 px-4 pt-12' : 'px-8 pt-12'} space-y-8`}>
         {/* Internal Page Header - Extra margin to prevent overlap */}
         <div className="bg-background/80 backdrop-blur-sm border border-primary/20 rounded-xl p-4 shadow-lg mt-4">
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="h-6 w-6 text-primary" />
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Meme Zone Hub
-                </h1>
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Zap className="h-6 w-6 text-primary" />
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    Meme Zone Hub
+                  </h1>
+                </div>
+                <p className="text-sm text-muted-foreground">{t('page.memeHub.centerTitle')}</p>
               </div>
-              <p className="text-sm text-muted-foreground">Ditt centrum för meme token ekosystemet</p>
-            </div>
-            <div className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
-              <Star className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Premium</span>
-            </div>
+              <div className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full">
+                <Star className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium text-primary">{t('common.premium')}</span>
+              </div>
           </div>
         </div>
         {/* Hero Section */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/20 to-primary/10 px-4 py-2 rounded-full text-primary font-medium text-sm border border-primary/30">
-            <Sparkles className="h-4 w-4" />
-            Komplett Meme Token Ekosystem
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/20 to-primary/10 px-4 py-2 rounded-full text-primary font-medium text-sm border border-primary/30">
+              <Sparkles className="h-4 w-4" />
+              {t('page.memeHub.ecosystem')}
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
+              {t('page.memeHub.createAnalyze')}
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {t('page.memeHub.completeDescription')}
+            </p>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
-            Skapa, Handla & Analysera
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Allt du behöver för att delta i meme token revolutionen på ett ställe. Från skapande till handel och analys.
-          </p>
-        </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -176,7 +178,7 @@ const MemeHubPage = () => {
                     variant="outline" 
                     className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
                   >
-                    Öppna {feature.title}
+                    {t('page.memeHub.openAction')} {feature.title}
                   </Button>
                 </CardContent>
               </Card>
@@ -189,7 +191,7 @@ const MemeHubPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Populära Aktioner
+              {t('page.memeHub.popularActions')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -199,7 +201,7 @@ const MemeHubPage = () => {
               onClick={() => navigate('/meme/buy')}
             >
               <ShoppingCart className="h-4 w-4 mr-3" />
-              Köp BONK Token
+              {t('page.memeHub.buyBonkToken')}
             </Button>
             <Button 
               variant="outline" 
@@ -207,7 +209,7 @@ const MemeHubPage = () => {
               onClick={() => navigate('/meme/create')}
             >
               <Coins className="h-4 w-4 mr-3" />
-              Skapa Min Första Token
+              {t('page.memeHub.createFirstToken')}
             </Button>
             <Button 
               variant="outline" 
@@ -215,7 +217,7 @@ const MemeHubPage = () => {
               onClick={() => navigate('/meme/stats')}
             >
               <BarChart3 className="h-4 w-4 mr-3" />
-              Se Marknadsstatistik
+              {t('page.memeHub.viewMarketStats')}
             </Button>
           </CardContent>
         </Card>

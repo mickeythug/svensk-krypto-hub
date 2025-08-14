@@ -5,13 +5,15 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
 import hexPattern from '@/assets/hex-pattern.jpg';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    const title = 'Meme Tokens – Ultimate Meme Coin Universe | Crypto Network Sweden';
-    const description = 'Världens mest färgglada meme token-sida med stora bilder, live-data och interaktiv upplevelse. Upptäck de hetaste meme-coinsen nu!';
+    const title = t('meme.main.title') + ' | Crypto Network Sweden';
+    const description = t('meme.main.description');
     document.title = title;
 
     const ensureTag = (selector: string, create: () => HTMLElement) => {

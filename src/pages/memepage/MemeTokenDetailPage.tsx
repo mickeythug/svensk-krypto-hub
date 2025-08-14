@@ -28,6 +28,7 @@ import { TokenInfoSection } from '@/components/TokenInfoSection';
 import { TransactionsTable } from '@/components/TransactionsTable';
 import { MarketDataToggle } from '@/components/MarketDataToggle';
 import { ModernMobileTokenPage } from './components/mobile/ModernMobileTokenPage';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -45,6 +46,7 @@ const MemeTokenDetailPage = () => {
   const isMobile = useIsMobile();
   const { tokens } = useMemeTokens('all');
   const { toast } = useToast();
+  const { t } = useLanguage();
   
   // Resolve address from query and fetch full details
   const [searchParams] = useSearchParams();
@@ -171,7 +173,7 @@ const MemeTokenDetailPage = () => {
       const isBuy = tradeType === 'buy';
       const amountNum = (selectedAmount || parseFloat(customAmount) || 0);
       if (!Number.isFinite(amountNum) || amountNum <= 0) {
-        throw new Error('Ogiltigt belopp');
+        throw new Error(t('page.token.invalidAmount'));
       }
 
       const prioMap: Record<typeof priority, number> = { low: 0.0001, medium: 0.0005, high: 0.001 } as const;
@@ -190,7 +192,7 @@ const MemeTokenDetailPage = () => {
       };
 
       const res = await trade(params);
-      if (res?.status !== 200) throw new Error('Trade misslyckades');
+      if (res?.status !== 200) throw new Error(t('page.token.tradeFailed'));
 
       setCustomAmount('');
       setSelectedAmount(null);
@@ -236,7 +238,7 @@ const MemeTokenDetailPage = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading token...</p>
+          <p className="text-muted-foreground">{t('page.token.loading')}</p>
         </div>
       </div>
     );
@@ -270,7 +272,7 @@ const MemeTokenDetailPage = () => {
             className="h-12 px-6 bg-card/50 backdrop-blur-sm hover:bg-card border border-border/50 rounded-xl"
           >
             <ArrowLeft className="mr-3 h-5 w-5" />
-            <span className="text-lg font-semibold">Back to Market</span>
+            <span className="text-lg font-semibold">{t('page.token.backToMarket')}</span>
           </Button>
         </div>
         
@@ -289,11 +291,11 @@ const MemeTokenDetailPage = () => {
             <Card className="p-8 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-4xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Live Price Chart
+                  {t('page.token.livePriceChart')}
                 </h3>
                 <div className="flex items-center gap-4">
                   <div className="h-4 w-4 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
-                  <span className="text-xl font-medium text-muted-foreground">Live Trading</span>
+                  <span className="text-xl font-medium text-muted-foreground">{t('page.token.liveTrading')}</span>
                 </div>
               </div>
               <div className="h-[800px] rounded-3xl overflow-hidden border-2 border-border/20 shadow-inner">

@@ -225,6 +225,12 @@ const translations = {
     
     // Additional common translations needed
     'common.of': 'av',
+    'common.and': 'och',
+    'common.for': 'för',
+    'common.last24h': 'senaste 24h',
+    'common.premium': 'Premium',
+    
+    'nav.price': 'Pris',
     
     // Trading
     'trading.buy': 'Köp',
@@ -348,6 +354,40 @@ const translations = {
     'common.help': 'Hjälp',
     'common.about': 'Om',
     'common.contact': 'Kontakt',
+    
+    // Page-specific content
+    'page.memeHub.centerTitle': 'Ditt centrum för meme token ekosystemet',
+    'page.memeHub.ecosystem': 'Komplett Meme Token Ekosystem',
+    'page.memeHub.createAnalyze': 'Skapa, Handla & Analysera',
+    'page.memeHub.completeDescription': 'Allt du behöver för att delta i meme token revolutionen på ett ställe. Från skapande till handel och analys.',
+    'page.memeHub.openAction': 'Öppna',
+    'page.memeHub.activeTokens': 'Aktiva Tokens',
+    'page.memeHub.totalTradingVolume': 'Total Handelsvolym',
+    'page.memeHub.community': 'Community',
+    'page.memeHub.createdTokens': 'Skapade Tokens',
+    'page.memeHub.popularActions': 'Populära Aktioner',
+    'page.memeHub.buyBonkToken': 'Köp BONK Token',
+    'page.memeHub.createFirstToken': 'Skapa Min Första Token',
+    'page.memeHub.viewMarketStats': 'Se Marknadsstatistik',
+    
+    // Crypto detail page
+    'page.crypto.loadingCrypto': 'Laddar kryptovaluta data...',
+    'page.crypto.loadingError': 'Fel vid laddning',
+    'page.crypto.errorDescription': 'Det gick inte att ladda kryptodata. Kontrollera din internetanslutning och försök igen.',
+    'page.crypto.tryAgain': 'Försök igen',
+    'page.crypto.backToHomepage': 'Tillbaka till startsidan',
+    'page.crypto.tokenNotFound': 'Token ej hittad',
+    'page.crypto.tokenNotFoundDescription': 'Kryptovalutan finns inte tillgänglig eller har tagits bort från vårt system.',
+    'page.crypto.searchOtherTokens': 'Sök andra tokens',
+    'page.crypto.popularAlternatives': 'Populära alternativ:',
+    
+    // Token detail
+    'page.token.backToMarket': 'Back to Market',
+    'page.token.livePriceChart': 'Live Price Chart',
+    'page.token.liveTrading': 'Live Trading',
+    'page.token.loading': 'Loading token...',
+    'page.token.invalidAmount': 'Ogiltigt belopp',
+    'page.token.tradeFailed': 'Trade misslyckades',
     'common.support': 'Support',
     'common.more': 'Mer',
     'common.less': 'Mindre',
@@ -594,7 +634,16 @@ const translations = {
     'meme.stats.greed': 'Greed',
     'meme.stats.socialActivity': 'Social Activity',
     
-    // Trading
+    // Additional common translations needed
+    'common.of': 'of',
+    'common.and': 'and',
+    'common.for': 'for',
+    'common.last24h': 'last 24h',
+    'common.premium': 'Premium',
+    
+    'nav.price': 'Price',
+    
+     // Trading
     'trading.buy': 'Buy',
     'trading.sell': 'Sell',
     'trading.amount': 'Amount',
@@ -717,6 +766,40 @@ const translations = {
     'common.help': 'Help',
     'common.about': 'About',
     'common.contact': 'Contact',
+    
+    // Page-specific content
+    'page.memeHub.centerTitle': 'Your center for meme token ecosystem',
+    'page.memeHub.ecosystem': 'Complete Meme Token Ecosystem',
+    'page.memeHub.createAnalyze': 'Create, Trade & Analyze',
+    'page.memeHub.completeDescription': 'Everything you need to participate in the meme token revolution in one place. From creation to trading and analysis.',
+    'page.memeHub.openAction': 'Open',
+    'page.memeHub.activeTokens': 'Active Tokens',
+    'page.memeHub.totalTradingVolume': 'Total Trading Volume',
+    'page.memeHub.community': 'Community',
+    'page.memeHub.createdTokens': 'Created Tokens',
+    'page.memeHub.popularActions': 'Popular Actions',
+    'page.memeHub.buyBonkToken': 'Buy BONK Token',
+    'page.memeHub.createFirstToken': 'Create My First Token',
+    'page.memeHub.viewMarketStats': 'View Market Statistics',
+    
+    // Crypto detail page
+    'page.crypto.loadingCrypto': 'Loading cryptocurrency data...',
+    'page.crypto.loadingError': 'Loading Error',
+    'page.crypto.errorDescription': 'Failed to load crypto data. Check your internet connection and try again.',
+    'page.crypto.tryAgain': 'Try Again',
+    'page.crypto.backToHomepage': 'Back to Homepage',
+    'page.crypto.tokenNotFound': 'Token Not Found',
+    'page.crypto.tokenNotFoundDescription': 'The cryptocurrency is not available or has been removed from our system.',
+    'page.crypto.searchOtherTokens': 'Search Other Tokens',
+    'page.crypto.popularAlternatives': 'Popular Alternatives:',
+    
+    // Token detail
+    'page.token.backToMarket': 'Back to Market',
+    'page.token.livePriceChart': 'Live Price Chart',
+    'page.token.liveTrading': 'Live Trading',
+    'page.token.loading': 'Loading token...',
+    'page.token.invalidAmount': 'Invalid Amount',
+    'page.token.tradeFailed': 'Trade Failed',
     'common.support': 'Support',
     'common.more': 'More',
     'common.less': 'Less',
