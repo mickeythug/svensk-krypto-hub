@@ -16,6 +16,8 @@ export interface MemeToken {
   pairAddress?: string;
   chainId?: string;
   dexId?: string;
+  source?: 'dextools' | 'dexscreener';
+  created?: string;
 }
 
 export interface MemeTokensResult {
@@ -25,54 +27,51 @@ export interface MemeTokensResult {
   refetch: () => void;
 }
 
-// Transform DEXScreener API response to our MemeToken interface
-function transformDexScreenerToken(token: any): MemeToken {
-  const txns24h = (token?.txns?.h24?.buys || 0) + (token?.txns?.h24?.sells || 0);
-  
+// Transform unified service response to our MemeToken interface
+function transformUnifiedToken(token: any): MemeToken {
   return {
-    address: token?.baseToken?.address || '',
-    symbol: token?.baseToken?.symbol || '',
-    name: token?.baseToken?.name || '',
-    price: parseFloat(token?.priceUsd || '0'),
-    priceChange24h: parseFloat(token?.priceChange?.h24 || '0'),
-    volume24h: parseFloat(token?.volume?.h24 || '0'),
+    address: token?.address || '',
+    symbol: token?.symbol || '',
+    name: token?.name || '',
+    price: parseFloat(token?.price || '0'),
+    priceChange24h: parseFloat(token?.priceChange24h || '0'),
+    volume24h: parseFloat(token?.volume24h || '0'),
     marketCap: parseFloat(token?.marketCap || '0'),
-    liquidity: parseFloat(token?.liquidity?.usd || '0'),
-    holders: token?.info?.holders,
-    txns24h: txns24h > 0 ? txns24h : undefined,
-    image: token?.info?.imageUrl,
+    liquidity: parseFloat(token?.liquidity || '0'),
+    holders: token?.holders,
+    txns24h: undefined,
+    image: token?.image || '',
     pairAddress: token?.pairAddress,
-    chainId: token?.chainId,
-    dexId: token?.dexId,
+    chainId: 'solana',
+    dexId: 'dexscreener',
+    source: token?.source || 'unknown',
+    created: token?.created,
   };
 }
 
-async function fetchMemeTokens(): Promise<MemeToken[]> {
+async function fetchMemeTokens(category: string = 'trending'): Promise<MemeToken[]> {
   try {
-    console.log('[useMemeTokens] Fetching trending meme tokens...');
+    console.log(`[useMemeTokens] Fetching ${category} tokens from unified service...`);
     
-    // Call the DEXScreener proxy Edge Function with correct parameters
-    const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
+    // Call the unified data service that combines DEXTools + DEXScreener
+    const { data, error } = await supabase.functions.invoke('unified-meme-data', {
       body: {
-        action: 'profiles',
-        sort: 'trendingScore',
-        order: 'desc',
+        category: category,
         limit: 50,
-        minLiquidity: 1000, // Minimum $1000 liquidity
       },
     });
 
     if (error) {
-      console.error('[useMemeTokens] Supabase function error:', error);
-      throw new Error(`DEXScreener proxy error: ${error.message}`);
+      console.error('[useMemeTokens] Unified service error:', error);
+      throw new Error(`Unified service error: ${error.message}`);
     }
 
     if (!data) {
-      console.error('[useMemeTokens] No data returned from proxy');
-      throw new Error('No data returned from DEXScreener proxy');
+      console.error('[useMemeTokens] No data returned from unified service');
+      throw new Error('No data returned from unified service');
     }
 
-    console.log('[useMemeTokens] Raw response:', data);
+    console.log('[useMemeTokens] Unified service response:', data);
 
     // Handle the response structure
     let tokens = [];
@@ -82,20 +81,20 @@ async function fetchMemeTokens(): Promise<MemeToken[]> {
       tokens = data;
     } else {
       console.error('[useMemeTokens] Unexpected response structure:', data);
-      throw new Error('Unexpected response structure from DEXScreener proxy');
+      throw new Error('Unexpected response structure from unified service');
     }
 
-    console.log(`[useMemeTokens] Processing ${tokens.length} tokens`);
+    console.log(`[useMemeTokens] Processing ${tokens.length} tokens from sources:`, data.sources);
 
     // Transform and filter tokens
     const transformedTokens = tokens
-      .map(transformDexScreenerToken)
+      .map(transformUnifiedToken)
       .filter(token => {
         // Filter out tokens with invalid data
         return token.address && 
                token.symbol && 
-               token.price > 0 && 
-               token.liquidity > 1000; // Minimum liquidity filter
+               token.name &&
+               token.price >= 0; // Allow 0 price but not negative
       })
       .slice(0, 20); // Limit to top 20
 
@@ -104,26 +103,62 @@ async function fetchMemeTokens(): Promise<MemeToken[]> {
 
   } catch (error) {
     console.error('[useMemeTokens] Error fetching tokens:', error);
-    throw error;
+    
+    // Fallback to dexscreener-proxy if unified service fails
+    try {
+      console.log('[useMemeTokens] Trying fallback to dexscreener-proxy...');
+      
+      const { data: fallbackData, error: fallbackError } = await supabase.functions.invoke('dexscreener-proxy', {
+        body: {
+          action: 'profiles',
+          sort: 'trendingScore',
+          order: 'desc',
+          limit: 50,
+          minLiquidity: 1000,
+        },
+      });
+
+      if (fallbackError || !fallbackData) {
+        throw error; // Throw original error if fallback also fails
+      }
+
+      const fallbackTokens = Array.isArray(fallbackData.data) ? fallbackData.data : [];
+      return fallbackTokens.map((token: any) => ({
+        address: token?.baseToken?.address || token?.tokenAddress || '',
+        symbol: token?.baseToken?.symbol || token?.symbol || '',
+        name: token?.baseToken?.name || token?.name || '',
+        price: parseFloat(token?.priceUsd || token?.price || '0'),
+        priceChange24h: parseFloat(token?.priceChange?.h24 || token?.priceChange24h || '0'),
+        volume24h: parseFloat(token?.volume?.h24 || token?.volume24h || '0'),
+        marketCap: parseFloat(token?.marketCap || token?.fdv || '0'),
+        liquidity: parseFloat(token?.liquidity?.usd || token?.liquidity || '0'),
+        holders: token?.holders,
+        source: 'dexscreener' as const,
+      })).filter(token => token.address && token.symbol).slice(0, 20);
+      
+    } catch (fallbackError) {
+      console.error('[useMemeTokens] Fallback also failed:', fallbackError);
+      throw error; // Throw original error
+    }
   }
 }
 
-export function useMemeTokens(): MemeTokensResult {
+export function useMemeTokens(category: string = 'trending'): MemeTokensResult {
   const {
     data: tokens = [],
     isLoading,
     error,
     refetch,
   } = useQuery<MemeToken[], Error>({
-    queryKey: ['meme-tokens'],
-    queryFn: fetchMemeTokens,
+    queryKey: ['meme-tokens', category],
+    queryFn: () => fetchMemeTokens(category),
     staleTime: 30000, // 30 seconds
     refetchInterval: 60000, // Refetch every minute
     refetchIntervalInBackground: true,
     retry: (failureCount, error) => {
       // Retry up to 3 times for network errors
       if (failureCount >= 3) return false;
-      if (error?.message?.includes('DEXScreener proxy error')) return false;
+      if (error?.message?.includes('Unified service error')) return false;
       return true;
     },
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -147,17 +182,34 @@ export function useBoostedMemeTokens(): MemeTokensResult {
   } = useQuery<MemeToken[], Error>({
     queryKey: ['boosted-meme-tokens'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
-        body: {
-          action: 'boosted',
-        },
-      });
+      // Try unified service first for trending tokens as boost proxy
+      try {
+        const tokens = await fetchMemeTokens('trending');
+        return tokens.slice(0, 10);
+      } catch {
+        // Fallback to dexscreener boosted endpoint
+        const { data, error } = await supabase.functions.invoke('dexscreener-proxy', {
+          body: {
+            action: 'boosted',
+          },
+        });
 
-      if (error) throw new Error(`DEXScreener proxy error: ${error.message}`);
-      if (!data) throw new Error('No data returned from DEXScreener proxy');
+        if (error) throw new Error(`DEXScreener proxy error: ${error.message}`);
+        if (!data) throw new Error('No data returned from DEXScreener proxy');
 
-      const tokens = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
-      return tokens.map(transformDexScreenerToken).slice(0, 10);
+        const tokens = Array.isArray(data.data) ? data.data : (Array.isArray(data) ? data : []);
+        return tokens.map((token: any) => ({
+          address: token?.baseToken?.address || '',
+          symbol: token?.baseToken?.symbol || '',
+          name: token?.baseToken?.name || '',
+          price: parseFloat(token?.priceUsd || '0'),
+          priceChange24h: parseFloat(token?.priceChange?.h24 || '0'),
+          volume24h: parseFloat(token?.volume?.h24 || '0'),
+          marketCap: parseFloat(token?.marketCap || '0'),
+          liquidity: parseFloat(token?.liquidity?.usd || '0'),
+          source: 'dexscreener' as const,
+        })).slice(0, 10);
+      }
     },
     staleTime: 60000, // 1 minute
     refetchInterval: 120000, // Refetch every 2 minutes
