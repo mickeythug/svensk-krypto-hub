@@ -139,8 +139,8 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
             />
             <div className="mt-4 text-sm text-muted-foreground">
               {tradeType === 'buy' 
-                ? `You will receive approximately <span class="font-numbers">${amount ? Math.floor(parseFloat(amount) / token.price).toLocaleString() : '0'}</span> ${token.symbol}`
-                : `You will receive approximately $<span class="font-numbers">${amount ? (parseFloat(amount) * token.price).toFixed(2) : '0.00'}</span>`
+                ? `You will receive approximately <span className="font-numbers">${amount ? Math.floor(parseFloat(amount) / token.price).toLocaleString() : '0'}</span> ${token.symbol}`
+                : `You will receive approximately $<span className="font-numbers">${amount ? (parseFloat(amount) * token.price).toFixed(2) : '0.00'}</span>`
               }
             </div>
           </div>
