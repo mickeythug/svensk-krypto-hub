@@ -229,6 +229,10 @@ const translations = {
     'common.for': 'för',
     'common.last24h': 'senaste 24h',
     'common.premium': 'Premium',
+    'common.today': 'idag',
+    'common.members': 'Aktiva Medlemmar',
+    'common.resources': 'Utbildningsresurser',
+    'common.cryptocurrencies': 'Olika kryptovalutor',
     
     'nav.price': 'Pris',
     
@@ -480,6 +484,18 @@ const translations = {
     'news.minRead': 'min läsning',
     'news.readMoreLink': 'Läs mer',
     'news.unknown': 'Okänd',
+    'news.dailyReport': 'DAGLIG KRYPTO RAPPORT',
+    'news.dailyReportDescription': 'Få de viktigaste kryptonotiserna levererade direkt via vår Telegram-community varje dag.',
+    
+    // Market translations
+    'market.alert': 'MARKNADS ALERT',
+    'market.fear': 'Rädsla',
+    'market.greed': 'Girighet', 
+    'market.neutral': 'Neutral',
+    'market.sentimentAnalysis': 'Sentimentanalys',
+    'market.socialMedia': 'Social Media',
+    'market.institutionalFlow': 'Institutionella flöden',
+    'market.technicalAnalysis': 'Teknisk Analys',
     
     // CommunityPage translations  
     'community.page.title': 'VÅR COMMUNITY',

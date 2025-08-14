@@ -3,81 +3,83 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Users, MessageCircle, BookOpen, Trophy, Star, Calendar, MapPin, Heart } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CommunitySection = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const communityFeatures = [
     {
       icon: MessageCircle,
-      title: "Telegram Community",
-      description: "Gå med i vår öppna Telegram-grupp där alla är välkomna att ställa frågor och lära sig tillsammans",
-      count: "Alltid"
+      title: t('community.telegramCommunity.title'),
+      description: t('community.telegramCommunity.description'),
+      count: t('community.features.telegram.count')
     },
     {
       icon: Users, 
-      title: "Voice Chat Trading",
-      description: "Möjlighet att trade tillsammans i voice chat och dela insights i realtid med andra medlemmar",
-      count: "Dagligen"
+      title: t('community.voiceChat.title'),
+      description: t('community.voiceChat.description'),
+      count: t('community.features.voiceChat.count')
     },
     {
       icon: Trophy,
-      title: "Meme Token Scanning", 
-      description: "Scanna och analysera nya meme tokens tillsammans - hitta nästa stora möjlighet som grupp",
-      count: "24/7"
+      title: t('community.memeScanning.title'), 
+      description: t('community.memeScanning.description'),
+      count: t('community.features.memeScanning.count')
     },
     {
       icon: Heart,
-      title: "Nya Vänner",
-      description: "Träffa likasinnade personer och bygg vänskaper med andra som delar ditt intresse för krypto",
-      count: "Öppet"
+      title: t('community.newFriends.title'),
+      description: t('community.newFriends.description'),
+      count: t('community.features.newFriends.count')
     }
   ];
 
   const upcomingEvents = [
     {
-      title: "Voice Chat Trading Session",
-      date: "Varje dag",
+      title: t('community.events.voiceChat'),
+      date: t('community.events.voiceChatTime'),
       time: "20:00",
       type: "Telegram VC",
-      attendees: "Alla välkomna"
+      attendees: t('community.events.voiceChatParticipants')
     },
     {
-      title: "Meme Token Scanning", 
-      date: "Kontinuerligt",
+      title: t('community.events.memeScanning'), 
+      date: t('community.events.memeScanningTime'),
       time: "24/7",
       type: "Telegram Chat",
-      attendees: "Community"
+      attendees: t('community.events.memeScanningParticipants')
     },
     {
-      title: "Frågor & Svar",
-      date: "Alltid öppet",
-      time: "Dygnet runt", 
+      title: t('community.events.qa'),
+      date: t('community.events.qaTime'),
+      time: t('common.support'), 
       type: "Telegram",
-      attendees: "Gratis hjälp"
+      attendees: t('community.events.qaParticipants')
     }
   ];
 
   const testimonials = [
     {
-      name: "Anna L.",
-      role: "Community Medlem",
-      content: "Bästa Telegram-gruppen! Alla hjälper varandra, ställer frågor fritt och vi tradear tillsammans i voice chat. Känns som en stor familj!",
+      name: t('community.testimonial1.name'),
+      role: t('community.testimonial1.role'),
+      content: t('community.testimonial1.content'),
       rating: 5,
-      timeInCommunity: "8 månader"
+      timeInCommunity: t('community.testimonial1.time')
     },
     {
-      name: "Erik M.", 
-      role: "Meme Token Hunter",
-      content: "Vi scannar meme tokens tillsammans varje dag! Gruppen har hjälpt mig hitta så många tidiga gems. Helt gratis och öppet för alla!",
+      name: t('community.testimonial2.name'), 
+      role: t('community.testimonial2.role'),
+      content: t('community.testimonial2.content'),
       rating: 5,
-      timeInCommunity: "1 år"
+      timeInCommunity: t('community.testimonial2.time')
     },
     {
-      name: "Maria S.",
-      role: "Voice Chat Regular",
-      content: "Voice chat sessionerna är fantastiska! Vi tradear live tillsammans och delar tips. Träffat så många nya vänner genom communityn.",
+      name: t('community.testimonial3.name'),
+      role: t('community.testimonial3.role'),
+      content: t('community.testimonial3.content'),
       rating: 5,
-      timeInCommunity: "6 månader"
+      timeInCommunity: t('community.testimonial3.time')
     }
   ];
 
@@ -86,11 +88,10 @@ const CommunitySection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
-            VÅR COMMUNITY
+            {t('community.page.title')}
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Vår Telegram-community är öppen för alla! Ställ frågor, lär dig, trade tillsammans i voice chat och hitta möjligheter. 
-            Vi hjälps åt att scanna meme tokens och bygga vänskaper - allt helt gratis.
+            {t('community.page.description')}
           </p>
         </div>
 
@@ -132,11 +133,10 @@ const CommunitySection = () => {
                   className="h-20 w-20 mx-auto mb-4"
                 />
                 <h3 className="font-crypto text-3xl font-bold mb-4">
-                  GÅ MED I VÅR TELEGRAM COMMUNITY
+                  {t('community.joinTelegramCommunity').toUpperCase()}
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
-                  Anslut till vår växande krypto-community - vårt mål är att bli Sveriges största! Ställ frågor, lär dig, tradea tillsammans i voice chat, 
-                  scanna meme tokens och träffa nya vänner. Helt gratis och öppet för alla!
+                  {t('community.page.description')}
                 </p>
               </div>
               
@@ -155,26 +155,26 @@ const CommunitySection = () => {
                     alt="Telegram" 
                     className="h-6 w-6 mr-3"
                   />
-                  Gå med nu - Gratis!
+                  {t('community.joinNowFree')}
                 </Button>
               </a>
               
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm opacity-90">
                 <div>
-                  <div className="font-bold">Voice Chat</div>
-                  <div>Dagligen 20:00</div>
+                  <div className="font-bold">{t('community.voiceChat.title')}</div>
+                  <div>{t('community.events.voiceChatTime')}</div>
                 </div>
                 <div>
-                  <div className="font-bold">Meme Scanning</div>
-                  <div>24/7 Support</div>
+                  <div className="font-bold">{t('community.memeScanning.title')}</div>
+                  <div>{t('community.features.memeScanning.count')} {t('common.support')}</div>
                 </div>
                 <div>
-                  <div className="font-bold">Frågor & Svar</div>
-                  <div>Alltid öppet</div>
+                  <div className="font-bold">{t('community.events.qa')}</div>
+                  <div>{t('community.events.qaTime')}</div>
                 </div>
                 <div>
-                  <div className="font-bold">Nya Vänner</div>
-                  <div>Välkommen in!</div>
+                  <div className="font-bold">{t('community.newFriends.title')}</div>
+                  <div>{t('community.features.newFriends.count')}</div>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ const CommunitySection = () => {
         {/* Testimonials */}
         <div className="mb-16">
           <h3 className="font-crypto text-2xl font-bold text-center mb-8 text-primary">
-            VAD SÄGER VÅRA MEDLEMMAR
+            {t('community.whatMembersSay')}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

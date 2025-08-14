@@ -5,9 +5,11 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Newspaper, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import "@/styles/utilities.css";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const NewsSection = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   type NewsItem = {
     id: string;
@@ -68,12 +70,12 @@ const NewsSection = () => {
     const now = new Date();
     const date = new Date(dateString);
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    if (diffInMinutes < 1) return "Just nu";
-    if (diffInMinutes < 60) return `${diffInMinutes} min sedan`;
+    if (diffInMinutes < 1) return t('news.justNow');
+    if (diffInMinutes < 60) return `${diffInMinutes} ${t('news.minutesAgo')}`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}h sedan`;
+    if (diffInHours < 24) return `${diffInHours}${t('news.hoursAgo')}`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d sedan`;
+    if (diffInDays < 7) return `${diffInDays}${t('news.daysAgo')}`;
     return date.toLocaleDateString('sv-SE');
   };
 
@@ -155,11 +157,10 @@ const NewsSection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
-            KRYPTO NYHETER
+            {t('news.title').toUpperCase()}
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Håll dig uppdaterad med de senaste nyheterna från kryptovärlden. 
-            Vi kurerar och översätter de viktigaste händelserna för svenska läsare.
+            {t('news.page.description')}
           </p>
         </div>
 
@@ -192,7 +193,7 @@ const NewsSection = () => {
                             <Clock size={12} />
                             <span>{article.time}</span>
                             <span>•</span>
-                            <span>{article.readTime} läsning</span>
+                            <span>{article.readTime} {t('news.minRead')}</span>
                           </div>
                         </div>
                         
@@ -207,7 +208,7 @@ const NewsSection = () => {
                       <div className="flex items-center justify-between">
                           <a href={article.url} target="_blank" rel="noopener noreferrer">
                             <Button variant="outline" size="sm" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                              Läs mer <ArrowRight size={14} className="ml-1" />
+                              {t('news.readMoreLink')} <ArrowRight size={14} className="ml-1" />
                             </Button>
                           </a>
                         <div className="flex space-x-2">
@@ -232,7 +233,7 @@ const NewsSection = () => {
             <Card className="p-6 border-border bg-card/80 backdrop-blur-sm">
               <div className="flex items-center space-x-2 mb-4">
                 <Newspaper className="h-5 w-5 text-primary" />
-                <h3 className="font-crypto font-bold text-primary">TRENDING IDAG</h3>
+                <h3 className="font-crypto font-bold text-primary">{t('news.categories.trending').toUpperCase()} {t('common.today')}</h3>
               </div>
               
               <div className="space-y-4">
@@ -265,10 +266,10 @@ const NewsSection = () => {
             {/* Newsletter Signup */}
             <Card className="p-6 border-border bg-gradient-primary text-primary-foreground">
               <h3 className="font-crypto font-bold text-lg mb-3">
-                DAGLIG KRYPTO RAPPORT
+                {t('news.dailyReport')}
               </h3>
               <p className="text-sm mb-4 opacity-90">
-                Få de viktigaste kryptonotiserna levererade direkt via vår Telegram-community varje dag.
+                {t('news.dailyReportDescription')}
               </p>
               <a 
                 href="https://t.me/cryptonetworksweden" 
@@ -277,7 +278,7 @@ const NewsSection = () => {
                 className="block"
               >
                 <Button className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90">
-                  Gå med i Telegram
+                  {t('community.joinTelegram')}
                 </Button>
               </a>
             </Card>
@@ -285,7 +286,7 @@ const NewsSection = () => {
             {/* Market Alert */}
             <Card className="p-6 border-border bg-card/80 backdrop-blur-sm">
               <h3 className="font-crypto font-bold text-primary mb-3">
-                MARKNADS ALERT
+                {t('market.alert')}
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-2 rounded bg-success/10">

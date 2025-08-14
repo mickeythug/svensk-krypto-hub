@@ -10,6 +10,7 @@ import { useAIMarketIntel } from "@/hooks/useAIMarketIntel";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import OptimizedImage from "@/components/OptimizedImage";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Coin logos
 import btcLogo from "@/assets/crypto-logos/svg/btc.svg";
@@ -85,6 +86,7 @@ function AIMarkets() {
 const MarketOverview = () => {
   const { data: aiIntel, isLoading: aiLoading } = useAIMarketIntel();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const { data: intel } = useMarketIntel(); // Backup for market stats
   const { cryptoPrices } = useCryptoData();
   const [openDetails, setOpenDetails] = useState(false);
@@ -109,7 +111,7 @@ const MarketOverview = () => {
 
   const marketStats = [
     {
-      title: "Total Marknadskapital",
+      title: t('market.totalMarketCap'),
       value: formatAbbrev(aiIntel?.summary ? extractMarketCap(aiIntel.summary) : intel?.overview.totalMarketCap),
       unit: "USD",
       change: typeof intel?.sentiment.trend24hPct === 'number' ? `${intel!.sentiment.trend24hPct >= 0 ? '+' : ''}${intel!.sentiment.trend24hPct.toFixed(2)}%` : null,
@@ -117,7 +119,7 @@ const MarketOverview = () => {
       icon: DollarSign
     },
     {
-      title: "24h Volym",
+      title: t('market.volume24h'),
       value: formatAbbrev(intel?.overview.totalVolume24h),
       unit: "USD", 
       change: null,
@@ -125,7 +127,7 @@ const MarketOverview = () => {
       icon: BarChart3
     },
     {
-      title: "Bitcoin Dominans",
+      title: t('market.btcDominance'),
       value: typeof intel?.overview.btcDominance === 'number' ? intel!.overview.btcDominance.toFixed(1) : '—',
       unit: "%",
       change: null,
@@ -174,11 +176,10 @@ const MarketOverview = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
-            MARKNADSÖVERSIKT
+            {t('market.title').toUpperCase()}
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Få en komplett bild av kryptomarknaden med realtidsdata, 
-            analyser och insikter från de största digitala tillgångarna.
+            {t('market.description')}
           </p>
         </div>
 
@@ -225,7 +226,7 @@ const MarketOverview = () => {
           {/* Top Cryptocurrencies */}
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
             <h3 className={`font-crypto ${isMobile ? 'text-lg' : 'text-xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-primary`}>
-              TOP 8 KRYPTOVALUTOR
+              {t('market.topCryptocurrencies').toUpperCase()}
             </h3>
             
             <div className={`${isMobile ? 'space-y-2' : 'space-y-4'}`}>
@@ -291,7 +292,7 @@ const MarketOverview = () => {
           {/* Market Analysis */}
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
             <div className={`flex items-center justify-between ${isMobile ? 'mb-4' : 'mb-6'}`}>
-              <h3 className={`font-crypto ${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary`}>MARKNADSANALYS</h3>
+              <h3 className={`font-crypto ${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary`}>{t('market.marketAnalysis').toUpperCase()}</h3>
               {!isMobile && <Button variant="outline" size="sm" onClick={() => setOpenDetails(true)}>Detaljerad info</Button>}
             </div>
             <div 
@@ -526,18 +527,18 @@ const MarketOverview = () => {
                     
                     {aiIntel?.sentiment && (
                       <div className="mt-4 p-4 rounded-lg bg-secondary/20 border border-secondary">
-                        <h5 className="font-crypto text-sm font-semibold mb-2">Sentimentanalys</h5>
+                        <h5 className="font-crypto text-sm font-semibold mb-2">{t('market.sentimentAnalysis')}</h5>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                           <div>
-                            <span className="text-muted-foreground">Fear & Greed:</span>
+                            <span className="text-muted-foreground">{t('market.fearGreed')}:</span>
                             <span className="ml-2 font-semibold">{aiIntel.sentiment.fearGreed}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Social Media:</span>
+                            <span className="text-muted-foreground">{t('market.socialMedia')}:</span>
                             <span className="ml-2 font-semibold">{aiIntel.sentiment.socialMediaTrend}</span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Institutionella flöden:</span>
+                            <span className="text-muted-foreground">{t('market.institutionalFlow')}:</span>
                             <span className="ml-2 font-semibold">{aiIntel.sentiment.institutionalFlow}</span>
                           </div>
                         </div>
@@ -546,7 +547,7 @@ const MarketOverview = () => {
                   </div>
                 ) : intel?.ta ? (
                   <div className="md:col-span-2 mt-2">
-                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">Teknisk Analys (Fallback)</h4>
+                    <h4 className="font-crypto text-sm text-muted-foreground mb-3">{t('market.technicalAnalysis')} (Fallback)</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {(['btc','eth'] as const).map((asset) => {
                         const set = intel.ta?.[asset];
