@@ -53,12 +53,25 @@ All colors MUST be HSL.
 
     --radius: 1rem;
 
-    /* Meme-specific gradients */
+    /* Premium mobile app gradients */
     --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
     --gradient-secondary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
     --gradient-hero: linear-gradient(135deg, hsl(280 25% 8%), hsl(300 30% 15%));
     --gradient-rainbow: linear-gradient(90deg, hsl(0 100% 60%), hsl(60 100% 60%), hsl(120 100% 60%), hsl(165 85% 45%), hsl(165 70% 60%), hsl(300 100% 60%));
     --gradient-neon: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%), hsl(60 100% 50%));
+    
+    /* Premium Apple-like gradients */
+    --gradient-ios-blue: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(218 100% 58%) 100%);
+    --gradient-ios-purple: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(312 73% 55%) 100%);
+    --gradient-ios-pink: linear-gradient(135deg, hsl(330 85% 60%) 0%, hsl(348 83% 56%) 100%);
+    --gradient-ios-orange: linear-gradient(135deg, hsl(25 100% 58%) 0%, hsl(38 100% 50%) 100%);
+    --gradient-ios-green: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(158 64% 52%) 100%);
+    --gradient-ios-red: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(15 100% 55%) 100%);
+    
+    /* Premium dark mode gradients */
+    --gradient-dark-surface: linear-gradient(145deg, hsl(240 10% 3.9%) 0%, hsl(240 5.9% 10%) 100%);
+    --gradient-dark-card: linear-gradient(145deg, hsl(240 3.7% 15.9%) 0%, hsl(240 5.9% 10%) 100%);
+    --gradient-glass: linear-gradient(145deg, hsla(0 0% 100% / 0.1) 0%, hsla(0 0% 100% / 0.05) 100%);
     
     /* Meme page specific colors */
     --meme-primary: 44 100% 50%; /* yellow-500 */
@@ -74,6 +87,13 @@ All colors MUST be HSL.
     --shadow-glow-gold: 0 0 40px hsl(44 100% 50% / 0.6), 0 0 80px hsl(44 100% 50% / 0.3);
     --shadow-glow-rainbow: 0 0 30px hsl(0 100% 60% / 0.4), 0 0 60px hsl(120 100% 60% / 0.3), 0 0 90px hsl(240 100% 60% / 0.2);
     --shadow-glow-primary: 0 0 25px hsl(var(--primary) / 0.5), 0 0 50px hsl(var(--primary) / 0.3);
+    
+    /* Premium shadows */
+    --shadow-premium: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
+    --shadow-elevation-1: 0 1px 3px hsl(0 0% 0% / 0.12), 0 1px 2px hsl(0 0% 0% / 0.24);
+    --shadow-elevation-2: 0 3px 6px hsl(0 0% 0% / 0.15), 0 2px 4px hsl(0 0% 0% / 0.12);
+    --shadow-elevation-3: 0 10px 20px hsl(0 0% 0% / 0.15), 0 3px 6px hsl(0 0% 0% / 0.10);
+    --shadow-elevation-4: 0 15px 25px hsl(0 0% 0% / 0.15), 0 5px 10px hsl(0 0% 0% / 0.05);
     
     /* Meme token specific colors */
     --meme-pink: 330 100% 70%;

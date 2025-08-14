@@ -28,8 +28,8 @@ import {
   User,
   Settings
 } from 'lucide-react';
-import MobileMemeHero from './MobileMemeHero';
-import MobileMemeTokenGrid from './MobileMemeTokenGrid';
+import WorldClassMobileMemeHero from './WorldClassMobileMemeHero';
+import WorldClassMobileMemeTokenGrid from './WorldClassMobileMemeTokenGrid';
 import MobileMemeStats from './MobileMemeStats';
 import MobileMemeNavigation from './MobileMemeNavigation';
 
@@ -69,7 +69,7 @@ const MobileMemeZoneApp = () => {
       {/* Main content */}
       <div className="relative z-10 pt-11 pb-20">
         {/* Hero Section */}
-        <MobileMemeHero />
+        <WorldClassMobileMemeHero />
 
         {/* Stats Overview */}
         <MobileMemeStats />
@@ -115,19 +115,19 @@ const MobileMemeZoneApp = () => {
 
             {/* Tab Content */}
             <TabsContent value="trending" className="mt-0">
-              <MobileMemeTokenGrid category="trending" />
+              <WorldClassMobileMemeTokenGrid category="trending" />
             </TabsContent>
             
             <TabsContent value="new" className="mt-0">
-              <MobileMemeTokenGrid category="newest" />
+              <WorldClassMobileMemeTokenGrid category="newest" />
             </TabsContent>
             
             <TabsContent value="gainers" className="mt-0">
-              <MobileMemeTokenGrid category="gainers" />
+              <WorldClassMobileMemeTokenGrid category="gainers" />
             </TabsContent>
             
             <TabsContent value="volume" className="mt-0">
-              <MobileMemeTokenGrid category="volume" />
+              <WorldClassMobileMemeTokenGrid category="volume" />
             </TabsContent>
           </Tabs>
         </div>
