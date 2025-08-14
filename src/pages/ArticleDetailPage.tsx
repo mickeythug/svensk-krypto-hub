@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Article {
   id: string;
@@ -33,6 +34,7 @@ const ArticleDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   // Mock article data - in real app this would come from API
   const article: Article = {
@@ -149,10 +151,10 @@ const ArticleDetailPage = () => {
     const date = new Date(dateString);
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
     
-    if (diffInHours < 1) return "Just nu";
-    if (diffInHours < 24) return `${diffInHours}h sedan`;
+    if (diffInHours < 1) return t('news.justNow');
+    if (diffInHours < 24) return `${diffInHours}${t('news.hoursAgo')}`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d sedan`;
+    if (diffInDays < 7) return `${diffInDays}${t('news.daysAgo')}`;
     return date.toLocaleDateString('sv-SE');
   };
 
@@ -181,7 +183,7 @@ const ArticleDetailPage = () => {
               className="text-muted-foreground hover:text-primary"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {isMobile ? "Tillbaka" : "Tillbaka till nyheter"}
+              {isMobile ? t('news.back') : t('news.backToNews')}
             </Button>
             {!isMobile && (
               <>
@@ -196,18 +198,18 @@ const ArticleDetailPage = () => {
           {/* Article Header */}
           <div className={`${isMobile ? 'mb-4' : 'mb-8'}`}>
             <div className={`flex items-center gap-2 flex-wrap ${isMobile ? 'mb-3' : 'mb-4'}`}>
-              <Badge className={`${getSentimentBadge(article.sentiment)} text-sm px-3 py-1`}>
-                {article.sentiment === 'positive' ? '📈 Positiv' : 
-                 article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
-              </Badge>
-              <Badge className={`${getImpactBadge(article.impact)} text-sm px-3 py-1`}>
-                {article.impact === 'high' ? '🔥 Hög påverkan' : 
-                 article.impact === 'medium' ? '⚡ Medium påverkan' : '💭 Låg påverkan'}
-              </Badge>
+               <Badge className={`${getSentimentBadge(article.sentiment)} text-sm px-3 py-1`}>
+                 {article.sentiment === 'positive' ? t('news.positiveLabel') : 
+                  article.sentiment === 'negative' ? t('news.negativeLabel') : t('news.neutralLabel')}
+               </Badge>
+               <Badge className={`${getImpactBadge(article.impact)} text-sm px-3 py-1`}>
+                 {article.impact === 'high' ? t('news.highImpact') : 
+                  article.impact === 'medium' ? t('news.mediumImpact') : t('news.lowImpact')}
+               </Badge>
               {article.trending && (
-                <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30 text-sm px-3 py-1">
-                  🔥 Trending
-                </Badge>
+                 <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/30 text-sm px-3 py-1">
+                   {t('news.trending')}
+                 </Badge>
               )}
               <Badge variant="outline" className="text-sm">
                 {article.category}
@@ -234,11 +236,11 @@ const ArticleDetailPage = () => {
               </div>
               <div className="flex items-center">
                 <Clock className="h-4 w-4 mr-2" />
-                <span>{article.readTime} min läsning</span>
+                <span>{article.readTime} {t('news.readingTime')}</span>
               </div>
               <div className="flex items-center">
                 <Eye className="h-4 w-4 mr-2" />
-                <span>{article.views.toLocaleString()} visningar</span>
+                <span>{article.views.toLocaleString()} {t('news.views')}</span>
               </div>
             </div>
 
@@ -246,11 +248,11 @@ const ArticleDetailPage = () => {
             <div className={`flex items-center gap-3 ${isMobile ? 'mb-4' : 'mb-8'}`}>
               <Button variant="outline" size="sm" className={isMobile ? 'flex-1' : ''}>
                 <Share2 className="h-4 w-4 mr-2" />
-                Dela
+                {t('news.share')}
               </Button>
               <Button variant="outline" size="sm" className={isMobile ? 'flex-1' : ''}>
                 <Bookmark className="h-4 w-4 mr-2" />
-                Spara
+                {t('news.save')}
               </Button>
             </div>
 
@@ -267,7 +269,7 @@ const ArticleDetailPage = () => {
 
           {/* Tags */}
           <div className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
-            <h3 className={`font-semibold ${isMobile ? 'text-base mb-3' : 'text-lg mb-4'}`}>Taggar</h3>
+            <h3 className={`font-semibold ${isMobile ? 'text-base mb-3' : 'text-lg mb-4'}`}>{t('news.tags')}</h3>
             <div className="flex flex-wrap gap-2">
               {article.tags.map((tag, index) => (
                 <Badge key={index} variant="secondary" className="text-sm hover:bg-primary/20 transition-colors cursor-pointer">
@@ -280,7 +282,7 @@ const ArticleDetailPage = () => {
 
           {/* Source */}
           <div className="text-sm text-muted-foreground">
-            Källa: {article.source}
+            {t('news.sourceLabel')}: {article.source}
           </div>
         </div>
       </main>

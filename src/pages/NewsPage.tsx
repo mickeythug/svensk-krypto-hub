@@ -492,10 +492,10 @@ const NewsPage = () => {
                         </div>
                       </div>
                       <div className="flex-1 text-white">
-                        <div className="flex items-center gap-3 mb-4">
-                          <Badge className="bg-white/30 text-white border-white/50 font-black text-sm px-4 py-1 tracking-wider backdrop-blur-sm">
-                            🚨 SENASTE NYTT
-                          </Badge>
+                         <div className="flex items-center gap-3 mb-4">
+                           <Badge className="bg-white/30 text-white border-white/50 font-black text-sm px-4 py-1 tracking-wider backdrop-blur-sm">
+                             {t('news.latestNews')}
+                           </Badge>
                           <span className="text-white/80 text-sm font-medium">
                             {formatTimeAgo(news[0].publishedAt)}
                           </span>
@@ -508,17 +508,17 @@ const NewsPage = () => {
                         </p>
                         <div className="flex items-center gap-4">
                           {news[0].url && (
-                            <Button 
-                              className="bg-white text-red-600 hover:bg-white/90 font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
-                              onClick={() => window.open(news[0].url!, '_blank')}
-                            >
-                              Läs hela artikeln
-                              <ExternalLink className="ml-2 h-4 w-4" />
-                            </Button>
+                             <Button 
+                               className="bg-white text-red-600 hover:bg-white/90 font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+                               onClick={() => window.open(news[0].url!, '_blank')}
+                             >
+                               {t('news.readFullArticle')}
+                               <ExternalLink className="ml-2 h-4 w-4" />
+                             </Button>
                           )}
-                          <div className="text-white/70 text-sm font-medium">
-                            Källa: {news[0].source}
-                          </div>
+                           <div className="text-white/70 text-sm font-medium">
+                             {t('news.source')}: {news[0].source}
+                           </div>
                         </div>
                       </div>
                     </div>
@@ -528,12 +528,12 @@ const NewsPage = () => {
 
               {/* Results Counter & Pagination Info */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-crypto text-2xl font-bold text-primary">
-                  {searchQuery ? `SÖKRESULTAT (${filteredNews.length})` : 'ALLA NYHETER'}
-                </h2>
-                <div className="text-sm text-muted-foreground">
-                  Sida {currentPage} av {totalPages} | Visar {currentArticles.length} av {filteredNews.length} artiklar
-                </div>
+                 <h2 className="font-crypto text-2xl font-bold text-primary">
+                   {searchQuery ? `${t('news.searchResults')} (${filteredNews.length})` : t('news.allNews')}
+                 </h2>
+                 <div className="text-sm text-muted-foreground">
+                   {t('news.page')} {currentPage} {t('news.of')} {totalPages} | {t('news.showing')} {currentArticles.length} {t('news.of')} {filteredNews.length} {t('news.articles')}
+                 </div>
               </div>
 
               {/* Loading State */}
@@ -584,30 +584,30 @@ const NewsPage = () => {
                                      <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
                                        <Bitcoin className="w-8 h-8 text-primary" />
                                      </div>
-                                     <p className="text-primary font-crypto font-bold text-sm">CRYPTO NEWS</p>
+                                     <p className="text-primary font-crypto font-bold text-sm">{t('news.cryptoNews')}</p>
                                    </div>
                                  </div>
                                </div>
                                
                                {/* Overlay badges */}
                                <div className="absolute top-3 left-3 flex gap-2">
-                                 <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1 backdrop-blur-sm`}>
-                                   {article.sentiment === 'positive' ? '📈 Positiv' : 
-                                    article.sentiment === 'negative' ? '📉 Negativ' : '➡️ Neutral'}
-                                 </Badge>
-                                 {article.trending && (
-                                   <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 animate-pulse backdrop-blur-sm">
-                                     🔥 HOT
+                                   <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1 backdrop-blur-sm`}>
+                                     {article.sentiment === 'positive' ? t('news.positive') : 
+                                      article.sentiment === 'negative' ? t('news.negative') : t('news.neutral')}
                                    </Badge>
-                                 )}
+                                   {article.trending && (
+                                     <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 animate-pulse backdrop-blur-sm">
+                                       {t('news.hot')}
+                                     </Badge>
+                                   )}
                                </div>
                                
                                {/* Impact badge */}
                                <div className="absolute top-3 right-3">
-                                 <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1 backdrop-blur-sm`}>
-                                   {article.impact === 'high' ? '🔥 Hög' : 
-                                    article.impact === 'medium' ? '⚡ Medium' : '💭 Låg'}
-                                 </Badge>
+                                   <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1 backdrop-blur-sm`}>
+                                     {article.impact === 'high' ? t('news.high') : 
+                                      article.impact === 'medium' ? t('news.medium') : t('news.low')}
+                                   </Badge>
                                </div>
                              </div>
                              
@@ -708,11 +708,11 @@ const NewsPage = () => {
                                   <Badge variant="outline" className={`${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} truncate max-w-20`}>
                                     {article.category}
                                   </Badge>
-                                  {article.trending && (
-                                    <Badge className={`bg-gradient-to-r from-orange-500 to-red-500 text-white ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} animate-pulse`}>
-                                      🔥 HOT
-                                    </Badge>
-                                  )}
+                                   {article.trending && (
+                                     <Badge className={`bg-gradient-to-r from-orange-500 to-red-500 text-white ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} animate-pulse`}>
+                                       {t('news.hot')}
+                                     </Badge>
+                                   )}
                                 </div>
                                 
                                 {/* Title - Mobile Optimized */}
@@ -752,9 +752,9 @@ const NewsPage = () => {
                                       if (article.url) window.open(article.url, '_blank'); 
                                     }}
                                   >
-                                    <ExternalLink className="h-3 w-3 mr-1" />
-                                    {isMobile ? 'Läs hela artikeln' : 'Läs mer'}
-                                  </Button>
+                                     <ExternalLink className="h-3 w-3 mr-1" />
+                                     {isMobile ? t('news.readFullText') : t('news.readMoreShort')}
+                                   </Button>
                                 </div>
                               </div>
                             </div>
@@ -772,9 +772,9 @@ const NewsPage = () => {
                         disabled={currentPage === 1}
                         className="px-6 py-3"
                       >
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Föregående
-                      </Button>
+                         <ArrowLeft className="mr-2 h-4 w-4" />
+                         {t('news.previousPage')}
+                       </Button>
                       
                       <div className="flex items-center gap-2">
                         {/* Page numbers */}
@@ -801,9 +801,9 @@ const NewsPage = () => {
                         disabled={currentPage === totalPages}
                         className="px-6 py-3"
                       >
-                        Nästa
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                         {t('news.nextPage')}
+                         <ArrowRight className="ml-2 h-4 w-4" />
+                       </Button>
                     </div>
                   )}
 
@@ -812,19 +812,19 @@ const NewsPage = () => {
                     <Card className="p-12 text-center">
                       <div className="flex flex-col items-center gap-4">
                         <Search className="h-12 w-12 text-muted-foreground" />
-                        <h3 className="text-xl font-semibold">Inga nyheter hittades</h3>
-                        <p className="text-muted-foreground">
-                          Prova att ändra sökterm eller välj en annan kategori
-                        </p>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => {
-                            setSearchQuery("");
-                            setSelectedCategory("all");
-                          }}
-                        >
-                          Rensa filter
-                        </Button>
+                         <h3 className="text-xl font-semibold">{t('news.noNewsFound')}</h3>
+                         <p className="text-muted-foreground">
+                           {t('news.tryDifferentSearch')}
+                         </p>
+                         <Button 
+                           variant="outline" 
+                           onClick={() => {
+                             setSearchQuery("");
+                             setSelectedCategory("all");
+                           }}
+                         >
+                           {t('news.clearFilters')}
+                         </Button>
                       </div>
                     </Card>
                   )}
@@ -837,29 +837,29 @@ const NewsPage = () => {
             <div className="space-y-6">
               {/* Market Sentiment */}
               <Card className="p-6">
-                <h3 className="font-crypto text-lg font-bold mb-6 text-primary">MARKNADS-<br />SENTIMENT</h3>
+                <h3 className="font-crypto text-lg font-bold mb-6 text-primary">{t('news.marketSentiment')}</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Fear & Greed Index</span>
+                    <span className="text-sm text-muted-foreground">{t('news.fearGreedIndex')}</span>
                     <span className="font-bold text-success">{sentiment.fearGreedIndex}/100</span>
                   </div>
                   <Progress value={sentiment.fearGreedIndex} className="h-2" />
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Social Volym</span>
+                    <span className="text-sm text-muted-foreground">{t('news.socialVolume')}</span>
                     <span className="font-bold">{sentiment.socialVolume}%</span>
                   </div>
                   <Progress value={sentiment.socialVolume} className="h-2" />
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Nyhetsvolym</span>
+                    <span className="text-sm text-muted-foreground">{t('news.newsVolume')}</span>
                     <span className="font-bold">{sentiment.newsVolume}%</span>
                   </div>
                   <Progress value={sentiment.newsVolume} className="h-2" />
 
                   <div className="pt-4 border-t border-border">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">24h Trend</span>
+                      <span className="text-sm font-medium">{t('news.trend24h')}</span>
                       <div className={`flex items-center gap-1 ${
                         sentiment.change24h >= 0 ? 'text-success' : 'text-destructive'
                       }`}>
@@ -873,7 +873,7 @@ const NewsPage = () => {
 
               {/* Top Movers */}
               <Card className="p-6">
-                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">TOP MOVERS</h3>
+                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">{t('news.topMovers')}</h3>
                 <div className="space-y-4">
                   {topMoversUI.map((token, index) => (
                     <div key={`${token.symbol}-${index}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer group">
@@ -909,30 +909,30 @@ const NewsPage = () => {
 
               {/* Market Data */}
               <Card className="p-6">
-                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">MARKNADSDATA</h3>
+                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">{t('news.marketData')}</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">Total Market Cap</span>
+                    <span className="text-muted-foreground text-sm">{t('news.totalMarketCap')}</span>
                     <span className="font-mono font-bold">{marketDataUI.totalMarketCap}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">24h Volym</span>
+                    <span className="text-muted-foreground text-sm">{t('news.volume24h')}</span>
                     <span className="font-mono font-bold">{marketDataUI.totalVolume}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">BTC Dominans</span>
+                    <span className="text-muted-foreground text-sm">{t('news.btcDominance')}</span>
                     <span className="font-mono font-bold">{marketDataUI.btcDominance}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">ETH Dominans</span>
+                    <span className="text-muted-foreground text-sm">{t('news.ethDominance')}</span>
                     <span className="font-mono font-bold">{marketDataUI.ethDominance}%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">Aktiva Adresser</span>
+                    <span className="text-muted-foreground text-sm">{t('news.activeAddresses')}</span>
                     <span className="font-mono font-bold">{marketDataUI.activeAddresses}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">DeFi TVL</span>
+                    <span className="text-muted-foreground text-sm">{t('news.defiTvl')}</span>
                     <span className="font-mono font-bold">{marketDataUI.defiTvl}</span>
                   </div>
                 </div>

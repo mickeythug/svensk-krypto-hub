@@ -177,9 +177,9 @@ const NewsSection = () => {
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80" />
                       {article.trending && (
-                        <Badge className="absolute top-3 left-3 bg-destructive text-destructive-foreground">
-                          🔥 Trending
-                        </Badge>
+                         <Badge className="absolute top-3 left-3 bg-destructive text-destructive-foreground">
+                           {t('news.categories.trending')}
+                         </Badge>
                       )}
                     </div>
                     
@@ -238,7 +238,7 @@ const NewsSection = () => {
               
               <div className="space-y-4">
                 {trendingList.map((article, index) => (
-                  <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer" aria-label={`Öppna artikel: ${article.title}`}>
+                  <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer" aria-label={`${t('news.readMoreLink')}: ${article.title}`}>
                     <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-secondary/30 transition-colors">
                       <div className="text-primary font-crypto text-xs mt-1">
                         {index + 3}
