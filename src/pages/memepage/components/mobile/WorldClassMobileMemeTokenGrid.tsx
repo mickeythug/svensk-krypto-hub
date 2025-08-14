@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import OptimizedImage from '@/components/OptimizedImage';
 import { useMemeTokens, type MemeCategory } from '../../hooks/useMemeTokens';
 import { useNavigate } from 'react-router-dom';
+import MobilePagination from './MobilePagination';
 import {
   TrendingUp,
   TrendingDown,
@@ -94,19 +95,19 @@ const PremiumTokenCard = ({ token, index, onClick }) => {
             {/* Enhanced Rank & Image */}
             <div className="relative">
               {isTop3 && (
-                <div className="absolute -top-2 -left-2 z-10 animate-fade-in">
-                  <Badge className={`text-xs px-2 py-1 animate-bounce ${
-                    index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg shadow-yellow-500/25' :
-                    index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black shadow-lg' :
-                    'bg-gradient-to-r from-orange-400 to-orange-600 text-black shadow-lg shadow-orange-500/25'
-                  }`}>
-                    {index === 0 && <Crown className="w-3 h-3 mr-1 animate-pulse" />}
-                    #{index + 1}
-                  </Badge>
-                </div>
-              )}
-              
-              <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/10 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                  <div className="absolute -top-2 -left-2 z-10 animate-fade-in">
+                    <Badge className={`text-xs px-2 py-1 ${
+                      index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg shadow-yellow-500/25' :
+                      index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black shadow-lg' :
+                      'bg-gradient-to-r from-orange-400 to-orange-600 text-black shadow-lg shadow-orange-500/25'
+                    }`}>
+                      {index === 0 && <Crown className="w-3 h-3 mr-1" />}
+                      #{index + 1}
+                    </Badge>
+                  </div>
+                )}
+                
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-white/5 border border-white/10 group-hover:scale-110 transition-all duration-500">
                 <OptimizedImage
                   src={token.image || '/placeholder.svg'}
                   alt={`${token.name} logo`}
@@ -119,58 +120,55 @@ const PremiumTokenCard = ({ token, index, onClick }) => {
             {/* Enhanced Token Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-2">
-                <div className="min-w-0 flex-1 group-hover:translate-x-1 transition-transform duration-300">
-                  <h3 className="font-black text-lg text-white truncate group-hover:text-primary transition-colors duration-300">
+                <div className="min-w-0 flex-1 pr-2 text-container no-fancy-effects">
+                  <h3 className="font-bold text-lg text-white truncate transition-colors duration-300 text-clean">
                     {token.symbol}
                   </h3>
-                  <p className="text-white/60 text-sm truncate">{token.name}</p>
+                  <p className="text-white/60 text-sm truncate font-medium text-clean">{token.name}</p>
                 </div>
                 
-                {/* Enhanced Price Change */}
-                <div className={`flex items-center gap-1 text-sm font-bold group-hover:scale-110 transition-transform duration-300 ${
+                {/* Clean Price Change display */}
+                <div className={`flex items-center gap-1 text-sm font-bold transition-colors duration-300 pl-2 no-fancy-effects ${
                   positive ? 'text-green-400' : 'text-red-400'
                 }`}>
                   {positive ? (
-                    <TrendingUp className="w-4 h-4 animate-pulse" />
+                    <TrendingUp className="w-4 h-4" />
                   ) : (
-                    <TrendingDown className="w-4 h-4 animate-pulse" />
+                    <TrendingDown className="w-4 h-4" />
                   )}
-                  {positive ? '+' : ''}{formatPercentage(token.change24h)}
+                  <span className="truncate max-w-[60px] text-clean">{positive ? '+' : ''}{formatPercentage(token.change24h)}</span>
                 </div>
               </div>
 
-              {/* Enhanced Stats Grid */}
-              <div className="grid grid-cols-3 gap-3 mb-3">
+              {/* Enhanced Stats Grid - Only MCap and Volume */}
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 {[
-                  { icon: DollarSign, label: "Price", value: formatPrice(token.price), color: "text-blue-400" },
-                  { icon: BarChart3, label: "MCap", value: formatCompact(token.marketCap), color: "text-purple-400" },
+                  { icon: BarChart3, label: "MCap", value: formatCompact(token.marketCap), color: "text-blue-400" },
                   { icon: Users, label: "Vol 24h", value: formatCompact(token.volume24h), color: "text-green-400" }
                 ].map((stat, statIndex) => (
                   <div
                     key={statIndex}
-                    className="bg-white/5 rounded-lg p-2 border border-white/10 group-hover:bg-white/10 group-hover:scale-105 transition-all duration-300"
+                    className="bg-white/5 rounded-lg p-3 border border-white/10 group-hover:bg-white/10 transition-all duration-300"
                     style={{ transitionDelay: `${statIndex * 50}ms` }}
                   >
-                    <div className="text-white/60 text-xs mb-1 flex items-center gap-1">
+                    <div className="text-white/60 text-xs mb-2 flex items-center gap-1 font-medium no-fancy-effects text-clean">
                       <stat.icon className={`w-3 h-3 ${stat.color}`} />
                       {stat.label}
                     </div>
-                    <div className="text-white font-bold text-sm group-hover:scale-110 transition-transform duration-300">
+                    <div className="text-white font-bold text-base text-clean text-container">
                       {stat.value}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Premium Action Button */}
+              {/* Action Button - Changed to KÖP */}
               <Button 
                 size="sm"
-                className={`w-full bg-gradient-to-r from-primary/80 to-primary text-black font-bold rounded-lg transition-all duration-300 mobile-backdrop hover:scale-105 hover:shadow-lg hover:shadow-primary/25 ${
-                  isTop1 ? 'animate-pulse shadow-lg shadow-primary/20' : ''
-                }`}
+                className="w-full bg-gradient-to-r from-primary/80 to-primary text-black font-bold rounded-lg transition-all duration-300 mobile-backdrop hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
               >
                 <Target className="w-4 h-4 mr-2" />
-                HANDLA NU
+                KÖP
               </Button>
 
               {/* Social engagement indicators */}
@@ -226,7 +224,7 @@ const PremiumTokenCard = ({ token, index, onClick }) => {
 const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({ category }) => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const { tokens, loading, error, hasMore } = useMemeTokens(category, 20, page);
+  const { tokens, loading, error, hasMore } = useMemeTokens(category, 20, page); // Max 20 per page
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
@@ -294,25 +292,13 @@ const WorldClassMobileMemeTokenGrid: React.FC<Props> = ({ category }) => {
         />
       ))}
 
-      {/* Enhanced Load More Button */}
-      {hasMore && (
-        <div className="pt-4 animate-fade-in">
-          <Button
-            onClick={loadMore}
-            disabled={loading || isLoadingMore}
-            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20 hover:scale-105 font-semibold py-4 mobile-backdrop transition-all duration-300 hover:shadow-lg"
-          >
-            {isLoadingMore ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Laddar fler...
-              </div>
-            ) : (
-              'Ladda fler tokens'
-            )}
-          </Button>
-        </div>
-      )}
+      {/* Enhanced Pagination with proper controls */}
+      <MobilePagination
+        currentPage={page}
+        hasMore={hasMore}
+        onPageChange={setPage}
+        loading={loading}
+      />
     </div>
   );
 };

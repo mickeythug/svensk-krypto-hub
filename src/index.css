@@ -234,6 +234,36 @@ All colors MUST be HSL.
     overscroll-behavior: none;
   }
 
+  /* Simple fade-in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Simple float animation */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
   /* iOS-like card animations */
   .mobile-card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -251,9 +281,33 @@ All colors MUST be HSL.
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Backdrop blur effects for mobile */
+  /* Clean backdrop blur effects for mobile */
   .mobile-backdrop {
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  /* Clean text styles - no fancy effects */
+  .text-clean {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: normal;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Ensure text doesn't overflow */
+  .text-container {
+    overflow: hidden;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Remove all complex animations on important text */
+  .no-fancy-effects * {
+    animation: none !important;
+    text-shadow: none !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    color: inherit !important;
   }
 }

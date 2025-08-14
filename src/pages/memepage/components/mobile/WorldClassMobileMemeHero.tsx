@@ -104,11 +104,11 @@ const WorldClassMobileMemeHero = () => {
 
       {/* Header with premium styling */}
       <div className="flex items-center justify-between mb-6 animate-fade-in">
-        <div className="hover:scale-105 transition-transform duration-300">
-          <h1 className="text-2xl font-black text-white mb-1 bg-gradient-to-r from-white via-primary to-accent bg-clip-text text-transparent">
+        <div className="hover:scale-105 transition-transform duration-300 no-fancy-effects">
+          <h1 className="text-2xl font-bold text-white mb-1 font-sans text-clean">
             Meme Zone
           </h1>
-          <p className="text-white/70 text-sm">Upptäck hetaste tokens</p>
+          <p className="text-white/70 text-sm font-medium text-clean">Upptäck hetaste tokens</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -174,15 +174,13 @@ const WorldClassMobileMemeHero = () => {
             
             {/* Main content with world-class typography */}
             <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-3 group">
-                <Sparkles className="w-6 h-6 text-yellow-300 animate-spin group-hover:animate-pulse" />
-                <h2 className="text-2xl font-black text-white group-hover:text-shadow-lg transition-all duration-300">
+              <div className="flex items-center justify-center gap-2 mb-3 group no-fancy-effects">
+                <h2 className="text-2xl font-bold text-white transition-all duration-300 text-clean">
                   HETASTE TOKENS
                 </h2>
-                <Sparkles className="w-6 h-6 text-yellow-300 animate-spin group-hover:animate-pulse animation-delay-1000" />
               </div>
               
-              <p className="text-white/90 text-sm mb-6 max-w-xs mx-auto leading-relaxed">
+              <p className="text-white/90 text-sm mb-6 max-w-xs mx-auto leading-relaxed font-medium text-clean text-container">
                 Upptäck de mest explosiva meme tokens med live-data och realtidsuppdateringar
               </p>
               
@@ -215,11 +213,11 @@ const WorldClassMobileMemeHero = () => {
             className="hover:scale-105 hover:-translate-y-2 transition-all duration-500 ease-out"
             style={{ animationDelay: `${index * 200}ms` }}
           >
-            <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-4 text-center mobile-backdrop hover:bg-black/30 hover:border-white/20 transition-all duration-300 group">
-              <div className={`text-2xl font-black mb-1 ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
+            <Card className="bg-black/20 backdrop-blur-xl border border-white/10 p-3 text-center mobile-backdrop hover:bg-black/30 hover:border-white/20 transition-all duration-300 group">
+              <div className={`text-lg font-bold mb-1 ${stat.color} group-hover:scale-110 transition-transform duration-300`}>
                 <AnimatedNumber value={stat.value} />
               </div>
-              <div className="text-white/70 text-xs font-medium">
+              <div className="text-white/70 text-xs font-medium text-center">
                 {stat.label}
               </div>
               {/* Subtle gradient accent */}
