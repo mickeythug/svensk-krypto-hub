@@ -20,8 +20,9 @@ serve(async (req) => {
 
   const heliusApiKey = Deno.env.get('HELIUS_RPC_API_KEY');
   
-  if (!heliusApiKey) {
-    console.error('HELIUS_RPC_API_KEY not found in environment');
+  if (!heliusApiKey || heliusApiKey.trim() === '') {
+    console.error('HELIUS_RPC_API_KEY not found or empty in environment');
+    console.error('Available env vars:', Object.keys(Deno.env.toObject()));
     return new Response("API key not configured", { 
       status: 500,
       headers: corsHeaders 
