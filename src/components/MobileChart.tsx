@@ -81,12 +81,12 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
       {/* Price Display */}
       <div className="p-4 bg-card/30">
         <div className="flex items-end gap-4 mb-2">
-          <div className="text-3xl font-bold">{formatPrice(currentPrice)}</div>
+          <div className="text-3xl font-bold font-numbers">{formatPrice(currentPrice)}</div>
           <div className={`flex items-center gap-1 text-lg font-semibold ${
             priceChange24h >= 0 ? 'text-success' : 'text-destructive'
           }`}>
             {priceChange24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-            {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
+            <span className="font-numbers">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
           </div>
         </div>
         
@@ -94,11 +94,11 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div>
             <div className="text-muted-foreground">24h High</div>
-            <div className="font-semibold">{formatPrice(currentPrice * 1.05)}</div>
+            <div className="font-semibold font-numbers">{formatPrice(currentPrice * 1.05)}</div>
           </div>
           <div>
             <div className="text-muted-foreground">24h Low</div>
-            <div className="font-semibold">{formatPrice(currentPrice * 0.95)}</div>
+            <div className="font-semibold font-numbers">{formatPrice(currentPrice * 0.95)}</div>
           </div>
           <div>
             <div className="text-muted-foreground">Volume</div>
@@ -191,8 +191,8 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
               <span className="text-xs text-muted-foreground">Moving Average</span>
               <Badge variant="outline" className="text-xs">MA20</Badge>
             </div>
-            <div className="text-sm font-semibold">{formatPrice(currentPrice * 0.98)}</div>
-            <div className="text-xs text-success">+2.1%</div>
+            <div className="text-sm font-semibold font-numbers">{formatPrice(currentPrice * 0.98)}</div>
+            <div className="text-xs text-success font-numbers">+2.1%</div>
           </div>
           
           <div className="bg-secondary/20 rounded-lg p-3">
@@ -200,7 +200,7 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
               <span className="text-xs text-muted-foreground">Support/Resistance</span>
               <Badge variant="outline" className="text-xs">S/R</Badge>
             </div>
-            <div className="text-sm font-semibold">{formatPrice(currentPrice * 1.02)}</div>
+            <div className="text-sm font-semibold font-numbers">{formatPrice(currentPrice * 1.02)}</div>
             <div className="text-xs text-muted-foreground">Resistance</div>
           </div>
           

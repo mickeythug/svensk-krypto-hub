@@ -211,7 +211,7 @@ const MarketOverview = () => {
                 </div>
                 
                 <div className={`${isMobile ? 'mb-1' : 'mb-2'}`}>
-                  <span className={`font-crypto ${isMobile ? 'text-lg' : 'text-2xl'} font-bold`}>{stat.value}</span>
+                  <span className={`font-crypto font-numbers ${isMobile ? 'text-lg' : 'text-2xl'} font-bold`}>{stat.value}</span>
                   <span className={`text-muted-foreground ${isMobile ? 'text-xs ml-1' : 'ml-1'}`}>{stat.unit}</span>
                 </div>
                 
@@ -269,9 +269,9 @@ const MarketOverview = () => {
                   </div>
                   
                   <div className="text-right">
-                    <div className={`font-display font-semibold ${isMobile ? 'text-sm' : ''}`}>
-                      {formatPrice(coin.price)} USD
-                    </div>
+                     <div className={`font-display font-semibold font-numbers ${isMobile ? 'text-sm' : ''}`}>
+                       {formatPrice(coin.price)} USD
+                     </div>
                     <div className={`flex items-center justify-end space-x-1 ${isMobile ? 'text-xs' : 'text-sm'} ${
                       coin.change >= 0 ? 'text-success' : 'text-destructive'
                     }`}>
@@ -280,7 +280,7 @@ const MarketOverview = () => {
                       ) : (
                         <TrendingDown size={isMobile ? 10 : 12} />
                       )}
-                      <span>{coin.change >= 0 ? '+' : ''}{coin.change.toFixed(2)}%</span>
+                      <span className="font-numbers">{coin.change >= 0 ? '+' : ''}{coin.change.toFixed(2)}%</span>
                     </div>
                   </div>
                 </div>
@@ -461,7 +461,7 @@ const MarketOverview = () => {
   
   <div className="flex justify-between items-center p-2 rounded bg-success/10 border border-success/20">
     <span className="text-sm text-success">Nästa motstånd:</span>
-    <span className="font-crypto text-sm text-success font-bold">{(typeof levels.nextResistance?.price === 'number' && isFinite(levels.nextResistance.price) && levels.nextResistance.price > 0) ? `$${Math.round(levels.nextResistance.price).toLocaleString()}` : '—'}</span>
+    <span className="font-crypto text-sm text-success font-bold font-numbers">{(typeof levels.nextResistance?.price === 'number' && isFinite(levels.nextResistance.price) && levels.nextResistance.price > 0) ? `$${Math.round(levels.nextResistance.price).toLocaleString()}` : '—'}</span>
   </div>
                                 
                                 {levels.criticalLevel && (
@@ -503,7 +503,7 @@ const MarketOverview = () => {
                                 <span className="font-display text-sm">{name}</span>
                                 <div className={`font-display text-sm ${color}`}>
                                   <span className="mr-2">{t?.trend ?? '—'}</span>
-                                  {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground">RSI {t.rsi14.toFixed(0)}</span>)}
+                                   {typeof t?.rsi14 === 'number' && (<span className="text-muted-foreground font-numbers">RSI {t.rsi14.toFixed(0)}</span>)}
                                 </div>
                               </div>
                             );

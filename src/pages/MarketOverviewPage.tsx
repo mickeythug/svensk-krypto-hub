@@ -308,8 +308,8 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">Total Market Cap</h3>
                     <DollarSign className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="text-3xl font-bold text-primary mb-2">{totalMarketCap}</div>
-                  <div className={`text-sm font-medium ${trend24 >= 0 ? 'text-success' : 'text-destructive'}`}>{trend24 >= 0 ? `+${trend24}% (24h)` : `${trend24}% (24h)`}</div>
+                  <div className="text-3xl font-bold font-numbers text-primary mb-2">{totalMarketCap}</div>
+                  <div className={`text-sm font-medium font-numbers ${trend24 >= 0 ? 'text-success' : 'text-destructive'}`}>{trend24 >= 0 ? `+${trend24}% (24h)` : `${trend24}% (24h)`}</div>
                 </div>
 
                 {/* Fear & Greed Index */}
@@ -318,7 +318,7 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">Fear & Greed Index</h3>
                     <Activity className="h-5 w-5 text-success" />
                   </div>
-                  <div className="text-3xl font-bold text-success mb-2">{fearGreed}</div>
+                  <div className="text-3xl font-bold font-numbers text-success mb-2">{fearGreed}</div>
                   <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-destructive via-warning to-success h-2 rounded-full transition-all duration-500"
@@ -334,7 +334,7 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">Alt Season Index</h3>
                     <BarChart3 className="h-5 w-5 text-accent" />
                   </div>
-                  <div className="text-3xl font-bold text-accent mb-2">{altSeason}</div>
+                  <div className="text-3xl font-bold font-numbers text-accent mb-2">{altSeason}</div>
                   <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
@@ -350,7 +350,7 @@ const MarketOverviewPage = () => {
                     <h3 className="text-sm font-medium text-muted-foreground">BTC Dominance</h3>
                     <Bitcoin className="h-5 w-5 text-warning" />
                   </div>
-                  <div className="text-3xl font-bold text-warning mb-2">{btcDom}%</div>
+                  <div className="text-3xl font-bold font-numbers text-warning mb-2">{btcDom}%</div>
                   <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-warning to-destructive h-2 rounded-full transition-all duration-500"
@@ -542,9 +542,9 @@ const MarketOverviewPage = () => {
                           
                           {/* Price */}
                           <TableCell className="py-4 px-6 text-right">
-                            <div className="font-mono font-semibold text-foreground text-base">
-                              {formatPrice(crypto.price)}
-                            </div>
+                             <div className="font-numbers font-semibold text-foreground text-base">
+                               {formatPrice(crypto.price)}
+                             </div>
                           </TableCell>
                           
                           {/* 1h Change */}
@@ -559,7 +559,7 @@ const MarketOverviewPage = () => {
                               ) : (
                                 <TrendingDown className="h-3 w-3" />
                               )}
-                              <span>{crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%</span>
+                              <span className="font-numbers">{crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%</span>
                             </div>
                           </TableCell>
                           
@@ -575,7 +575,7 @@ const MarketOverviewPage = () => {
                               ) : (
                                 <TrendingDown className="h-3 w-3" />
                               )}
-                              <span>{crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%</span>
+                              <span className="font-numbers">{crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%</span>
                             </div>
                           </TableCell>
                           
@@ -591,22 +591,22 @@ const MarketOverviewPage = () => {
                               ) : (
                                 <TrendingDown className="h-3 w-3" />
                               )}
-                              <span>{crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%</span>
+                              <span className="font-numbers">{crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%</span>
                             </div>
                           </TableCell>
                           
                           {/* Market Cap */}
                           <TableCell className="py-4 px-6 text-right">
-                            <div className="font-mono text-muted-foreground text-sm">
-                              ${crypto.marketCap}
-                            </div>
+                             <div className="font-numbers text-muted-foreground text-sm">
+                               ${crypto.marketCap}
+                             </div>
                           </TableCell>
                           
                           {/* Volume */}
                           <TableCell className="py-4 px-6 text-right">
-                            <div className="font-mono text-muted-foreground text-sm">
-                              ${crypto.volume}
-                            </div>
+                             <div className="font-numbers text-muted-foreground text-sm">
+                               ${crypto.volume}
+                             </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -644,31 +644,31 @@ const MarketOverviewPage = () => {
                        <div className="space-y-3">
                          <div className="flex justify-between items-center">
                            <span className="text-white/80">Pris</span>
-                           <span className="font-mono font-semibold text-lg text-white">{formatPrice(crypto.price)}</span>
+                           <span className="font-numbers font-semibold text-lg text-white">{formatPrice(crypto.price)}</span>
                          </div>
                          
                          <div className="grid grid-cols-3 gap-2">
                            <div className="text-center">
                              <p className="text-xs text-white/70 mb-1">1h</p>
-                             <div className={`text-sm font-medium ${
-                               crypto.change1h >= 0 ? 'text-white' : 'text-red-300'
-                             }`}>
+                              <div className={`text-sm font-medium font-numbers ${
+                                crypto.change1h >= 0 ? 'text-white' : 'text-red-300'
+                              }`}>
                                {crypto.change1h >= 0 ? '+' : ''}{crypto.change1h.toFixed(2)}%
                              </div>
                            </div>
                            <div className="text-center">
                              <p className="text-xs text-white/70 mb-1">24h</p>
-                             <div className={`text-sm font-medium ${
-                               crypto.change24h >= 0 ? 'text-white' : 'text-red-300'
-                             }`}>
+                              <div className={`text-sm font-medium font-numbers ${
+                                crypto.change24h >= 0 ? 'text-white' : 'text-red-300'
+                              }`}>
                                {crypto.change24h >= 0 ? '+' : ''}{crypto.change24h.toFixed(2)}%
                              </div>
                            </div>
                            <div className="text-center">
                              <p className="text-xs text-white/70 mb-1">7d</p>
-                             <div className={`text-sm font-medium ${
-                               crypto.change7d >= 0 ? 'text-white' : 'text-red-300'
-                             }`}>
+                              <div className={`text-sm font-medium font-numbers ${
+                                crypto.change7d >= 0 ? 'text-white' : 'text-red-300'
+                              }`}>
                                {crypto.change7d >= 0 ? '+' : ''}{crypto.change7d.toFixed(2)}%
                              </div>
                            </div>
@@ -677,11 +677,11 @@ const MarketOverviewPage = () => {
                          <div className="pt-2 border-t border-white/20">
                            <div className="flex justify-between text-sm">
                              <span className="text-white/70">Market Cap</span>
-                             <span className="font-mono text-white">${crypto.marketCap}</span>
+                             <span className="font-numbers text-white">${crypto.marketCap}</span>
                            </div>
                            <div className="flex justify-between text-sm mt-1">
                              <span className="text-white/70">Volume</span>
-                             <span className="font-mono text-white">${crypto.volume}</span>
+                             <span className="font-numbers text-white">${crypto.volume}</span>
                            </div>
                          </div>
                       </div>
@@ -773,12 +773,12 @@ const MarketOverviewPage = () => {
                     </div>
                     <span className="text-xs text-muted-foreground font-semibold">Market Cap</span>
                   </div>
-                  <div className="text-xl font-bold text-primary mb-1">
-                    {totalMarketCap}
-                  </div>
-                  <div className={`text-xs font-semibold flex items-center ${trend24 >= 0 ? 'text-success' : 'text-destructive'}`}>
-                    <TrendingUp className={`h-3 w-3 mr-1 ${trend24 < 0 ? 'rotate-180' : ''}`} />
-                    {trend24 >= 0 ? `+${trend24}%` : `${trend24}%`}
+                   <div className="text-xl font-bold font-numbers text-primary mb-1">
+                     {totalMarketCap}
+                   </div>
+                   <div className={`text-xs font-semibold font-numbers flex items-center ${trend24 >= 0 ? 'text-success' : 'text-destructive'}`}>
+                     <TrendingUp className={`h-3 w-3 mr-1 ${trend24 < 0 ? 'rotate-180' : ''}`} />
+                     {trend24 >= 0 ? `+${trend24}%` : `${trend24}%`}
                   </div>
                 </Card>
 
@@ -805,7 +805,7 @@ const MarketOverviewPage = () => {
                     </div>
                     <span className="text-xs text-muted-foreground font-semibold">Fear & Greed Index</span>
                   </div>
-                  <div className="text-2xl font-bold text-success">{fearGreed}</div>
+                  <div className="text-2xl font-bold font-numbers text-success">{fearGreed}</div>
                 </div>
                 <div className="w-full bg-secondary/20 rounded-full h-3 mb-3 overflow-hidden">
                   <div 
@@ -825,7 +825,7 @@ const MarketOverviewPage = () => {
                     </div>
                     <span className="text-xs text-muted-foreground font-semibold">Alt Season</span>
                   </div>
-                  <div className="text-xl font-bold text-accent mb-2">{altSeason}</div>
+                  <div className="text-xl font-bold font-numbers text-accent mb-2">{altSeason}</div>
                   <div className="w-full bg-secondary/20 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
@@ -842,7 +842,7 @@ const MarketOverviewPage = () => {
                     </div>
                     <span className="text-xs text-muted-foreground font-semibold">BTC Dom</span>
                   </div>
-                  <div className="text-xl font-bold text-warning mb-2">{btcDom}%</div>
+                  <div className="text-xl font-bold font-numbers text-warning mb-2">{btcDom}%</div>
                   <div className="w-full bg-secondary/20 rounded-full h-2 mb-2">
                     <div 
                       className="bg-gradient-to-r from-warning to-destructive h-2 rounded-full transition-all duration-500"

@@ -459,7 +459,7 @@ const NewsPage = () => {
                 <TabsTrigger
                   key={category.id}
                   value={category.id}
-                  className={`font-orbitron font-black text-foreground ${isMobile ? 'text-xs tracking-wide px-2 py-2' : 'text-sm tracking-widest px-3 py-2'} data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg`}
+                  className={`font-sans font-black text-foreground ${isMobile ? 'text-xs tracking-wide px-2 py-2' : 'text-sm tracking-widest px-3 py-2'} data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg`}
                 >
                   {category.label}
                 </TabsTrigger>
@@ -471,7 +471,7 @@ const NewsPage = () => {
                   <TabsTrigger
                     key={category.id}
                     value={category.id}
-                    className="font-orbitron font-black text-foreground text-xs tracking-wide px-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg"
+                    className="font-sans font-black text-foreground text-xs tracking-wide px-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg"
                   >
                     {category.label}
                   </TabsTrigger>

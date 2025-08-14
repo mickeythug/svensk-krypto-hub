@@ -149,9 +149,9 @@ const TokenItem = memo<TokenItemProps>(({ crypto, isMobile, onTokenClick }) => {
         ) : (
           <TrendingDown size={isMobile ? 10 : 14} />
         )}
-        <span className={`font-display ${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>
-          {changeFormatted}
-        </span>
+         <span className={`font-display font-numbers ${isMobile ? 'text-xs' : 'text-sm'} font-medium`}>
+           {changeFormatted}
+         </span>
       </div>
       
       {/* Live indicator */}
