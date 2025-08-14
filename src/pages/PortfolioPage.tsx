@@ -15,100 +15,94 @@ import {
   EyeOff,
   Settings,
   Star,
-  StarOff
+  StarOff,
+  RefreshCw,
+  AlertCircle,
+  Wifi,
+  WifiOff
 } from "lucide-react";
 import Header from "@/components/Header";
 import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
-import { useCryptoData } from "@/hooks/useCryptoData";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useWatchlist } from "@/hooks/useWatchlist";
-
-interface PortfolioHolding {
-  id: string;
-  symbol: string;
-  name: string;
-  amount: number;
-  avgBuyPrice: number;
-  currentPrice: number;
-  image: string;
-}
+import { useRealPortfolio } from "@/hooks/useRealPortfolio";
+import { useWalletConnection } from "@/hooks/useWalletConnection";
+import { useRealWatchlist } from "@/hooks/useRealWatchlist";
+import { toast } from "sonner";
 
 const PortfolioPage = () => {
   const isMobile = useIsMobile();
-  const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [showValues, setShowValues] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const { cryptoPrices, isLoading } = useCryptoData();
-  const { watchlist, toggleWatchlist, isInWatchlist } = useWatchlist();
+  
+  // Real portfolio data hooks
+  const { connectedWallets, primaryWallet, isLoading: walletsLoading } = useWalletConnection();
+  const { 
+    portfolioData, 
+    transactions, 
+    isLoading: portfolioLoading, 
+    error: portfolioError,
+    isConnected: wsConnected,
+    pnl,
+    refreshPortfolio 
+  } = useRealPortfolio(primaryWallet || undefined);
+  
+  const { 
+    watchlist, 
+    isLoading: watchlistLoading, 
+    toggleWatchlist, 
+    isInWatchlist,
+    refreshPrices 
+  } = useRealWatchlist();
 
-  // Demo portfolio data
-  useEffect(() => {
-    if (cryptoPrices && cryptoPrices.length > 0) {
-      const demoHoldings: PortfolioHolding[] = [
-        {
-          id: "1",
-          symbol: "BTC",
-          name: "Bitcoin",
-          amount: 0.5,
-          avgBuyPrice: 100000,
-          currentPrice: cryptoPrices.find(c => c.symbol === "BTC")?.price || 115000,
-          image: cryptoPrices.find(c => c.symbol === "BTC")?.image || ""
-        },
-        {
-          id: "2", 
-          symbol: "ETH",
-          name: "Ethereum",
-          amount: 2.5,
-          avgBuyPrice: 3200,
-          currentPrice: cryptoPrices.find(c => c.symbol === "ETH")?.price || 3800,
-          image: cryptoPrices.find(c => c.symbol === "ETH")?.image || ""
-        },
-        {
-          id: "3",
-          symbol: "SOL",
-          name: "Solana", 
-          amount: 10,
-          avgBuyPrice: 150,
-          currentPrice: cryptoPrices.find(c => c.symbol === "SOL")?.price || 169,
-          image: cryptoPrices.find(c => c.symbol === "SOL")?.image || ""
-        }
-      ];
-      setHoldings(demoHoldings);
+  const isLoading = walletsLoading || portfolioLoading || watchlistLoading;
+
+  // Handle wallet connection errors
+  const handleWalletError = () => {
+    if (!primaryWallet) {
+      toast.error("Ingen plånbok ansluten", {
+        description: "Anslut en Solana-plånbok för att se din portfolio",
+      });
+    } else if (portfolioError) {
+      toast.error("Fel vid hämtning av portfoliodata", {
+        description: "Försök igen om en stund",
+      });
     }
-  }, [cryptoPrices]);
-
-  const calculateTotalValue = () => {
-    return holdings.reduce((total, holding) => total + (holding.amount * holding.currentPrice), 0);
   };
 
-  const calculateTotalPnL = () => {
-    return holdings.reduce((total, holding) => {
-      const invested = holding.amount * holding.avgBuyPrice;
-      const current = holding.amount * holding.currentPrice;
-      return total + (current - invested);
-    }, 0);
-  };
-
-  const calculatePnLPercentage = () => {
-    const totalInvested = holdings.reduce((total, holding) => total + (holding.amount * holding.avgBuyPrice), 0);
-    const totalPnL = calculateTotalPnL();
-    return totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0;
+  // Refresh all data
+  const handleRefreshAll = async () => {
+    try {
+      await Promise.all([
+        refreshPortfolio(),
+        refreshPrices(),
+      ]);
+      toast.success("Data uppdaterad");
+    } catch (error) {
+      toast.error("Kunde inte uppdatera data");
+    }
   };
 
   const formatCurrency = (amount: number) => {
     if (!showValues) return "••••••";
     return new Intl.NumberFormat('sv-SE', {
       style: 'currency',
-      currency: 'SEK',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount * 11); // Rough USD to SEK conversion
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
   };
 
-  const totalValue = calculateTotalValue();
-  const totalPnL = calculateTotalPnL();
-  const pnlPercentage = calculatePnLPercentage();
+  const formatNumber = (num: number) => {
+    if (!showValues) return "••••";
+    return num.toFixed(2);
+  };
+
+  // Get real portfolio values
+  const totalValue = portfolioData?.totalValue || 0;
+  const totalPnL = pnl.pnl || 0;
+  const pnlPercentage = pnl.percentage || 0;
+  const holdingsCount = portfolioData ? (portfolioData.tokenBalances.length + (portfolioData.solBalance.balance > 0 ? 1 : 0)) : 0;
 
   if (isLoading) {
     return (
@@ -147,6 +141,25 @@ const PortfolioPage = () => {
           </div>
           
           <div className={`flex items-center gap-3 ${isMobile ? 'self-end' : ''}`}>
+            <div className="flex items-center gap-2">
+              {wsConnected ? (
+                <Wifi className="h-4 w-4 text-success" />
+              ) : (
+                <WifiOff className="h-4 w-4 text-muted-foreground" />
+              )}
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefreshAll}
+              className="flex items-center gap-2"
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              {!isMobile && "Uppdatera"}
+            </Button>
+            
             <Button
               variant="outline"
               size="sm"
@@ -156,10 +169,16 @@ const PortfolioPage = () => {
               {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               {!isMobile && (showValues ? "Dölj" : "Visa")}
             </Button>
-            <Button className={`flex items-center gap-2 bg-gradient-primary ${isMobile ? 'px-3' : ''}`}>
-              <Plus className="h-4 w-4" />
-              {!isMobile && "Lägg till"}
-            </Button>
+            
+            {!primaryWallet && (
+              <Button 
+                onClick={handleWalletError}
+                className={`flex items-center gap-2 bg-gradient-primary ${isMobile ? 'px-3' : ''}`}
+              >
+                <Plus className="h-4 w-4" />
+                {!isMobile && "Anslut plånbok"}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -200,7 +219,7 @@ const PortfolioPage = () => {
               <PieChart className="h-5 w-5 text-accent" />
             </div>
             <div className="text-3xl font-bold text-accent mb-2">
-              {holdings.length}
+              {holdingsCount}
             </div>
             <div className="text-sm text-muted-foreground">
               Olika kryptovalutor
@@ -235,14 +254,76 @@ const PortfolioPage = () => {
           </TabsList>
 
           <TabsContent value="overview" className="mt-6">
-            <div className="space-y-4">
-              {holdings.map((holding) => {
-                const pnl = (holding.currentPrice - holding.avgBuyPrice) * holding.amount;
-                const pnlPercentage = ((holding.currentPrice - holding.avgBuyPrice) / holding.avgBuyPrice) * 100;
-                
-                return (
+            {!primaryWallet ? (
+              <Card className="p-12 text-center">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="font-semibold text-lg mb-2">Ingen plånbok ansluten</h3>
+                <p className="text-muted-foreground mb-6">
+                  Anslut din Solana-plånbok för att se din portfolio
+                </p>
+                <Button onClick={handleWalletError} className="bg-gradient-primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Anslut plånbok
+                </Button>
+              </Card>
+            ) : portfolioError ? (
+              <Card className="p-12 text-center">
+                <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+                <h3 className="font-semibold text-lg mb-2">Fel vid hämtning av data</h3>
+                <p className="text-muted-foreground mb-6">
+                  {portfolioError}
+                </p>
+                <Button onClick={refreshPortfolio} className="bg-gradient-primary">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Försök igen
+                </Button>
+              </Card>
+            ) : portfolioData ? (
+              <div className="space-y-4">
+                {/* SOL Balance */}
+                {portfolioData.solBalance.balance > 0 && (
+                  <Card className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    <div className={`relative ${isMobile ? 'p-4' : 'p-6'} flex items-center justify-between`}>
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <div className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform shadow-lg`}>
+                            SOL
+                          </div>
+                        </div>
+                        <div>
+                          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} group-hover:text-primary transition-colors`}>
+                            Solana
+                          </h3>
+                          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>
+                            SOL
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="text-right">
+                        <div className={`font-semibold ${isMobile ? 'text-sm' : 'text-lg'} group-hover:text-primary transition-colors`}>
+                          {showValues ? `${portfolioData.solBalance.balance.toFixed(4)} SOL` : "••••••"}
+                        </div>
+                        <div className={`text-muted-foreground ${isMobile ? 'text-xs' : ''}`}>
+                          {formatCurrency(portfolioData.solBalance.value)}
+                        </div>
+                      </div>
+                      
+                      <div className="text-right">
+                        <div className="text-muted-foreground text-sm">
+                          @ {formatCurrency(portfolioData.solBalance.price)}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                )}
+
+                {/* Token Balances */}
+                {portfolioData.tokenBalances.map((token) => (
                   <Card 
-                    key={holding.id} 
+                    key={token.mint} 
                     className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -250,60 +331,65 @@ const PortfolioPage = () => {
                     <div className={`relative ${isMobile ? 'p-4' : 'p-6'} flex items-center justify-between`}>
                       <div className="flex items-center gap-4">
                         <div className="relative">
-                          <img 
-                            src={holding.image} 
-                            alt={holding.name}
-                            className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full group-hover:scale-110 transition-transform shadow-lg`}
-                            onError={(e) => {
-                              e.currentTarget.src = '/placeholder.svg';
-                            }}
-                          />
-                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          {token.image ? (
+                            <img 
+                              src={token.image} 
+                              alt={token.name}
+                              className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full group-hover:scale-110 transition-transform shadow-lg`}
+                              onError={(e) => {
+                                e.currentTarget.src = '/placeholder.svg';
+                              }}
+                            />
+                          ) : (
+                            <div className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full bg-gradient-to-br from-primary/50 to-accent/50 flex items-center justify-center text-white font-bold text-xs group-hover:scale-110 transition-transform shadow-lg`}>
+                              {token.symbol.slice(0, 3)}
+                            </div>
+                          )}
                         </div>
                         <div>
                           <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} group-hover:text-primary transition-colors`}>
-                            {holding.name}
+                            {token.name}
                           </h3>
                           <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>
-                            {holding.symbol}
+                            {token.symbol}
                           </p>
                         </div>
                       </div>
                       
                       <div className="text-right">
                         <div className={`font-semibold ${isMobile ? 'text-sm' : 'text-lg'} group-hover:text-primary transition-colors`}>
-                          {showValues ? `${holding.amount} ${holding.symbol}` : "••••••"}
+                          {showValues ? `${formatNumber(token.uiAmount)} ${token.symbol}` : "••••••"}
                         </div>
                         <div className={`text-muted-foreground ${isMobile ? 'text-xs' : ''}`}>
-                          {formatCurrency(holding.amount * holding.currentPrice)}
+                          {formatCurrency(token.value || 0)}
                         </div>
                       </div>
                       
                       <div className="text-right">
-                        <div className={`font-semibold ${isMobile ? 'text-sm' : ''} ${pnl >= 0 ? 'text-success' : 'text-destructive'} group-hover:scale-105 transition-transform`}>
-                          {showValues ? `${pnl >= 0 ? '+' : ''}${formatCurrency(Math.abs(pnl))}` : "••••••"}
-                        </div>
-                        <div className={`${isMobile ? 'text-xs' : 'text-sm'} ${pnl >= 0 ? 'text-success' : 'text-destructive'}`}>
-                          {showValues ? `${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toFixed(2)}%` : "••••"}
-                        </div>
+                        {token.price && (
+                          <div className="text-muted-foreground text-sm">
+                            @ {formatCurrency(token.price)}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Card>
-                );
-              })}
-            </div>
-            
-            {holdings.length === 0 && (
+                ))}
+                
+                {portfolioData.tokenBalances.length === 0 && portfolioData.solBalance.balance === 0 && (
+                  <Card className="p-12 text-center">
+                    <Wallet className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="font-semibold text-lg mb-2">Portfolio tom</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Din anslutna plånbok har inga tokens eller SOL
+                    </p>
+                  </Card>
+                )}
+              </div>
+            ) : (
               <Card className="p-12 text-center">
-                <Wallet className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">Ingen portfolio än</h3>
-                <p className="text-muted-foreground mb-6">
-                  Börja med att lägga till dina första krypto-investeringar
-                </p>
-                <Button className="bg-gradient-primary">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Lägg till första holding
-                </Button>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Laddar portfolio data...</p>
               </Card>
             )}
           </TabsContent>
@@ -324,9 +410,6 @@ const PortfolioPage = () => {
 
                 {/* Watchlist Items */}
                 {watchlist.map((item) => {
-                  const cryptoData = cryptoPrices?.find(c => c.symbol === item.symbol);
-                  
-                  if (!cryptoData) return null;
 
                   return (
                     <Card 
@@ -338,23 +421,29 @@ const PortfolioPage = () => {
                         <div className="p-4 space-y-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <img 
-                                src={cryptoData.image} 
-                                alt={cryptoData.name}
-                                className="h-10 w-10 rounded-full"
-                                onError={(e) => {
-                                  e.currentTarget.src = '/placeholder.svg';
-                                }}
-                              />
+                              {item.image ? (
+                                <img 
+                                  src={item.image} 
+                                  alt={item.name}
+                                  className="h-10 w-10 rounded-full"
+                                  onError={(e) => {
+                                    e.currentTarget.src = '/placeholder.svg';
+                                  }}
+                                />
+                              ) : (
+                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/50 to-accent/50 flex items-center justify-center text-white font-bold text-xs">
+                                  {item.symbol.slice(0, 3)}
+                                </div>
+                              )}
                               <div>
-                                <h3 className="font-semibold text-base">{cryptoData.name}</h3>
-                                <p className="text-sm text-muted-foreground">{cryptoData.symbol.toUpperCase()}</p>
+                                <h3 className="font-semibold text-base">{item.name}</h3>
+                                <p className="text-sm text-muted-foreground">{item.symbol.toUpperCase()}</p>
                               </div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => toggleWatchlist({ id: item.id, symbol: item.symbol, name: item.name })}
+                              onClick={() => toggleWatchlist({ symbol: item.symbol, name: item.name, chain: item.chain })}
                               className="p-2 text-yellow-500 hover:text-yellow-600"
                             >
                               <Star className="h-4 w-4 fill-current" />
@@ -364,24 +453,24 @@ const PortfolioPage = () => {
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                               <div className="text-muted-foreground">Pris</div>
-                              <div className="font-semibold">{formatCurrency(cryptoData.price)}</div>
+                              <div className="font-semibold">{item.price ? formatCurrency(item.price) : '—'}</div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">24h %</div>
-                              <div className={`font-semibold ${cryptoData.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
-                                {cryptoData.change24h >= 0 ? '+' : ''}{cryptoData.change24h.toFixed(2)}%
+                              <div className={`font-semibold ${(item.change24h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                                {item.change24h ? `${item.change24h >= 0 ? '+' : ''}${item.change24h.toFixed(2)}%` : '—'}
                               </div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Market Cap</div>
                               <div className="font-semibold">
-                                {cryptoData.marketCap || '—'}
+                                {item.marketCap ? formatCurrency(item.marketCap) : '—'}
                               </div>
                             </div>
                             <div>
                               <div className="text-muted-foreground">Volym 24h</div>
                               <div className="font-semibold">
-                                {cryptoData.volume || '—'}
+                                {item.volume ? formatCurrency(item.volume) : '—'}
                               </div>
                             </div>
                           </div>
@@ -390,22 +479,28 @@ const PortfolioPage = () => {
                         // Desktop Layout
                         <div className="grid grid-cols-7 gap-4 p-4 items-center">
                           <div className="flex items-center gap-3">
-                            <img 
-                              src={cryptoData.image} 
-                              alt={cryptoData.name}
-                              className="h-8 w-8 rounded-full"
-                              onError={(e) => {
-                                e.currentTarget.src = '/placeholder.svg';
-                              }}
-                            />
+                            {item.image ? (
+                              <img 
+                                src={item.image} 
+                                alt={item.name}
+                                className="h-8 w-8 rounded-full"
+                                onError={(e) => {
+                                  e.currentTarget.src = '/placeholder.svg';
+                                }}
+                              />
+                            ) : (
+                              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary/50 to-accent/50 flex items-center justify-center text-white font-bold text-xs">
+                                {item.symbol.slice(0, 2)}
+                              </div>
+                            )}
                             <div>
-                              <div className="font-semibold">{cryptoData.name}</div>
-                              <div className="text-sm text-muted-foreground">{cryptoData.symbol.toUpperCase()}</div>
+                              <div className="font-semibold">{item.name}</div>
+                              <div className="text-sm text-muted-foreground">{item.symbol.toUpperCase()}</div>
                             </div>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => toggleWatchlist({ id: item.id, symbol: item.symbol, name: item.name })}
+                              onClick={() => toggleWatchlist({ symbol: item.symbol, name: item.name, chain: item.chain })}
                               className="p-1 text-yellow-500 hover:text-yellow-600 ml-2"
                             >
                               <Star className="h-3 w-3 fill-current" />
@@ -413,27 +508,27 @@ const PortfolioPage = () => {
                           </div>
                           
                           <div className="text-right font-semibold">
-                            {formatCurrency(cryptoData.price)}
+                            {item.price ? formatCurrency(item.price) : '—'}
                           </div>
                           
-                          <div className={`text-right font-semibold ${(cryptoData.change1h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {(cryptoData.change1h || 0) >= 0 ? '+' : ''}{(cryptoData.change1h || 0).toFixed(2)}%
+                          <div className={`text-right font-semibold ${(item.change1h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {item.change1h ? `${item.change1h >= 0 ? '+' : ''}${item.change1h.toFixed(2)}%` : '—'}
                           </div>
                           
-                          <div className={`text-right font-semibold ${cryptoData.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {cryptoData.change24h >= 0 ? '+' : ''}{cryptoData.change24h.toFixed(2)}%
+                          <div className={`text-right font-semibold ${(item.change24h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {item.change24h ? `${item.change24h >= 0 ? '+' : ''}${item.change24h.toFixed(2)}%` : '—'}
                           </div>
                           
-                          <div className={`text-right font-semibold ${(cryptoData.change7d || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {(cryptoData.change7d || 0) >= 0 ? '+' : ''}{(cryptoData.change7d || 0).toFixed(2)}%
-                          </div>
-                          
-                          <div className="text-right font-semibold">
-                            {cryptoData.marketCap || '—'}
+                          <div className={`text-right font-semibold ${(item.change7d || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {item.change7d ? `${item.change7d >= 0 ? '+' : ''}${item.change7d.toFixed(2)}%` : '—'}
                           </div>
                           
                           <div className="text-right font-semibold">
-                            {cryptoData.volume || '—'}
+                            {item.marketCap ? formatCurrency(item.marketCap) : '—'}
+                          </div>
+                          
+                          <div className="text-right font-semibold">
+                            {item.volume ? formatCurrency(item.volume) : '—'}
                           </div>
                         </div>
                       )}
