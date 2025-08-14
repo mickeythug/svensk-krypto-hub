@@ -3,8 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Home, TrendingUp, Plus, Wallet, User, Search, Star, BarChart3 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MobileMemeNavigation = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('meme');
@@ -12,28 +14,28 @@ const MobileMemeNavigation = () => {
   const navItems = [
     {
       id: 'home',
-      label: 'Home',
+      label: t('memeZone.home'),
       icon: Home,
       path: '/',
       badge: null
     }, 
     {
       id: 'meme',
-      label: 'Meme Zone',
+      label: t('memeZone.title'),
       icon: TrendingUp,
       path: '/meme',
       badge: null
     }, 
     {
       id: 'create',
-      label: 'Create',
+      label: t('memeZone.create'),
       icon: Plus,
       path: '/meme/create',
       badge: null
     }, 
     {
       id: 'portfolio',
-      label: 'Portfolio',
+      label: t('memeZone.portfolio'),
       icon: Wallet,
       path: '/portfolio',
       badge: null
