@@ -21,6 +21,8 @@ import {
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 
 interface HeaderProps {
@@ -34,6 +36,7 @@ const Header = ({ showTicker = true }: HeaderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,24 +48,24 @@ const Header = ({ showTicker = true }: HeaderProps) => {
 
   // Complete list of all app pages
   const allPages = [
-    { name: "Hem", href: "/", icon: Home, route: true, description: "Startsida" },
-    { name: "Marknad", href: "/marknad", icon: TrendingUp, route: true, description: "Marknadsöversikt" },
-    { name: "Portfolio", href: "/portfolio", icon: PieChart, route: true, description: "Min portfolio & watchlist" },
-    { name: "Handel", href: "/crypto/btc", icon: BarChart3, route: true, description: "Trading & analys" },
-    { name: "Meme Zone", href: "/meme", icon: Zap, route: true, description: "Meme coins & tokens" },
-    { name: "Skapa Token", href: "/meme/create", icon: Star, route: true, description: "Skapa din egen token" },
-    { name: "Verktyg", href: "/verktyg", icon: Settings, route: true, description: "Krypto verktyg" },
-    { name: "Nyheter", href: "/nyheter", icon: Newspaper, route: true, description: "Senaste nyheterna" },
-    { name: "Community", href: "/community", icon: Users, route: true, description: "Community & forum" }
+    { name: t('nav.home'), href: "/", icon: Home, route: true, description: t('desc.home') },
+    { name: t('nav.market'), href: "/marknad", icon: TrendingUp, route: true, description: t('desc.market') },
+    { name: t('nav.portfolio'), href: "/portfolio", icon: PieChart, route: true, description: t('desc.portfolio') },
+    { name: t('nav.trading'), href: "/crypto/btc", icon: BarChart3, route: true, description: t('desc.trading') },
+    { name: t('nav.memeZone'), href: "/meme", icon: Zap, route: true, description: t('desc.memeZone') },
+    { name: t('nav.createToken'), href: "/meme/create", icon: Star, route: true, description: t('desc.createToken') },
+    { name: t('nav.tools'), href: "/verktyg", icon: Settings, route: true, description: t('desc.tools') },
+    { name: t('nav.news'), href: "/nyheter", icon: Newspaper, route: true, description: t('desc.news') },
+    { name: t('nav.community'), href: "/community", icon: Users, route: true, description: t('desc.community') }
   ];
 
   // Main navigation items (visible in desktop nav)
   const mainNavItems = [
-    { name: "Marknad", href: "/marknad", icon: TrendingUp, route: true },
-    { name: "Portfolio", href: "/portfolio", icon: PieChart, route: true },
-    { name: "Handel", href: "/crypto/btc", icon: BarChart3, route: true },
-    { name: "Meme Zone", href: "/meme", icon: Zap, route: true },
-    { name: "Community", href: "#community", icon: Users, route: false }
+    { name: t('nav.market'), href: "/marknad", icon: TrendingUp, route: true },
+    { name: t('nav.portfolio'), href: "/portfolio", icon: PieChart, route: true },
+    { name: t('nav.trading'), href: "/crypto/btc", icon: BarChart3, route: true },
+    { name: t('nav.memeZone'), href: "/meme", icon: Zap, route: true },
+    { name: t('nav.community'), href: "#community", icon: Users, route: false }
   ];
 
   const handleNavigation = (item: { name: string; href: string; route: boolean }) => {
@@ -187,14 +190,19 @@ const Header = ({ showTicker = true }: HeaderProps) => {
 
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-6 scrollbar-thin scrollbar-track-background scrollbar-thumb-primary/30 hover:scrollbar-thumb-primary/50 scrollbar-thumb-rounded-full">
+                    {/* Language Switcher */}
+                    <div className="p-4 rounded-xl border border-border bg-muted/30">
+                      <LanguageSwitcher />
+                    </div>
+                    
                     {/* Wallet Connect Section */}
                     <div className="p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                      <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
                       <ConnectWalletButton />
                     </div>
                     {/* Complete Navigation Menu */}
                     <div>
-                      <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Huvudsidor</h3>
+                      <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.home')}</h3>
                       <nav className="space-y-2">
                         {allPages.map((item) => {
                           const isActive = location.pathname === item.href || 

@@ -9,6 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 function formatPrice(n: number) {
   if (!isFinite(n)) return '—';
@@ -39,6 +40,7 @@ const MemeHeroNew = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { tokens, loading, error } = useMemeTokens('trending', 20, 1);
+  const { t } = useLanguage();
 
   // Sort tokens by hotness score (volume × absolute change)
   const hottestTokens = tokens
@@ -80,18 +82,18 @@ const MemeHeroNew = () => {
               <Flame className="w-10 h-10 text-white animate-pulse" />
             </div>
             <h1 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
-              HETASTE TOKENS
+              {t('meme.hero.title')}
             </h1>
             <div className="w-20 h-20 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center shadow-2xl">
               <Crown className="w-10 h-10 text-white animate-pulse" />
             </div>
           </div>
           <p className="text-2xl text-white/90 max-w-4xl mx-auto mb-8 font-medium">
-            De 20 mest explosiva meme tokens just nu – Live data från marknaden
+            {t('meme.hero.subtitle')}
           </p>
           <div className="flex items-center justify-center gap-4">
             <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-xl font-bold text-green-400">LIVE UPPDATERINGAR</span>
+            <span className="text-xl font-bold text-green-400">{t('meme.hero.liveUpdates')}</span>
             <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
           </div>
         </div>
@@ -107,9 +109,9 @@ const MemeHeroNew = () => {
           </div>
         ) : error || hottestTokens.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-white/80 text-2xl mb-6">Laddar hetaste tokens...</p>
+            <p className="text-white/80 text-2xl mb-6">{t('meme.hero.loading')}</p>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-lg px-8 py-4">
-              Försök igen
+              {t('meme.hero.tryAgain')}
             </Button>
           </div>
         ) : (
@@ -197,14 +199,14 @@ const MemeHeroNew = () => {
                       <div className="bg-muted/60 rounded-xl p-4 border-2 border-white/10">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                           <DollarSign className="w-4 h-4" />
-                          <span className="font-bold">PRIS</span>
+                          <span className="font-bold">{t('meme.hero.price')}</span>
                         </div>
                          <div className="text-xl font-black text-foreground font-numbers">{formatPrice(token.price)}</div>
                       </div>
                       <div className="bg-muted/60 rounded-xl p-4 border-2 border-white/10">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                           <Star className="w-4 h-4" />
-                          <span className="font-bold">MCAP</span>
+                          <span className="font-bold">{t('meme.hero.mcap')}</span>
                         </div>
                         <div className="text-xl font-black text-foreground font-numbers">{formatCompact(token.marketCap)}</div>
                       </div>
@@ -216,7 +218,7 @@ const MemeHeroNew = () => {
                       isTop3 ? 'bg-gradient-to-r from-orange-400/40 to-red-400/40 text-orange-200' :
                       'bg-gradient-to-r from-primary/40 to-accent/40 text-primary'
                     }`}>
-                      {isTop1 ? '🔥 EXPLOSIV' : isTop3 ? '🚀 HET' : '⭐ TRENDING'}
+                      {isTop1 ? `🔥 ${t('meme.hero.explosive')}` : isTop3 ? `🚀 ${t('meme.hero.hot')}` : `⭐ ${t('meme.hero.trending')}`}
                     </div>
 
                     {/* Action Button */}
@@ -226,7 +228,7 @@ const MemeHeroNew = () => {
                       }`}
                     >
                       <Target className="w-5 h-5 mr-2" />
-                      HANDLA NU
+                      {t('meme.hero.tradeNow')}
                     </Button>
                   </div>
                 </Card>
@@ -246,10 +248,10 @@ const MemeHeroNew = () => {
             }}
           >
             <Rocket className="w-6 h-6 mr-3" />
-            UTFORSKA ALLA TOKENS
+            {t('meme.hero.exploreAll')}
           </Button>
           <p className="text-white/70 text-lg mt-6">
-            Uppdateras varje minut • {hottestTokens.length} hetaste tokens
+            {t('meme.hero.updates')} • {hottestTokens.length} {t('meme.hero.hottestTokens')}
           </p>
         </div>
       </div>

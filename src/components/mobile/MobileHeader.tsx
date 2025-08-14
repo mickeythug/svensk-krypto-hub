@@ -7,6 +7,8 @@ import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 interface MobileHeaderProps {
   title: string;
   showMenu?: boolean;
@@ -19,6 +21,7 @@ const MobileHeader = ({
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [showWalletConnect, setShowWalletConnect] = useState(false);
+  const { t } = useLanguage();
 
   // Hide menu on trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');
@@ -26,59 +29,59 @@ const MobileHeader = ({
   const shouldShowMenu = showMenu && !isTradingPage;
   const shouldShowTicker = !isTradingPage;
   const navItems = [{
-    name: "Hem",
+    name: t('nav.home'),
     href: "/",
     icon: Home,
     route: true,
-    description: "Startsida"
+    description: t('desc.home')
   }, {
-    name: "Marknad",
+    name: t('nav.market'),
     href: "/marknad",
     icon: TrendingUp,
     route: true,
-    description: "Marknadsöversikt"
+    description: t('desc.market')
   }, {
-    name: "Portfolio",
+    name: t('nav.portfolio'),
     href: "/portfolio",
     icon: PieChart,
     route: true,
-    description: "Min portfolio & watchlist"
+    description: t('desc.portfolio')
   }, {
-    name: "Handel",
+    name: t('nav.trading'),
     href: "/crypto/btc",
     icon: BarChart3,
     route: true,
-    description: "Trading & analys"
+    description: t('desc.trading')
   }, {
-    name: "Meme Zone",
+    name: t('nav.memeZone'),
     href: "/meme",
     icon: Zap,
     route: true,
-    description: "Meme coins & tokens"
+    description: t('desc.memeZone')
   }, {
-    name: "Skapa Token",
+    name: t('nav.createToken'),
     href: "/meme/create",
     icon: Star,
     route: true,
-    description: "Skapa din egen token"
+    description: t('desc.createToken')
   }, {
-    name: "Verktyg",
+    name: t('nav.tools'),
     href: "/verktyg",
     icon: Settings,
     route: true,
-    description: "Krypto verktyg"
+    description: t('desc.tools')
   }, {
-    name: "Nyheter",
+    name: t('nav.news'),
     href: "/nyheter",
     icon: Newspaper,
     route: true,
-    description: "Senaste nyheterna"
+    description: t('desc.news')
   }, {
-    name: "Community",
+    name: t('nav.community'),
     href: "/community",
     icon: Users,
     route: true,
-    description: "Community & forum"
+    description: t('desc.community')
   }];
   return <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-[110] md:hidden">
       <div className="flex items-center justify-between p-4">
@@ -128,9 +131,14 @@ const MobileHeader = ({
                   </button>
                 </div>
 
+                {/* Language Switcher */}
+                <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
+                  <LanguageSwitcher />
+                </div>
+
                 {/* Wallet Connect Section */}
                 <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Plånbok</div>
+                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
                   <ConnectWalletButton />
                 </div>
                 <nav className="space-y-2 pb-6">
