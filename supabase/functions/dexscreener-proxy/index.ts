@@ -138,7 +138,9 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { action, address, pairAddress } = await req.json().catch(() => ({}));
+    // Read request body only once
+    const body = await req.json().catch(() => ({}));
+    const { action, address, pairAddress } = body;
 
     if (!action) {
       return new Response(JSON.stringify({ error: 'Missing action' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -150,7 +152,6 @@ serve(async (req) => {
 
     if (action === 'profiles') {
       // DexScreener token-profiles using the CORRECT working endpoints
-      const body: any = await req.json().catch(() => ({}));
       const sortKey = body.sort || 'trendingScore';
       const order: 'asc' | 'desc' = (body.order === 'asc' ? 'asc' : 'desc');
       const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
@@ -288,7 +289,6 @@ serve(async (req) => {
 
     if (action === 'pairsList') {
       // DexScreener latest pairs list for Solana (e.g., sort=createdAt)
-      const body: any = await req.json().catch(() => ({}));
       const sortKey = body.sort || undefined; // e.g., 'createdAt'
       const order = body.order || 'desc';
       const limit = Math.max(1, Math.min(200, Number(body.limit ?? 100)));
@@ -333,7 +333,6 @@ serve(async (req) => {
     }
 
     if (action === 'tokenBatch') {
-      const body: any = await req.json().catch(() => ({}));
       const addresses: string[] = Array.isArray(body.addresses) ? body.addresses.filter(Boolean) : [];
       const unique = Array.from(new Set(addresses)).slice(0, 60);
       const concurrency = 6;
