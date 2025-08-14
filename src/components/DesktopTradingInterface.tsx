@@ -47,6 +47,7 @@ import OrderHistoryPanel from '@/components/trade/OrderHistoryPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DesktopTradingInterfaceProps {
   symbol: string;
@@ -58,6 +59,7 @@ interface DesktopTradingInterfaceProps {
 
 const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }: DesktopTradingInterfaceProps) => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const [orderType, setOrderType] = useState("market");
   const [side, setSide] = useState("buy");
   const [price, setPrice] = useState(currentPrice.toString());
@@ -222,7 +224,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
                       ) : (
                         <WifiOff className="h-3 w-3 text-destructive" />
                       )}
-                      <span>{live ? 'Live' : 'Offline'}</span>
+                      <span>{live ? t('trading.live') : t('trading.offline')}</span>
                     </div>
                   </div>
                 </div>
@@ -261,19 +263,19 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           {/* Market Stats */}
           <div className="flex items-center gap-8 mt-4 text-sm">
             <div className="flex flex-col">
-              <span className="text-muted-foreground">24h High</span>
+              <span className="text-muted-foreground">{t('trading.high24h')}</span>
                <span className="font-numbers font-semibold text-success">
                  {Number.isFinite(ticker?.high24h as any) ? formatUsd(ticker!.high24h!) : '—'}
                </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-muted-foreground">24h Low</span>
+              <span className="text-muted-foreground">{t('trading.low24h')}</span>
                <span className="font-numbers font-semibold text-destructive">
                  {Number.isFinite(ticker?.low24h as any) ? formatUsd(ticker!.low24h!) : '—'}
                </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-muted-foreground">24h Volume</span>
+              <span className="text-muted-foreground">{t('trading.volume')}</span>
                <span className="font-numbers font-semibold">
                  {Number.isFinite(ticker?.volumeQuote as any)
                    ? `$${new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(ticker!.volumeQuote!)}`
@@ -281,13 +283,13 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-muted-foreground">Market Cap</span>
+              <span className="text-muted-foreground">{t('trading.marketCap')}</span>
                <span className="font-numbers font-semibold">
                  {crypto?.marketCap ? `$${crypto.marketCap}` : '—'}
                </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-muted-foreground">Spread</span>
+              <span className="text-muted-foreground">{t('trading.spread')}</span>
                <span className="font-numbers font-semibold">
                  {calculateSpread()}%
                </span>
@@ -314,16 +316,16 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           <Tabs defaultValue="positions" className="h-full">
             <TabsList className="mb-3 bg-card border border-border rounded-lg p-1 shadow-sm">
               <TabsTrigger value="positions" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
-                Positions
+                {t('trading.positions')}
               </TabsTrigger>
               <TabsTrigger value="orders" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
-                Open Orders
+                {t('trading.openOrders')}
               </TabsTrigger>
               <TabsTrigger value="history" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
-                Order History
+                {t('trading.orderHistory')}
               </TabsTrigger>
               <TabsTrigger value="balances" className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md">
-                Balances
+                {t('trading.balance')}
               </TabsTrigger>
             </TabsList>
             
@@ -343,7 +345,7 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
               <Card className="h-full p-6 bg-card border-border">
                 <h3 className="font-semibold mb-4 flex items-center gap-2">
                   <Wallet className="h-4 w-4" />
-                  Wallet Balances
+                  {t('trading.walletBalances')}
                 </h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center py-2 border-b border-border/50">
@@ -386,9 +388,9 @@ const DesktopTradingInterface = ({ symbol, currentPrice, priceChange24h, tokenNa
           <div className="p-4 pt-2 mt-2">
             <Card className="p-6 text-center bg-card border">
               <AlertTriangle className="h-12 w-12 text-warning mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Connect Wallet to Trade</h3>
+              <h3 className="font-semibold mb-2">{t('trading.connectWallet')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Connect your wallet to start trading {symbol}
+                {t('trading.connectWalletDescription')} {symbol}
               </p>
               <ConnectWalletButton />
             </Card>

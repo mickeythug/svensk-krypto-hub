@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MobileTradingPanelProps {
   symbol: string;
@@ -17,6 +18,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
   const [side, setSide] = useState("buy");
   const [price, setPrice] = useState(currentPrice.toString());
   const [amount, setAmount] = useState("");
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-3">
@@ -28,14 +30,14 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
             className="data-[state=active]:bg-success data-[state=active]:text-white"
           >
             <TrendingUp className="h-4 w-4 mr-1" />
-            Köp
+            {t('trading.buy')}
           </TabsTrigger>
           <TabsTrigger 
             value="sell"
             className="data-[state=active]:bg-destructive data-[state=active]:text-white"
           >
             <TrendingDown className="h-4 w-4 mr-1" />
-            Sälj
+            {t('trading.sell')}
           </TabsTrigger>
         </TabsList>
 
@@ -70,7 +72,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
 
       {/* Account Balance */}
       <Card className="p-3">
-        <h3 className="font-semibold text-xs mb-2">Saldo</h3>
+        <h3 className="font-semibold text-xs mb-2">{t('trading.balance')}</h3>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">USDT</span>
@@ -85,9 +87,9 @@ const MobileTradingPanel = ({ symbol, currentPrice, tokenName }: MobileTradingPa
 
       {/* Open Orders */}
       <Card className="p-3">
-        <h3 className="font-semibold text-xs mb-2">Öppna ordrar</h3>
+        <h3 className="font-semibold text-xs mb-2">{t('trading.openOrders')}</h3>
         <div className="text-center text-muted-foreground text-xs py-3">
-          Inga öppna ordrar
+          {t('trading.noOpenOrders')}
         </div>
       </Card>
     </div>
@@ -129,7 +131,7 @@ const TradingForm = ({
           onClick={() => setOrderType("market")}
           className="flex-1"
         >
-          Marknad
+          {t('trading.market')}
         </Button>
         <Button
           variant={orderType === "limit" ? "default" : "outline"}
@@ -137,7 +139,7 @@ const TradingForm = ({
           onClick={() => setOrderType("limit")}
           className="flex-1"
         >
-          Limit
+          {t('trading.limit')}
         </Button>
       </div>
 
@@ -145,7 +147,7 @@ const TradingForm = ({
       {orderType === "limit" && (
         <div className="space-y-2">
           <label className="text-sm font-medium text-muted-foreground">
-            Price (USDT)
+            {t('trading.price')} (USDT)
           </label>
           <Input
             type="number"
@@ -160,7 +162,7 @@ const TradingForm = ({
       {/* Amount Input */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-muted-foreground">
-          Belopp ({symbol})
+          {t('trading.amount')} ({symbol})
         </label>
         <Input
           type="number"
@@ -188,13 +190,13 @@ const TradingForm = ({
       {/* Order Summary */}
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Ordervärde:</span>
+          <span className="text-muted-foreground">{t('trading.orderValue')}:</span>
           <span className="font-mono">
             {amount && price ? `$${(parseFloat(amount) * parseFloat(price)).toFixed(2)}` : '$0.00'}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Avgift:</span>
+          <span className="text-muted-foreground">{t('trading.fee')}:</span>
           <span className="font-mono">~$0.05</span>
         </div>
       </div>
@@ -209,7 +211,7 @@ const TradingForm = ({
         disabled={!amount}
       >
         <Wallet className="h-4 w-4 mr-2" />
-        {isBuy ? "Köp" : "Sälj"} {symbol}
+        {isBuy ? t('trading.buy') : t('trading.sell')} {symbol}
       </Button>
     </Card>
   );

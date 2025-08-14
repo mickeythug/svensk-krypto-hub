@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { formatUsd } from "@/lib/utils";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ModernMobileTradingPanelProps {
   symbol: string;
@@ -38,6 +39,7 @@ const ModernMobileTradingPanel = ({
   const [percentage, setPercentage] = useState("");
   
   const { connected } = useWallet();
+  const { t } = useLanguage();
 
   const quickPercentages = [25, 50, 75, 100];
 
@@ -83,7 +85,7 @@ const ModernMobileTradingPanel = ({
             )}
             <div>
               <h3 className="font-bold text-lg">{symbol.toUpperCase()}/USDT</h3>
-              <p className="text-sm text-muted-foreground">Current price: {formatUsd(currentPrice)}</p>
+              <p className="text-sm text-muted-foreground">{t('trading.currentPrice')}: {formatUsd(currentPrice)}</p>
             </div>
           </div>
         </div>
@@ -101,7 +103,7 @@ const ModernMobileTradingPanel = ({
           }`}
         >
           <TrendingUp className="h-4 w-4 mr-2" />
-          KÖP
+          {t('trading.buy').toUpperCase()}
         </Button>
         <Button
           onClick={() => setTradeType("sell")}
@@ -113,7 +115,7 @@ const ModernMobileTradingPanel = ({
           }`}
         >
           <TrendingDown className="h-4 w-4 mr-2" />
-          SÄLJ
+          {t('trading.sell').toUpperCase()}
         </Button>
       </div>
 
@@ -121,28 +123,28 @@ const ModernMobileTradingPanel = ({
       <Card className="p-4">
         <h4 className="font-semibold mb-3 flex items-center gap-2">
           <Calculator className="h-4 w-4" />
-          Ordertyp
+          {t('trading.orderType')}
         </h4>
         
         <Tabs value={orderType} onValueChange={(value) => setOrderType(value as any)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="market" className="text-xs">
               <Zap className="h-3 w-3 mr-1" />
-              Market
+              {t('trading.market')}
             </TabsTrigger>
             <TabsTrigger value="limit" className="text-xs">
               <DollarSign className="h-3 w-3 mr-1" />
-              Limit
+              {t('trading.limit')}
             </TabsTrigger>
             <TabsTrigger value="stop" className="text-xs">
               <Clock className="h-3 w-3 mr-1" />
-              Stop
+              {t('trading.stop')}
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="market" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Belopp ({symbol.toUpperCase()})</label>
+              <label className="text-sm font-medium">{t('trading.amount')} ({symbol.toUpperCase()})</label>
               <Input
                 type="number"
                 value={amount}
@@ -153,7 +155,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Totalt (USDT)</label>
+              <label className="text-sm font-medium">{t('trading.total')} (USDT)</label>
               <div className="font-mono text-lg font-bold p-3 bg-muted/50 rounded-lg">
                 {formatUsd(calculateTotal())}
               </div>
@@ -162,7 +164,7 @@ const ModernMobileTradingPanel = ({
 
           <TabsContent value="limit" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Price (USDT)</label>
+              <label className="text-sm font-medium">{t('trading.price')} (USDT)</label>
               <Input
                 type="number"
                 value={price}
@@ -173,7 +175,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Belopp ({symbol.toUpperCase()})</label>
+              <label className="text-sm font-medium">{t('trading.amount')} ({symbol.toUpperCase()})</label>
               <Input
                 type="number"
                 value={amount}
@@ -184,7 +186,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Totalt (USDT)</label>
+              <label className="text-sm font-medium">{t('trading.total')} (USDT)</label>
               <div className="font-mono text-lg font-bold p-3 bg-muted/50 rounded-lg">
                 {formatUsd(calculateTotal())}
               </div>
@@ -193,7 +195,7 @@ const ModernMobileTradingPanel = ({
 
           <TabsContent value="stop" className="space-y-4 mt-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Stop Price (USDT)</label>
+              <label className="text-sm font-medium">{t('trading.stopPrice')} (USDT)</label>
               <Input
                 type="number"
                 value={stopPrice}
@@ -204,7 +206,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Limit Price (USDT)</label>
+              <label className="text-sm font-medium">{t('trading.limitPrice')} (USDT)</label>
               <Input
                 type="number"
                 value={price}
@@ -215,7 +217,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Belopp ({symbol.toUpperCase()})</label>
+              <label className="text-sm font-medium">{t('trading.amount')} ({symbol.toUpperCase()})</label>
               <Input
                 type="number"
                 value={amount}
@@ -226,7 +228,7 @@ const ModernMobileTradingPanel = ({
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Totalt (USDT)</label>
+              <label className="text-sm font-medium">{t('trading.total')} (USDT)</label>
               <div className="font-mono text-lg font-bold p-3 bg-muted/50 rounded-lg">
                 {formatUsd(calculateTotal())}
               </div>
@@ -239,7 +241,7 @@ const ModernMobileTradingPanel = ({
       <Card className="p-4">
         <h4 className="font-semibold mb-3 flex items-center gap-2">
           <Percent className="h-4 w-4" />
-          Snabbval (% av saldo)
+          {t('trading.quickSelection')}
         </h4>
         
         <div className="grid grid-cols-4 gap-2">
@@ -263,19 +265,19 @@ const ModernMobileTradingPanel = ({
 
       {/* TRADING FEES & INFO */}
       <Card className="p-4 bg-muted/30">
-        <h4 className="font-semibold mb-3 text-sm">Avgifter & Information</h4>
+        <h4 className="font-semibold mb-3 text-sm">{t('trading.feesInfo')}</h4>
         
         <div className="space-y-2 text-xs">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Trading fee:</span>
+            <span className="text-muted-foreground">{t('trading.tradingFee')}:</span>
             <span className="font-mono">0.1%</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Geschätziga avgifter:</span>
+            <span className="text-muted-foreground">{t('trading.estimatedFees')}:</span>
             <span className="font-mono">{formatUsd(calculateTotal() * 0.001)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Du får ca:</span>
+            <span className="text-muted-foreground">{t('trading.youWillReceive')}:</span>
             <span className="font-mono font-bold">
               {tradeType === "buy" 
                 ? `${parseFloat(amount || "0").toFixed(6)} ${symbol.toUpperCase()}`
@@ -289,7 +291,7 @@ const ModernMobileTradingPanel = ({
       {/* TRADE BUTTON */}
       {!connected ? (
         <Button className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90">
-          Connect wallet to trade
+          {t('trading.connectWalletToTrade')}
         </Button>
       ) : (
         <Button 
@@ -301,7 +303,7 @@ const ModernMobileTradingPanel = ({
               : "bg-red-500 hover:bg-red-600 text-white"
           }`}
         >
-          {tradeType === "buy" ? "KÖP" : "SÄLJ"} {symbol.toUpperCase()}
+          {tradeType === "buy" ? t('trading.buy').toUpperCase() : t('trading.sell').toUpperCase()} {symbol.toUpperCase()}
         </Button>
       )}
 
@@ -311,11 +313,10 @@ const ModernMobileTradingPanel = ({
           <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
             <h4 className="font-semibold text-sm text-amber-600 dark:text-amber-400">
-              Trading Warning
+              {t('trading.tradingWarning')}
             </h4>
             <p className="text-xs text-amber-600/80 dark:text-amber-400/80 leading-relaxed">
-              Cryptocurrency trading involves high risks and you may lose your entire invested capital. 
-              Trade only with funds you can afford to lose.
+              {t('trading.tradingWarningText')}
             </p>
           </div>
         </div>
