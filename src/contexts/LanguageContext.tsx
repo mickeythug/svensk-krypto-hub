@@ -1033,6 +1033,22 @@ const translations = {
     'meme.hero.price': 'PRICE',
     'meme.hero.mcap': 'MCAP',
     
+    
+    // Meme Stats Page
+    'memeStatsPage.title': 'Meme Zone Statistics',
+    'memeStatsPage.description': 'Live market data and trends',
+    'memeStatsPage.live': 'Live',
+    'memeStatsPage.marketCap': 'Market Cap',
+    'memeStatsPage.activeTokens': 'Active Tokens',
+    'memeStatsPage.volume24h': '24h Volume',
+    'memeStatsPage.topGainer': 'Top Gainer',
+    'memeStatsPage.topPerformers': 'Top Performers (24h)',
+    'memeStatsPage.marketSentiment': 'Market Sentiment',
+    'memeStatsPage.bullishSentiment': 'Bullish Sentiment',
+    'memeStatsPage.fearGreedIndex': 'Fear & Greed Index',
+    'memeStatsPage.greed': 'Greed',
+    'memeStatsPage.socialActivity': 'Social Activity',
+
     // Meme Pages
     'meme.buyToken.title': 'Buy Token',
     'meme.buyToken.description': 'Buy and sell meme tokens with advanced analysis and real-time data',
@@ -1653,9 +1669,13 @@ const translations = {
     'memeZoneTabs.price': 'Price',
     'memeZoneTabs.tryAgain': 'Try again',
     'memeZoneTabs.tradeNow': 'TRADE NOW',
-    'memeZoneTabs.previous': 'Previous',
-    'memeZoneTabs.next': 'Next',
+    'memeZoneTabs.previousPage': 'Previous',
+    'memeZoneTabs.nextPage': 'Next',
     'memeZoneTabs.page': 'Page',
+    'memeZoneTabs.priceLabel': 'PRICE',
+    'memeZoneTabs.mcapLabel': 'MCAP',
+    'memeZoneTabs.vol24hLabel': '24H VOL',
+    'memeZoneTabs.holdersLabel': 'HOLDERS',
 
     // Trading page translations
     'trading.desktop.overview': 'Trading Overview',

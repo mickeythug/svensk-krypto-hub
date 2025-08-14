@@ -5,9 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, Users, DollarSign, Clock, Zap, Star } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 
 const MemeStatsPage = () => {
+  const { t } = useLanguage();
   const [stats, setStats] = useState({
     totalMarketCap: '$2.4B',
     activeTokens: '2,847',
@@ -34,13 +36,13 @@ const MemeStatsPage = () => {
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Meme Zone Statistik
+                {t('memeStatsPage.title')}
               </h1>
-              <p className="text-sm text-muted-foreground">Live marknadsdata och trender</p>
+              <p className="text-sm text-muted-foreground">{t('memeStatsPage.description')}</p>
             </div>
             <div className="flex items-center gap-2 bg-green-500/10 px-3 py-1 rounded-full">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-green-500">Live</span>
+              <span className="text-sm font-medium text-green-500">{t('memeStatsPage.live')}</span>
             </div>
           </div>
         </div>
@@ -50,7 +52,7 @@ const MemeStatsPage = () => {
             <CardContent className="p-4 text-center">
               <DollarSign className="h-6 w-6 text-primary mx-auto mb-2" />
               <p className="text-2xl font-bold font-numbers">{stats.totalMarketCap}</p>
-              <p className="text-sm text-muted-foreground">Market Cap</p>
+              <p className="text-sm text-muted-foreground">{t('memeStatsPage.marketCap')}</p>
             </CardContent>
           </Card>
           
@@ -58,7 +60,7 @@ const MemeStatsPage = () => {
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-6 w-6 text-green-500 mx-auto mb-2" />
               <p className="text-2xl font-bold font-numbers">{stats.activeTokens}</p>
-              <p className="text-sm text-muted-foreground">Active Tokens</p>
+              <p className="text-sm text-muted-foreground">{t('memeStatsPage.activeTokens')}</p>
             </CardContent>
           </Card>
           
@@ -66,7 +68,7 @@ const MemeStatsPage = () => {
             <CardContent className="p-4 text-center">
               <Zap className="h-6 w-6 text-blue-500 mx-auto mb-2" />
               <p className="text-2xl font-bold font-numbers">{stats.dailyVolume}</p>
-              <p className="text-sm text-muted-foreground">24h Volume</p>
+              <p className="text-sm text-muted-foreground">{t('memeStatsPage.volume24h')}</p>
             </CardContent>
           </Card>
           
@@ -74,7 +76,7 @@ const MemeStatsPage = () => {
             <CardContent className="p-4 text-center">
               <Star className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
               <p className="text-2xl font-bold font-numbers">{stats.topGainerChange}</p>
-              <p className="text-sm text-muted-foreground">Top Gainer</p>
+              <p className="text-sm text-muted-foreground">{t('memeStatsPage.topGainer')}</p>
             </CardContent>
           </Card>
         </div>
@@ -84,7 +86,7 @@ const MemeStatsPage = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Top Performers (24h)
+              {t('memeStatsPage.topPerformers')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -114,19 +116,19 @@ const MemeStatsPage = () => {
         {/* Market Sentiment */}
         <Card className="bg-card/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>Marknadssentiment</CardTitle>
+            <CardTitle>{t('memeStatsPage.marketSentiment')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Bullish Sentiment</span>
+                <span className="text-sm font-medium">{t('memeStatsPage.bullishSentiment')}</span>
                 <span className="text-sm text-muted-foreground font-numbers">78%</span>
               </div>
               <Progress value={78} className="h-2" />
             </div>
             <div>
               <div className="flex justify-between mb-2">
-                <span className="text-sm font-medium">Fear & Greed Index</span>
+                <span className="text-sm font-medium">{t('memeStatsPage.fearGreedIndex')}</span>
                 <span className="text-sm text-muted-foreground font-numbers">65 (Greed)</span>
               </div>
               <Progress value={65} className="h-2" />

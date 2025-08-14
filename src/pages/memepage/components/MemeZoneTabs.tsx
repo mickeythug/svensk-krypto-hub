@@ -9,6 +9,7 @@ import { useMemeTokens, type MemeCategory } from '../hooks/useMemeTokens';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 import hexPattern from '@/assets/hex-pattern.jpg';
 import { 
   TrendingUp, 
@@ -72,6 +73,7 @@ const TokenGrid: React.FC<{
 }> = ({ category, viewMode, sortBy, sortDirection }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const [page, setPage] = useState(1);
   const { tokens, loading, error, hasMore } = useMemeTokens(category, 50, page);
 
@@ -160,7 +162,7 @@ const TokenGrid: React.FC<{
       <div className="text-center py-12">
         <p className="text-destructive text-lg mb-4">{error}</p>
         <Button onClick={() => window.location.reload()} variant="outline">
-          Try again
+          {t('memeZoneTabs.tryAgain')}
         </Button>
       </div>
     );
@@ -221,15 +223,15 @@ const TokenGrid: React.FC<{
                 {/* Stats Grid */}
                 <div className="hidden md:flex items-center gap-8">
                   <div className="text-center">
-                    <p className="text-base font-bold text-muted-foreground">PRICE</p>
+                    <p className="text-base font-bold text-muted-foreground">{t('memeZoneTabs.priceLabel')}</p>
                     <p className="font-black text-xl">{formatPrice(token.price)}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-base font-bold text-muted-foreground">MCAP</p>
+                    <p className="text-base font-bold text-muted-foreground">{t('memeZoneTabs.mcapLabel')}</p>
                     <p className="font-black text-xl">{formatCompact(token.marketCap)}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-base font-bold text-muted-foreground">24H VOL</p>
+                    <p className="text-base font-bold text-muted-foreground">{t('memeZoneTabs.vol24hLabel')}</p>
                     <p className="font-black text-xl">{formatCompact(token.volume24h)}</p>
                   </div>
                 </div>
@@ -259,11 +261,11 @@ const TokenGrid: React.FC<{
             className="flex items-center gap-2"
           >
             <ChevronLeft className="w-4 h-4" />
-            Föregående
+          {t('memeZoneTabs.previousPage')}
           </Button>
           
           <div className="flex items-center gap-3 px-4 py-2 bg-card rounded-full border">
-            <span className="text-sm font-medium text-muted-foreground">Sida</span>
+            <span className="text-sm font-medium text-muted-foreground">{t('memeZoneTabs.page')}</span>
             <span className="text-lg font-bold text-foreground">{page}</span>
           </div>
           
@@ -272,7 +274,7 @@ const TokenGrid: React.FC<{
             onClick={() => setPage(p => p + 1)}
             className="flex items-center gap-2"
           >
-            Nästa
+            {t('memeZoneTabs.nextPage')}
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>
@@ -368,14 +370,14 @@ const TokenGrid: React.FC<{
                   <div className="bg-muted/50 rounded-lg p-4 border">
                     <div className="flex items-center gap-2 text-muted-foreground text-sm font-bold mb-3">
                       <DollarSign className="w-5 h-5" />
-                      PRICE
+                      {t('memeZoneTabs.priceLabel')}
                     </div>
                     <div className="text-xl font-black text-foreground">{formatPrice(token.price)}</div>
                   </div>
                   <div className="bg-muted/50 rounded-lg p-4 border">
                     <div className="flex items-center gap-2 text-muted-foreground text-sm font-bold mb-3">
                       <Star className="w-5 h-5" />
-                      MCAP
+                      {t('memeZoneTabs.mcapLabel')}
                     </div>
                     <div className="text-xl font-black text-foreground">{formatCompact(token.marketCap)}</div>
                   </div>
@@ -386,14 +388,14 @@ const TokenGrid: React.FC<{
                   <div className="bg-muted/50 rounded-lg p-3 border">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                       <BarChart3 className="w-4 h-4" />
-                      VOL 24H
+                      {t('memeZoneTabs.vol24hLabel')}
                     </div>
                     <div className="text-sm font-black text-foreground">{formatCompact(token.volume24h)}</div>
                   </div>
                   <div className="bg-muted/50 rounded-lg p-3 border">
                     <div className="flex items-center gap-2 text-muted-foreground text-xs mb-2">
                       <Users className="w-4 h-4" />
-                      HOLDERS
+                      {t('memeZoneTabs.holdersLabel')}
                     </div>
                     <div className="text-sm font-black text-foreground">{formatCompact(token.holders)}</div>
                   </div>
@@ -417,7 +419,7 @@ const TokenGrid: React.FC<{
                   }`}
                 >
                   <Target className="w-6 h-6 mr-3" />
-                  TRADE NOW
+                  {t('memeZoneTabs.tradeNow')}
                 </Button>
               </div>
             </Card>
@@ -434,11 +436,11 @@ const TokenGrid: React.FC<{
           className="flex items-center gap-2"
         >
           <ChevronLeft className="w-4 h-4" />
-          Föregående
+          {t('memeZoneTabs.previousPage')}
         </Button>
         
         <div className="flex items-center gap-3 px-4 py-2 bg-card rounded-full border">
-          <span className="text-sm font-medium text-muted-foreground">Sida</span>
+          <span className="text-sm font-medium text-muted-foreground">{t('memeZoneTabs.page')}</span>
           <span className="text-lg font-bold text-foreground">{page}</span>
         </div>
         
@@ -447,7 +449,7 @@ const TokenGrid: React.FC<{
           onClick={() => setPage(p => p + 1)}
           className="flex items-center gap-2"
         >
-          Nästa
+          {t('memeZoneTabs.nextPage')}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
@@ -457,26 +459,27 @@ const TokenGrid: React.FC<{
 
 const MemeZoneTabs: React.FC = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<MemeCategory>('trending');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<SortBy>('marketCap');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const categories: Array<{ label: string; value: MemeCategory; icon: React.ComponentType<any>; }> = [
-    { label: 'Trending', value: 'trending', icon: Flame },
-    { label: 'Gainers', value: 'gainers', icon: TrendingUp },
-    { label: 'Market Cap High', value: 'marketcap_high', icon: Crown },
-    { label: 'Market Cap Low', value: 'marketcap_low', icon: BarChart3 },
-    { label: 'Volume', value: 'volume', icon: Activity },
-    { label: 'Newest', value: 'newest', icon: Sparkles },
+    { label: t('memeZoneTabs.trending'), value: 'trending', icon: Flame },
+    { label: t('memeZoneTabs.gainers'), value: 'gainers', icon: TrendingUp },
+    { label: t('memeZoneTabs.marketCapHigh'), value: 'marketcap_high', icon: Crown },
+    { label: t('memeZoneTabs.marketCapLow'), value: 'marketcap_low', icon: BarChart3 },
+    { label: t('memeZoneTabs.volume'), value: 'volume', icon: Activity },
+    { label: t('memeZoneTabs.newest'), value: 'newest', icon: Sparkles },
   ];
 
   const sortOptions: Array<{ label: string; value: SortBy; icon: React.ComponentType<any>; }> = [
-    { label: 'Market Cap', value: 'marketCap', icon: BarChart3 },
-    { label: 'Volume 24h', value: 'volume24h', icon: Activity },
-    { label: '24h Change', value: 'change24h', icon: TrendingUp },
-    { label: 'Holders', value: 'holders', icon: Users },
-    { label: 'Price', value: 'price', icon: DollarSign },
+    { label: t('memeZoneTabs.marketCap'), value: 'marketCap', icon: BarChart3 },
+    { label: t('memeZoneTabs.volume24h'), value: 'volume24h', icon: Activity },
+    { label: t('memeZoneTabs.change24h'), value: 'change24h', icon: TrendingUp },
+    { label: t('memeZoneTabs.holders'), value: 'holders', icon: Users },
+    { label: t('memeZoneTabs.price'), value: 'price', icon: DollarSign },
   ];
 
   const handleSort = (option: SortBy) => {
@@ -499,14 +502,14 @@ const MemeZoneTabs: React.FC = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-3 bg-card/80 backdrop-blur-sm border border-border/40 rounded-full px-6 py-3 mb-6">
             <Rocket className="w-6 h-6 text-primary" />
-            <span className="font-bold text-lg text-foreground">TOKEN EXPLORER</span>
+            <span className="font-bold text-lg text-foreground">{t('memeZoneTabs.tokenExplorer')}</span>
             <Sparkles className="w-6 h-6 text-primary" />
           </div>
           <h1 className="font-black text-4xl md:text-6xl bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 bg-clip-text text-transparent mb-4">
-            UPPTÄCK TOKENS
+            {t('memeZoneTabs.discoverTokens')}
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Utforska alla meme tokens med avancerade filter och sortering
+            {t('memeZoneTabs.exploreDescription')}
           </p>
         </div>
 
@@ -516,7 +519,7 @@ const MemeZoneTabs: React.FC = () => {
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
               <Layers className="w-5 h-5 text-primary" />
-              <span className="font-bold text-foreground">Kategorier</span>
+              <span className="font-bold text-foreground">{t('memeZoneTabs.categories')}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {categories.map((category) => {
@@ -547,7 +550,7 @@ const MemeZoneTabs: React.FC = () => {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-4">
                 <Filter className="w-5 h-5 text-primary" />
-                <span className="font-bold text-foreground">Sortera</span>
+                <span className="font-bold text-foreground">{t('memeZoneTabs.sort')}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {sortOptions.map((option) => {
@@ -583,7 +586,7 @@ const MemeZoneTabs: React.FC = () => {
             <div className="flex-shrink-0">
               <div className="flex items-center gap-3 mb-4">
                 <Eye className="w-5 h-5 text-primary" />
-                <span className="font-bold text-foreground">Vy</span>
+                <span className="font-bold text-foreground">{t('memeZoneTabs.view')}</span>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -593,7 +596,7 @@ const MemeZoneTabs: React.FC = () => {
                   className="gap-2"
                 >
                   <Grid3X3 className="w-4 h-4" />
-                  Rutnät
+                  {t('memeZoneTabs.grid')}
                 </Button>
                 <Button
                   variant={viewMode === 'list' ? 'default' : 'outline'}
@@ -602,7 +605,7 @@ const MemeZoneTabs: React.FC = () => {
                   className="gap-2"
                 >
                   <List className="w-4 h-4" />
-                  Lista
+                  {t('memeZoneTabs.list')}
                 </Button>
               </div>
             </div>
