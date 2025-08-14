@@ -310,4 +310,29 @@ All colors MUST be HSL.
     background-clip: initial !important;
     color: inherit !important;
   }
+
+  /* Modern Web3 Ads Animations */
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite ease-in-out;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { 
+      transform: scale(1);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+    50% { 
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    }
+  }
 }

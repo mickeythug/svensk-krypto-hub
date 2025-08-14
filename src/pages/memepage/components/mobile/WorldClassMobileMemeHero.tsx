@@ -6,6 +6,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import { Flame, Crown, Sparkles, TrendingUp, Star, Bell, Search, Plus, Zap, Rocket } from 'lucide-react';
 import heroImage from '@/assets/meme-hero.jpg';
 import MobileMemeSearch from './MobileMemeSearch';
+import ModernWeb3AdsCarousel from '@/components/ModernWeb3AdsCarousel';
 const FloatingIcon = ({
   icon: Icon,
   delay = 0,
@@ -100,54 +101,8 @@ const WorldClassMobileMemeHero = () => {
         </div>
       </div>
 
-      {/* Premium Hero Card with advanced styling */}
-      <div className="group hover:scale-[1.02] hover:-translate-y-2 transition-all duration-500 ease-out" style={{
-      perspective: '1000px'
-    }}>
-        <Card className="relative overflow-hidden bg-gradient-to-br from-orange-600/90 via-red-600/90 to-pink-600/90 border-none shadow-2xl backdrop-blur-sm mobile-backdrop group-hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] transition-all duration-500">
-          {/* Dynamic background with enhanced effects */}
-          <div className="absolute inset-0 opacity-30 group-hover:scale-110 transition-transform duration-1000">
-            <OptimizedImage src={heroImage} alt="Meme Hero Background" className="w-full h-full object-cover" fallbackSrc="/placeholder.svg" />
-          </div>
-          
-          {/* Animated gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-20 animate-shimmer" />
-          
-          {/* Content with premium styling */}
-          <div className="relative z-10 p-6">
-            {/* Premium badges with enhanced animations - HOT badge removed */}
-            <div className="flex items-center justify-end mb-4">
-              
-            </div>
-            
-            {/* Main content with world-class typography */}
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-3 group no-fancy-effects">
-                <h2 className="text-2xl font-bold text-white transition-all duration-300 text-clean font-sans">
-                  HETASTE TOKENS
-                </h2>
-              </div>
-              
-              <p className="text-white/90 text-sm mb-6 max-w-xs mx-auto leading-relaxed font-medium text-clean text-container font-sans">
-                Upptäck de mest explosiva meme tokens med live-data och realtidsuppdateringar
-              </p>
-              
-              {/* Premium CTA Buttons with enhanced effects */}
-              <div className="flex gap-3">
-                <Button className="flex-1 bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30 hover:scale-105 hover:-translate-y-1 font-semibold rounded-full mobile-backdrop transition-all duration-300 shadow-lg hover:shadow-xl">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  Utforska
-                </Button>
-                
-                <Button className="flex-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold hover:from-yellow-500 hover:to-yellow-700 hover:scale-105 hover:-translate-y-1 rounded-full transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-yellow-500/25">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Skapa Token
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
+      {/* Modern Web3 Ads Carousel */}
+      <ModernWeb3AdsCarousel />
 
       {/* Enhanced stats with world-class animations */}
       <div className="grid grid-cols-3 gap-4 mt-6">
