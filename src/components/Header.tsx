@@ -117,14 +117,14 @@ const Header = ({ showTicker = true }: HeaderProps) => {
             />
             {!isMobile && (
               <div>
-                <h1 className="font-crypto text-lg font-bold">
+                <h1 className="font-orbitron text-lg font-bold">
                   <span className="text-brand-turquoise">CRY</span>
                   <span className="text-brand-white">PTO</span>
                   <span> </span>
                   <span className="text-brand-white">NET</span>
                   <span className="text-brand-turquoise">WORK</span>
                 </h1>
-                <p className="font-crypto text-xs text-muted-foreground">
+                <p className="font-orbitron text-xs text-muted-foreground">
                   SWEDEN
                 </p>
               </div>
@@ -139,7 +139,7 @@ const Header = ({ showTicker = true }: HeaderProps) => {
                   <button
                     key={item.name}
                     onClick={() => handleNavigation(item)}
-                    className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-crypto font-bold tracking-wider uppercase text-sm"
+                    className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-orbitron font-bold tracking-wider uppercase text-sm"
                   >
                     <span>{item.name}</span>
                   </button>
@@ -174,14 +174,14 @@ const Header = ({ showTicker = true }: HeaderProps) => {
                         className="h-8 w-auto"
                       />
                       <div>
-                        <h1 className="font-crypto text-sm font-bold">
+                        <h1 className="font-orbitron text-sm font-bold">
                           <span className="text-brand-turquoise">CRY</span>
                           <span className="text-brand-white">PTO</span>
                           <span> </span>
                           <span className="text-brand-white">NET</span>
                           <span className="text-brand-turquoise">WORK</span>
                         </h1>
-                        <p className="font-crypto text-xs text-muted-foreground">
+                        <p className="font-orbitron text-xs text-muted-foreground">
                           SWEDEN
                         </p>
                       </div>
@@ -197,12 +197,12 @@ const Header = ({ showTicker = true }: HeaderProps) => {
                     
                     {/* Wallet Connect Section */}
                     <div className="p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-crypto text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
+                      <div className="font-orbitron text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
                       <ConnectWalletButton />
                     </div>
                     {/* Complete Navigation Menu */}
                     <div>
-                      <h3 className="font-crypto text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
+                      <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
                       <nav className="space-y-2">
                         {allPages.map((item) => {
                           const isActive = location.pathname === item.href || 
@@ -220,7 +220,7 @@ const Header = ({ showTicker = true }: HeaderProps) => {
                             >
                               <div className="flex items-center space-x-3">
                                 <div className="text-left">
-                                  <div className="font-crypto font-bold tracking-wider uppercase text-sm">
+                                  <div className="font-orbitron font-bold tracking-wider uppercase text-sm">
                                     {item.name}
                                   </div>
                                   <div className="text-xs text-muted-foreground font-display">
