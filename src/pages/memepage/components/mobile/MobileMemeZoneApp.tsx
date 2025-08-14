@@ -77,34 +77,33 @@ const MobileMemeZoneApp = () => {
         {/* Main Tabs */}
         <div className="px-4 pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            {/* Tab Navigation - iOS style */}
             <div className="relative mb-6">
-              <div className="bg-black/20 backdrop-blur-xl rounded-2xl p-2 border border-white/10">
-                <TabsList className="grid w-full grid-cols-4 bg-transparent gap-1">
+              <div className="bg-gradient-to-r from-black/30 via-black/20 to-black/30 backdrop-blur-2xl rounded-3xl p-3 border border-white/20 shadow-2xl shadow-purple-500/10">
+                <TabsList className="grid w-full grid-cols-4 bg-transparent gap-2">
                   <TabsTrigger 
                     value="trending" 
-                    className="rounded-xl py-3 px-4 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-lg text-white/70 transition-all duration-300"
+                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-white data-[state=active]:to-gray-100 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-white/20 data-[state=active]:scale-105 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform"
                   >
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Trending
                   </TabsTrigger>
                   <TabsTrigger 
                     value="new" 
-                    className="rounded-xl py-3 px-4 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-lg text-white/70 transition-all duration-300"
+                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-white data-[state=active]:to-gray-100 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-white/20 data-[state=active]:scale-105 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
                     New
                   </TabsTrigger>
                   <TabsTrigger 
                     value="gainers" 
-                    className="rounded-xl py-3 px-4 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-lg text-white/70 transition-all duration-300"
+                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-white data-[state=active]:to-gray-100 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-white/20 data-[state=active]:scale-105 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform"
                   >
                     <Rocket className="w-4 h-4 mr-2" />
                     Gainers
                   </TabsTrigger>
                   <TabsTrigger 
                     value="volume" 
-                    className="rounded-xl py-3 px-4 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-black data-[state=active]:shadow-lg text-white/70 transition-all duration-300"
+                    className="rounded-2xl py-4 px-4 text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-white data-[state=active]:to-gray-100 data-[state=active]:text-black data-[state=active]:shadow-xl data-[state=active]:shadow-white/20 data-[state=active]:scale-105 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-500 ease-out transform"
                   >
                     <BarChart3 className="w-4 h-4 mr-2" />
                     Volume
