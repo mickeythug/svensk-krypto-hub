@@ -58,8 +58,7 @@ export function useRealPortfolio(walletAddress?: string) {
       const solResponse = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -80,8 +79,7 @@ export function useRealPortfolio(walletAddress?: string) {
       const tokenResponse = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -194,8 +192,7 @@ export function useRealPortfolio(walletAddress?: string) {
       const response = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -229,8 +226,7 @@ export function useRealPortfolio(walletAddress?: string) {
       const response = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           jsonrpc: '2.0',
@@ -254,8 +250,7 @@ export function useRealPortfolio(walletAddress?: string) {
         const txResponse = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/solana-rpc-proxy', {
           method: 'POST',
           headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpjbGxjcnZvbXhkcmh0a3FwY2JyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NzI3NzIsImV4cCI6MjA3MDE0ODc3Mn0.heVnPPTIYaR2AHpmM-v2LPxV_i4KT5sQE9Qh_2woB9U'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             jsonrpc: '2.0',

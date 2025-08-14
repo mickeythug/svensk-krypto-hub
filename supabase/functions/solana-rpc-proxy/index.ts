@@ -14,12 +14,16 @@ serve(async (req) => {
   }
 
   try {
+    // Log the request for debugging
+    console.log('Solana RPC Proxy request:', req.method, req.url);
+    console.log('Headers:', Object.fromEntries(req.headers.entries()));
+    
     const heliusApiKey = Deno.env.get('HELIUS_RPC_API_KEY');
     
     if (!heliusApiKey) {
       console.error('HELIUS_RPC_API_KEY not found in environment');
       return new Response(
-        JSON.stringify({ error: 'RPC service unavailable' }),
+        JSON.stringify({ error: 'RPC service unavailable', code: 500 }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
