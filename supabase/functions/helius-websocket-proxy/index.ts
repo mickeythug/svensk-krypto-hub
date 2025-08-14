@@ -30,8 +30,8 @@ serve(async (req) => {
 
   const { socket, response } = Deno.upgradeWebSocket(req);
   
-  // Connect to Helius WebSocket
-  const heliusWs = new WebSocket(`wss://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`);
+  // Connect to Helius WebSocket - use standard RPC endpoint for WebSocket
+  const heliusWs = new WebSocket(`wss://${heliusApiKey}.helius-rpc.com`);
   
   console.log('Creating WebSocket proxy to Helius');
 
