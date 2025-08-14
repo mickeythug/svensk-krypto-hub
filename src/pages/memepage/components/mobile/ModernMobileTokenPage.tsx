@@ -369,7 +369,7 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
         )}
 
         {/* Bottom Navigation - Big, Clear, No Icons */}
-        <div className="flex bg-muted/30 rounded-3xl p-2">
+        <div className="flex bg-muted/30 rounded-3xl p-3 mx-2">
           {[
             { id: 'trade', label: 'TRADE' },
             { id: 'chart', label: 'CHART' },
@@ -380,7 +380,7 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
               variant="ghost"
               size="lg"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 h-14 rounded-2xl text-lg font-bold transition-all ${
+              className={`flex-1 h-16 rounded-2xl text-base font-bold transition-all mx-1 ${
                 activeTab === tab.id 
                   ? 'bg-background text-foreground shadow-sm' 
                   : 'text-muted-foreground hover:text-foreground hover:bg-muted/70'
