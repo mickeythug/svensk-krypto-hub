@@ -25,7 +25,7 @@ const MobilePagination: React.FC<PaginationProps> = ({
         variant="outline" 
         disabled={loading || currentPage === 1} 
         onClick={() => onPageChange(currentPage - 1)}
-        className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 disabled:opacity-50"
+        className="flex items-center gap-2 bg-white/10 border-white/20 text-white hover:bg-white/20 disabled:opacity-50 font-sans"
       >
         <ChevronLeft className="w-4 h-4" />
         Föregående
@@ -33,16 +33,16 @@ const MobilePagination: React.FC<PaginationProps> = ({
       
       <Card className="bg-black/20 backdrop-blur-xl border border-white/10 px-4 py-2">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-medium text-white/70">Sida</span>
-          <span className="text-lg font-bold text-white">{currentPage}</span>
-          <span className="text-sm text-white/50">av {totalPages}+</span>
+          <span className="text-sm font-medium text-white/70 font-sans">Sida</span>
+          <span className="text-lg font-bold text-white font-sans">{currentPage}</span>
+          <span className="text-sm text-white/50 font-sans">av {totalPages}+</span>
         </div>
       </Card>
       
       <Button 
         disabled={loading || !hasMore} 
         onClick={() => onPageChange(currentPage + 1)}
-        className="flex items-center gap-2 bg-gradient-to-r from-primary/80 to-primary text-black font-bold hover:scale-105 transition-all duration-300 disabled:opacity-50"
+        className="flex items-center gap-2 bg-gradient-to-r from-primary/80 to-primary text-black font-bold hover:scale-105 transition-all duration-300 disabled:opacity-50 font-sans"
       >
         Nästa
         <ChevronRight className="w-4 h-4" />

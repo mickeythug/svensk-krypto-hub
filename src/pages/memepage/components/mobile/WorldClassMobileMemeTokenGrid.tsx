@@ -121,14 +121,14 @@ const PremiumTokenCard = ({ token, index, onClick }) => {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between mb-2">
                 <div className="min-w-0 flex-1 pr-2 text-container no-fancy-effects">
-                  <h3 className="font-bold text-lg text-white truncate transition-colors duration-300 text-clean">
+                  <h3 className="font-bold text-lg text-white truncate transition-colors duration-300 text-clean font-sans">
                     {token.symbol}
                   </h3>
-                  <p className="text-white/60 text-sm truncate font-medium text-clean">{token.name}</p>
+                  <p className="text-white/60 text-sm truncate font-medium text-clean font-sans">{token.name}</p>
                 </div>
                 
                 {/* Clean Price Change display */}
-                <div className={`flex items-center gap-1 text-sm font-bold transition-colors duration-300 pl-2 no-fancy-effects ${
+                <div className={`flex items-center gap-1 text-sm font-bold transition-colors duration-300 pl-2 no-fancy-effects font-sans ${
                   positive ? 'text-green-400' : 'text-red-400'
                 }`}>
                   {positive ? (
@@ -151,11 +151,11 @@ const PremiumTokenCard = ({ token, index, onClick }) => {
                     className="bg-white/5 rounded-lg p-3 border border-white/10 group-hover:bg-white/10 transition-all duration-300"
                     style={{ transitionDelay: `${statIndex * 50}ms` }}
                   >
-                    <div className="text-white/60 text-xs mb-2 flex items-center gap-1 font-medium no-fancy-effects text-clean">
+                    <div className="text-white/60 text-xs mb-2 flex items-center gap-1 font-medium no-fancy-effects text-clean font-sans">
                       <stat.icon className={`w-3 h-3 ${stat.color}`} />
                       {stat.label}
                     </div>
-                    <div className="text-white font-bold text-base text-clean text-container">
+                    <div className="text-white font-bold text-base text-clean text-container font-sans truncate">
                       {stat.value}
                     </div>
                   </div>
@@ -165,7 +165,7 @@ const PremiumTokenCard = ({ token, index, onClick }) => {
               {/* Action Button - Changed to KÖP */}
               <Button 
                 size="sm"
-                className="w-full bg-gradient-to-r from-primary/80 to-primary text-black font-bold rounded-lg transition-all duration-300 mobile-backdrop hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
+                className="w-full bg-gradient-to-r from-primary/80 to-primary text-black font-bold rounded-lg transition-all duration-300 mobile-backdrop hover:scale-105 hover:shadow-lg hover:shadow-primary/25 font-sans"
               >
                 <Target className="w-4 h-4 mr-2" />
                 KÖP

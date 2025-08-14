@@ -159,13 +159,8 @@ const WorldClassMobileMemeHero = () => {
           
           {/* Content with premium styling */}
           <div className="relative z-10 p-6">
-            {/* Premium badges with enhanced animations */}
-            <div className="flex items-center justify-between mb-4">
-              <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm mobile-backdrop hover:scale-110 hover:rotate-3 transition-all duration-300">
-                <Flame className="w-3 h-3 mr-1 animate-pulse" />
-                LIVE
-              </Badge>
-              
+            {/* Premium badges with enhanced animations - HOT badge removed */}
+            <div className="flex items-center justify-end mb-4">
               <Badge className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold hover:scale-110 hover:-rotate-3 transition-all duration-300">
                 <Crown className="w-3 h-3 mr-1 animate-bounce" />
                 Premium
@@ -175,12 +170,12 @@ const WorldClassMobileMemeHero = () => {
             {/* Main content with world-class typography */}
             <div className="text-center">
               <div className="flex items-center justify-center gap-2 mb-3 group no-fancy-effects">
-                <h2 className="text-2xl font-bold text-white transition-all duration-300 text-clean">
+                <h2 className="text-2xl font-bold text-white transition-all duration-300 text-clean font-sans">
                   HETASTE TOKENS
                 </h2>
               </div>
               
-              <p className="text-white/90 text-sm mb-6 max-w-xs mx-auto leading-relaxed font-medium text-clean text-container">
+              <p className="text-white/90 text-sm mb-6 max-w-xs mx-auto leading-relaxed font-medium text-clean text-container font-sans">
                 Upptäck de mest explosiva meme tokens med live-data och realtidsuppdateringar
               </p>
               
