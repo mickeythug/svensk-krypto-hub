@@ -344,14 +344,14 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
       </div>
 
       {/* Bottom Navigation & Trade Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/20 p-4 space-y-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border/20 p-3 space-y-3">
         {/* Trade Button */}
         {activeTab === 'trade' && (
           <Button
             size="lg"
             onClick={handleTrade}
             disabled={isTrading || !amount}
-            className={`w-full h-16 text-xl font-bold rounded-2xl shadow-lg text-white ${
+            className={`w-full h-14 text-lg font-bold rounded-2xl shadow-lg text-white ${
               tradeType === 'buy' 
                 ? 'bg-success hover:bg-success/90' 
                 : 'bg-destructive hover:bg-destructive/90'
@@ -368,27 +368,29 @@ export const ModernMobileTokenPage: React.FC<ModernMobileTokenPageProps> = ({
           </Button>
         )}
 
-        {/* Bottom Navigation - Big, Clear, No Icons */}
-        <div className="flex bg-muted/30 rounded-3xl p-3 mx-2">
-          {[
-            { id: 'trade', label: 'TRADE' },
-            { id: 'chart', label: 'CHART' },
-            { id: 'info', label: 'INFO' }
-          ].map((tab) => (
-            <Button
-              key={tab.id}
-              variant="ghost"
-              size="lg"
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 h-16 rounded-2xl text-base font-bold transition-all mx-1 ${
-                activeTab === tab.id 
-                  ? 'bg-background text-foreground shadow-sm' 
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/70'
-              }`}
-            >
-              {tab.label}
-            </Button>
-          ))}
+        {/* Bottom Navigation - Fixed sizing for all buttons */}
+        <div className="w-full bg-muted/30 rounded-2xl p-1">
+          <div className="grid grid-cols-3 gap-1">
+            {[
+              { id: 'trade', label: 'TRADE' },
+              { id: 'chart', label: 'CHART' },
+              { id: 'info', label: 'INFO' }
+            ].map((tab) => (
+              <Button
+                key={tab.id}
+                variant="ghost"
+                size="sm"
+                onClick={() => setActiveTab(tab.id)}
+                className={`h-12 text-sm font-bold rounded-xl transition-all ${
+                  activeTab === tab.id 
+                    ? 'bg-background text-foreground shadow-sm' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/70'
+                }`}
+              >
+                {tab.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
