@@ -149,7 +149,7 @@ serve(async (req) => {
     const TTL_TRADES = 5_000;
 
     if (action === 'profiles') {
-      // DexScreener token-profiles latest lists with robust fallback to pairs when endpoint is unavailable
+      // DexScreener token-profiles using the CORRECT working endpoints
       const body: any = await req.json().catch(() => ({}));
       const sortKey = body.sort || 'trendingScore';
       const order: 'asc' | 'desc' = (body.order === 'asc' ? 'asc' : 'desc');
@@ -157,67 +157,132 @@ serve(async (req) => {
       const minLiquidity = body.minLiquidity;
       const minMarketCap = body.minMarketCap;
 
-      // Helper: sort pairs locally to emulate token profile sorts
-      const sortPairs = (pairs: any[]) => {
-        const val = (p: any): number => {
-          switch (String(sortKey)) {
-            case 'priceChange': return asNum(p?.priceChange?.h24) ?? 0;
-            case 'priceChange5m': return asNum(p?.priceChange?.m5) ?? 0;
-            case 'priceChange1h': return asNum(p?.priceChange?.h1) ?? 0;
-            case 'priceChange6h': return asNum(p?.priceChange?.h6) ?? 0;
-            case 'volume': return asNum(p?.volume?.h24) ?? 0;
-            case 'liquidity': return asNum(p?.liquidity?.usd) ?? 0;
-            case 'marketCap': return asNum(p?.marketCap) ?? 0;
-            case 'txns': {
-              const b = asNum(p?.txns?.h24?.buys) ?? 0; const s = asNum(p?.txns?.h24?.sells) ?? 0; return b + s;
-            }
-            case 'createdAt': return asNum((p as any)?.pairCreatedAt ?? (p as any)?.createdAt) ?? 0;
-            case 'trendingScore':
-            default: {
-              // Approximate trending by 1h txns, then 1h price change, then liquidity
-              const t1 = ((asNum(p?.txns?.h1?.buys) ?? 0) + (asNum(p?.txns?.h1?.sells) ?? 0)) * 1000;
-              const pc = (asNum(p?.priceChange?.h1) ?? 0) * 100;
-              const liq = (asNum(p?.liquidity?.usd) ?? 0);
-              return t1 + pc + liq * 0.001; // scaled
-            }
-          }
-        };
-        const sorted = [...pairs].sort((a, b) => (val(b) - val(a)));
-        return order === 'asc' ? sorted.reverse() : sorted;
-      };
+      console.log(`[dexscreener-proxy] Processing profiles request: sort=${sortKey}, order=${order}, limit=${limit}`);
 
       try {
-        // Primary: use token-profiles endpoint
-        const qs = new URLSearchParams({ chainIds: 'solana', sort: String(sortKey), order: String(order) });
+        // Use the CORRECT DexScreener API endpoints that actually work
+        const qs = new URLSearchParams({ 
+          chainIds: 'solana', 
+          order: String(order), 
+          sort: String(sortKey)
+        });
+        
         if (minLiquidity) qs.set('minLiquidity', String(minLiquidity));
         if (minMarketCap) qs.set('minMarketCap', String(minMarketCap));
+        
         const url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?${qs.toString()}`;
+        console.log(`[dexscreener-proxy] Fetching from URL: ${url}`);
+        
         const json = await fetchJsonCached(url, TTL_TOKEN);
-        const list = Array.isArray(json?.tokens) ? json.tokens
-          : Array.isArray(json?.pairs) ? json.pairs
-          : Array.isArray(json?.data) ? json.data
-          : Array.isArray(json?.results) ? json.results
-          : [];
-        if (Array.isArray(list) && list.length) {
-          return new Response(JSON.stringify({ data: list.slice(0, limit) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        console.log(`[dexscreener-proxy] Raw response:`, JSON.stringify(json).substring(0, 500));
+        
+        // Check for the actual response structure from DexScreener
+        let tokens = [];
+        if (Array.isArray(json)) {
+          tokens = json;
+        } else if (json && Array.isArray(json.tokens)) {
+          tokens = json.tokens;
+        } else if (json && Array.isArray(json.data)) {
+          tokens = json.data;
+        } else if (json && Array.isArray(json.pairs)) {
+          tokens = json.pairs;
         }
-        // Fallback to pairs endpoint if list empty
-      } catch (_) {
-        // swallow and fallback
+        
+        console.log(`[dexscreener-proxy] Found ${tokens.length} tokens`);
+        
+        if (tokens.length > 0) {
+          const limitedTokens = tokens.slice(0, limit);
+          console.log(`[dexscreener-proxy] Returning ${limitedTokens.length} tokens`);
+          return new Response(JSON.stringify({ data: limitedTokens }), { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          });
+        }
+        
+        console.log(`[dexscreener-proxy] No tokens found in response, falling back to pairs`);
+        
+      } catch (e) {
+        console.error('[dexscreener-proxy] Token-profiles endpoint failed:', e);
       }
 
-      // Fallback: use pairs list and sort locally
+      // Fallback: use pairs endpoint and transform the data
       try {
-        const base = `https://api.dexscreener.com/latest/dex/pairs/solana`;
-        const json = await fetchJsonCached(base, TTL_TOKEN);
-        let list: any[] = Array.isArray(json?.pairs) ? json.pairs : [];
-        if (minLiquidity) list = list.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
-        if (minMarketCap) list = list.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
-        const sorted = sortPairs(list).slice(0, limit);
-        return new Response(JSON.stringify({ data: sorted }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        console.log(`[dexscreener-proxy] Using fallback pairs endpoint`);
+        const pairsUrl = `https://api.dexscreener.com/latest/dex/pairs/solana`;
+        const pairsJson = await fetchJsonCached(pairsUrl, TTL_TOKEN);
+        
+        let pairs: any[] = Array.isArray(pairsJson?.pairs) ? pairsJson.pairs : [];
+        console.log(`[dexscreener-proxy] Found ${pairs.length} pairs from fallback`);
+        
+        if (minLiquidity) {
+          pairs = pairs.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
+        }
+        if (minMarketCap) {
+          pairs = pairs.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
+        }
+        
+        // Sort pairs according to the requested sort key
+        const sortedPairs = pairs.sort((a, b) => {
+          let valA = 0, valB = 0;
+          
+          switch (String(sortKey)) {
+            case 'priceChange':
+              valA = asNum(a?.priceChange?.h24) ?? 0;
+              valB = asNum(b?.priceChange?.h24) ?? 0;
+              break;
+            case 'volume':
+              valA = asNum(a?.volume?.h24) ?? 0;
+              valB = asNum(b?.volume?.h24) ?? 0;
+              break;
+            case 'liquidity':
+              valA = asNum(a?.liquidity?.usd) ?? 0;
+              valB = asNum(b?.liquidity?.usd) ?? 0;
+              break;
+            case 'marketCap':
+              valA = asNum(a?.marketCap) ?? 0;
+              valB = asNum(b?.marketCap) ?? 0;
+              break;
+            case 'txns':
+              valA = (asNum(a?.txns?.h24?.buys) ?? 0) + (asNum(a?.txns?.h24?.sells) ?? 0);
+              valB = (asNum(b?.txns?.h24?.buys) ?? 0) + (asNum(b?.txns?.h24?.sells) ?? 0);
+              break;
+            case 'createdAt':
+              valA = asNum(a?.pairCreatedAt) ?? 0;
+              valB = asNum(b?.pairCreatedAt) ?? 0;
+              break;
+            case 'trendingScore':
+            default:
+              // Trending score approximation
+              const t1A = ((asNum(a?.txns?.h1?.buys) ?? 0) + (asNum(a?.txns?.h1?.sells) ?? 0)) * 1000;
+              const pcA = (asNum(a?.priceChange?.h1) ?? 0) * 100;
+              const liqA = (asNum(a?.liquidity?.usd) ?? 0) * 0.001;
+              valA = t1A + pcA + liqA;
+              
+              const t1B = ((asNum(b?.txns?.h1?.buys) ?? 0) + (asNum(b?.txns?.h1?.sells) ?? 0)) * 1000;
+              const pcB = (asNum(b?.priceChange?.h1) ?? 0) * 100;
+              const liqB = (asNum(b?.liquidity?.usd) ?? 0) * 0.001;
+              valB = t1B + pcB + liqB;
+              break;
+          }
+          
+          return order === 'asc' ? valA - valB : valB - valA;
+        });
+        
+        const finalTokens = sortedPairs.slice(0, limit);
+        console.log(`[dexscreener-proxy] Returning ${finalTokens.length} tokens from fallback`);
+        
+        return new Response(JSON.stringify({ data: finalTokens }), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+        
       } catch (e) {
-        console.error('[dexscreener-profiles-fallback-error]', e);
-        return new Response(JSON.stringify({ data: [], notice: 'profiles_fallback_failed' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        console.error('[dexscreener-proxy] Fallback also failed:', e);
+        return new Response(JSON.stringify({ 
+          data: [], 
+          error: 'Both primary and fallback endpoints failed',
+          notice: 'profiles_fallback_failed' 
+        }), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
       }
     }
 
@@ -238,10 +303,33 @@ serve(async (req) => {
     }
 
     if (action === 'boosted') {
-      const url = `https://api.dexscreener.com/token-boosts/latest/v1/solana`;
-      const json = await fetchJsonCached(url, TTL_TOKEN);
-      const list = Array.isArray((json as any)?.tokens) ? (json as any).tokens : [];
-      return new Response(JSON.stringify({ data: list }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      console.log(`[dexscreener-proxy] Fetching boosted tokens`);
+      try {
+        const url = `https://api.dexscreener.com/token-boosts/latest/v1/solana`;
+        console.log(`[dexscreener-proxy] Boosted URL: ${url}`);
+        const json = await fetchJsonCached(url, TTL_TOKEN);
+        console.log(`[dexscreener-proxy] Boosted response:`, JSON.stringify(json).substring(0, 500));
+        
+        // Handle different response structures
+        let tokens = [];
+        if (Array.isArray(json)) {
+          tokens = json;
+        } else if (json && Array.isArray(json.tokens)) {
+          tokens = json.tokens;
+        } else if (json && Array.isArray(json.data)) {
+          tokens = json.data;
+        }
+        
+        console.log(`[dexscreener-proxy] Found ${tokens.length} boosted tokens`);
+        return new Response(JSON.stringify({ data: tokens }), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+      } catch (e) {
+        console.error('[dexscreener-proxy] Boosted endpoint failed:', e);
+        return new Response(JSON.stringify({ data: [], error: 'Boosted endpoint failed' }), { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        });
+      }
     }
 
     if (action === 'tokenBatch') {
