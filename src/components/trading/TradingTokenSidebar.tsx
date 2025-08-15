@@ -200,10 +200,10 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                                 ${formatPrice(token.price)}
                               </div>
                               <div className="flex items-center gap-1">
-                                <Badge variant={token.change24h >= 0 ? "default" : "destructive"} className="text-xs px-1.5 py-0.5">
-                                  {token.change24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                                <span className={`text-xs font-medium flex items-center gap-1 ${token.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                  {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                                   {formatChange(token.change24h)}
-                                </Badge>
+                                </span>
                               </div>
                             </div>
 
