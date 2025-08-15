@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import MemeHeroNew from './components/MemeHeroNew';
 import MemeZoneTabs from './components/MemeZoneTabs';
 import { useIsMobile } from '@/hooks/use-mobile';
