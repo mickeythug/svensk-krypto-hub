@@ -302,7 +302,7 @@ const MemeTokenDetailPage = () => {
             {/* Data Toggle Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Market Overview Card */}
-              <Card className="bg-gradient-surface border-gray-800 p-6">
+              <Card className="bg-gray-900/95 border-gray-800 p-6 rounded-lg">
                 <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5 text-primary" />
                   Market Overview
@@ -336,7 +336,7 @@ const MemeTokenDetailPage = () => {
               </Card>
 
               {/* Trading Activity Card */}
-              <Card className="bg-gradient-surface border-gray-800 p-6">
+              <Card className="bg-gray-900/95 border-gray-800 p-6 rounded-lg">
                 <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
                   <Activity className="w-5 h-5 text-primary" />
                   Trading Activity
