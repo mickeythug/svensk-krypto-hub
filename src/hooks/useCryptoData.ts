@@ -545,31 +545,17 @@ export const useCryptoData = () => {
     gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
     refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
     refetchIntervalInBackground: true,
-    // Seed immediately from cache (localStorage) to avoid any loading flashes
+    // Force fresh data - clear all cache first!
     initialData: () => {
-      console.log('🔍 Checking for initialData in localStorage...');
-      try {
-        const raw = localStorage.getItem('crypto-prices-cache-v2');
-        if (!raw) {
-          console.log('❌ No localStorage cache found');
-          return undefined;
-        }
-        const parsed = JSON.parse(raw);
-        if (Date.now() - parsed.ts <= CACHE_DURATIONS.STALE_WHILE_REVALIDATE) {
-          console.log('✅ Using localStorage cache with', parsed.data?.length, 'tokens');
-          return parsed.data as CryptoPrice[];
-        } else {
-          console.log('⏰ localStorage cache expired');
-        }
-      } catch (e) {
-        console.log('💥 localStorage parse error:', e);
-      }
-      // Fallback to any in-memory cached data
-      const queryData = queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined;
-      console.log('🔄 Using query cache with', queryData?.length || 0, 'tokens');
-      return queryData;
+      console.log('🔍 Forcing fresh data - clearing all cache...');
+      // Clear ALL possible caches
+      localStorage.clear();
+      globalCache.clear();
+      queryClient.clear();
+      console.log('🗑️ All cache cleared, will fetch fresh data');
+      return undefined; // Force fresh fetch
     },
-    placeholderData: () => queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined,
+    placeholderData: undefined, // No placeholder data - force fresh load
     retry: (failureCount, error) => {
       // Intelligent retry logik
       if (failureCount >= 3) return false;
