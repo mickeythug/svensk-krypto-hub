@@ -57,7 +57,7 @@ import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import { useBinanceTicker } from '@/hooks/useBinanceTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import ProfessionalOrderBook from './ProfessionalOrderBook';
-import ModernStepTradingPanel from './ModernStepTradingPanel';
+import WorldClassTradingPanel from './WorldClassTradingPanel';
 import ModernMarketStats from './ModernMarketStats';
 import ProfessionalBottomPanels from './ProfessionalBottomPanels';
 import TokenSearchBar from '../TokenSearchBar';
@@ -392,13 +392,14 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                 />
               </div>
 
-              {/* Modern Step Trading Panel - UNDER ORDERBOOK */}
+              {/* World Class Trading Panel - UNDER ORDERBOOK */}
               <div className="h-[400px] p-4">
-                <ModernStepTradingPanel 
+                <WorldClassTradingPanel 
                   symbol={symbol}
                   currentPrice={realTimePrice}
                   tokenName={tokenName}
-                  crypto={crypto}
+                  volume24h={realTickerData.volume24h}
+                  priceChange24h={realTickerData.priceChange24h}
                 />
               </div>
             </div>
