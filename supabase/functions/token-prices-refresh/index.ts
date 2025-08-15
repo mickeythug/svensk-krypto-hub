@@ -27,13 +27,11 @@ async function fetchCoinGeckoPages(pages: number, perPage = 100, vs = 'usd', del
   return all;
 }
 
-// ENDAST dessa 16 tokens tillåts
-const ALLOWED_TOKENS = new Set(['BTC','ETH','HBAR','ALGO','SUI','XRP','DOGE','BONK','SOL','LINK','APT','BNB','ADA','HYPE','TRX','AVAX']);
+// Return ALL tokens from CoinGecko - no filtering
 
 async function upsertLatestPrices(coins: any[]) {
-  // Transform to rows - FILTER to only allowed tokens
+  // Transform to rows - NO FILTERING, return ALL tokens
   const rows = coins
-    .filter(c => ALLOWED_TOKENS.has(String(c.symbol || '').toUpperCase()))
     .map((c) => ({
       symbol: String(c.symbol || '').toUpperCase(),
       name: c.name ?? null,
@@ -84,13 +82,12 @@ Deno.serve(async (req) => {
       })());
     }
 
-    // Return latest from DB - FILTER to only allowed tokens
+    // Return latest from DB - ALL tokens
     let { data, error } = await supabase
       .from('latest_token_prices')
       .select('*')
-      .in('symbol', Array.from(ALLOWED_TOKENS))
       .order('market_cap', { ascending: false })
-      .limit(16);
+      .limit(1000); // Increase limit to 1000 tokens
     if (error) throw error;
 
     const now = Date.now();
@@ -102,13 +99,12 @@ Deno.serve(async (req) => {
       try {
         const coins = await fetchCoinGeckoPages(pages);
         await upsertLatestPrices(coins);
-        // Re-read fresh data - FILTER to only allowed tokens
+        // Re-read fresh data - ALL tokens
         const reread = await supabase
           .from('latest_token_prices')
           .select('*')
-          .in('symbol', Array.from(ALLOWED_TOKENS))
           .order('market_cap', { ascending: false })
-          .limit(16);
+          .limit(1000); // Increase limit to 1000 tokens
         if (reread.error) throw reread.error;
         data = reread.data as any[];
       } catch (e) {
