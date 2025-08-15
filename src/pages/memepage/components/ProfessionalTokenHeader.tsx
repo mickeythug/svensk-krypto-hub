@@ -37,7 +37,7 @@ export const ProfessionalTokenHeader: React.FC<ProfessionalTokenHeaderProps> = (
 
   return (
     <Card className="border-0 bg-gradient-subtle backdrop-blur-sm">
-      <div className="p-8">
+      <div className="p-8 bg-gray-900/95 rounded-lg">
         <div className="flex items-start justify-between">
           {/* Token Info Section */}
           <div className="flex items-center gap-6">
