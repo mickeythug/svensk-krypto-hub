@@ -70,7 +70,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
     return `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
   };
   if (collapsed) {
-    return <motion.div className="w-14 bg-gray-900/95 border-r border-gray-800/50 backdrop-blur-sm flex flex-col" initial={{
+    return <motion.div className="w-14 bg-black border-r border-gray-800/50 backdrop-blur-sm flex flex-col" initial={{
       opacity: 0
     }} animate={{
       opacity: 1
@@ -96,7 +96,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
         </div>
       </motion.div>;
   }
-  return <motion.div className="w-80 bg-gray-900/95 border-r border-gray-800/50 backdrop-blur-sm flex flex-col" initial={{
+  return <motion.div className="w-80 bg-black border-r border-gray-800/50 backdrop-blur-sm flex flex-col" initial={{
     opacity: 0,
     x: -50
   }} animate={{

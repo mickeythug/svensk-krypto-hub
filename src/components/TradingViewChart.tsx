@@ -180,65 +180,36 @@ const TradingViewChart = ({
       widgetRef.current.chart().setResolution(getInterval(newTimeframe));
     }
   };
-  const toggleFullscreen = async () => {
-    try {
-      const chartContainer = containerRef.current?.closest('.chart-fullscreen-container') as HTMLElement;
+  const toggleFullscreen = () => {
+    console.log('🔥 Fullscreen button clicked!');
+    const chartContainer = containerRef.current?.closest('.chart-fullscreen-container') as HTMLElement;
+    
+    if (!chartContainer) {
+      console.error('❌ Chart container not found');
+      return;
+    }
+
+    if (!isFullscreen) {
+      console.log('📱 Entering fullscreen mode');
+      setIsFullscreen(true);
       
-      if (!document.fullscreenElement) {
-        // Enter fullscreen
-        if (chartContainer) {
-          console.log('📱 Entering fullscreen for chart');
-          
-          // Try different fullscreen methods
-          if (chartContainer.requestFullscreen) {
-            await chartContainer.requestFullscreen();
-          } else if ((chartContainer as any).webkitRequestFullscreen) {
-            await (chartContainer as any).webkitRequestFullscreen();
-          } else if ((chartContainer as any).msRequestFullscreen) {
-            await (chartContainer as any).msRequestFullscreen();
-          } else {
-            // Fallback modal mode
-            console.log('📱 Using fallback modal mode');
-            setIsFullscreen(true);
-            chartContainer.style.position = 'fixed';
-            chartContainer.style.top = '0';
-            chartContainer.style.left = '0';
-            chartContainer.style.width = '100vw';
-            chartContainer.style.height = '100vh';
-            chartContainer.style.zIndex = '9999';
-            chartContainer.style.background = 'rgb(10, 10, 10)';
-            return;
-          }
-          
-          setIsFullscreen(true);
-          chartContainer.classList.add('fullscreen-active');
-        }
-      } else {
-        // Exit fullscreen
-        console.log('📱 Exiting fullscreen');
-        if (document.exitFullscreen) {
-          await document.exitFullscreen();
-        } else if ((document as any).webkitExitFullscreen) {
-          await (document as any).webkitExitFullscreen();
-        } else if ((document as any).msExitFullscreen) {
-          await (document as any).msExitFullscreen();
-        } else {
-          // Fallback exit
-          setIsFullscreen(false);
-          if (chartContainer) {
-            chartContainer.style.position = '';
-            chartContainer.style.top = '';
-            chartContainer.style.left = '';
-            chartContainer.style.width = '';
-            chartContainer.style.height = '';
-            chartContainer.style.zIndex = '';
-            chartContainer.style.background = '';
-          }
-        }
-      }
-    } catch (error) {
-      console.error('❌ Fullscreen error:', error);
-      setIsFullscreen(!isFullscreen);
+      // Apply fullscreen styles directly
+      chartContainer.style.cssText = `
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        background: rgb(10, 10, 10) !important;
+        border-radius: 0 !important;
+      `;
+    } else {
+      console.log('📱 Exiting fullscreen mode');
+      setIsFullscreen(false);
+      
+      // Remove fullscreen styles
+      chartContainer.style.cssText = '';
     }
   };
   useEffect(() => {
