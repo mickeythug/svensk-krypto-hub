@@ -27,10 +27,13 @@ async function fetchCoinGeckoPages(pages: number, perPage = 100, vs = 'usd', del
   return all;
 }
 
+// ENDAST dessa 16 tokens tillåts
+const ALLOWED_TOKENS = new Set(['BTC','ETH','HBAR','ALGO','SUI','XRP','DOGE','BONK','SOL','LINK','APT','BNB','ADA','HYPE','TRX','AVAX']);
 
 async function upsertLatestPrices(coins: any[]) {
-  // Transform to rows - Include ALL tokens
+  // Transform to rows - FILTER to only allowed tokens
   const rows = coins
+    .filter(c => ALLOWED_TOKENS.has(String(c.symbol || '').toUpperCase()))
     .map((c) => ({
       symbol: String(c.symbol || '').toUpperCase(),
       name: c.name ?? null,
@@ -69,7 +72,7 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const refresh = url.searchParams.get('refresh') === 'true';
-    const pages = Math.max(1, Math.min(20, Number(url.searchParams.get('pages') || '10')));
+    const pages = Math.max(1, Math.min(5, Number(url.searchParams.get('pages') || '2')));
 
     if (refresh || req.method === 'POST') {
       EdgeRuntime.waitUntil((async () => {
@@ -81,12 +84,13 @@ Deno.serve(async (req) => {
       })());
     }
 
-    // Return latest from DB - Include ALL tokens
+    // Return latest from DB - FILTER to only allowed tokens
     let { data, error } = await supabase
       .from('latest_token_prices')
       .select('*')
+      .in('symbol', Array.from(ALLOWED_TOKENS))
       .order('market_cap', { ascending: false })
-      .limit(1000);
+      .limit(16);
     if (error) throw error;
 
     const now = Date.now();
@@ -98,12 +102,13 @@ Deno.serve(async (req) => {
       try {
         const coins = await fetchCoinGeckoPages(pages);
         await upsertLatestPrices(coins);
-        // Re-read fresh data - Include ALL tokens
+        // Re-read fresh data - FILTER to only allowed tokens
         const reread = await supabase
           .from('latest_token_prices')
           .select('*')
+          .in('symbol', Array.from(ALLOWED_TOKENS))
           .order('market_cap', { ascending: false })
-          .limit(1000);
+          .limit(16);
         if (reread.error) throw reread.error;
         data = reread.data as any[];
       } catch (e) {

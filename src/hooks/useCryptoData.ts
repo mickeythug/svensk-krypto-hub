@@ -183,7 +183,7 @@ class RateLimiter {
 // API rate limiter - 10 requests per second
 const apiRateLimiter = new RateLimiter(10, 2);
 
-// CoinGecko top 100+ coins for robust fallback - expanderar till 1000+ med tiden
+// CoinGecko top 100 coins - riktig ranking
 const TOP_100_COINS = Object.freeze([
   'bitcoin', 'ethereum', 'tether', 'binancecoin', 'solana', 'usd-coin', 'xrp', 'staked-ether', 'cardano', 'avalanche-2',
   'dogecoin', 'chainlink', 'tron', 'polygon', 'shiba-inu', 'polkadot', 'litecoin', 'bitcoin-cash', 'uniswap', 'pepe',
@@ -195,9 +195,7 @@ const TOP_100_COINS = Object.freeze([
   'tezos', 'zcash', 'chiliz', 'mina-protocol', 'dydx', 'bonk', 'neo', 'iota', 'celsius-degree-token', 'eos',
   'the-open-network', 'quant-network', 'kava', 'conflux-token', '1inch', 'compound', 'arweave', 'ecash', 'curve-dao-token',
   'terra-luna-2', 'looksrare', 'trust-wallet-token', 'wormhole', 'pancakeswap-token', 'convex-finance', 'havven',
-  'bitcoin-sv', 'livepeer', 'sushiswap', 'blur', 'mask-network', 'osmosis', 'celsius-degree-token', 'golem',
-  // Lägg till ytterligare 200+ tokens för att nå 300+ total coverage
-  'wrapped-bitcoin', 'chainlink', 'wrapped-ethereum', 'usdt', 'usdc', 'busd', 'dai', 'frax', 'tusd', 'usdp'
+  'bitcoin-sv', 'livepeer', 'sushiswap', 'blur', 'mask-network', 'osmosis', 'celsius-degree-token', 'golem'
 ] as const);
 
 // Utökad coin data mapping för top 100
@@ -369,19 +367,14 @@ class CryptoAPIClient {
   private readonly circuitBreakerTimeout = 30000; // 30s
 
 async fetchCryptoPrices(): Promise<CryptoPrice[]> {
-  console.log('🚀 fetchCryptoPrices called - starting fetch...');
-  
   // Circuit breaker check
   if (this.isCircuitOpen()) {
-    console.log('❌ Circuit breaker is open');
     throw new Error('Circuit breaker is open - too many recent failures');
   }
 
   const cacheKey = 'crypto-prices-cache-v2';
   const projectRef = 'jcllcrvomxdrhtkqpcbr';
-  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=50&refresh=true&_ts=${Date.now()}`;
-  
-  console.log('🌐 Fetching crypto data with URL:', fnUrl);
+  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=50&refresh=true`;
 
   // Attempt via Edge Function (DB-backed, refreshed every 3 min via cron)
   const controller = new AbortController();
@@ -416,7 +409,6 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     }));
 
     const finalData: CryptoPrice[] = transformed;
-    console.log(`✅ Received ${finalData.length} tokens from edge function`);
 
     // Persist to localStorage as 1h fallback
     try {
@@ -427,7 +419,6 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     this.failureCount = 0;
     
     // Return ALL tokens from CoinGecko
-    console.log(`🎯 Final return: ${this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData()).length} tokens`);
     return this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData());
   } catch (error: any) {
     clearTimeout(timer);
@@ -485,22 +476,8 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
   }
 
   private getFallbackData(): CryptoPrice[] {
-    // Return expanded fallback tokens when edge function is unavailable
-    // This provides much more comprehensive coverage than the old 16-token limit
-    const expandedTokens = [
-      ...TOP_100_COINS,
-      // Add more popular tokens to reach 200+ for better coverage
-      'hyperliquid', 'jupag', 'raydium', 'orca', 'marinade', 'step-finance', 'serum', 'oxygen', 'bonfida', 'mercurial',
-      'saber', 'port-finance', 'tulip', 'francium', 'larix', 'apricot', 'drift-protocol', 'mango-markets', 'hedge',
-      'quarry-protocol', 'mean-fi', 'streamflow', 'parrot-protocol', 'grape-protocol', 'soldex', 'cropper-finance',
-      'socean', 'cashio', 'sunny-aggregator', 'cyclos', 'aurory', 'star-atlas', 'genopets', 'defi-land', 'solice',
-      'nyan-heroes', 'crypto-cavemen', 'degods', 'okay-bears', 'galactic-geckos', 'solana-monkey-business',
-      'degenerate-ape-academy', 'thugbirdz', 'catalina-whale-mixer', 'famous-fox-federation', 'sollamas', 'degen-poet',
-      'trippin-ape-tribe', 'shadowy-super-coder', 'rogue-sharks', 'transdimensional-fox-federation', 'alpha-wolves',
-      'jungle-book', 'skeleton-crew', 'solsteads', 'geometric-pattern', 'pixel-ape', 'space-y-2025', 'communi3-mad-scientists'
-    ];
-    
-    return expandedTokens.slice(0, 500).map((coinId, index) => {
+    // Return top 100 fallback tokens for when API is unavailable
+    return TOP_100_COINS.map((coinId, index) => {
       const info = getCoinInfo(coinId, index + 1);
       return {
         symbol: info.symbol,
@@ -546,7 +523,7 @@ export const useCryptoData = () => {
   } = useQuery<CryptoPrice[], Error>({
     queryKey: [CACHE_KEYS.CRYPTO_PRICES],
     queryFn: apiClient.fetchCryptoPrices.bind(apiClient),
-    staleTime: 0, // Force fresh data - no cache
+    staleTime: CACHE_DURATIONS.CRYPTO_PRICES,
     gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
     refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
     refetchIntervalInBackground: true,
