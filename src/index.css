@@ -694,7 +694,6 @@ All colors MUST be HSL.
     );
     background-clip: content-box;
   }
-}
 
 /* Enhanced button feedback */
 .btn-feedback {
