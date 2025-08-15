@@ -159,29 +159,29 @@ const Header = ({
   return <header className={`fixed top-0 left-0 right-0 z-[110] transition-all duration-300 ${isScrolled ? "bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl" : "bg-background/90 backdrop-blur-md"}`}>
       {/* Main Header */}
       <div className="px-0">
-        <div className="h-16 flex items-center justify-between">
+        <div className="h-24 flex items-center justify-between">
           {/* Logo */}
-          <button onClick={() => navigate('/')} className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer ml-2">
-            <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className={`${isMobile ? 'h-10 w-10 object-contain' : 'h-12 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`} />
+          <button onClick={() => navigate('/')} className="flex items-center space-x-4 hover:opacity-80 transition-opacity cursor-pointer ml-2">
+            <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className={`${isMobile ? 'h-12 w-12 object-contain' : 'h-16 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`} />
             {!isMobile && <div>
-                 <h1 className="font-tech text-lg font-bold">
+                <h1 className="font-tech text-3xl font-black tracking-[0.15em]">
                   <span className="text-brand-turquoise">CRY</span>
                   <span className="text-brand-white">PTO</span>
                   <span> </span>
                   <span className="text-brand-white">NET</span>
                   <span className="text-brand-turquoise">WORK</span>
                 </h1>
-                <p className="font-future text-xs text-muted-foreground">
+                <p className="font-future text-lg font-bold text-muted-foreground tracking-[0.3em]">
                   SWEDEN
                 </p>
               </div>}
           </button>
 
           {/* Desktop Navigation */}
-          {!isMobile && <nav className="hidden lg:flex items-center space-x-8">
+          {!isMobile && <nav className="hidden lg:flex items-center space-x-12">
               {mainNavItems.map(item => {
-            return <button key={item.name} onClick={() => handleNavigation(item)} className="flex items-center space-x-2 text-foreground hover:text-primary transition-all duration-300 font-tech font-bold tracking-wider uppercase text-sm hover:scale-105 hover:glow">
-                    <span className="font-future font-semibold">{item.name}</span>
+            return <button key={item.name} onClick={() => handleNavigation(item)} className="flex items-center space-x-2 text-foreground hover:text-primary transition-all duration-300 font-tech font-black tracking-[0.2em] uppercase text-xl hover:scale-110 hover:glow">
+                    <span className="font-future font-black text-xl">{item.name}</span>
                   </button>;
           })}
             </nav>}

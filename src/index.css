@@ -131,6 +131,10 @@ All colors MUST be HSL.
 
     /* Custom token for dark turquoise backgrounds */
     --turquoise-dark: 186 65% 15%;
+    
+    /* Brand Colors */
+    --brand-turquoise: 165 85% 45%;
+    --brand-white: 0 0% 98%;
   }
 
   .dark {
