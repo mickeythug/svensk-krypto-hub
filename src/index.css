@@ -46,14 +46,14 @@ All colors MUST be HSL.
     --gray-900: 0 0% 5%;
     --gray-950: 0 0% 2%;
 
-    --secondary: 0 0% 8%; /* Dark gray */
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 0%; /* Pure black secondary */
+    --secondary-foreground: 0 0% 100%; /* Pure white text */
 
-    --muted: 0 0% 6%; /* Ultra subtle backgrounds */
-    --muted-foreground: 0 0% 70%;
+    --muted: 0 0% 1%; /* Almost black muted backgrounds */
+    --muted-foreground: 0 0% 80%; /* Light gray text */
 
-    --accent: 0 0% 12%; /* Interactive elements */
-    --accent-foreground: 0 0% 98%;
+    --accent: 0 0% 2%; /* Near black interactive elements */
+    --accent-foreground: 0 0% 100%; /* Pure white text */
 
     /* Trading Colors */
     --trade-buy: 142 76% 50%; /* Green for buy */
@@ -70,8 +70,8 @@ All colors MUST be HSL.
     --warning: 45 100% 60%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 0 0% 12%; /* Subtle borders */
-    --input: 0 0% 6%; /* Ultra dark inputs */
+    --border: 165 85% 45%; /* Bright turquoise borders */
+    --input: 0 0% 1%; /* Almost black inputs */
     --ring: 165 85% 45%; /* Brand turquoise focus ring */
 
     --radius: 0.75rem; /* Rounded corners from reference */
@@ -85,17 +85,17 @@ All colors MUST be HSL.
     --gradient-sell: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(15 100% 55%) 100%);
     --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%) 0%, hsl(165 85% 65%) 100%);
     
-    /* Dark Surface Gradients */
-    --gradient-surface: linear-gradient(145deg, hsl(0 0% 4%) 0%, hsl(0 0% 8%) 100%);
-    --gradient-panel: linear-gradient(145deg, hsl(0 0% 3%) 0%, hsl(0 0% 6%) 100%);
-    --gradient-input: linear-gradient(145deg, hsl(0 0% 6%) 0%, hsl(0 0% 4%) 100%);
+    /* Pure Black Surface Gradients */
+    --gradient-surface: linear-gradient(145deg, hsl(0 0% 0%) 0%, hsl(0 0% 2%) 100%);
+    --gradient-panel: linear-gradient(145deg, hsl(0 0% 0%) 0%, hsl(0 0% 1%) 100%);
+    --gradient-input: linear-gradient(145deg, hsl(0 0% 1%) 0%, hsl(0 0% 0%) 100%);
     
-    /* Enhanced Neon Glow Effects with Stronger Brand Turquoise */
-    --glow-turquoise: 0 0 40px hsl(165 85% 45% / 0.8), 0 0 80px hsl(165 85% 45% / 0.6), 0 0 120px hsl(165 85% 45% / 0.4);
-    --glow-primary: 0 0 40px hsl(165 85% 45% / 0.8), 0 0 80px hsl(165 85% 45% / 0.6), 0 0 120px hsl(165 85% 45% / 0.4);
-    --glow-green: 0 0 30px hsl(142 76% 50% / 0.7), 0 0 60px hsl(142 76% 50% / 0.5);
-    --glow-red: 0 0 30px hsl(0 84% 60% / 0.7), 0 0 60px hsl(0 84% 60% / 0.5);
-    --glow-soft: 0 0 50px hsl(165 85% 45% / 0.4);
+    /* Ultra Strong Neon Glow Effects with Brand Turquoise */
+    --glow-turquoise: 0 0 60px hsl(165 85% 45% / 1), 0 0 120px hsl(165 85% 45% / 0.8), 0 0 180px hsl(165 85% 45% / 0.6);
+    --glow-primary: 0 0 60px hsl(165 85% 45% / 1), 0 0 120px hsl(165 85% 45% / 0.8), 0 0 180px hsl(165 85% 45% / 0.6);
+    --glow-green: 0 0 40px hsl(142 76% 50% / 0.9), 0 0 80px hsl(142 76% 50% / 0.7);
+    --glow-red: 0 0 40px hsl(0 84% 60% / 0.9), 0 0 80px hsl(0 84% 60% / 0.7);
+    --glow-soft: 0 0 80px hsl(165 85% 45% / 0.6);
     
     /* Glass Morphism Shadows */
     --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4);
@@ -111,10 +111,10 @@ All colors MUST be HSL.
     --meme-lime: 90 100% 60%;
     --meme-orange: 30 100% 60%;
 
-    /* Enhanced glowing effects - Stronger neon */
-    --glow-primary: 0 0 50px hsl(165 85% 45% / 1), 0 0 100px hsl(165 85% 45% / 0.8);
-    --glow-secondary: 0 0 40px hsl(165 85% 45% / 0.9), 0 0 80px hsl(165 85% 45% / 0.7);
-    --glow-rainbow: 0 0 60px hsl(165 85% 45% / 0.8), 0 0 120px hsl(165 70% 60% / 0.6);
+    /* Ultra Strong glowing effects - Maximum neon intensity */
+    --glow-primary: 0 0 80px hsl(165 85% 45% / 1), 0 0 160px hsl(165 85% 45% / 0.9), 0 0 240px hsl(165 85% 45% / 0.7);
+    --glow-secondary: 0 0 60px hsl(165 85% 45% / 1), 0 0 120px hsl(165 85% 45% / 0.8);
+    --glow-rainbow: 0 0 100px hsl(165 85% 45% / 1), 0 0 200px hsl(165 70% 60% / 0.8);
 
     /* Meme backgrounds - Changed from purple to dark neutral */
     --meme-grid-bg: 214 32% 5%;
