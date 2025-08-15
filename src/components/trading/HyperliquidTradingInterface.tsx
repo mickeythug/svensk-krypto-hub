@@ -223,16 +223,20 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   <Menu className="h-5 w-5" />
                 </Button>
 
-                {/* Token Info - Enhanced Visual Hierarchy */}
+                {/* Token Info - Enhanced Visual Hierarchy with Static Logo */}
                 <div className="flex items-center gap-4">
                   {crypto?.image && (
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                       <img
                         src={crypto.image}
                         alt={`${tokenName} logo`}
                         className="h-16 w-16 rounded-full ring-2 ring-primary/30 shadow-elevation-3"
+                        style={{ transform: 'none !important', animation: 'none !important' }}
                       />
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-background shadow-lg"></div>
+                      <div 
+                        className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-background shadow-lg" 
+                        style={{ transform: 'none !important', animation: 'none !important' }}
+                      ></div>
                     </div>
                   )}
                   <div className="space-y-2">
