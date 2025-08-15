@@ -12,7 +12,6 @@ interface TradingTokenSidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
-const TOKENS_PER_PAGE = 15;
 const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
   collapsed,
   onToggle
@@ -26,10 +25,9 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
     isLoading
   } = useCryptoData();
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
 
-  // Filter and search tokens
+  // Filter and search tokens - now showing ALL tokens
   const filteredTokens = useMemo(() => {
     if (!cryptoPrices) return [];
     let filtered = cryptoPrices;
@@ -39,13 +37,6 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
     }
     return filtered;
   }, [cryptoPrices, searchQuery]);
-
-  // Paginated tokens
-  const paginatedTokens = useMemo(() => {
-    const startIndex = currentPage * TOKENS_PER_PAGE;
-    return filteredTokens.slice(startIndex, startIndex + TOKENS_PER_PAGE);
-  }, [filteredTokens, currentPage]);
-  const totalPages = Math.ceil(filteredTokens.length / TOKENS_PER_PAGE);
   const handleTokenSelect = useCallback((symbol: string) => {
     navigate(`/crypto/${symbol.toLowerCase()}`);
   }, [navigate]);
@@ -134,10 +125,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
           <Input 
             placeholder="Search tokens..." 
             value={searchQuery} 
-            onChange={e => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(0);
-            }} 
+          onChange={e => setSearchQuery(e.target.value)}
             className="pl-10 h-11 bg-muted/50 border-muted-foreground/20 text-foreground placeholder:text-muted-foreground focus:bg-muted/70 focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 rounded-xl transition-all duration-300" 
           />
           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
@@ -171,7 +159,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
             }} transition={{
               duration: 0.2
             }} className="space-y-1">
-                  {paginatedTokens.map((token, index) => {
+                  {filteredTokens.map((token, index) => {
                 const isActive = currentSymbol?.toLowerCase() === token.symbol.toLowerCase();
                 const isWatchlisted = watchlist.has(token.symbol);
                 return <motion.div key={token.symbol} initial={{
@@ -263,57 +251,12 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
         </ScrollArea>
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-          <div className="flex items-center justify-between">
-            <div className="text-xs text-muted-foreground font-mono">
-              Page {currentPage + 1} of {totalPages}
-            </div>
-            <div className="flex items-center gap-1">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setCurrentPage(p => Math.max(0, p - 1))} 
-                disabled={currentPage === 0} 
-                className="h-8 w-8 p-0 bg-muted/30 border-muted-foreground/20 hover:bg-primary/10 hover:border-primary/30 disabled:opacity-30 rounded-lg transition-all duration-300"
-              >
-                <ChevronLeft className="h-3 w-3" />
-              </Button>
-              <div className="flex items-center gap-1 mx-2">
-                {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-                  const pageIndex = Math.max(0, Math.min(totalPages - 5, currentPage - 2)) + i;
-                  if (pageIndex >= totalPages) return null;
-                  return (
-                    <Button 
-                      key={pageIndex} 
-                      variant={pageIndex === currentPage ? "default" : "outline"} 
-                      size="sm" 
-                      onClick={() => setCurrentPage(pageIndex)} 
-                      className={`h-8 w-8 p-0 text-xs rounded-lg transition-all duration-300 ${
-                        pageIndex === currentPage 
-                          ? 'bg-gradient-to-br from-primary to-primary-glow text-primary-foreground shadow-lg shadow-primary/30' 
-                          : 'bg-muted/30 border-muted-foreground/20 hover:bg-primary/10 hover:border-primary/30'
-                      }`}
-                    >
-                      {pageIndex + 1}
-                    </Button>
-                  );
-                })}
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))} 
-                disabled={currentPage === totalPages - 1} 
-                className="h-8 w-8 p-0 bg-muted/30 border-muted-foreground/20 hover:bg-primary/10 hover:border-primary/30 disabled:opacity-30 rounded-lg transition-all duration-300"
-              >
-                <ChevronRight className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
+      {/* Token Count Footer */}
+      <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+        <div className="text-xs text-muted-foreground font-mono text-center">
+          {filteredTokens.length} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
         </div>
-      )}
+      </div>
     </motion.div>;
 };
 export default TradingTokenSidebar;
