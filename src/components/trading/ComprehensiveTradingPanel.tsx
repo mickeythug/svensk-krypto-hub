@@ -374,7 +374,8 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
         {/* Right Column - Order Summary & Execute */}
         <motion.div 
-          className="space-y-4 h-full overflow-y-auto pl-2"
+          className="space-y-4 h-full overflow-y-auto pl-2 scrollbar-none"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
