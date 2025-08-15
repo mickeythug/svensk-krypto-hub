@@ -447,3 +447,38 @@ All colors MUST be HSL.
 .container-padding-spacious {
   padding: 1.25rem; /* 20px spacious */
 }
+
+/* Chart Fullscreen Styles */
+.chart-fullscreen-container:fullscreen {
+  background: rgb(10, 10, 10) !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+.chart-fullscreen-container:fullscreen .border-border\/20 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fullscreen-active {
+  background: rgb(10, 10, 10) !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+/* Ensure chart content fills fullscreen */
+.chart-fullscreen-container:fullscreen .flex-1 {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+/* Fullscreen button animation */
+.chart-fullscreen-container .group:hover .Maximize2 {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* TradingView iframe fullscreen support */
+.chart-fullscreen-container:fullscreen iframe {
+  width: 100% !important;
+  height: 100% !important;
+}

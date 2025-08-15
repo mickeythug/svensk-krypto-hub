@@ -183,28 +183,65 @@ const TradingViewChart = ({
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
-        // Find the chart card element to make fullscreen
-        const chartCard = containerRef.current?.closest('.chart-fullscreen-container') || containerRef.current?.parentElement?.parentElement;
-        if (chartCard) {
+        // Target the main chart card element directly
+        const chartCard = containerRef.current?.closest('.chart-fullscreen-container');
+        if (chartCard && chartCard.requestFullscreen) {
+          console.log('📱 Entering fullscreen for chart');
           await chartCard.requestFullscreen();
           setIsFullscreen(true);
+          
+          // Add fullscreen styles
+          chartCard.classList.add('fullscreen-active');
+        } else {
+          console.error('❌ Fullscreen not supported or element not found');
         }
       } else {
+        console.log('📱 Exiting fullscreen');
         await document.exitFullscreen();
         setIsFullscreen(false);
+        
+        // Remove fullscreen styles
+        document.querySelectorAll('.fullscreen-active').forEach(el => {
+          el.classList.remove('fullscreen-active');
+        });
       }
     } catch (error) {
-      console.error('Fullscreen error:', error);
+      console.error('❌ Fullscreen error:', error);
+      // Fallback: Try to toggle a modal-like fullscreen
+      setIsFullscreen(!isFullscreen);
     }
   };
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isFullscreen && !document.fullscreenElement) {
+        setIsFullscreen(false);
+      }
+    };
+
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
-  return <Card className={`h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container ${isFullscreen ? 'fullscreen-chart' : ''}`}>
+    document.addEventListener('keydown', handleEscapeKey);
+    
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isFullscreen]);
+  return <Card className={`h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container ${isFullscreen ? 'fullscreen-chart' : ''}`} style={{
+    ...(isFullscreen && !document.fullscreenElement ? {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      zIndex: 9999,
+      background: 'rgb(10, 10, 10)',
+      borderRadius: 0
+    } : {})
+  }}>
       {/* Controls Header Above Chart */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/20 bg-background/90">
         <div className="flex gap-2">
@@ -213,8 +250,16 @@ const TradingViewChart = ({
             </Badge>)}
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20" onClick={toggleFullscreen}>
-            <Maximize2 className="h-4 w-4" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`h-8 w-8 p-0 bg-background/80 backdrop-blur-sm transition-all duration-200 ${
+              isFullscreen ? 'bg-red-500/20 hover:bg-red-500/40 text-red-400' : 'hover:bg-primary/20'
+            }`}
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen (ESC)" : "Enter Fullscreen"}
+          >
+            <Maximize2 className={`h-4 w-4 ${isFullscreen ? 'transform rotate-45' : ''}`} />
           </Button>
           <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20">
             <Settings className="h-4 w-4" />
