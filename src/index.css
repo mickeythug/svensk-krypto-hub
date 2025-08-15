@@ -8,57 +8,64 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Meme Token Page Color Scheme - Vibrant & Colorful */
-    --background: 280 25% 8%; /* Deep purple-black */
-    --foreground: 60 100% 95%; /* Bright white with yellow tint */
+    /* OpenAI-Style Professional Color Scheme */
+    --background: 0 0% 5%; /* Ultra deep black-gray */
+    --foreground: 0 0% 95%; /* Clean white */
 
-    --card: 280 30% 12%; /* Dark purple cards */
-    --card-foreground: 60 100% 98%;
+    --card: 0 0% 8%; /* Very dark gray cards */
+    --card-foreground: 0 0% 95%;
+    --card-muted: 0 0% 12%; /* Slightly lighter card variant */
 
-    --popover: 280 30% 12%;
-    --popover-foreground: 60 100% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 165 85% 45%; /* #12E19F converted to HSL */
-    --primary-foreground: 280 25% 8%;
-    --primary-glow: 165 70% 60%; /* Lighter version of #12E19F */
+    --primary: 165 85% 45%; /* Brand turquoise accent */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 165 70% 60%;
     
-    /* Brand Colors for Crypto Network Sweden */
-    --brand-turquoise: 165 85% 45%; /* #12E19F - CRY and WORK */
-    --brand-white: 0 0% 100%; /* White - PTO and NET */
-    
-    /* Market cap specific color */
-    --market-cap: 165 85% 45%; /* #12E19F - exact hex color requested */
+    /* Professional gray tones like OpenAI */
+    --gray-50: 0 0% 97%;
+    --gray-100: 0 0% 94%;
+    --gray-200: 0 0% 88%;
+    --gray-300: 0 0% 78%;
+    --gray-400: 0 0% 62%;
+    --gray-500: 0 0% 46%;
+    --gray-600: 0 0% 35%;
+    --gray-700: 0 0% 25%;
+    --gray-800: 0 0% 15%;
+    --gray-900: 0 0% 8%;
+    --gray-950: 0 0% 5%;
 
-    --secondary: 165 85% 45%; /* Same as primary - no more blue */
-    --secondary-foreground: 280 25% 8%;
+    --secondary: 0 0% 15%; /* Professional gray */
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 280 20% 15%;
-    --muted-foreground: 280 10% 65%;
+    --muted: 0 0% 12%; /* Subtle gray backgrounds */
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 165 70% 60%; /* Lighter version of the green */
-    --accent-foreground: 280 25% 8%;
+    --accent: 0 0% 18%; /* Interactive gray elements */
+    --accent-foreground: 0 0% 95%;
 
-    --destructive: 0 100% 60%;
-    --destructive-foreground: 60 100% 98%;
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --success: 120 100% 50%; /* Neon green */
-    --success-foreground: 280 25% 8%;
+    --success: 120 60% 50%;
+    --success-foreground: 0 0% 100%;
 
-    --warning: 30 100% 60%; /* Orange */
-    --warning-foreground: 280 25% 8%;
+    --warning: 40 90% 55%;
+    --warning-foreground: 0 0% 100%;
 
-    --border: 280 30% 20%;
-    --input: 280 25% 18%;
+    --border: 0 0% 18%; /* Subtle borders */
+    --input: 0 0% 12%; /* Form inputs */
     --ring: 165 85% 45%;
 
     --radius: 1rem;
 
-    /* Premium mobile app gradients */
+    /* Professional gradient system */
     --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(280 25% 8%), hsl(300 30% 15%));
-    --gradient-rainbow: linear-gradient(90deg, hsl(0 100% 60%), hsl(60 100% 60%), hsl(120 100% 60%), hsl(165 85% 45%), hsl(165 70% 60%), hsl(300 100% 60%));
-    --gradient-neon: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%), hsl(60 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 12%), hsl(0 0% 18%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 5%), hsl(0 0% 8%));
+    --gradient-surface: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 12%));
+    --gradient-subtle: linear-gradient(135deg, hsl(0 0% 6%), hsl(0 0% 10%));
     
     /* Premium Apple-like gradients */
     --gradient-ios-blue: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(218 100% 58%) 100%);

@@ -28,6 +28,9 @@ import { TokenInfoSection } from '@/components/TokenInfoSection';
 import { TransactionsTable } from '@/components/TransactionsTable';
 import { MarketDataToggle } from '@/components/MarketDataToggle';
 import { ModernMobileTokenPage } from './components/mobile/ModernMobileTokenPage';
+import { ProfessionalTokenHeader } from './components/ProfessionalTokenHeader';
+import { ProfessionalTradingChart } from './components/ProfessionalTradingChart';
+import { ProfessionalTradingSidebar } from './components/ProfessionalTradingSidebar';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Import cover images
@@ -263,123 +266,117 @@ const MemeTokenDetailPage = () => {
   // Desktop Layout
   return (
     <div className="min-h-screen bg-background font-inter">
-      {/* Header - Full Width */}
-      <div className="w-full px-8 py-6 border-b border-border/20">
-        <div className="flex items-center justify-between">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate(-1)} 
-            className="h-12 px-6 bg-card/50 backdrop-blur-sm hover:bg-card border border-border/50 rounded-xl"
-          >
-            <ArrowLeft className="mr-3 h-5 w-5" />
-            <span className="text-lg font-semibold">{t('page.token.backToMarket')}</span>
-          </Button>
-        </div>
-        
-        {/* Modern Token Header */}
-        <div className="mt-8">
-          <TokenHeader token={token} />
+      {/* Professional Header */}
+      <div className="border-b border-gray-800 bg-gradient-subtle">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(-1)} 
+              className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-300"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Markets
+            </Button>
+            <Badge className="bg-primary/20 text-primary border-primary/30">
+              Professional Trading
+            </Badge>
+          </div>
+          
+          <ProfessionalTokenHeader token={token} />
         </div>
       </div>
 
-      {/* Main Content Layout - Center Chart with Right Sidebar */}
-      <div className="w-full flex">
-        {/* Center Chart Area - Expanded */}
-        <div className="flex-1 min-h-screen">
-          <div className="p-8 space-y-8">
-            {/* Expanded Chart */}
-            <Card className="p-8 bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-xl border border-border/30 shadow-2xl hover:shadow-primary/10 transition-all duration-500 rounded-3xl">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-4xl font-bold text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  {t('page.token.livePriceChart')}
-                </h3>
-                <div className="flex items-center gap-4">
-                  <div className="h-4 w-4 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
-                  <span className="text-xl font-medium text-muted-foreground">{t('page.token.liveTrading')}</span>
-                </div>
-              </div>
-              <div className="h-[800px] rounded-3xl overflow-hidden border-2 border-border/20 shadow-inner">
-                <TradingViewChart 
-                  symbol={tokenAddress || token.symbol}
-                  currentPrice={token.price}
-                  coinGeckoId={token.symbol.toLowerCase()}
-                />
-              </div>
-            </Card>
-
-            {/* Market Data Toggle */}
-            <div className="animate-fade-in">
-              <MarketDataToggle 
-                activeTab={marketDataTab}
-                onToggle={setMarketDataTab}
-              />
-            </div>
-
-            {/* Conditional Content Based on Toggle */}
-            <div className="animate-fade-in">
-              {marketDataTab === 'market' ? (
-                  <TokenInfoSection
-                    tokenAddress={tokenAddress}
-                    fallbackData={{
-                      price: token.price,
-                      marketCap: token.marketCap,
-                      holders: token.holders,
-                      volume24h: token.volume24h,
-                      symbol: token.symbol,
-                      name: token.name,
-                      description: token.description,
-                    }}
-                  />
-              ) : (
-<TransactionsTable 
-  tokenAddress={tokenAddress || (token as any)?.id}
-  tokenSymbol={token.symbol}
-/>
-              )}
-            </div>
-
-          </div>
-        </div>
-
-        {/* Right Sidebar - Fixed to Right Edge */}
-        <div className="w-96 flex-shrink-0 bg-card/30 backdrop-blur-sm border-l border-border/20">
-          <div className="sticky top-0 h-screen overflow-y-auto p-6">
-            <AdvancedTradingSettings
-              tradeType={tradeType}
-              setTradeType={setTradeType}
-              orderType={orderType}
-              setOrderType={setOrderType}
-              customAmount={customAmount}
-              setCustomAmount={setCustomAmount}
-              selectedAmount={selectedAmount}
-              setSelectedAmount={setSelectedAmount}
-              slippage={slippage}
-              setSlippage={setSlippage}
-              customSlippage={customSlippage}
-              setCustomSlippage={setCustomSlippage}
-              priority={priority}
-              setPriority={setPriority}
-              mevProtection={mevProtection}
-              setMevProtection={setMevProtection}
-              autoSlippage={autoSlippage}
-              setAutoSlippage={setAutoSlippage}
-              limitPrice={limitPrice}
-              setLimitPrice={setLimitPrice}
-              stopPrice={stopPrice}
-              setStopPrice={setStopPrice}
-              priceAlert={priceAlert}
-              setPriceAlert={setPriceAlert}
-              solBalance={solBalance}
-              tokenBalance={tokenBalance}
-              handleAmountSelect={handleAmountSelect}
-              calculateSellPercentage={calculateSellPercentage}
-              handleTrade={handleTrade}
-              isTrading={isTrading}
-              getPriorityFee={getPriorityFee}
-              getEstimatedGas={getEstimatedGas}
+      {/* Main Layout - Chart + Sidebar */}
+      <div className="flex">
+        {/* Chart Section */}
+        <div className="flex-1 p-6">
+          <div className="space-y-6">
+            {/* Professional Trading Chart */}
+            <ProfessionalTradingChart
+              symbol={tokenAddress || token.symbol}
+              currentPrice={token.price}
+              tokenName={token.name}
             />
+
+            {/* Data Toggle Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Market Overview Card */}
+              <Card className="bg-gradient-surface border-gray-800 p-6">
+                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-primary" />
+                  Market Overview
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Market Cap</p>
+                    <p className="text-lg font-bold text-foreground font-mono">
+                      {formatMarketCap(token.marketCap)}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">24h Volume</p>
+                    <p className="text-lg font-bold text-foreground font-mono">
+                      {formatMarketCap(token.volume24h)}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Holders</p>
+                    <p className="text-lg font-bold text-foreground font-mono">
+                      {token.holders?.toLocaleString() || '—'}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Circulating</p>
+                    <p className="text-lg font-bold text-foreground font-mono">
+                      1.00B {token.symbol}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Trading Activity Card */}
+              <Card className="bg-gradient-surface border-gray-800 p-6">
+                <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-primary" />
+                  Trading Activity
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Buys (24h)</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-success rounded-full"></div>
+                      <span className="font-mono text-foreground">1,247</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Sells (24h)</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-destructive rounded-full"></div>
+                      <span className="font-mono text-foreground">892</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Avg. Trade Size</span>
+                    <span className="font-mono text-foreground">2.3 SOL</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Price Impact</span>
+                    <span className="font-mono text-success">0.12%</span>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
+
+        {/* Professional Trading Sidebar */}
+        <ProfessionalTradingSidebar
+          tokenSymbol={token.symbol}
+          currentPrice={token.price}
+          onTrade={handleMobileTrade}
+          isTrading={isTrading}
+        />
       </div>
     </div>
   );
