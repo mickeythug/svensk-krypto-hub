@@ -182,32 +182,62 @@ const TradingViewChart = ({
   };
   const toggleFullscreen = async () => {
     try {
+      const chartContainer = containerRef.current?.closest('.chart-fullscreen-container') as HTMLElement;
+      
       if (!document.fullscreenElement) {
-        // Target the main chart card element directly
-        const chartCard = containerRef.current?.closest('.chart-fullscreen-container');
-        if (chartCard && chartCard.requestFullscreen) {
+        // Enter fullscreen
+        if (chartContainer) {
           console.log('📱 Entering fullscreen for chart');
-          await chartCard.requestFullscreen();
-          setIsFullscreen(true);
           
-          // Add fullscreen styles
-          chartCard.classList.add('fullscreen-active');
-        } else {
-          console.error('❌ Fullscreen not supported or element not found');
+          // Try different fullscreen methods
+          if (chartContainer.requestFullscreen) {
+            await chartContainer.requestFullscreen();
+          } else if ((chartContainer as any).webkitRequestFullscreen) {
+            await (chartContainer as any).webkitRequestFullscreen();
+          } else if ((chartContainer as any).msRequestFullscreen) {
+            await (chartContainer as any).msRequestFullscreen();
+          } else {
+            // Fallback modal mode
+            console.log('📱 Using fallback modal mode');
+            setIsFullscreen(true);
+            chartContainer.style.position = 'fixed';
+            chartContainer.style.top = '0';
+            chartContainer.style.left = '0';
+            chartContainer.style.width = '100vw';
+            chartContainer.style.height = '100vh';
+            chartContainer.style.zIndex = '9999';
+            chartContainer.style.background = 'rgb(10, 10, 10)';
+            return;
+          }
+          
+          setIsFullscreen(true);
+          chartContainer.classList.add('fullscreen-active');
         }
       } else {
+        // Exit fullscreen
         console.log('📱 Exiting fullscreen');
-        await document.exitFullscreen();
-        setIsFullscreen(false);
-        
-        // Remove fullscreen styles
-        document.querySelectorAll('.fullscreen-active').forEach(el => {
-          el.classList.remove('fullscreen-active');
-        });
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if ((document as any).webkitExitFullscreen) {
+          await (document as any).webkitExitFullscreen();
+        } else if ((document as any).msExitFullscreen) {
+          await (document as any).msExitFullscreen();
+        } else {
+          // Fallback exit
+          setIsFullscreen(false);
+          if (chartContainer) {
+            chartContainer.style.position = '';
+            chartContainer.style.top = '';
+            chartContainer.style.left = '';
+            chartContainer.style.width = '';
+            chartContainer.style.height = '';
+            chartContainer.style.zIndex = '';
+            chartContainer.style.background = '';
+          }
+        }
       }
     } catch (error) {
       console.error('❌ Fullscreen error:', error);
-      // Fallback: Try to toggle a modal-like fullscreen
       setIsFullscreen(!isFullscreen);
     }
   };

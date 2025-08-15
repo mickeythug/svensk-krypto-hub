@@ -111,7 +111,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <h2 className="text-lg font-semibold text-white font-mono">Markets</h2>
+            <h2 className="text-lg font-semibold text-white font-orbitron">Markets</h2>
           </div>
           <Button variant="ghost" size="sm" onClick={onToggle} className="text-gray-400 hover:text-white hover:bg-gray-800/50">
             <ChevronLeft className="h-4 w-4" />
@@ -200,7 +200,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                                 ${formatPrice(token.price)}
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className={`text-xs font-medium flex items-center gap-1 ${token.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                <span className={`text-sm font-normal font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                   {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                                   {formatChange(token.change24h)}
                                 </span>
