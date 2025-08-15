@@ -3,10 +3,10 @@ import { Card } from "@/components/ui/card";
 import { BarChart3 } from 'lucide-react';
 
 interface ReferenceMarketStatsProps {
-  marketCap?: number;
-  volume?: number;
-  marketCapChange?: number;
-  volumeChange?: number;
+  marketCap?: number | null;
+  volume?: number | null;
+  marketCapChange?: number | null;
+  volumeChange?: number | null;
 }
 
 const ReferenceMarketStats: React.FC<ReferenceMarketStatsProps> = ({
@@ -15,15 +15,20 @@ const ReferenceMarketStats: React.FC<ReferenceMarketStatsProps> = ({
   marketCapChange = -3.24,
   volumeChange = 7.70
 }) => {
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toFixed(0);
+  const formatNumber = (num: number | undefined | null) => {
+    // Ensure we have a valid number
+    const validNum = typeof num === 'number' && !isNaN(num) ? num : 0;
+    
+    if (validNum >= 1000000) return `${(validNum / 1000000).toFixed(1)}M`;
+    if (validNum >= 1000) return `${(validNum / 1000).toFixed(1)}K`;
+    return validNum.toFixed(0);
   };
 
-  const formatPercent = (percent: number) => {
-    const sign = percent >= 0 ? '+' : '';
-    return `${sign}${percent.toFixed(2)}%`;
+  const formatPercent = (percent: number | undefined | null) => {
+    // Ensure we have a valid number
+    const validPercent = typeof percent === 'number' && !isNaN(percent) ? percent : 0;
+    const sign = validPercent >= 0 ? '+' : '';
+    return `${sign}${validPercent.toFixed(2)}%`;
   };
 
   // Mock volume chart data
