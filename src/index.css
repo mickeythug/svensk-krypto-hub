@@ -117,51 +117,43 @@ All colors MUST be HSL.
     --shadow-elevation-3: 0 10px 20px hsl(0 0% 0% / 0.15), 0 3px 6px hsl(0 0% 0% / 0.10);
     --shadow-elevation-4: 0 15px 25px hsl(0 0% 0% / 0.15), 0 5px 10px hsl(0 0% 0% / 0.05);
     
-  /* Meme Zone Casino Colors - Vibrant Neon Palette */
-  --meme-neon-pink: 330 100% 65%;
-  --meme-neon-cyan: 186 100% 60%;
-  --meme-neon-lime: 90 100% 50%;
-  --meme-neon-orange: 30 100% 55%;
-  --meme-neon-purple: 270 100% 65%;
-  --meme-neon-blue: 218 100% 65%;
-  --meme-casino-gold: 45 100% 55%;
-  --meme-casino-red: 0 100% 65%;
+  /* Premium Meme Zone Colors - Mature & Professional */
+  --meme-premium-purple: 270 70% 45%;
+  --meme-premium-cyan: 190 75% 50%;
+  --meme-premium-silver: 210 20% 55%;
+  --meme-premium-blue: 220 70% 55%;
+  --meme-accent-purple: 260 85% 35%;
+  --meme-accent-cyan: 185 85% 40%;
+  --meme-dark-surface: 240 20% 8%;
+  --meme-darker-surface: 230 25% 4%;
   
-  /* Casino/Web3 Gradient Backgrounds */
-  --gradient-casino-rainbow: linear-gradient(135deg, 
-    hsl(330 100% 65%) 0%, 
-    hsl(270 100% 65%) 16%, 
-    hsl(218 100% 65%) 33%, 
-    hsl(186 100% 60%) 50%, 
-    hsl(90 100% 50%) 66%, 
-    hsl(30 100% 55%) 83%, 
-    hsl(0 100% 65%) 100%);
+  /* Premium Web3 Gradients - Mature & Professional */
+  --gradient-premium-purple: linear-gradient(135deg, 
+    hsl(260 85% 35%) 0%, 
+    hsl(280 70% 45%) 50%, 
+    hsl(300 60% 55%) 100%);
   
-  --gradient-casino-gold: linear-gradient(135deg, 
-    hsl(45 100% 55%) 0%, 
-    hsl(30 100% 55%) 50%, 
-    hsl(15 100% 55%) 100%);
+  --gradient-premium-cyan: linear-gradient(135deg, 
+    hsl(185 85% 40%) 0%, 
+    hsl(195 75% 50%) 50%, 
+    hsl(210 65% 60%) 100%);
     
-  --gradient-web3-cyber: linear-gradient(135deg, 
-    hsl(186 100% 60%) 0%, 
-    hsl(270 100% 65%) 50%, 
-    hsl(330 100% 65%) 100%);
+  --gradient-premium-silver: linear-gradient(135deg, 
+    hsl(220 15% 45%) 0%, 
+    hsl(210 20% 55%) 50%, 
+    hsl(200 25% 65%) 100%);
     
-  --gradient-meme-energy: linear-gradient(135deg, 
-    hsl(0 100% 65%) 0%, 
-    hsl(30 100% 55%) 25%, 
-    hsl(90 100% 50%) 50%, 
-    hsl(186 100% 60%) 75%, 
-    hsl(270 100% 65%) 100%);
+  --gradient-premium-dark: linear-gradient(135deg, 
+    hsl(240 20% 8%) 0%, 
+    hsl(230 25% 12%) 50%, 
+    hsl(220 20% 16%) 100%);
 
-  /* Casino/Web3 Glow Effects - Ultra Vibrant */
-  --glow-casino-gold: 0 0 30px hsl(45 100% 55% / 0.8), 0 0 60px hsl(45 100% 55% / 0.6), 0 0 90px hsl(45 100% 55% / 0.4);
-  --glow-neon-pink: 0 0 30px hsl(330 100% 65% / 0.8), 0 0 60px hsl(330 100% 65% / 0.6);
-  --glow-neon-cyan: 0 0 30px hsl(186 100% 60% / 0.8), 0 0 60px hsl(186 100% 60% / 0.6);
-  --glow-neon-purple: 0 0 30px hsl(270 100% 65% / 0.8), 0 0 60px hsl(270 100% 65% / 0.6);
-  --glow-rainbow: 0 0 40px hsl(330 100% 65% / 0.6), 0 0 80px hsl(186 100% 60% / 0.4), 0 0 120px hsl(270 100% 65% / 0.3);
-  --glow-primary: 0 0 50px hsl(165 85% 45% / 1), 0 0 100px hsl(165 85% 45% / 0.8);
-  --glow-secondary: 0 0 40px hsl(165 85% 45% / 0.9), 0 0 80px hsl(165 85% 45% / 0.7);
+  /* Professional Glow Effects */
+  --glow-premium-purple: 0 0 20px hsl(270 70% 45% / 0.6), 0 0 40px hsl(270 70% 45% / 0.3);
+  --glow-premium-cyan: 0 0 20px hsl(190 75% 50% / 0.6), 0 0 40px hsl(190 75% 50% / 0.3);
+  --glow-premium-silver: 0 0 20px hsl(210 20% 55% / 0.6), 0 0 40px hsl(210 20% 55% / 0.3);
+  --glow-primary: 0 0 20px hsl(270 70% 45% / 0.5), 0 0 40px hsl(270 70% 45% / 0.3);
+  --glow-secondary: 0 0 20px hsl(190 75% 50% / 0.5), 0 0 40px hsl(190 75% 50% / 0.3);
 
     /* Meme backgrounds - Changed from purple to dark neutral */
     --meme-grid-bg: 214 32% 5%;
@@ -687,8 +679,8 @@ All colors MUST be HSL.
 
   ::-webkit-scrollbar-thumb {
     background: linear-gradient(135deg, 
-      hsl(var(--primary) / 0.8), 
-      hsl(var(--primary) / 0.6)
+      hsl(var(--meme-premium-purple) / 0.8), 
+      hsl(var(--meme-premium-cyan) / 0.6)
     );
     border-radius: 8px;
     border: 2px solid transparent;
@@ -697,8 +689,8 @@ All colors MUST be HSL.
 
   ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, 
-      hsl(var(--primary)), 
-      hsl(var(--primary) / 0.8)
+      hsl(var(--meme-premium-purple)), 
+      hsl(var(--meme-premium-cyan) / 0.8)
     );
     background-clip: content-box;
   }
@@ -714,9 +706,67 @@ All colors MUST be HSL.
   transform: scale(0.95);
 }
 
+/* Premium UI Components */
+.glass-premium {
+  background: linear-gradient(145deg, 
+    hsla(240 20% 8% / 0.95), 
+    hsla(230 25% 12% / 0.9)
+  );
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid hsla(270 70% 45% / 0.2);
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid hsl(var(--meme-premium-purple));
+  outline-offset: 2px;
+}
+
+.casino-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.casino-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsla(270 70% 45% / 0.3),
+    transparent
+  );
+  transition: left 0.7s ease;
+}
+
+.casino-button:hover::before {
+  left: 100%;
+}
+
 /* Container spacing standards */
 .container-padding {
   padding: 1rem; /* 16px standard */
+}
+
+/* Professional number display */
+.number-display {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.025em;
+}
+
+/* Premium text effects */
+.text-glow {
+  text-shadow: 0 0 10px hsl(var(--meme-premium-purple) / 0.5);
+}
+
+.text-mega-glow {
+  text-shadow: 
+    0 0 5px hsl(var(--meme-premium-purple) / 0.8),
+    0 0 10px hsl(var(--meme-premium-purple) / 0.6),
+    0 0 15px hsl(var(--meme-premium-purple) / 0.4);
 }
 
 .container-padding-compact {

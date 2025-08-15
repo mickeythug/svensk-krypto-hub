@@ -20,17 +20,17 @@ export const CasinoCard = React.forwardRef<HTMLDivElement, CasinoCardProps>(
     ...props 
   }, ref) => {
     const variants = {
-      default: 'bg-gradient-to-br from-gray-900/95 to-gray-800/95 border-white/20',
-      golden: 'bg-gradient-to-br from-yellow-900/90 to-orange-900/90 border-yellow-400/60',
-      platinum: 'bg-gradient-to-br from-gray-700/90 to-gray-600/90 border-gray-300/60',
-      diamond: 'bg-gradient-to-br from-purple-900/90 to-pink-900/90 border-purple-400/60'
+      default: 'bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-slate-400/30',
+      golden: 'bg-gradient-premium-silver border-slate-300/50',
+      platinum: 'bg-gradient-premium-cyan border-cyan-400/40',
+      diamond: 'bg-gradient-premium-purple border-purple-400/50'
     };
 
     const glowVariants = {
-      default: 'shadow-glow-primary',
-      golden: 'shadow-glow-casino-gold',
-      platinum: 'shadow-glow-neon-cyan',
-      diamond: 'shadow-glow-neon-purple'
+      default: 'shadow-glow-secondary',
+      golden: 'shadow-glow-premium-silver',
+      platinum: 'shadow-glow-premium-cyan',
+      diamond: 'shadow-glow-premium-purple'
     };
 
     return (
