@@ -206,7 +206,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
       />
 
       {/* Main Trading Area */}
-      <div className="flex-1 flex flex-col max-w-[calc(100vw-360px)]">
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${sidebarCollapsed ? 'max-w-none' : 'max-w-[calc(100vw-360px)]'}`}>
         {/* Professional Header - Enhanced */}
         <div className="bg-card/95 border-b border-border backdrop-blur-sm shadow-elevation-2">
           <div className="p-6">
@@ -378,17 +378,19 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
               className="h-full flex flex-col w-[380px]"
             >
               {/* Sidebar Header - Enhanced */}
-              <div className="p-6 border-b border-border">
-                <div className="flex items-center justify-between">
+              <div className="p-6 border-b border-border relative">
+                {/* Hide Button - Positioned on the left side */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                  className="absolute -left-6 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-card/95 border-border backdrop-blur-sm shadow-lg hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
+                >
+                  <EyeOff className="h-5 w-5" />
+                </Button>
+                
+                <div className="flex items-center justify-center">
                   <h3 className="text-xl font-semibold text-foreground section-title">{t('trading.marketDepth')}</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                    className="text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 hover-scale"
-                  >
-                    <EyeOff className="h-5 w-5" />
-                  </Button>
                 </div>
               </div>
 
@@ -423,9 +425,9 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
       <AnimatePresence>
         {sidebarCollapsed && (
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
+            exit={{ opacity: 0, x: -20 }}
             className="fixed right-4 top-1/2 -translate-y-1/2 z-50"
           >
             <Button
