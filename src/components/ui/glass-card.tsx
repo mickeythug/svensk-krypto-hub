@@ -14,27 +14,26 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={cn(
-          // Base glass morphism with pure black background
+          // Base glass morphism styles
           'relative overflow-hidden',
-          'bg-black',
+          'bg-gradient-to-br from-white/[0.08] to-white/[0.02]',
           'backdrop-blur-xl',
           
-          // Subtle neon turquoise glowing border
-          border && 'border border-primary/60',
-          border && 'shadow-[0_0_15px_hsl(var(--primary)/0.4),inset_0_0_15px_hsl(var(--primary)/0.05)]',
+          // Border with gradient
+          border && 'border border-white/[0.1]',
           
           // Rounded corners
           'rounded-xl',
           
-          // Enhanced shadow effects with subtle neon glow
-          'shadow-[0_8px_32px_0_rgba(0,0,0,0.9)]',
+          // Shadow effects
+          'shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]',
           
-          // Subtle glow effect
-          glow && 'shadow-[0_0_25px_hsl(var(--primary)/0.6),0_0_50px_hsl(var(--primary)/0.3)]',
+          // Glow effect
+          glow && 'shadow-[0_0_30px_hsl(var(--primary)/0.4)]',
           
-          // Subtle neon inner glow effect
+          // Before pseudo for inner glow
           'before:absolute before:inset-0 before:rounded-xl',
-          'before:bg-gradient-to-br before:from-primary/[0.05] before:to-transparent',
+          'before:bg-gradient-to-br before:from-white/[0.05] before:to-transparent',
           'before:pointer-events-none',
           
           className
