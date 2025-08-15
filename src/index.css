@@ -90,12 +90,12 @@ All colors MUST be HSL.
     --gradient-panel: linear-gradient(145deg, hsl(0 0% 3%) 0%, hsl(0 0% 6%) 100%);
     --gradient-input: linear-gradient(145deg, hsl(0 0% 6%) 0%, hsl(0 0% 4%) 100%);
     
-    /* Neon Glow Effects with Brand Turquoise */
-    --glow-turquoise: 0 0 20px hsl(165 85% 45% / 0.5), 0 0 40px hsl(165 85% 45% / 0.3);
-    --glow-primary: 0 0 20px hsl(165 85% 45% / 0.5), 0 0 40px hsl(165 85% 45% / 0.3);
-    --glow-green: 0 0 20px hsl(142 76% 50% / 0.5), 0 0 40px hsl(142 76% 50% / 0.3);
-    --glow-red: 0 0 20px hsl(0 84% 60% / 0.5), 0 0 40px hsl(0 84% 60% / 0.3);
-    --glow-soft: 0 0 30px hsl(165 85% 45% / 0.2);
+    /* Enhanced Neon Glow Effects with Stronger Brand Turquoise */
+    --glow-turquoise: 0 0 40px hsl(165 85% 45% / 0.8), 0 0 80px hsl(165 85% 45% / 0.6), 0 0 120px hsl(165 85% 45% / 0.4);
+    --glow-primary: 0 0 40px hsl(165 85% 45% / 0.8), 0 0 80px hsl(165 85% 45% / 0.6), 0 0 120px hsl(165 85% 45% / 0.4);
+    --glow-green: 0 0 30px hsl(142 76% 50% / 0.7), 0 0 60px hsl(142 76% 50% / 0.5);
+    --glow-red: 0 0 30px hsl(0 84% 60% / 0.7), 0 0 60px hsl(0 84% 60% / 0.5);
+    --glow-soft: 0 0 50px hsl(165 85% 45% / 0.4);
     
     /* Glass Morphism Shadows */
     --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4);
@@ -111,14 +111,14 @@ All colors MUST be HSL.
     --meme-lime: 90 100% 60%;
     --meme-orange: 30 100% 60%;
 
-    /* Enhanced glowing effects */
-    --glow-primary: 0 0 30px hsl(165 85% 45% / 0.8);
-    --glow-secondary: 0 0 25px hsl(165 85% 45% / 0.6);
-    --glow-rainbow: 0 0 40px hsl(165 85% 45% / 0.5), 0 0 60px hsl(165 70% 60% / 0.3);
+    /* Enhanced glowing effects - Stronger neon */
+    --glow-primary: 0 0 50px hsl(165 85% 45% / 1), 0 0 100px hsl(165 85% 45% / 0.8);
+    --glow-secondary: 0 0 40px hsl(165 85% 45% / 0.9), 0 0 80px hsl(165 85% 45% / 0.7);
+    --glow-rainbow: 0 0 60px hsl(165 85% 45% / 0.8), 0 0 120px hsl(165 70% 60% / 0.6);
 
-    /* Meme backgrounds */
-    --meme-grid-bg: 280 40% 5%;
-    --meme-card-bg: 280 35% 10%;
+    /* Meme backgrounds - Changed from purple to dark neutral */
+    --meme-grid-bg: 214 32% 5%;
+    --meme-card-bg: 214 32% 10%;
 
     --sidebar-background: 214 28% 10%;
     --sidebar-foreground: 180 100% 85%;
