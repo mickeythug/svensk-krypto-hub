@@ -24,7 +24,7 @@ import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import ModernMobileTokenInfo from "./ModernMobileTokenInfo";
 import ModernMobileTradingPanel from "./ModernMobileTradingPanel";
 import ModernMobileOrdersPanel from "./ModernMobileOrdersPanel";
-import ModernDexTradingPanel from "../trading/ModernDexTradingPanel";
+import ModernStepTradingPanel from "../trading/ModernStepTradingPanel";
 import TokenSearchBar from "@/components/TokenSearchBar";
 
 interface ModernMobileTradingViewProps {
@@ -164,7 +164,7 @@ const ModernMobileTradingView = ({
 
         {activeTab === "trade" && (
           <div className="p-4">
-            <ModernDexTradingPanel
+            <ModernStepTradingPanel
               symbol={symbol}
               currentPrice={currentPrice}
               tokenName={tokenName}
