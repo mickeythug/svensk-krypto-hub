@@ -61,19 +61,18 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
     return `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
   };
   if (collapsed) {
-    return <motion.div 
-      className="w-14 bg-gradient-to-b from-card to-muted border-r border-primary/20 backdrop-blur-xl flex flex-col shadow-glow-primary/10" 
-      initial={{ opacity: 0, x: -50 }} 
-      animate={{ opacity: 1, x: 0 }} 
-      transition={{ duration: 0.3, ease: "easeOut" }}
-    >
+    return <motion.div className="w-14 bg-gradient-to-b from-card to-muted border-r border-primary/20 backdrop-blur-xl flex flex-col shadow-glow-primary/10" initial={{
+      opacity: 0,
+      x: -50
+    }} animate={{
+      opacity: 1,
+      x: 0
+    }} transition={{
+      duration: 0.3,
+      ease: "easeOut"
+    }}>
         <div className="p-3 border-b border-primary/20">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onToggle} 
-            className="w-full h-8 text-muted-foreground hover:text-primary hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 rounded-xl"
-          >
+          <Button variant="ghost" size="sm" onClick={onToggle} className="w-full h-8 text-muted-foreground hover:text-primary hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 rounded-xl">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -91,12 +90,16 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
         </div>
       </motion.div>;
   }
-  return <motion.div 
-    className="w-80 bg-gradient-to-b from-card/95 to-muted/95 border-r border-primary/20 backdrop-blur-xl flex flex-col shadow-2xl shadow-primary/5" 
-    initial={{ opacity: 0, x: -50 }} 
-    animate={{ opacity: 1, x: 0 }} 
-    transition={{ duration: 0.3, ease: "easeOut" }}
-  >
+  return <motion.div className="w-80 bg-gradient-to-b from-card/95 to-muted/95 border-r border-primary/20 backdrop-blur-xl flex flex-col shadow-2xl shadow-primary/5" initial={{
+    opacity: 0,
+    x: -50
+  }} animate={{
+    opacity: 1,
+    x: 0
+  }} transition={{
+    duration: 0.3,
+    ease: "easeOut"
+  }}>
       {/* Header */}
       <div className="p-4 border-b border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <div className="flex items-center justify-between mb-4">
@@ -109,12 +112,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
               MARKETS
             </h2>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onToggle} 
-            className="text-muted-foreground hover:text-primary hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 rounded-xl"
-          >
+          <Button variant="ghost" size="sm" onClick={onToggle} className="text-muted-foreground hover:text-primary hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 rounded-xl">
             <ChevronLeft className="h-4 w-4" />
           </Button>
         </div>
@@ -122,12 +120,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
         {/* Search Bar */}
         <div className="relative group">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors duration-300" />
-          <Input 
-            placeholder="Search tokens..." 
-            value={searchQuery} 
-          onChange={e => setSearchQuery(e.target.value)}
-            className="pl-10 h-11 bg-muted/50 border-muted-foreground/20 text-foreground placeholder:text-muted-foreground focus:bg-muted/70 focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 rounded-xl transition-all duration-300" 
-          />
+          <Input placeholder="Search tokens..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10 h-11 bg-muted/50 border-muted-foreground/20 text-foreground placeholder:text-muted-foreground focus:bg-muted/70 focus:border-primary/50 focus:shadow-lg focus:shadow-primary/10 rounded-xl transition-all duration-300" />
           <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
         </div>
       </div>
@@ -176,27 +169,15 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                             <div className="flex items-center gap-3 flex-1 min-w-0">
                               {/* Token Logo */}
                               <div className="relative">
-                                {token.image ? (
-                                  <div className="relative">
-                                    <img 
-                                      src={token.image} 
-                                      alt={`${token.name} logo`} 
-                                      className="h-10 w-10 rounded-xl ring-2 ring-primary/20 shadow-lg" 
-                                    />
+                                {token.image ? <div className="relative">
+                                    <img src={token.image} alt={`${token.name} logo`} className="h-10 w-10 rounded-xl ring-2 ring-primary/20 shadow-lg" />
                                     <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-transparent via-transparent to-primary/10"></div>
-                                  </div>
-                                ) : (
-                                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/30 to-primary/60 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/20">
+                                  </div> : <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/30 to-primary/60 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/20">
                                     <span className="text-xs font-bold text-white">
                                       {token.symbol.slice(0, 2)}
                                     </span>
-                                  </div>
-                                )}
-                                {token.rank && token.rank <= 10 && (
-                                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-warning to-warning/70 rounded-full flex items-center justify-center border border-warning/50 shadow-lg shadow-warning/30">
-                                    <Star className="h-2 w-2 text-white fill-current" />
-                                  </div>
-                                )}
+                                  </div>}
+                                {token.rank && token.rank <= 10}
                               </div>
 
                               {/* Token Info */}
@@ -205,9 +186,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                                   <span className="font-bold text-foreground text-sm truncate font-mono tracking-wide">
                                     {token.symbol}
                                   </span>
-                                  {isWatchlisted && (
-                                    <Star className="h-3 w-3 text-warning fill-current drop-shadow-sm shadow-warning/50" />
-                                  )}
+                                  {isWatchlisted && <Star className="h-3 w-3 text-warning fill-current drop-shadow-sm shadow-warning/50" />}
                                 </div>
                                 <div className="text-xs text-muted-foreground truncate font-inter">
                                   {token.name}
@@ -222,23 +201,14 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                               </div>
                               <div className="flex items-center gap-1">
                                 <span className={`text-sm font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
-                                  {token.change24h >= 0 ? (
-                                    <TrendingUp className="h-3 w-3" />
-                                  ) : (
-                                    <TrendingDown className="h-3 w-3" />
-                                  )}
+                                  {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                                   {formatChange(token.change24h)}
                                 </span>
                               </div>
                             </div>
 
                             {/* Watchlist Button */}
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={e => toggleWatchlist(token.symbol, e)} 
-                              className={`ml-2 h-8 w-8 p-0 rounded-lg transition-all duration-300 ${isWatchlisted ? 'opacity-100 bg-warning/10 hover:bg-warning/20' : 'opacity-0 group-hover:opacity-100 hover:bg-muted/30'}`}
-                            >
+                            <Button variant="ghost" size="sm" onClick={e => toggleWatchlist(token.symbol, e)} className={`ml-2 h-8 w-8 p-0 rounded-lg transition-all duration-300 ${isWatchlisted ? 'opacity-100 bg-warning/10 hover:bg-warning/20' : 'opacity-0 group-hover:opacity-100 hover:bg-muted/30'}`}>
                               <Star className={`h-3 w-3 transition-all duration-300 ${isWatchlisted ? 'fill-warning text-warning drop-shadow-sm shadow-warning/50' : 'text-muted-foreground hover:text-warning'}`} />
                             </Button>
                           </div>
