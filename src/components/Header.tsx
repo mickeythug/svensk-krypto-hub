@@ -159,29 +159,30 @@ const Header = ({
   return <header className={`fixed top-0 left-0 right-0 z-[110] transition-all duration-300 ${isScrolled ? "bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl" : "bg-background/90 backdrop-blur-md"}`}>
       {/* Main Header */}
       <div className="px-0">
-        <div className="h-24 flex items-center justify-between">
+        <div className="h-20 flex items-center justify-between">
           {/* Logo */}
           <button onClick={() => navigate('/')} className="flex items-center space-x-4 hover:opacity-80 transition-opacity cursor-pointer ml-2">
-            <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className={`${isMobile ? 'h-12 w-12 object-contain' : 'h-16 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`} />
+            <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className={`${isMobile ? 'h-10 w-10 object-contain' : 'h-14 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`} />
             {!isMobile && <div>
-                <h1 className="font-tech text-3xl font-black tracking-[0.15em]">
+                <h1 className="font-orbitron text-xl font-bold tracking-wider">
                   <span className="text-brand-turquoise">CRY</span>
                   <span className="text-brand-white">PTO</span>
                   <span> </span>
                   <span className="text-brand-white">NET</span>
                   <span className="text-brand-turquoise">WORK</span>
                 </h1>
-                <p className="font-future text-lg font-bold text-muted-foreground tracking-[0.3em]">
+                <p className="font-orbitron text-sm font-medium text-muted-foreground tracking-widest">
                   SWEDEN
                 </p>
               </div>}
           </button>
 
           {/* Desktop Navigation */}
-          {!isMobile && <nav className="hidden lg:flex items-center space-x-12">
+          {!isMobile && <nav className="hidden lg:flex items-center space-x-8">
               {mainNavItems.map(item => {
-            return <button key={item.name} onClick={() => handleNavigation(item)} className="flex items-center space-x-2 text-foreground hover:text-primary transition-all duration-300 font-tech font-black tracking-[0.2em] uppercase text-xl hover:scale-110 hover:glow">
-                    <span className="font-future font-black text-xl">{item.name}</span>
+            return <button key={item.name} onClick={() => handleNavigation(item)} className="relative flex items-center space-x-2 text-foreground hover:text-primary transition-all duration-300 font-orbitron font-bold tracking-widest uppercase text-sm hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)] hover:scale-105 group">
+                    <span className="relative z-10">{item.name}</span>
+                    <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </button>;
           })}
             </nav>}
@@ -204,14 +205,14 @@ const Header = ({
                 }} className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
                       <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className="h-8 w-auto" />
                       <div>
-                        <h1 className="font-tech text-sm font-bold">
+                        <h1 className="font-orbitron text-sm font-bold">
                           <span className="text-brand-turquoise">CRY</span>
                           <span className="text-brand-white">PTO</span>
                           <span> </span>
                           <span className="text-brand-white">NET</span>
                           <span className="text-brand-turquoise">WORK</span>
                         </h1>
-                        <p className="font-future text-xs text-muted-foreground">
+                        <p className="font-orbitron text-xs text-muted-foreground">
                           SWEDEN
                         </p>
                       </div>
@@ -227,24 +228,25 @@ const Header = ({
                     
                     {/* Wallet Connect Section */}
                     <div className="p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-tech text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
+                      <div className="font-orbitron text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
                       <ConnectWalletButton />
                     </div>
                     {/* Complete Navigation Menu */}
                     <div>
-                      <h3 className="font-tech text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
+                      <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
                       <nav className="space-y-2">
                         {allPages.map(item => {
                       const isActive = location.pathname === item.href || item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto');
-                      return <button key={item.name} onClick={() => handleNavigation(item)} className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-300 group ${isActive ? 'bg-primary/10 border border-primary/20 text-primary' : 'hover:bg-muted/50 border border-transparent'}`}>
+                      return <button key={item.name} onClick={() => handleNavigation(item)} className={`relative flex items-center justify-between w-full p-4 rounded-xl transition-all duration-300 group ${isActive ? 'bg-primary/10 border border-primary/20 text-primary shadow-[0_0_10px_hsl(var(--primary)/0.3)]' : 'hover:bg-muted/50 border border-transparent hover:shadow-[0_0_8px_hsl(var(--primary)/0.2)] hover:border-primary/10'}`}>
                               <div className="flex items-center space-x-3">
                                 <div className="text-left">
-                                  <div className="font-tech font-bold tracking-wider uppercase text-sm">
+                                  <div className="font-orbitron font-bold tracking-wider uppercase text-sm relative z-10">
                                     {item.name}
                                   </div>
                                   
                                 </div>
                               </div>
+                              {!isActive && <div className="absolute inset-0 rounded-xl bg-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>}
                             </button>;
                     })}
                       </nav>
