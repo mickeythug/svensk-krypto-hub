@@ -48,6 +48,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useSolBalance } from '@/hooks/useSolBalance';
 import { useTradeHistory } from '@/hooks/useTradeHistory';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useOpenOrders } from '@/hooks/useOpenOrders';
 import { useOrderHistory } from '@/hooks/useOrderHistory';
 import { useOrderbook } from '@/hooks/useOrderbook';
@@ -98,7 +99,11 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   const { balance: solBalance } = useSolBalance();
   const { history } = useTradeHistory([solAddress || '', evmAddress || '']);
   const { fullyAuthed } = useWalletAuthStatus();
+  const { isAuthenticated: supabaseAuthed, user: supabaseUser } = useSupabaseAuth();
   const { info: solInfo } = useSolanaTokenInfo(symbol);
+
+  // Combined authentication status - wallet must be connected AND Supabase session active
+  const isFullyAuthenticated = fullyAuthed && supabaseAuthed;
 
   // Real Backend Integration - Open orders (DB + Jupiter)
   const { dbOrders, jupOrders } = useOpenOrders({
@@ -380,7 +385,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
               </div>
 
               {/* Modern Trading Panel with Auth */}
-              {fullyAuthed ? (
+              {isFullyAuthenticated ? (
                 <div className="h-[400px] p-4 pt-2">
                   <ModernTradingPanel 
                     symbol={symbol}

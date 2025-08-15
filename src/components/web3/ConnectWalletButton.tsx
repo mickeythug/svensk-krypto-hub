@@ -15,6 +15,8 @@ import type { Address } from 'viem';
 import { authLog } from '@/lib/authDebug';
 import TradingWalletOnboardingModal from '@/pages/memepage/components/TradingWalletOnboardingModal';
 import { useTradingWallet } from '@/hooks/useTradingWallet';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+
 function formatAddress(addr?: string) {
   if (!addr) return '';
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -44,6 +46,7 @@ export default function ConnectWalletButton() {
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
   const { walletAddress: twAddress, privateKey: twPk, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const { user: supabaseUser, createWalletSession, signOut: supabaseSignOut } = useSupabaseAuth();
 
   const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
   const [selectedEvmChainId, setSelectedEvmChainId] = useState<number | null>(1);
@@ -195,6 +198,12 @@ export default function ConnectWalletButton() {
           const ok = await signAndVerify(pubkeyStr, signFn);
           if (!ok) throw new Error('Signaturen kunde inte verifieras');
 
+          // Create Supabase session for authenticated wallet
+          const sessionResult = await createWalletSession(pubkeyStr, 'SOL');
+          if (!sessionResult.success) {
+            authLog('Failed to create Supabase session', sessionResult.error, 'warn');
+          }
+
           // Skapa trading wallet om saknas; visa onboarding endast om vi har en private key att visa
           try {
             const res = await createIfMissing();
@@ -255,6 +264,12 @@ export default function ConnectWalletButton() {
         if (address) sessionStorage.setItem('siwe_address', address);
         sessionStorage.setItem('siwe_verified', 'true');
         setIsAuthed(true);
+
+        // Create Supabase session for authenticated wallet
+        const sessionResult = await createWalletSession(address, 'EVM');
+        if (!sessionResult.success) {
+          authLog('Failed to create Supabase session', sessionResult.error, 'warn');
+        }
       } catch (e) {
         authLog('EVM: sign/verify failed', String(e), 'error');
         await disconnect();
@@ -278,6 +293,10 @@ export default function ConnectWalletButton() {
   const handleDisconnect = async () => {
     try {
       const mode = chainMode || (solConnected ? 'SOL' : 'EVM');
+      
+      // Sign out from Supabase first
+      await supabaseSignOut();
+      
       if (mode === 'SOL') {
         try { await disconnectSol(); } catch {}
       } else {

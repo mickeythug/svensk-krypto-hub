@@ -16,7 +16,10 @@ import {
 } from "lucide-react";
 import { formatUsd } from "@/lib/utils";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useLanguage } from '@/contexts/LanguageContext';
+import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 
 interface ModernMobileTradingPanelProps {
   symbol: string;
@@ -39,7 +42,12 @@ const ModernMobileTradingPanel = ({
   const [percentage, setPercentage] = useState("");
   
   const { connected } = useWallet();
+  const { fullyAuthed } = useWalletAuthStatus();
+  const { isAuthenticated: supabaseAuthed } = useSupabaseAuth();
   const { t } = useLanguage();
+
+  // Combined authentication status
+  const isFullyAuthenticated = fullyAuthed && supabaseAuthed;
 
   const quickPercentages = [25, 50, 75, 100];
 
@@ -289,10 +297,16 @@ const ModernMobileTradingPanel = ({
       </Card>
 
       {/* TRADE BUTTON */}
-      {!connected ? (
-        <Button className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90">
-          {t('trading.connectWalletToTrade')}
-        </Button>
+      {!isFullyAuthenticated ? (
+        <div className="space-y-3">
+          <div className="text-center p-4 bg-muted/50 rounded-lg">
+            <AlertTriangle className="h-8 w-8 text-primary mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {t('trading.connectWalletMessage')}
+            </p>
+          </div>
+          <ConnectWalletButton />
+        </div>
       ) : (
         <Button 
           onClick={handleTrade}

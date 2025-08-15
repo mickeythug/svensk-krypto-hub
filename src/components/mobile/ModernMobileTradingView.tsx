@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import TradingViewMobileChart from "./TradingViewMobileChart";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 import { formatUsd } from "@/lib/utils";
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
@@ -44,7 +46,12 @@ const ModernMobileTradingView = ({
   
   const isPositive = priceChange24h >= 0;
   const { connected: solConnected } = useWallet();
+  const { fullyAuthed } = useWalletAuthStatus();
+  const { isAuthenticated: supabaseAuthed } = useSupabaseAuth();
   const symbolUpper = symbol.toUpperCase();
+
+  // Combined authentication status
+  const isFullyAuthenticated = fullyAuthed && supabaseAuthed;
   const coinGeckoId = (crypto?.coinGeckoId || crypto?.coin_gecko_id || crypto?.data?.id) as string | undefined;
   const { isSolToken } = useSolanaTokenInfo(symbolUpper, coinGeckoId);
   const { data: ticker } = useExchangeTicker(symbol, coinGeckoId);
