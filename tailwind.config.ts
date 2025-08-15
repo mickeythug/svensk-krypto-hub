@@ -18,6 +18,18 @@ export default {
 			}
 		},
     extend: {
+			fontSize: {
+				'binance-body': ['14px', { lineHeight: '1.4', letterSpacing: '0' }],
+				'binance-secondary': ['12px', { lineHeight: '1.4', letterSpacing: '0' }],
+				'binance-number': ['16px', { lineHeight: '1.2', letterSpacing: '0.5px' }],
+				'binance-title': ['18px', { lineHeight: '1.3', letterSpacing: '0' }],
+			},
+			fontWeight: {
+				'binance-light': '300',
+				'binance-regular': '400',
+				'binance-medium': '500',
+				'binance-semibold': '600',
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
