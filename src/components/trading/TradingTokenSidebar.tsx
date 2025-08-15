@@ -103,7 +103,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
         </div>
       </motion.div>;
   }
-  return <motion.div className="w-64 bg-gradient-to-b from-card/95 to-muted/95 border-r border-primary/20 backdrop-blur-xl flex flex-col shadow-2xl shadow-primary/5" initial={{
+  return <motion.div className="w-72 bg-gradient-to-b from-card/95 to-muted/95 border-r border-primary/20 backdrop-blur-xl flex flex-col shadow-2xl shadow-primary/5" initial={{
     opacity: 0,
     x: -50
   }} animate={{
@@ -140,8 +140,8 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
 
       {/* Token List */}
       <div className="flex-1 min-h-0">
-        <ScrollArea className="h-full max-h-[calc(16*4.5rem)]" ref={scrollElementRef}>
-          <div className="p-2">
+        <ScrollArea className="h-full" ref={scrollElementRef}>
+          <div className="p-3 space-y-2">
             <AnimatePresence mode="wait">
               {isCryptoLoading ? <motion.div initial={{
               opacity: 0
@@ -177,43 +177,41 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                 }} transition={{
                   delay: index * 0.02
                 }}>
-                        <Card className={`p-3 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group rounded-xl border ${isActive ? 'bg-gradient-to-r from-primary/20 to-primary/10 border-primary/40 shadow-xl shadow-primary/20' : 'bg-gradient-to-r from-muted/30 to-muted/10 border-muted-foreground/20 hover:from-muted/50 hover:to-muted/30 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10'}`} onClick={() => handleTokenSelect(token.symbol)}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                              {/* Token Logo */}
-                              <div className="relative">
-                                {token.image ? <div className="relative">
-                                    <img src={token.image} alt={`${token.name} logo`} className="h-10 w-10 rounded-xl ring-2 ring-primary/20 shadow-lg" />
-                                    <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-transparent via-transparent to-primary/10"></div>
-                                  </div> : <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/30 to-primary/60 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/20">
-                                    <span className="text-xs font-bold text-white">
-                                      {token.symbol.slice(0, 2)}
-                                    </span>
-                                  </div>}
-                                {token.rank && token.rank <= 10}
-                              </div>
-
-                              {/* Token Info */}
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-bold text-foreground text-sm truncate font-mono tracking-wide">
-                                    {token.symbol}
+                        <Card className={`p-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] hover:shadow-xl group rounded-xl border ${isActive ? 'bg-gradient-to-r from-primary/20 to-primary/10 border-primary/40 shadow-xl shadow-primary/20' : 'bg-gradient-to-r from-muted/30 to-muted/10 border-muted-foreground/20 hover:from-muted/50 hover:to-muted/30 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10'}`} onClick={() => handleTokenSelect(token.symbol)}>
+                          <div className="flex items-center gap-3">
+                            {/* Token Logo */}
+                            <div className="relative flex-shrink-0">
+                              {token.image ? <div className="relative">
+                                  <img src={token.image} alt={`${token.name} logo`} className="h-10 w-10 rounded-xl ring-2 ring-primary/20 shadow-lg" />
+                                  <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-transparent via-transparent to-primary/10"></div>
+                                </div> : <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/30 to-primary/60 flex items-center justify-center border border-primary/30 shadow-lg shadow-primary/20">
+                                  <span className="text-xs font-bold text-white">
+                                    {token.symbol.slice(0, 2)}
                                   </span>
-                                  {isWatchlisted && <Star className="h-3 w-3 text-warning fill-current drop-shadow-sm shadow-warning/50" />}
-                                </div>
-                                <div className="text-xs text-muted-foreground truncate font-inter">
-                                  {token.name}
-                                </div>
+                                </div>}
+                              {token.rank && token.rank <= 10}
+                            </div>
+
+                            {/* Token Info - Left Side */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-bold text-foreground text-sm font-mono tracking-wide">
+                                  {token.symbol}
+                                </span>
+                                {isWatchlisted && <Star className="h-3 w-3 text-warning fill-current drop-shadow-sm shadow-warning/50" />}
+                              </div>
+                              <div className="text-xs text-muted-foreground font-inter">
+                                {token.name}
                               </div>
                             </div>
 
-                            {/* Price & Change */}
-                            <div className="text-right">
+                            {/* Price & Change - Right Side */}
+                            <div className="flex flex-col items-end gap-1 min-w-[80px]">
                               <div className="font-mono text-sm text-foreground font-semibold tracking-tight">
                                 ${formatPrice(token.price)}
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className={`text-sm font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
+                                <span className={`text-xs font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
                                   {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                                   {formatChange(token.change24h)}
                                 </span>
@@ -221,7 +219,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                             </div>
 
                             {/* Watchlist Button */}
-                            <Button variant="ghost" size="sm" onClick={e => toggleWatchlist(token.symbol, e)} className={`ml-2 h-8 w-8 p-0 rounded-lg transition-all duration-300 ${isWatchlisted ? 'opacity-100 bg-warning/10 hover:bg-warning/20' : 'opacity-0 group-hover:opacity-100 hover:bg-muted/30'}`}>
+                            <Button variant="ghost" size="sm" onClick={e => toggleWatchlist(token.symbol, e)} className={`h-8 w-8 p-0 rounded-lg transition-all duration-300 flex-shrink-0 ${isWatchlisted ? 'opacity-100 bg-warning/10 hover:bg-warning/20' : 'opacity-0 group-hover:opacity-100 hover:bg-muted/30'}`}>
                               <Star className={`h-3 w-3 transition-all duration-300 ${isWatchlisted ? 'fill-warning text-warning drop-shadow-sm shadow-warning/50' : 'text-muted-foreground hover:text-warning'}`} />
                             </Button>
                           </div>
