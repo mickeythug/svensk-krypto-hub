@@ -136,14 +136,14 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
               <TabsList className="bg-muted/80 border border-border rounded-xl p-1.5 backdrop-blur-sm animate-fade-in shadow-elevation-2">
                 <TabsTrigger 
                   value="trade" 
-                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
                   <BarChart3 className="h-5 w-5 mr-2" />
                   <span className="text-binance-body">{t('trading.trade')}</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="positions" 
-                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
                   <Target className="h-5 w-5 mr-2" />
                   <span className="text-binance-body">{t('trading.positions')}</span>
@@ -153,7 +153,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
                 </TabsTrigger>
                 <TabsTrigger 
                   value="orders" 
-                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
                   <Clock className="h-5 w-5 mr-2" />
                   <span className="text-binance-body">{t('trading.openOrders')}</span>
@@ -163,7 +163,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
                 </TabsTrigger>
                 <TabsTrigger 
                   value="balances" 
-                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary/80 data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
                   <Wallet className="h-5 w-5 mr-2" />
                   <span className="text-binance-body">{t('trading.walletBalances')}</span>
