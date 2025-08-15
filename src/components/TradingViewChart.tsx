@@ -231,7 +231,7 @@ const TradingViewChart = ({
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [isFullscreen]);
-  return <Card className={`h-full bg-background/80 backdrop-blur-sm border-border/20 relative overflow-hidden flex flex-col chart-fullscreen-container ${isFullscreen ? 'fullscreen-chart' : ''}`} style={{
+  return <Card className={`h-full bg-gradient-to-br from-card/95 to-muted/95 backdrop-blur-xl border-primary/20 relative overflow-hidden flex flex-col chart-fullscreen-container shadow-2xl shadow-primary/5 ${isFullscreen ? 'fullscreen-chart' : ''}`} style={{
     ...(isFullscreen && !document.fullscreenElement ? {
       position: 'fixed',
       top: 0,
@@ -239,33 +239,54 @@ const TradingViewChart = ({
       width: '100vw',
       height: '100vh',
       zIndex: 9999,
-      background: 'rgb(10, 10, 10)',
+      background: 'linear-gradient(135deg, hsl(var(--card)), hsl(var(--muted)))',
       borderRadius: 0
     } : {})
   }}>
       {/* Controls Header Above Chart */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/20 bg-background/90">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-primary/20 bg-gradient-to-r from-card/95 to-muted/95 backdrop-blur-xl">
         <div className="flex gap-2">
-          {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map(tf => <Badge key={tf} variant={timeframe === tf ? "default" : "outline"} className={`cursor-pointer bg-background/80 backdrop-blur-sm transition-all hover:scale-105 ${timeframe === tf ? "bg-primary text-primary-foreground" : "hover:bg-primary/20"}`} onClick={() => handleTimeframeChange(tf)}>
+          {["1m", "5m", "15m", "1H", "4H", "1D", "1W"].map(tf => (
+            <Badge 
+              key={tf} 
+              variant={timeframe === tf ? "default" : "outline"} 
+              className={`cursor-pointer backdrop-blur-sm transition-all duration-300 hover:scale-105 rounded-lg font-medium ${
+                timeframe === tf 
+                  ? "bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-lg shadow-primary/30 border-primary/50" 
+                  : "bg-muted/30 border-muted-foreground/20 hover:bg-primary/10 hover:border-primary/30 text-muted-foreground hover:text-primary"
+              }`} 
+              onClick={() => handleTimeframeChange(tf)}
+            >
               {tf}
-            </Badge>)}
+            </Badge>
+          ))}
         </div>
         <div className="flex gap-2">
           <Button 
             variant="ghost" 
             size="sm" 
-            className={`h-8 w-8 p-0 bg-background/80 backdrop-blur-sm transition-all duration-200 ${
-              isFullscreen ? 'bg-red-500/20 hover:bg-red-500/40 text-red-400' : 'hover:bg-primary/20'
+            className={`h-8 w-8 p-0 backdrop-blur-sm transition-all duration-300 rounded-lg ${
+              isFullscreen 
+                ? 'bg-gradient-to-br from-destructive/20 to-destructive/30 hover:from-destructive/30 hover:to-destructive/40 text-destructive shadow-lg shadow-destructive/20' 
+                : 'bg-muted/30 hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 text-muted-foreground hover:text-primary'
             }`}
             onClick={toggleFullscreen}
             title={isFullscreen ? "Exit Fullscreen (ESC)" : "Enter Fullscreen"}
           >
-            <Maximize2 className={`h-4 w-4 ${isFullscreen ? 'transform rotate-45' : ''}`} />
+            <Maximize2 className={`h-4 w-4 transition-all duration-300 ${isFullscreen ? 'transform rotate-45' : ''}`} />
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 bg-muted/30 backdrop-blur-sm hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 rounded-lg text-muted-foreground hover:text-primary"
+          >
             <Settings className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-background/80 backdrop-blur-sm hover:bg-primary/20">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 w-8 p-0 bg-muted/30 backdrop-blur-sm hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 rounded-lg text-muted-foreground hover:text-primary"
+          >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </div>
