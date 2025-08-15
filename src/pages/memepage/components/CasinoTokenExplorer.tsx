@@ -140,76 +140,102 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
               onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)}
             >
               <div className="flex items-center gap-6">
-                {/* Rank */}
+                {/* Rank with enhanced styling */}
                 <div className="flex-shrink-0">
-                  <Badge className={`text-lg font-black px-3 py-2 ${
-                    index === 0 ? 'bg-gradient-casino-gold text-black' :
-                    index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
-                    index === 2 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black' :
+                  <Badge className={`text-base sm:text-lg font-black px-3 sm:px-4 py-2 sm:py-3 shadow-lg ${
+                    index === 0 ? 'bg-gradient-casino-gold text-black shadow-glow-casino-gold' :
+                    index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black shadow-glow-neon-cyan' :
+                    index === 2 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black shadow-glow-neon-pink' :
                     'bg-gradient-web3-cyber text-white'
                   }`}>
-                    {index === 0 && <Crown className="w-4 h-4 mr-1" />}
-                    #{index + 1}
+                    {index === 0 && <Crown className="w-4 h-4 mr-1 sm:mr-2" />}
+                    <span className="number-display">#{index + 1}</span>
                   </Badge>
                 </div>
 
-                {/* Image */}
-                <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden">
+                {/* Image with better border radius */}
+                <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 border-white/20 shadow-lg">
                   <OptimizedImage
                     src={token.image || '/placeholder.svg'}
                     alt={`${token.name} logo`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     fallbackSrc="/placeholder.svg"
                   />
                 </div>
 
-                {/* Token Info */}
+                {/* Token Info with improved spacing */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-black text-xl text-white truncate">{token.symbol}</h3>
-                    <Badge className="bg-red-500/20 text-red-300 text-xs px-2 py-1">🔥</Badge>
+                    <h3 className="font-black text-lg sm:text-xl text-white truncate number-display">{token.symbol}</h3>
+                    <Badge className="bg-red-500/25 text-red-300 text-xs px-2 py-1 border border-red-400/40">🔥</Badge>
                   </div>
-                  <p className="text-white/60 text-sm truncate">{token.name}</p>
+                  <p className="text-white/70 text-sm truncate font-medium">{token.name}</p>
                 </div>
 
-                {/* Stats */}
-                <div className="flex items-center gap-8 text-sm">
-                  <div className="text-center">
-                    <div className="text-white/60 mb-1">Price</div>
-                    <div className="font-black text-white font-numbers">{formatPrice(token.price)}</div>
+                {/* Stats with improved responsive layout */}
+                <div className="hidden sm:flex items-center gap-6 lg:gap-8 text-sm">
+                  <div className="text-center min-w-[80px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs">Price</div>
+                    <div className="font-black text-white number-display">{formatPrice(token.price)}</div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="text-white/60 mb-1">24h</div>
-                    <div className={`font-black font-numbers flex items-center gap-1 ${
+                  <div className="text-center min-w-[80px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs">24h</div>
+                    <div className={`font-black number-display flex items-center justify-center gap-1 ${
                       positive ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {positive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                      {formatPercentage(token.change24h)}
+                      {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      <span>{formatPercentage(token.change24h)}</span>
                     </div>
                   </div>
 
-                  <div className="text-center">
-                    <div className="text-white/60 mb-1">Market Cap</div>
-                    <div className="font-black text-white font-numbers">{formatCompact(token.marketCap)}</div>
+                  <div className="text-center min-w-[80px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs">Market Cap</div>
+                    <div className="font-black text-white number-display">{formatCompact(token.marketCap)}</div>
                   </div>
 
-                  <div className="text-center">
-                    <div className="text-white/60 mb-1">Volume</div>
-                    <div className="font-black text-white font-numbers">{formatCompact(token.volume24h)}</div>
+                  <div className="text-center min-w-[80px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs">Volume</div>
+                    <div className="font-black text-white number-display">{formatCompact(token.volume24h)}</div>
                   </div>
                 </div>
 
-                {/* Action */}
+                {/* Action with enhanced responsive design */}
                 <div className="flex-shrink-0">
                   <NeonButton 
                     variant={isTop3 ? 'neon-gold' : 'neon-cyan'}
                     glow={index === 0}
-                    className="px-6 py-2"
+                    size="md"
+                    className="px-4 sm:px-6 py-2 sm:py-3 font-black"
                   >
-                    <Target className="w-4 h-4 mr-2" />
-                    BET
+                    <Target className="w-4 h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">BET</span>
+                    <span className="sm:hidden">🎯</span>
                   </NeonButton>
+                </div>
+
+                {/* Mobile-only stats panel */}
+                <div className="sm:hidden w-full mt-4 pt-4 border-t border-white/20">
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Price:</span>
+                      <span className="font-black text-white number-display">{formatPrice(token.price)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/60">24h:</span>
+                      <span className={`font-black number-display ${positive ? 'text-green-400' : 'text-red-400'}`}>
+                        {formatPercentage(token.change24h)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/60">MCap:</span>
+                      <span className="font-black text-white number-display">{formatCompact(token.marketCap)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Vol:</span>
+                      <span className="font-black text-white number-display">{formatCompact(token.volume24h)}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CasinoCard>
@@ -236,24 +262,24 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
             className="group cursor-pointer h-[400px] flex flex-col"
             onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)}
           >
-            {/* Header */}
-            <div className="relative p-4 flex justify-between items-start">
-              <Badge className={`font-black px-3 py-2 ${
-                isTop1 ? 'bg-gradient-casino-rainbow text-white animate-pulse' :
-                isTop3 ? 'bg-gradient-casino-gold text-black' :
+            {/* Header with improved responsive badges */}
+            <div className="relative p-3 sm:p-4 flex justify-between items-start">
+              <Badge className={`font-black px-3 py-2 text-sm sm:text-base shadow-lg ${
+                isTop1 ? 'bg-gradient-casino-rainbow text-white animate-pulse shadow-glow-rainbow' :
+                isTop3 ? 'bg-gradient-casino-gold text-black shadow-glow-casino-gold' :
                 'bg-gradient-web3-cyber text-white'
               }`}>
-                {isTop1 && <Crown className="w-4 h-4 mr-1" />}
-                #{index + 1}
+                {isTop1 && <Crown className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />}
+                <span className="number-display">#{index + 1}</span>
               </Badge>
 
-              <Badge className="bg-red-500/20 text-red-300 text-xs px-2 py-1">
+              <Badge className="bg-red-500/25 text-red-300 text-xs px-2 py-1 border border-red-400/40">
                 🔥
               </Badge>
             </div>
 
-            {/* Image */}
-            <div className="relative mx-4 mb-4 overflow-hidden rounded-xl">
+            {/* Image with enhanced aspect ratio and effects */}
+            <div className="relative mx-3 sm:mx-4 mb-3 sm:mb-4 overflow-hidden rounded-xl">
               <AspectRatio ratio={16 / 10}>
                 <OptimizedImage
                   src={token.image || '/placeholder.svg'}
@@ -262,39 +288,50 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
                   fallbackSrc="/placeholder.svg"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                {/* Rank-specific glow overlay */}
+                {isTop1 && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 animate-pulse"></div>
+                )}
+                {isTop3 && !isTop1 && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/15 to-orange-400/15"></div>
+                )}
               </AspectRatio>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 px-4 pb-4 space-y-3">
+            {/* Content with improved spacing and typography */}
+            <div className="flex-1 px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
+              {/* Symbol and Change with better responsive sizing */}
               <div className="flex items-center justify-between">
-                <h3 className="font-black text-xl text-white truncate">{token.symbol}</h3>
+                <h3 className="font-black text-lg sm:text-xl text-white truncate number-display">{token.symbol}</h3>
                 <div className={`flex items-center gap-1 font-black ${
                   positive ? 'text-green-400' : 'text-red-400'
                 }`}>
                   {positive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                  <span className="text-sm font-numbers">{formatPercentage(token.change24h)}</span>
+                  <span className="text-sm number-display">{formatPercentage(token.change24h)}</span>
                 </div>
               </div>
 
-              <p className="text-white/60 text-sm truncate">{token.name}</p>
+              <p className="text-white/70 text-sm truncate font-medium">{token.name}</p>
 
+              {/* Enhanced stats grid with better contrast */}
               <div className="grid grid-cols-2 gap-2">
-                <div className="bg-black/40 rounded-lg p-2 border border-white/20">
-                  <div className="text-white/60 text-xs mb-1">Price</div>
-                  <div className="font-black text-white text-sm font-numbers">{formatPrice(token.price)}</div>
+                <div className="bg-black/50 rounded-lg p-2 border border-white/30 backdrop-blur-sm">
+                  <div className="text-white/60 text-xs mb-1 font-bold">Price</div>
+                  <div className="font-black text-white text-sm number-display">{formatPrice(token.price)}</div>
                 </div>
-                <div className="bg-black/40 rounded-lg p-2 border border-white/20">
-                  <div className="text-white/60 text-xs mb-1">MCap</div>
-                  <div className="font-black text-white text-sm font-numbers">{formatCompact(token.marketCap)}</div>
+                <div className="bg-black/50 rounded-lg p-2 border border-white/30 backdrop-blur-sm">
+                  <div className="text-white/60 text-xs mb-1 font-bold">MCap</div>
+                  <div className="font-black text-white text-sm number-display">{formatCompact(token.marketCap)}</div>
                 </div>
               </div>
 
+              {/* Enhanced Bet Button with consistent sizing */}
               <NeonButton 
                 variant={isTop1 ? 'casino-rainbow' : isTop3 ? 'neon-gold' : 'neon-cyan'}
                 glow={isTop3}
                 pulse={isTop1}
-                className="w-full py-2 font-black"
+                size="md"
+                className="w-full font-black"
               >
                 <Target className="w-4 h-4 mr-2" />
                 🎰 BET NOW
@@ -344,79 +381,81 @@ const CasinoTokenExplorer = () => {
 
       <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-6xl font-black bg-gradient-casino-rainbow bg-clip-text text-transparent mb-6">
+        {/* Header with enhanced typography */}
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="responsive-title font-black bg-gradient-casino-rainbow bg-clip-text text-transparent mb-4 sm:mb-6 text-glow">
             🎰 TOKEN CASINO 🎰
           </h2>
-          <p className="text-xl text-white/80 max-w-3xl mx-auto">
+          <p className="responsive-subtitle text-white/90 max-w-3xl mx-auto font-bold px-4">
             Place your bets on the hottest Solana meme tokens. Live odds, real-time action!
           </p>
         </div>
 
-        {/* Controls */}
-        <div className="mb-12">
-          <CasinoCard variant="default" className="p-6">
-            <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
+        {/* Controls with improved responsive layout */}
+        <div className="mb-8 sm:mb-12">
+          <CasinoCard variant="default" className="p-4 sm:p-6">
+            <div className="flex flex-col gap-6">
               
-              {/* Categories */}
-              <div className="flex flex-wrap gap-3">
+              {/* Categories with improved wrapping */}
+              <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start">
                 {categories.map((category) => (
                   <Button
                     key={category.id}
                     variant={activeCategory === category.id ? 'default' : 'outline'}
-                    className={`font-bold transition-all duration-300 ${
+                    className={`font-bold transition-all duration-300 text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-3 ${
                       activeCategory === category.id
-                        ? 'bg-gradient-casino-gold text-black shadow-glow-casino-gold border-yellow-400'
-                        : 'bg-black/40 text-white border-white/30 hover:bg-white/10 hover:border-white/50'
+                        ? 'bg-gradient-casino-gold text-black shadow-glow-casino-gold border-yellow-400 hover-lift'
+                        : 'bg-black/40 text-white border-white/30 hover:bg-white/10 hover:border-white/50 casino-button'
                     }`}
                     onClick={() => setActiveCategory(category.id as MemeCategory)}
                   >
-                    <category.icon className="w-4 h-4 mr-2" />
-                    {category.label}
+                    <category.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">{category.label}</span>
+                    <span className="sm:hidden">{category.label.split(' ')[0]}</span>
                   </Button>
                 ))}
               </div>
 
-              {/* View and Sort Controls */}
-              <div className="flex items-center gap-4">
-                {/* Sort */}
-                <div className="flex items-center gap-2">
-                  <span className="text-white/60 text-sm font-bold">Sort:</span>
-                  <div className="flex gap-1">
+              {/* Sort and View Controls with improved mobile layout */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+                {/* Sort Controls */}
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <span className="text-white/70 text-sm font-bold whitespace-nowrap">Sort:</span>
+                  <div className="flex gap-1 flex-wrap">
                     {sortOptions.map((option) => (
                       <Button
                         key={option.id}
                         variant={sortBy === option.id ? 'default' : 'ghost'}
                         size="sm"
-                        className={`text-xs ${
+                        className={`text-xs px-2 sm:px-3 py-1 sm:py-2 ${
                           sortBy === option.id
-                            ? 'bg-gradient-web3-cyber text-white'
-                            : 'text-white/60 hover:text-white'
+                            ? 'bg-gradient-web3-cyber text-white shadow-glow-neon-cyan'
+                            : 'text-white/60 hover:text-white hover:bg-white/10'
                         }`}
                         onClick={() => setSortBy(option.id)}
                       >
                         <option.icon className="w-3 h-3 mr-1" />
-                        {option.label}
+                        <span className="hidden sm:inline">{option.label}</span>
+                        <span className="sm:hidden">{option.label.split(' ')[0]}</span>
                       </Button>
                     ))}
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-white/60 hover:text-white"
+                    className="text-white/60 hover:text-white p-1 sm:p-2"
                     onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
                   >
                     <ArrowUpDown className="w-4 h-4" />
                   </Button>
                 </div>
 
-                {/* View Mode */}
-                <div className="flex items-center gap-1 bg-black/40 rounded-lg p-1">
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-1 bg-black/50 rounded-lg p-1 border border-white/20">
                   <Button
                     variant={viewMode === 'grid' ? 'default' : 'ghost'}
                     size="sm"
-                    className={viewMode === 'grid' ? 'bg-gradient-web3-cyber text-white' : 'text-white/60'}
+                    className={`p-2 ${viewMode === 'grid' ? 'bg-gradient-web3-cyber text-white' : 'text-white/60 hover:text-white'}`}
                     onClick={() => setViewMode('grid')}
                   >
                     <Grid className="w-4 h-4" />
@@ -424,7 +463,7 @@ const CasinoTokenExplorer = () => {
                   <Button
                     variant={viewMode === 'list' ? 'default' : 'ghost'}
                     size="sm"
-                    className={viewMode === 'list' ? 'bg-gradient-web3-cyber text-white' : 'text-white/60'}
+                    className={`p-2 ${viewMode === 'list' ? 'bg-gradient-web3-cyber text-white' : 'text-white/60 hover:text-white'}`}
                     onClick={() => setViewMode('list')}
                   >
                     <List className="w-4 h-4" />

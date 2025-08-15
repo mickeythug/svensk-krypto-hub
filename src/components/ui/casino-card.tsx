@@ -6,15 +6,24 @@ interface CasinoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'golden' | 'platinum' | 'diamond';
   glow?: boolean;
   animate?: boolean;
+  interactive?: boolean;
 }
 
 export const CasinoCard = React.forwardRef<HTMLDivElement, CasinoCardProps>(
-  ({ className, children, variant = 'default', glow = false, animate = false, ...props }, ref) => {
+  ({ 
+    className, 
+    children, 
+    variant = 'default', 
+    glow = false, 
+    animate = false, 
+    interactive = true,
+    ...props 
+  }, ref) => {
     const variants = {
-      default: 'bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-white/20',
-      golden: 'bg-gradient-to-br from-yellow-900/80 to-orange-900/80 border-yellow-400/50',
-      platinum: 'bg-gradient-to-br from-gray-700/80 to-gray-600/80 border-gray-300/50',
-      diamond: 'bg-gradient-to-br from-purple-900/80 to-pink-900/80 border-purple-400/50'
+      default: 'bg-gradient-to-br from-gray-900/95 to-gray-800/95 border-white/20',
+      golden: 'bg-gradient-to-br from-yellow-900/90 to-orange-900/90 border-yellow-400/60',
+      platinum: 'bg-gradient-to-br from-gray-700/90 to-gray-600/90 border-gray-300/60',
+      diamond: 'bg-gradient-to-br from-purple-900/90 to-pink-900/90 border-purple-400/60'
     };
 
     const glowVariants = {
@@ -28,11 +37,15 @@ export const CasinoCard = React.forwardRef<HTMLDivElement, CasinoCardProps>(
       <div
         ref={ref}
         className={cn(
-          // Base casino card styles
-          'relative overflow-hidden rounded-2xl border-2 backdrop-blur-xl transition-all duration-500',
+          // Base casino card styles with professional spacing
+          'relative overflow-hidden rounded-2xl border-2 backdrop-blur-xl',
+          'transition-all duration-500 ease-out transform-gpu',
           
-          // 3D Transform effects
-          'transform-gpu perspective-1000',
+          // Enhanced glass morphism
+          'glass-premium',
+          
+          // 3D Transform effects with better performance
+          'perspective-1000',
           
           // Variant styles
           variants[variant],
@@ -40,26 +53,36 @@ export const CasinoCard = React.forwardRef<HTMLDivElement, CasinoCardProps>(
           // Glow effects
           glow && glowVariants[variant],
           
-          // Hover effects
-          'hover:scale-105 hover:rotate-1 hover:shadow-2xl',
-          'hover:border-opacity-70 hover:bg-opacity-90',
+          // Interactive states
+          interactive && [
+            'cursor-pointer focus-ring',
+            'hover:scale-[1.03] hover:rotate-1 hover:shadow-2xl',
+            'hover:border-opacity-80 hover:bg-opacity-95',
+            'active:scale-[0.98] active:rotate-0',
+            'transition-transform duration-300 ease-out'
+          ],
           
           // Animation
           animate && 'animate-pulse-glow',
           
-          // Glass morphism shadow
+          // Professional shadow system
           'shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]',
           
-          // Inner glow
-          'before:absolute before:inset-0 before:rounded-2xl',
-          'before:bg-gradient-to-br before:from-white/10 before:to-transparent',
-          'before:pointer-events-none before:z-0',
+          // Enhanced inner glow with better contrast
+          'before:absolute before:inset-0 before:rounded-2xl before:z-0',
+          'before:bg-gradient-to-br before:from-white/[0.12] before:to-transparent',
+          'before:pointer-events-none',
+          
+          // Subtle border enhancement
+          'after:absolute after:inset-0 after:rounded-2xl after:z-0',
+          'after:bg-gradient-to-br after:from-transparent after:via-white/[0.05] after:to-transparent',
+          'after:pointer-events-none',
           
           className
         )}
         {...props}
       >
-        <div className="relative z-10">
+        <div className="relative z-10 h-full">
           {children}
         </div>
       </div>

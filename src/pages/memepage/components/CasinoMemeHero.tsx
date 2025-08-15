@@ -85,61 +85,61 @@ const CasinoMemeHero = () => {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-black via-gray-900 to-black">
-      {/* Ultra Modern Casino Background */}
+      {/* Ultra Modern Casino Background with better layering */}
       <div className="absolute inset-0 z-0">
-        {/* Base gradient layers */}
-        <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-20 animate-shimmer"></div>
-        <div className="absolute inset-0 bg-gradient-web3-cyber opacity-15"></div>
-        <div className="absolute inset-0 bg-gradient-meme-energy opacity-10 animate-pulse"></div>
+        {/* Base gradient layers with improved opacity */}
+        <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-15 animate-shimmer"></div>
+        <div className="absolute inset-0 bg-gradient-web3-cyber opacity-12"></div>
+        <div className="absolute inset-0 bg-gradient-meme-energy opacity-8 animate-pulse"></div>
         
-        {/* Animated patterns */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,hsl(330_100%_65%/0.3)_0%,transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,hsl(186_100%_60%/0.3)_0%,transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,hsl(270_100%_65%/0.2)_0%,transparent_50%)]"></div>
+        {/* Enhanced animated patterns with better positioning */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,hsl(330_100%_65%/0.25)_0%,transparent_45%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,hsl(186_100%_60%/0.25)_0%,transparent_45%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,hsl(270_100%_65%/0.15)_0%,transparent_40%)]"></div>
       </div>
 
-      {/* Floating Web3 Elements */}
-      <FloatingIcon icon={Flame} className="top-20 left-10 text-orange-400" delay={0} />
-      <FloatingIcon icon={Sparkles} className="top-32 right-20 text-yellow-400" delay={1000} />
-      <FloatingIcon icon={Zap} className="bottom-40 left-1/4 text-cyan-400" delay={2000} />
-      <FloatingIcon icon={Diamond} className="top-60 right-1/3 text-purple-400" delay={3000} />
-      <FloatingIcon icon={Coins} className="bottom-60 right-10 text-green-400" delay={4000} />
+      {/* Floating Web3 Elements with improved responsive positioning */}
+      <FloatingIcon icon={Flame} className="top-16 left-4 sm:top-20 sm:left-10 text-orange-400" delay={0} />
+      <FloatingIcon icon={Sparkles} className="top-24 right-4 sm:top-32 sm:right-20 text-yellow-400" delay={1000} />
+      <FloatingIcon icon={Zap} className="bottom-32 left-1/6 sm:bottom-40 sm:left-1/4 text-cyan-400" delay={2000} />
+      <FloatingIcon icon={Diamond} className="top-48 right-1/4 sm:top-60 sm:right-1/3 text-purple-400" delay={3000} />
+      <FloatingIcon icon={Coins} className="bottom-48 right-4 sm:bottom-60 sm:right-10 text-green-400" delay={4000} />
 
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      {/* Main Content with improved responsive spacing */}
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-12 sm:pb-16">
         
-        {/* Epic Hero Header */}
-        <div className="text-center mb-20">
-          {/* Main Title */}
-          <div className="flex items-center justify-center gap-8 mb-12">
-            <div className="w-24 h-24 rounded-full bg-gradient-casino-gold flex items-center justify-center shadow-glow-casino-gold animate-pulse">
-              <Crown className="w-12 h-12 text-black" />
+        {/* Epic Hero Header with enhanced typography */}
+        <div className="text-center mb-16 sm:mb-20">
+          {/* Main Title with improved responsive sizing */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 mb-8 sm:mb-12">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-casino-gold flex items-center justify-center shadow-glow-casino-gold animate-pulse">
+              <Crown className="w-10 h-10 sm:w-12 sm:h-12 text-black" />
             </div>
             
-            <h1 className="text-5xl sm:text-7xl lg:text-9xl font-black bg-gradient-casino-rainbow bg-clip-text text-transparent animate-shimmer">
+            <h1 className="responsive-title font-black bg-gradient-casino-rainbow bg-clip-text text-transparent text-glow">
               MEME ZONE
             </h1>
             
-            <div className="w-24 h-24 rounded-full bg-gradient-web3-cyber flex items-center justify-center shadow-glow-rainbow animate-pulse">
-              <Rocket className="w-12 h-12 text-white" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-web3-cyber flex items-center justify-center shadow-glow-rainbow animate-pulse">
+              <Rocket className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
             </div>
           </div>
 
-          {/* Subtitle */}
-          <p className="text-xl sm:text-3xl text-white/90 max-w-5xl mx-auto mb-8 font-bold">
+          {/* Subtitle with improved readability */}
+          <p className="responsive-subtitle text-white/95 max-w-5xl mx-auto mb-6 sm:mb-8 font-bold leading-relaxed px-4">
             🎰 Ultimate Casino Experience for Solana Meme Tokens 🚀
           </p>
 
-          {/* Live Indicator */}
-          <div className="flex items-center justify-center gap-6 mb-12">
-            <div className="flex items-center gap-3 bg-green-500/20 px-6 py-3 rounded-full border border-green-400/50">
-              <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-green-300 font-bold text-lg">LIVE CASINO</span>
-              <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+          {/* Live Indicator with enhanced spacing */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-10 sm:mb-12 px-4">
+            <div className="flex items-center gap-3 bg-green-500/25 px-6 py-3 rounded-full border border-green-400/60 backdrop-blur-sm">
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse shadow-glow-primary"></div>
+              <span className="text-green-300 font-bold text-base sm:text-lg">LIVE CASINO</span>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse shadow-glow-primary"></div>
             </div>
-            <div className="flex items-center gap-3 bg-purple-500/20 px-6 py-3 rounded-full border border-purple-400/50">
+            <div className="flex items-center gap-3 bg-purple-500/25 px-6 py-3 rounded-full border border-purple-400/60 backdrop-blur-sm">
               <Timer className="w-5 h-5 text-purple-300" />
-              <span className="text-purple-300 font-bold text-lg">REAL-TIME ODDS</span>
+              <span className="text-purple-300 font-bold text-base sm:text-lg">REAL-TIME ODDS</span>
             </div>
           </div>
 
@@ -237,8 +237,8 @@ const CasinoMemeHero = () => {
                     </div>
                   </div>
 
-                  {/* Token Image with Vegas Style */}
-                  <div className="relative mx-4 mb-4 overflow-hidden rounded-2xl">
+                  {/* Token Image with enhanced Vegas Style */}
+                  <div className="relative mx-3 sm:mx-4 mb-3 sm:mb-4 overflow-hidden rounded-xl sm:rounded-2xl">
                     <AspectRatio ratio={16 / 10}>
                       <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                       <OptimizedImage
@@ -247,71 +247,79 @@ const CasinoMemeHero = () => {
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         fallbackSrc="/placeholder.svg"
                       />
-                      {/* Sparkle Overlay */}
+                      {/* Enhanced Sparkle Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      {/* Rank-specific overlay effects */}
+                      {isJackpot && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-purple-400/30 to-pink-400/30 animate-pulse"></div>
+                      )}
+                      {isGolden && !isJackpot && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/25 to-orange-400/25"></div>
+                      )}
                     </AspectRatio>
                   </div>
 
-                  {/* Token Info */}
-                  <div className="flex-1 px-4 pb-4 space-y-4">
-                    {/* Symbol and Change */}
+                  {/* Token Info with improved spacing and typography */}
+                  <div className="flex-1 px-3 sm:px-4 pb-3 sm:pb-4 space-y-3 sm:space-y-4">
+                    {/* Symbol and Change with better alignment */}
                     <div className="flex items-center justify-between">
-                      <h3 className="font-black text-2xl text-white truncate max-w-[120px]">
+                      <h3 className="font-black text-lg sm:text-xl lg:text-2xl text-white truncate max-w-[120px] sm:max-w-[140px]">
                         {token.symbol}
                       </h3>
-                      <div className={`flex items-center gap-2 text-xl font-black ${
+                      <div className={`flex items-center gap-1 sm:gap-2 text-lg sm:text-xl font-black ${
                         positive ? 'text-green-400' : 'text-red-400'
                       }`}>
                         {positive ? (
-                          <TrendingUp className="w-5 h-5 animate-bounce" />
+                          <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" />
                         ) : (
-                          <TrendingDown className="w-5 h-5 animate-bounce" />
+                          <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" />
                         )}
-                        <span className="text-lg font-numbers">
+                        <span className="text-sm sm:text-lg number-display">
                           {positive ? '+' : ''}{formatPercentage(token.change24h)}
                         </span>
                       </div>
                     </div>
 
-                    {/* Token Name */}
-                    <p className="text-white/80 text-base font-medium truncate">{token.name}</p>
+                    {/* Token Name with improved contrast */}
+                    <p className="text-white/90 text-sm sm:text-base font-medium truncate leading-relaxed">{token.name}</p>
 
-                    {/* Casino Stats */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-black/40 rounded-xl p-3 border border-white/20">
-                        <div className="flex items-center gap-2 text-white/60 text-xs mb-1">
+                    {/* Casino Stats with enhanced grid and better spacing */}
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                      <div className="bg-black/50 rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/30 backdrop-blur-sm">
+                        <div className="flex items-center gap-1 sm:gap-2 text-white/70 text-xs mb-1">
                           <DollarSign className="w-3 h-3" />
                           <span className="font-bold">BET</span>
                         </div>
-                        <div className="text-lg font-black text-white font-numbers">{formatPrice(token.price)}</div>
+                        <div className="text-base sm:text-lg font-black text-white number-display">{formatPrice(token.price)}</div>
                       </div>
-                      <div className="bg-black/40 rounded-xl p-3 border border-white/20">
-                        <div className="flex items-center gap-2 text-white/60 text-xs mb-1">
+                      <div className="bg-black/50 rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/30 backdrop-blur-sm">
+                        <div className="flex items-center gap-1 sm:gap-2 text-white/70 text-xs mb-1">
                           <Star className="w-3 h-3" />
                           <span className="font-bold">POT</span>
                         </div>
-                        <div className="text-lg font-black text-white font-numbers">{formatCompact(token.marketCap)}</div>
+                        <div className="text-base sm:text-lg font-black text-white number-display">{formatCompact(token.marketCap)}</div>
                       </div>
                     </div>
 
-                    {/* Casino Status */}
-                    <div className={`text-center py-3 rounded-xl font-bold text-sm border-2 ${
-                      isJackpot ? 'bg-gradient-casino-rainbow border-purple-400 text-white animate-pulse' :
-                      isGolden ? 'bg-gradient-casino-gold border-yellow-400 text-black' :
+                    {/* Casino Status with improved styling */}
+                    <div className={`text-center py-2 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm border-2 ${
+                      isJackpot ? 'bg-gradient-casino-rainbow border-purple-400 text-white animate-pulse text-mega-glow' :
+                      isGolden ? 'bg-gradient-casino-gold border-yellow-400 text-black text-glow' :
                       isPlatinum ? 'bg-gradient-to-r from-gray-600 to-gray-700 border-gray-400 text-white' :
                       'bg-gradient-web3-cyber border-cyan-400 text-white'
                     }`}>
                       {isJackpot ? '💎 MEGA JACKPOT' : isGolden ? '🏆 GOLDEN CHIP' : isPlatinum ? '🥈 PLATINUM' : '⭐ PLAYER'}
                     </div>
 
-                    {/* Bet Button */}
+                    {/* Bet Button with improved responsive sizing */}
                     <NeonButton 
                       variant={isJackpot ? 'casino-rainbow' : isGolden ? 'neon-gold' : isPlatinum ? 'neon-cyan' : 'neon-purple'}
                       glow={isGolden}
                       pulse={isJackpot}
-                      className="w-full h-12 font-black text-lg"
+                      size="md"
+                      className="w-full font-black"
                     >
-                      <Target className="w-5 h-5 mr-2" />
+                      <Target className="w-4 h-4 mr-2" />
                       🎰 PLACE BET
                     </NeonButton>
                   </div>
@@ -321,36 +329,37 @@ const CasinoMemeHero = () => {
           </div>
         )}
 
-        {/* Bottom Casino CTA */}
-        <div className="text-center mt-20">
-          <div className="mb-8">
+        {/* Bottom Casino CTA with enhanced responsive design */}
+        <div className="text-center mt-16 sm:mt-20">
+          <div className="mb-6 sm:mb-8">
             <NeonButton 
               variant="casino-rainbow" 
               glow 
               pulse 
-              className="text-2xl px-16 py-8 font-black"
+              size="xl"
+              className="font-black px-8 sm:px-16 py-6 sm:py-8 text-xl sm:text-2xl"
               onClick={() => {
                 const element = document.querySelector('[data-section="token-explorer"]');
                 element?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              <Rocket className="w-8 h-8 mr-4" />
+              <Rocket className="w-6 h-6 sm:w-8 sm:h-8 mr-3 sm:mr-4" />
               🎰 ENTER FULL CASINO 🎰
             </NeonButton>
           </div>
           
-          <div className="flex items-center justify-center gap-8 text-white/70">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-white/80 px-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="font-bold">Live Updates</span>
+              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-glow-primary"></div>
+              <span className="font-bold text-sm sm:text-base">Live Updates</span>
             </div>
             <div className="flex items-center gap-2">
               <Flame className="w-4 h-4 text-orange-400" />
-              <span className="font-bold">{hottestTokens.length} Hot Tokens</span>
+              <span className="font-bold text-sm sm:text-base">{hottestTokens.length} Hot Tokens</span>
             </div>
             <div className="flex items-center gap-2">
               <Trophy className="w-4 h-4 text-yellow-400" />
-              <span className="font-bold">Mega Jackpots</span>
+              <span className="font-bold text-sm sm:text-base">Mega Jackpots</span>
             </div>
           </div>
         </div>
