@@ -8,96 +8,98 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* OpenAI-Style Professional Color Scheme */
-    --background: 0 0% 5%; /* Ultra deep black-gray */
-    --foreground: 0 0% 95%; /* Clean white */
+    /* Ultra Modern Futuristic Color Scheme - Exact Reference Match */
+    --background: 0 0% 2%; /* Ultra deep black */
+    --foreground: 0 0% 98%; /* Pure white text */
 
-    --card: 0 0% 8%; /* Very dark gray cards */
-    --card-foreground: 0 0% 95%;
-    --card-muted: 0 0% 12%; /* Slightly lighter card variant */
-
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 95%;
-
-    --primary: 165 85% 45%; /* Brand turquoise accent */
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 165 70% 60%;
+    /* Glass Morphism Cards */
+    --card: 0 0% 4%; /* Deep black cards */
+    --card-foreground: 0 0% 98%;
+    --card-glass: 0 0% 8% / 0.6; /* Transparent glass effect */
     
-    /* Professional gray tones like OpenAI */
-    --gray-50: 0 0% 97%;
-    --gray-100: 0 0% 94%;
-    --gray-200: 0 0% 88%;
-    --gray-300: 0 0% 78%;
-    --gray-400: 0 0% 62%;
-    --gray-500: 0 0% 46%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Modern Purple/Violet Theme from Reference */
+    --primary: 271 81% 56%; /* Purple/violet from reference */
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 271 81% 70%; /* Lighter purple glow */
+    --primary-dark: 271 81% 40%; /* Darker purple */
+    
+    /* Neon Accents */
+    --neon-purple: 271 81% 56%;
+    --neon-pink: 312 73% 55%;
+    --neon-blue: 218 100% 58%;
+    --neon-green: 142 76% 50%;
+    --neon-red: 0 84% 60%;
+    
+    /* Ultra Dark Grays */
+    --gray-50: 0 0% 98%;
+    --gray-100: 0 0% 96%;
+    --gray-200: 0 0% 90%;
+    --gray-300: 0 0% 80%;
+    --gray-400: 0 0% 65%;
+    --gray-500: 0 0% 50%;
     --gray-600: 0 0% 35%;
-    --gray-700: 0 0% 25%;
-    --gray-800: 0 0% 15%;
-    --gray-900: 0 0% 8%;
-    --gray-950: 0 0% 5%;
+    --gray-700: 0 0% 20%;
+    --gray-800: 0 0% 10%;
+    --gray-900: 0 0% 5%;
+    --gray-950: 0 0% 2%;
 
-    --secondary: 0 0% 15%; /* Professional gray */
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 0 0% 8%; /* Dark gray */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 0 0% 12%; /* Subtle gray backgrounds */
-    --muted-foreground: 0 0% 65%;
+    --muted: 0 0% 6%; /* Ultra subtle backgrounds */
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 0 0% 18%; /* Interactive gray elements */
-    --accent-foreground: 0 0% 95%;
+    --accent: 0 0% 12%; /* Interactive elements */
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 80% 60%;
+    /* Trading Colors */
+    --trade-buy: 142 76% 50%; /* Green for buy */
+    --trade-sell: 0 84% 60%; /* Red for sell */
+    --trade-buy-bg: 142 76% 50% / 0.1; /* Transparent buy background */
+    --trade-sell-bg: 0 84% 60% / 0.1; /* Transparent sell background */
+
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --success: 120 60% 50%;
+    --success: 142 76% 50%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 40 90% 55%;
+    --warning: 45 100% 60%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 0 0% 18%; /* Subtle borders */
-    --input: 0 0% 12%; /* Form inputs */
-    --ring: 165 85% 45%;
+    --border: 0 0% 12%; /* Subtle borders */
+    --input: 0 0% 6%; /* Ultra dark inputs */
+    --ring: 271 81% 56%; /* Purple focus ring */
 
-    --radius: 1rem;
+    --radius: 0.75rem; /* Rounded corners from reference */
 
-    /* Professional gradient system */
-    --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%), hsl(165 70% 60%));
-    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 12%), hsl(0 0% 18%));
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 5%), hsl(0 0% 8%));
-    --gradient-surface: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 12%));
-    --gradient-subtle: linear-gradient(135deg, hsl(0 0% 6%), hsl(0 0% 10%));
+    /* Futuristic Glass Gradients */
+    --gradient-glass: linear-gradient(145deg, hsla(0 0% 100% / 0.1) 0%, hsla(0 0% 100% / 0.02) 100%);
+    --gradient-glass-border: linear-gradient(145deg, hsla(271 81% 56% / 0.3) 0%, hsla(0 0% 100% / 0.1) 100%);
     
-    /* Premium Apple-like gradients */
-    --gradient-ios-blue: linear-gradient(135deg, hsl(211 100% 50%) 0%, hsl(218 100% 58%) 100%);
-    --gradient-ios-purple: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(312 73% 55%) 100%);
-    --gradient-ios-pink: linear-gradient(135deg, hsl(330 85% 60%) 0%, hsl(348 83% 56%) 100%);
-    --gradient-ios-orange: linear-gradient(135deg, hsl(25 100% 58%) 0%, hsl(38 100% 50%) 100%);
-    --gradient-ios-green: linear-gradient(135deg, hsl(142 76% 36%) 0%, hsl(158 64% 52%) 100%);
-    --gradient-ios-red: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(15 100% 55%) 100%);
+    /* Purple Trading Gradients from Reference */
+    --gradient-buy: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(312 73% 55%) 100%);
+    --gradient-sell: linear-gradient(135deg, hsl(312 73% 55%) 0%, hsl(271 81% 56%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(312 73% 55%) 100%);
     
-    /* Premium dark mode gradients */
-    --gradient-dark-surface: linear-gradient(145deg, hsl(240 10% 3.9%) 0%, hsl(240 5.9% 10%) 100%);
-    --gradient-dark-card: linear-gradient(145deg, hsl(240 3.7% 15.9%) 0%, hsl(240 5.9% 10%) 100%);
-    --gradient-glass: linear-gradient(145deg, hsla(0 0% 100% / 0.1) 0%, hsla(0 0% 100% / 0.05) 100%);
+    /* Dark Surface Gradients */
+    --gradient-surface: linear-gradient(145deg, hsl(0 0% 4%) 0%, hsl(0 0% 8%) 100%);
+    --gradient-panel: linear-gradient(145deg, hsl(0 0% 3%) 0%, hsl(0 0% 6%) 100%);
+    --gradient-input: linear-gradient(145deg, hsl(0 0% 6%) 0%, hsl(0 0% 4%) 100%);
     
-    /* Meme page specific colors */
-    --meme-primary: 44 100% 50%; /* yellow-500 */
-    --meme-secondary: 30 100% 50%; /* orange-500 */
-    --meme-accent: 0 84% 60%; /* red-500 for hot badges */
-    --meme-gradient-primary: linear-gradient(135deg, hsl(44 100% 50%), hsl(30 100% 50%));
-    --meme-gradient-secondary: linear-gradient(135deg, hsl(44 100% 60%) 0%, hsl(30 100% 50%) 50%, hsl(340 75% 55%) 100%);
-    --meme-gradient-hot: linear-gradient(135deg, hsl(30 100% 50%), hsl(0 84% 60%));
+    /* Neon Glow Effects */
+    --glow-purple: 0 0 20px hsl(271 81% 56% / 0.5), 0 0 40px hsl(271 81% 56% / 0.3);
+    --glow-green: 0 0 20px hsl(142 76% 50% / 0.5), 0 0 40px hsl(142 76% 50% / 0.3);
+    --glow-red: 0 0 20px hsl(0 84% 60% / 0.5), 0 0 40px hsl(0 84% 60% / 0.3);
+    --glow-soft: 0 0 30px hsl(271 81% 56% / 0.2);
     
-    /* Casino-specific gradients */
-    --gradient-casino-gold: linear-gradient(135deg, hsl(44 100% 20%) 0%, hsl(44 100% 35%) 25%, hsl(44 100% 50%) 50%, hsl(44 100% 35%) 75%, hsl(44 100% 20%) 100%);
-    --gradient-casino-rainbow: linear-gradient(90deg, hsl(0 100% 60%) 0%, hsl(60 100% 60%) 16%, hsl(120 100% 60%) 32%, hsl(180 100% 60%) 48%, hsl(240 100% 60%) 64%, hsl(300 100% 60%) 80%, hsl(0 100% 60%) 100%);
-    --shadow-glow-gold: 0 0 40px hsl(44 100% 50% / 0.6), 0 0 80px hsl(44 100% 50% / 0.3);
-    --shadow-glow-rainbow: 0 0 30px hsl(0 100% 60% / 0.4), 0 0 60px hsl(120 100% 60% / 0.3), 0 0 90px hsl(240 100% 60% / 0.2);
-    --shadow-glow-primary: 0 0 25px hsl(var(--primary) / 0.5), 0 0 50px hsl(var(--primary) / 0.3);
-    
-    /* Premium shadows */
-    --shadow-premium: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
-    --shadow-elevation-1: 0 1px 3px hsl(0 0% 0% / 0.12), 0 1px 2px hsl(0 0% 0% / 0.24);
+    /* Glass Morphism Shadows */
+    --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4);
+    --shadow-glass-inset: inset 0 1px 0 0 hsl(0 0% 100% / 0.05);
+    --shadow-premium: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
     --shadow-elevation-2: 0 3px 6px hsl(0 0% 0% / 0.15), 0 2px 4px hsl(0 0% 0% / 0.12);
     --shadow-elevation-3: 0 10px 20px hsl(0 0% 0% / 0.15), 0 3px 6px hsl(0 0% 0% / 0.10);
     --shadow-elevation-4: 0 15px 25px hsl(0 0% 0% / 0.15), 0 5px 10px hsl(0 0% 0% / 0.05);
