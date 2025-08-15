@@ -19,10 +19,10 @@ export default {
 		},
     extend: {
 			fontSize: {
-				'binance-body': ['14px', { lineHeight: '1.4', letterSpacing: '0' }],
-				'binance-secondary': ['12px', { lineHeight: '1.4', letterSpacing: '0' }],
-				'binance-number': ['16px', { lineHeight: '1.2', letterSpacing: '0.5px' }],
-				'binance-title': ['18px', { lineHeight: '1.3', letterSpacing: '0' }],
+				'binance-body': ['16px', { lineHeight: '1.4', letterSpacing: '0' }],
+				'binance-secondary': ['14px', { lineHeight: '1.4', letterSpacing: '0' }],
+				'binance-number': ['20px', { lineHeight: '1.2', letterSpacing: '0.5px' }],
+				'binance-title': ['22px', { lineHeight: '1.3', letterSpacing: '0' }],
 			},
 			fontWeight: {
 				'binance-light': '300',
