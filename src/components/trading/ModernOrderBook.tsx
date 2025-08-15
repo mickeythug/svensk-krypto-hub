@@ -81,7 +81,7 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
     const fillPercentage = (order.total / maxTotal) * 100;
     
     return (
-      <div className="relative group h-5 flex items-center text-xs font-mono cursor-pointer hover:bg-white/[0.02] transition-colors duration-200">
+      <div className="relative group h-8 flex items-center text-base font-mono cursor-pointer hover:bg-white/[0.02] transition-colors duration-200">
         {/* Background fill indicator */}
         <div 
           className={cn(
@@ -96,15 +96,15 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
         {/* Order data */}
         <div className="relative z-10 w-full flex justify-between px-2">
           <span className={cn(
-            "font-semibold",
+            "font-semibold text-lg important-number",
             order.side === 'buy' ? "text-emerald-400" : "text-red-400"
           )}>
             ${formatPrice(order.price)}
           </span>
-          <span className="text-white/60">
+          <span className="text-white/60 text-base important-number">
             {formatAmount(order.amount)}
           </span>
-          <span className="text-white/40">
+          <span className="text-white/40 text-base">
             {formatAmount(order.total)}
           </span>
         </div>
@@ -135,7 +135,7 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
         </div>
         
         {/* Column headers */}
-        <div className="flex justify-between text-xs text-white/40 font-medium px-2">
+        <div className="flex justify-between text-sm text-white/40 font-medium px-2">
           <span>Price (USD)</span>
           <span>Amount</span>
           <span>Total</span>
@@ -154,10 +154,10 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
         {/* Current price separator with brand turquoise */}
         <div className="px-4 py-2 border-y border-white/[0.05] bg-gradient-to-r from-primary/10 to-primary-glow/10">
           <div className="text-center">
-            <div className="text-lg font-bold text-white font-mono">
+            <div className="text-2xl font-bold text-white font-mono important-number">
               ${formatPrice(currentPrice)}
             </div>
-            <div className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-md border border-primary/20">
+            <div className="text-base text-primary font-medium bg-primary/10 px-2 py-1 rounded-md border border-primary/20">
               {t('trading.currentPrice')} • {t('trading.live')}
             </div>
           </div>

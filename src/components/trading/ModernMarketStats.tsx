@@ -140,8 +140,8 @@ const ModernMarketStats: React.FC<ModernMarketStatsProps> = ({ tickerData, showA
               <stat.icon className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-xs text-gray-400 font-medium">{stat.label}</div>
-              <div className="text-sm font-bold text-white font-mono">{stat.value}</div>
+              <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
+              <div className="text-xl font-bold text-white font-mono important-number">{stat.value}</div>
             </div>
           </motion.div>
         ))}
@@ -170,8 +170,8 @@ const ModernMarketStats: React.FC<ModernMarketStatsProps> = ({ tickerData, showA
                     <stat.icon className="h-3 w-3" />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 font-medium">{stat.label}</div>
-                    <div className="text-sm font-bold text-white font-mono">{stat.value}</div>
+                    <div className="text-sm text-gray-400 font-medium">{stat.label}</div>
+                    <div className="text-lg font-bold text-white font-mono">{stat.value}</div>
                   </div>
                 </motion.div>
               ))}
