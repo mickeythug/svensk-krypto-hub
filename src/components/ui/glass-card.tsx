@@ -29,7 +29,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
           'shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]',
           
           // Glow effect
-          glow && 'shadow-[0_0_30px_rgba(139,92,246,0.2)]',
+          glow && 'shadow-[0_0_30px_hsl(var(--primary)/0.4)]',
           
           // Before pseudo for inner glow
           'before:absolute before:inset-0 before:rounded-xl',
