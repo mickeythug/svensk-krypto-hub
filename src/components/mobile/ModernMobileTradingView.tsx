@@ -24,6 +24,7 @@ import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import ModernMobileTokenInfo from "./ModernMobileTokenInfo";
 import ModernMobileTradingPanel from "./ModernMobileTradingPanel";
 import ModernMobileOrdersPanel from "./ModernMobileOrdersPanel";
+import ModernDexTradingPanel from "../trading/ModernDexTradingPanel";
 import TokenSearchBar from "@/components/TokenSearchBar";
 
 interface ModernMobileTradingViewProps {
@@ -82,7 +83,7 @@ const ModernMobileTradingView = ({
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
 
       {/* MAIN CONTENT AREA */}
       <div className={`flex-1 ${activeTab !== "chart" ? "pt-16" : "pt-0"}`}>
@@ -163,7 +164,7 @@ const ModernMobileTradingView = ({
 
         {activeTab === "trade" && (
           <div className="p-4">
-            <ModernMobileTradingPanel
+            <ModernDexTradingPanel
               symbol={symbol}
               currentPrice={currentPrice}
               tokenName={tokenName}

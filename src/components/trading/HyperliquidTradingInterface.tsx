@@ -57,7 +57,7 @@ import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import { useBinanceTicker } from '@/hooks/useBinanceTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import ProfessionalOrderBook from './ProfessionalOrderBook';
-import HyperliquidTradingPanel from './HyperliquidTradingPanel';
+import ModernDexTradingPanel from './ModernDexTradingPanel';
 import ModernMarketStats from './ModernMarketStats';
 import ProfessionalBottomPanels from './ProfessionalBottomPanels';
 import TokenSearchBar from '../TokenSearchBar';
@@ -384,25 +384,24 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                 />
               </div>
 
-              {/* Modern Trading Panel with Auth */}
-              {isFullyAuthenticated ? (
-                <div className="h-[400px] p-4 pt-2">
-                  <ModernTradingPanel 
-                    symbol={symbol}
-                    currentPrice={realTimePrice}
-                    tokenName={tokenName}
-                    balances={balances}
-                    solBalance={solBalance}
-                  />
-                </div>
-              ) : (
-                <div className="p-4 pt-2">
-                  <div className="relative overflow-hidden bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.1] rounded-xl p-6 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none"></div>
-                    <AlertTriangle className="h-12 w-12 text-primary mx-auto mb-4 relative z-10" />
-                    <h3 className="font-semibold mb-2 text-white relative z-10">{t('trading.connectWalletMessage')}</h3>
-                    <p className="text-sm text-white/60 mb-4 relative z-10">
-                      {t('trading.connectWalletSubMessage')} {symbol}
+              {/* Modern DEX Trading Panel - Always Visible */}
+              <div className="h-[500px] p-4 pt-2">
+                <ModernDexTradingPanel 
+                  symbol={symbol}
+                  currentPrice={realTimePrice}
+                  tokenName={tokenName}
+                  crypto={crypto}
+                />
+              </div>
+              
+              {/* Trading Panel Auth Warning - Only if not authenticated */}
+              {!isFullyAuthenticated && (
+                <div className="p-4 pt-2 pb-6">
+                  <div className="relative overflow-hidden bg-gradient-to-br from-yellow-500/[0.08] to-amber-500/[0.02] backdrop-blur-xl border border-yellow-500/[0.2] rounded-xl p-4 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-500/[0.05] to-transparent pointer-events-none"></div>
+                    <AlertTriangle className="h-8 w-8 text-yellow-400 mx-auto mb-2 relative z-10" />
+                    <p className="text-xs text-yellow-200/80 mb-3 relative z-10">
+                      {t('trading.connectWalletMessage')}
                     </p>
                     <div className="relative z-10">
                       <ConnectWalletButton />
