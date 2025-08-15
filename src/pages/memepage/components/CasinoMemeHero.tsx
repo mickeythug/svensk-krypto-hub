@@ -259,59 +259,68 @@ const CasinoMemeHero = () => {
                     </AspectRatio>
                   </div>
 
-                  {/* Token Info with improved spacing and typography */}
-                  <div className="flex-1 px-3 sm:px-4 pb-3 sm:pb-4 space-y-3 sm:space-y-4">
-                    {/* Symbol and Change with better alignment */}
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-black text-lg sm:text-xl lg:text-2xl text-white truncate max-w-[120px] sm:max-w-[140px]">
+                  {/* Token Info with fixed layout and clear text */}
+                  <div className="flex-1 px-4 pb-4 space-y-4">
+                    {/* Symbol and Change with improved contrast and spacing */}
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-black text-xl text-white truncate max-w-[140px] leading-tight">
                         {token.symbol}
                       </h3>
-                      <div className={`flex items-center gap-1 sm:gap-2 text-lg sm:text-xl font-black ${
+                      <div className={`flex items-center gap-2 text-lg font-black ${
                         positive ? 'text-green-400' : 'text-red-400'
                       }`}>
                         {positive ? (
-                          <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" />
+                          <TrendingUp className="w-5 h-5 animate-bounce" />
                         ) : (
-                          <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 animate-bounce" />
+                          <TrendingDown className="w-5 h-5 animate-bounce" />
                         )}
-                        <span className="text-sm sm:text-lg number-display">
+                        <span className="text-lg number-display">
                           {positive ? '+' : ''}{formatPercentage(token.change24h)}
                         </span>
                       </div>
                     </div>
 
-                    {/* Token Name with improved contrast */}
-                    <p className="text-white/90 text-sm sm:text-base font-medium truncate leading-relaxed">{token.name}</p>
+                    {/* Token Name with better readability */}
+                    <p className="text-white text-base font-medium truncate leading-normal">{token.name}</p>
 
-                    {/* Casino Stats with enhanced grid and better spacing */}
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                      <div className="bg-black/50 rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/30 backdrop-blur-sm">
-                        <div className="flex items-center gap-1 sm:gap-2 text-white/70 text-xs mb-1">
+                    {/* Fixed Stats with clear labels and proper values */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-black/60 rounded-xl p-3 border border-white/40 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-white/80 text-xs mb-2">
                           <DollarSign className="w-3 h-3" />
-                          <span className="font-bold">BET</span>
+                          <span className="font-bold">PRICE</span>
                         </div>
-                        <div className="text-base sm:text-lg font-black text-white number-display">{formatPrice(token.price)}</div>
+                        <div className="text-lg font-black text-white number-display">{formatPrice(token.price)}</div>
                       </div>
-                      <div className="bg-black/50 rounded-lg sm:rounded-xl p-2 sm:p-3 border border-white/30 backdrop-blur-sm">
-                        <div className="flex items-center gap-1 sm:gap-2 text-white/70 text-xs mb-1">
+                      <div className="bg-black/60 rounded-xl p-3 border border-white/40 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-white/80 text-xs mb-2">
                           <Star className="w-3 h-3" />
-                          <span className="font-bold">POT</span>
+                          <span className="font-bold">MCAP</span>
                         </div>
-                        <div className="text-base sm:text-lg font-black text-white number-display">{formatCompact(token.marketCap)}</div>
+                        <div className="text-lg font-black text-white number-display">{formatCompact(token.marketCap)}</div>
                       </div>
                     </div>
 
-                    {/* Premium Status with improved styling */}
-                    <div className={`text-center py-2 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm border-2 ${
-                      isJackpot ? 'bg-gradient-premium-purple border-purple-400 text-white animate-pulse text-mega-glow' :
-                      isGolden ? 'bg-gradient-premium-silver border-slate-400 text-slate-900 text-glow' :
+                    {/* Volume Stats Row */}
+                    <div className="bg-black/60 rounded-xl p-3 border border-white/40 backdrop-blur-sm">
+                      <div className="flex items-center gap-2 text-white/80 text-xs mb-2">
+                        <BarChart3 className="w-3 h-3" />
+                        <span className="font-bold">VOLUME 24H</span>
+                      </div>
+                      <div className="text-lg font-black text-white number-display">{formatCompact(token.volume24h)}</div>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className={`text-center py-3 rounded-xl font-bold text-sm border-2 ${
+                      isJackpot ? 'bg-gradient-premium-purple border-purple-400 text-white animate-pulse' :
+                      isGolden ? 'bg-gradient-premium-silver border-slate-400 text-slate-900' :
                       isPlatinum ? 'bg-gradient-premium-cyan border-cyan-400 text-white' :
                       'bg-gradient-to-r from-slate-600 to-slate-700 border-slate-400 text-white'
                     }`}>
                       {isJackpot ? '💎 DIAMOND TIER' : isGolden ? '🥈 PLATINUM' : isPlatinum ? '⚡ PREMIUM' : '⭐ STANDARD'}
                     </div>
 
-                    {/* Trade Button with improved responsive sizing */}
+                    {/* Trade Button with clear call-to-action */}
                     <NeonButton 
                       variant={isJackpot ? 'neon-purple' : isGolden ? 'neon-gold' : isPlatinum ? 'neon-cyan' : 'neon-purple'}
                       glow={isGolden}
@@ -320,7 +329,7 @@ const CasinoMemeHero = () => {
                       className="w-full font-black"
                     >
                       <Target className="w-4 h-4 mr-2" />
-                      💎 START TRADING
+                      TRADE {token.symbol}
                     </NeonButton>
                   </div>
                 </CasinoCard>

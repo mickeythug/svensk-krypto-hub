@@ -172,67 +172,67 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
                   <p className="text-white/70 text-sm truncate font-medium">{token.name}</p>
                 </div>
 
-                {/* Stats with improved responsive layout */}
+                {/* Stats with improved responsive layout and clear values */}
                 <div className="hidden sm:flex items-center gap-6 lg:gap-8 text-sm">
-                  <div className="text-center min-w-[80px]">
-                    <div className="text-white/60 mb-1 font-bold text-xs">Price</div>
-                    <div className="font-black text-white number-display">{formatPrice(token.price)}</div>
+                  <div className="text-center min-w-[100px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs tracking-wide">PRICE</div>
+                    <div className="font-black text-white number-display text-base">{formatPrice(token.price)}</div>
                   </div>
                   
-                  <div className="text-center min-w-[80px]">
-                    <div className="text-white/60 mb-1 font-bold text-xs">24h</div>
-                    <div className={`font-black number-display flex items-center justify-center gap-1 ${
+                  <div className="text-center min-w-[100px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs tracking-wide">24H CHANGE</div>
+                    <div className={`font-black number-display flex items-center justify-center gap-1 text-base ${
                       positive ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      {positive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                       <span>{formatPercentage(token.change24h)}</span>
                     </div>
                   </div>
 
-                  <div className="text-center min-w-[80px]">
-                    <div className="text-white/60 mb-1 font-bold text-xs">Market Cap</div>
-                    <div className="font-black text-white number-display">{formatCompact(token.marketCap)}</div>
+                  <div className="text-center min-w-[100px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs tracking-wide">MARKET CAP</div>
+                    <div className="font-black text-white number-display text-base">{formatCompact(token.marketCap)}</div>
                   </div>
 
-                  <div className="text-center min-w-[80px]">
-                    <div className="text-white/60 mb-1 font-bold text-xs">Volume</div>
-                    <div className="font-black text-white number-display">{formatCompact(token.volume24h)}</div>
+                  <div className="text-center min-w-[100px]">
+                    <div className="text-white/60 mb-1 font-bold text-xs tracking-wide">VOLUME 24H</div>
+                    <div className="font-black text-white number-display text-base">{formatCompact(token.volume24h)}</div>
                   </div>
                 </div>
 
-                {/* Action with enhanced responsive design */}
+                {/* Action Button with clear labeling */}
                 <div className="flex-shrink-0">
                   <NeonButton 
                     variant={isTop3 ? 'neon-gold' : 'neon-cyan'}
                     glow={index === 0}
                     size="md"
-                    className="px-4 sm:px-6 py-2 sm:py-3 font-black"
+                    className="px-6 py-3 font-black"
                   >
-                    <Target className="w-4 h-4 mr-1 sm:mr-2" />
-                    <span className="hidden sm:inline">BET</span>
-                    <span className="sm:hidden">🎯</span>
+                    <Target className="w-4 h-4 mr-2" />
+                    <span className="hidden sm:inline">TRADE {token.symbol}</span>
+                    <span className="sm:hidden">TRADE</span>
                   </NeonButton>
                 </div>
 
-                {/* Mobile-only stats panel */}
+                {/* Mobile-only stats panel with clear labels */}
                 <div className="sm:hidden w-full mt-4 pt-4 border-t border-white/20">
-                  <div className="grid grid-cols-2 gap-4 text-xs">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-white/60">Price:</span>
+                      <span className="text-white/60 font-medium">Price:</span>
                       <span className="font-black text-white number-display">{formatPrice(token.price)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-white/60">24h:</span>
+                      <span className="text-white/60 font-medium">24h Change:</span>
                       <span className={`font-black number-display ${positive ? 'text-green-400' : 'text-red-400'}`}>
                         {formatPercentage(token.change24h)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-white/60">MCap:</span>
+                      <span className="text-white/60 font-medium">Market Cap:</span>
                       <span className="font-black text-white number-display">{formatCompact(token.marketCap)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-white/60">Vol:</span>
+                      <span className="text-white/60 font-medium">Volume 24h:</span>
                       <span className="font-black text-white number-display">{formatCompact(token.volume24h)}</span>
                     </div>
                   </div>
@@ -299,10 +299,10 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
             </div>
 
             {/* Content with improved spacing and typography */}
-            <div className="flex-1 px-3 sm:px-4 pb-3 sm:pb-4 space-y-3">
+            <div className="flex-1 px-4 pb-4 space-y-3">
               {/* Symbol and Change with better responsive sizing */}
-              <div className="flex items-center justify-between">
-                <h3 className="font-black text-lg sm:text-xl text-white truncate number-display">{token.symbol}</h3>
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="font-black text-xl text-white truncate number-display">{token.symbol}</h3>
                 <div className={`flex items-center gap-1 font-black ${
                   positive ? 'text-green-400' : 'text-red-400'
                 }`}>
@@ -311,21 +311,21 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
                 </div>
               </div>
 
-              <p className="text-white/70 text-sm truncate font-medium">{token.name}</p>
+              <p className="text-white/80 text-sm truncate font-medium">{token.name}</p>
 
-              {/* Enhanced stats grid with better contrast */}
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-black/50 rounded-lg p-2 border border-white/30 backdrop-blur-sm">
-                  <div className="text-white/60 text-xs mb-1 font-bold">Price</div>
+              {/* Enhanced stats grid with clear labels and better contrast */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-black/60 rounded-lg p-3 border border-white/40 backdrop-blur-sm">
+                  <div className="text-white/70 text-xs mb-1 font-bold">PRICE</div>
                   <div className="font-black text-white text-sm number-display">{formatPrice(token.price)}</div>
                 </div>
-                <div className="bg-black/50 rounded-lg p-2 border border-white/30 backdrop-blur-sm">
-                  <div className="text-white/60 text-xs mb-1 font-bold">MCap</div>
+                <div className="bg-black/60 rounded-lg p-3 border border-white/40 backdrop-blur-sm">
+                  <div className="text-white/70 text-xs mb-1 font-bold">MCAP</div>
                   <div className="font-black text-white text-sm number-display">{formatCompact(token.marketCap)}</div>
                 </div>
               </div>
 
-              {/* Enhanced Bet Button with consistent sizing */}
+              {/* Trade Button with clear action */}
               <NeonButton 
                 variant={isTop1 ? 'casino-rainbow' : isTop3 ? 'neon-gold' : 'neon-cyan'}
                 glow={isTop3}
@@ -334,7 +334,7 @@ const TokenGrid: React.FC<TokenGridProps> = ({ category, viewMode, sortBy, sortD
                 className="w-full font-black"
               >
                 <Target className="w-4 h-4 mr-2" />
-                🎰 BET NOW
+                TRADE {token.symbol}
               </NeonButton>
             </div>
           </CasinoCard>
