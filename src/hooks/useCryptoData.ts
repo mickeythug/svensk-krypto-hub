@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-interface CryptoPrice {
+export interface CryptoPrice {
   symbol: string;
   name: string;
   price: number;

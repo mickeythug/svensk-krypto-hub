@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Star, Zap, Activity } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Star, Zap, Activity, Loader2 } from "lucide-react";
 import { useCryptoData } from '@/hooks/useCryptoData';
+import { usePaginatedTokens } from '@/hooks/usePaginatedTokens';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { motion, AnimatePresence } from 'framer-motion';
 interface TradingTokenSidebarProps {
   collapsed: boolean;
@@ -22,21 +24,32 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
   } = useParams();
   const {
     cryptoPrices,
-    isLoading
+    isLoading: isCryptoLoading
   } = useCryptoData();
   const [searchQuery, setSearchQuery] = useState("");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
 
-  // Filter and search tokens - now showing ALL tokens
-  const filteredTokens = useMemo(() => {
-    if (!cryptoPrices) return [];
-    let filtered = cryptoPrices;
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = cryptoPrices.filter(token => token.symbol.toLowerCase().includes(query) || token.name.toLowerCase().includes(query));
-    }
-    return filtered;
-  }, [cryptoPrices, searchQuery]);
+  // Smart pagination - only show 30 tokens at a time
+  const {
+    displayedTokens,
+    hasMore,
+    loadMore,
+    totalCount,
+    displayedCount,
+    isLoading: isPaginationLoading
+  } = usePaginatedTokens({
+    allTokens: cryptoPrices || [],
+    pageSize: 30,
+    searchQuery
+  });
+
+  // Infinite scroll hook
+  const { scrollElementRef, sentinelRef } = useInfiniteScroll({
+    hasMore,
+    isLoading: isPaginationLoading,
+    onLoadMore: loadMore,
+    threshold: 150
+  });
   const handleTokenSelect = useCallback((symbol: string) => {
     navigate(`/crypto/${symbol.toLowerCase()}`);
   }, [navigate]);
@@ -127,10 +140,10 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
 
       {/* Token List */}
       <div className="flex-1 min-h-0">
-        <ScrollArea className="h-full max-h-[calc(16*4.5rem)]">
+        <ScrollArea className="h-full max-h-[calc(16*4.5rem)]" ref={scrollElementRef}>
           <div className="p-2">
             <AnimatePresence mode="wait">
-              {isLoading ? <motion.div initial={{
+              {isCryptoLoading ? <motion.div initial={{
               opacity: 0
             }} animate={{
               opacity: 1
@@ -152,7 +165,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
             }} transition={{
               duration: 0.2
             }} className="space-y-1">
-                  {filteredTokens.map((token, index) => {
+                  {displayedTokens.map((token, index) => {
                 const isActive = currentSymbol?.toLowerCase() === token.symbol.toLowerCase();
                 const isWatchlisted = watchlist.has(token.symbol);
                 return <motion.div key={token.symbol} initial={{
@@ -215,6 +228,27 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                         </Card>
                       </motion.div>;
               })}
+                  
+                  {/* Infinite scroll sentinel */}
+                  {hasMore && (
+                    <div ref={sentinelRef} className="flex justify-center py-4">
+                      {isPaginationLoading ? (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-xs">Loading more tokens...</span>
+                        </div>
+                      ) : (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={loadMore}
+                          className="text-xs text-muted-foreground hover:text-primary"
+                        >
+                          Load more tokens
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </motion.div>}
             </AnimatePresence>
           </div>
@@ -224,7 +258,12 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
       {/* Token Count Footer */}
       <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <div className="text-xs text-muted-foreground font-mono text-center">
-          {filteredTokens.length} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
+          {displayedCount} of {totalCount} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
+          {hasMore && !searchQuery && (
+            <div className="text-xs text-primary/70 mt-1">
+              Scroll for more tokens
+            </div>
+          )}
         </div>
       </div>
     </motion.div>;
