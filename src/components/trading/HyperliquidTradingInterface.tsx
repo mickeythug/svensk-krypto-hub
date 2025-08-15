@@ -199,7 +199,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
       />
 
       {/* Main Trading Area */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 max-w-[calc(100vw-360px)]">
         {/* Professional Header */}
         <div className="bg-gray-900/95 border-b border-gray-800/50 backdrop-blur-sm">
           <div className="p-4">
@@ -319,16 +319,14 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
         </div>
 
         {/* Chart Area */}
-        <div className="flex-1 min-h-0">
-          <div className="h-full pr-4 pb-4">
-            <div className="h-full rounded-r-xl overflow-hidden border-r border-t border-b border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
-              <TradingViewChart 
-                symbol={symbol} 
-                currentPrice={realTimePrice}
-                limitLines={limitLines} 
-                coinGeckoId={crypto?.coinGeckoId} 
-              />
-            </div>
+        <div className="flex-1 min-h-0 p-4">
+          <div className="h-full rounded-xl overflow-hidden border border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
+            <TradingViewChart 
+              symbol={symbol} 
+              currentPrice={realTimePrice}
+              limitLines={limitLines} 
+              coinGeckoId={crypto?.coinGeckoId} 
+            />
           </div>
         </div>
 
