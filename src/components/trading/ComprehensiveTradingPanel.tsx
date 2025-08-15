@@ -87,25 +87,25 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
   };
 
   return (
-    <div className="p-8 bg-gray-900/98 border border-gray-800/60 backdrop-blur-sm rounded-xl">
-      <div className="grid grid-cols-3 gap-12 h-full">
+    <div className="h-full w-full p-4 bg-gray-900/98 border border-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden">
+      <div className="grid grid-cols-3 gap-6 h-full max-h-[500px]">
         
         {/* Left Column - Order Entry */}
-        <div className="space-y-8">
+        <div className="space-y-4 h-full overflow-y-auto pr-2">
           {/* Token Header */}
-          <div className="flex items-center justify-between pb-6 border-b border-gray-800/50">
+          <div className="flex items-center justify-between pb-4 border-b border-gray-800/50">
             <div className="flex items-center gap-4">
-              <h3 className="text-3xl font-bold text-white font-sans tracking-tight">{symbol}</h3>
+              <h3 className="text-2xl font-bold text-white font-sans tracking-tight">{symbol}</h3>
               <Badge 
                 variant={priceChange24h >= 0 ? "default" : "destructive"}
-                className="px-4 py-2 text-sm font-semibold"
+                className="px-3 py-1 text-sm font-semibold"
               >
                 {priceChange24h >= 0 ? <TrendingUp className="h-4 w-4 mr-2" /> : <TrendingDown className="h-4 w-4 mr-2" />}
                 {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
               </Badge>
             </div>
             <div className="text-right">
-              <div className="text-4xl font-mono font-bold text-white tracking-tight">
+              <div className="text-3xl font-mono font-bold text-white tracking-tight">
                 ${formatPrice(currentPrice)}
               </div>
               <div className="text-sm text-gray-400 font-medium mt-1">
@@ -115,17 +115,17 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </div>
 
           {/* Buy/Sell Toggle */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <Button
               variant={side === 'buy' ? 'default' : 'outline'}
               onClick={() => setSide('buy')}
-              className={`h-20 text-lg font-bold transition-all duration-300 ${
+              className={`h-16 text-base font-bold transition-all duration-300 ${
                 side === 'buy' 
                   ? 'bg-gradient-to-br from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white border-0 shadow-xl shadow-green-500/30' 
                   : 'bg-gray-800/60 border-gray-700/60 text-gray-300 hover:bg-gray-700/60 hover:border-gray-600/60'
               }`}
             >
-              <TrendingUp className="h-6 w-6 mr-4" />
+              <TrendingUp className="h-5 w-5 mr-3" />
               <div className="text-left">
                 <div className="font-bold">{t('trading.buy')}</div>
                 <div className="text-xs opacity-90 font-medium">Long Position</div>
@@ -134,13 +134,13 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
             <Button
               variant={side === 'sell' ? 'default' : 'outline'}
               onClick={() => setSide('sell')}
-              className={`h-20 text-lg font-bold transition-all duration-300 ${
+              className={`h-16 text-base font-bold transition-all duration-300 ${
                 side === 'sell' 
                   ? 'bg-gradient-to-br from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white border-0 shadow-xl shadow-red-500/30' 
                   : 'bg-gray-800/60 border-gray-700/60 text-gray-300 hover:bg-gray-700/60 hover:border-gray-600/60'
               }`}
             >
-              <TrendingDown className="h-6 w-6 mr-4" />
+              <TrendingDown className="h-5 w-5 mr-3" />
               <div className="text-left">
                 <div className="font-bold">{t('trading.sell')}</div>
                 <div className="text-xs opacity-90 font-medium">Short Position</div>
@@ -149,29 +149,29 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </div>
 
           {/* Order Type & Advanced Mode */}
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label className="text-white font-semibold text-sm tracking-wide">
                 {t('trading.orderType')}
               </Label>
               <Select value={orderType} onValueChange={setOrderType}>
-                <SelectTrigger className="h-14 bg-gray-800/60 border-gray-700/60 text-white font-medium text-base">
+                <SelectTrigger className="h-12 bg-gray-800/60 border-gray-700/60 text-white font-medium text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  <SelectItem value="market" className="text-white hover:bg-gray-700 py-3">
+                  <SelectItem value="market" className="text-white hover:bg-gray-700 py-2">
                     <div className="flex items-center gap-3">
                       <Zap className="h-4 w-4" />
                       <span className="font-medium">{t('trading.market')}</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="limit" className="text-white hover:bg-gray-700 py-3">
+                  <SelectItem value="limit" className="text-white hover:bg-gray-700 py-2">
                     <div className="flex items-center gap-3">
                       <Target className="h-4 w-4" />
                       <span className="font-medium">{t('trading.limit')}</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="stop" className="text-white hover:bg-gray-700 py-3">
+                  <SelectItem value="stop" className="text-white hover:bg-gray-700 py-2">
                     <div className="flex items-center gap-3">
                       <Shield className="h-4 w-4" />
                       <span className="font-medium">Stop Loss</span>
@@ -181,12 +181,12 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               </Select>
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Label className="text-white font-semibold text-sm tracking-wide">
                 Mode
               </Label>
-              <div className="flex items-center justify-center h-14 bg-gray-800/60 border border-gray-700/60 rounded-lg px-4">
-                <div className="flex items-center space-x-3">
+              <div className="flex items-center justify-center h-12 bg-gray-800/60 border border-gray-700/60 rounded-lg px-3">
+                <div className="flex items-center space-x-2">
                   <Switch
                     checked={advancedMode}
                     onCheckedChange={setAdvancedMode}
@@ -201,7 +201,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </div>
 
           {/* Amount Input */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Label className="text-white font-semibold text-sm tracking-wide">
               {t('trading.amount')} (USDT)
             </Label>
@@ -210,17 +210,17 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="h-16 bg-gray-800/60 border-gray-700/60 text-white text-xl font-mono placeholder:text-gray-500 font-semibold tracking-wide"
+              className="h-14 bg-gray-800/60 border-gray-700/60 text-white text-lg font-mono placeholder:text-gray-500 font-semibold tracking-wide"
             />
             
             {/* Quick Amount Buttons */}
-            <div className="grid grid-cols-4 gap-3 mt-4">
+            <div className="grid grid-cols-4 gap-2 mt-3">
               {quickAmounts.map((pct) => (
                 <Button
                   key={pct}
                   variant="outline"
                   size="sm"
-                  className="h-12 bg-gray-800/40 border-gray-700/40 text-white font-semibold hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
+                  className="h-10 bg-gray-800/40 border-gray-700/40 text-white font-semibold hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
                   onClick={() => {
                     const percentage = parseInt(pct) / 100;
                     const availableBalance = 1000;
@@ -235,13 +235,13 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
           {/* Leverage Slider */}
           {advancedMode && (
-            <div className="space-y-4 p-6 bg-gray-800/30 border border-gray-700/40 rounded-lg">
+            <div className="space-y-3 p-4 bg-gray-800/30 border border-gray-700/40 rounded-lg">
               <div className="flex items-center justify-between">
                 <Label className="text-white font-semibold text-sm tracking-wide">
                   Leverage
                 </Label>
-                <div className="flex items-center gap-3">
-                  <span className="text-primary font-mono text-xl font-bold">
+                <div className="flex items-center gap-2">
+                  <span className="text-primary font-mono text-lg font-bold">
                     {leverage[0]}x
                   </span>
                   <Badge variant="outline" className="text-xs font-medium">
@@ -257,7 +257,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 step={1}
                 className="w-full py-2"
               />
-              <div className="flex justify-between text-xs text-gray-400 font-medium mt-3">
+              <div className="flex justify-between text-xs text-gray-400 font-medium mt-2">
                 {leverageOptions.map(lev => (
                   <span key={lev}>{lev}x</span>
                 ))}
@@ -267,10 +267,10 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
         </div>
 
         {/* Middle Column - Price & Risk Management */}
-        <div className="space-y-8">
+        <div className="space-y-4 h-full overflow-y-auto pr-2">
           {/* Price Input (if limit order) */}
           {orderType === 'limit' && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <Label className="text-white font-semibold text-sm tracking-wide">
                 {t('trading.price')} (USDT)
               </Label>
@@ -279,14 +279,14 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 placeholder="0.00"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="h-16 bg-gray-800/60 border-gray-700/60 text-white text-xl font-mono placeholder:text-gray-500 font-semibold tracking-wide"
+                className="h-14 bg-gray-800/60 border-gray-700/60 text-white text-lg font-mono placeholder:text-gray-500 font-semibold tracking-wide"
               />
             </div>
           )}
 
           {/* Stop Loss & Take Profit */}
           {advancedMode && (
-            <div className="space-y-6">
+              <div className="space-y-3">
               <div className="space-y-4">
                 <Label className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
                   <Shield className="h-4 w-4 text-red-400" />
@@ -297,11 +297,11 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                   placeholder="0.00"
                   value={stopLoss}
                   onChange={(e) => setStopLoss(e.target.value)}
-                  className="h-14 bg-red-900/20 border-red-700/60 text-white font-mono placeholder:text-gray-500 font-semibold"
+                  className="h-12 bg-red-900/20 border-red-700/60 text-white font-mono placeholder:text-gray-500 font-semibold"
                 />
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Label className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
                   <Target className="h-4 w-4 text-green-400" />
                   Take Profit (USDT)
@@ -311,14 +311,14 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                   placeholder="0.00"
                   value={takeProfit}
                   onChange={(e) => setTakeProfit(e.target.value)}
-                  className="h-14 bg-green-900/20 border-green-700/60 text-white font-mono placeholder:text-gray-500 font-semibold"
+                  className="h-12 bg-green-900/20 border-green-700/60 text-white font-mono placeholder:text-gray-500 font-semibold"
                 />
               </div>
             </div>
           )}
 
           {/* Slippage */}
-          <div className="space-y-4 p-6 bg-gray-800/30 border border-gray-700/40 rounded-lg">
+          <div className="space-y-3 p-4 bg-gray-800/30 border border-gray-700/40 rounded-lg">
             <div className="flex items-center justify-between">
               <Label className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
                 <Percent className="h-4 w-4 text-blue-400" />
@@ -344,7 +344,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </div>
 
           {/* Auto Trading */}
-          <div className="p-6 bg-blue-900/20 border border-blue-700/40 rounded-lg">
+          <div className="p-4 bg-blue-900/20 border border-blue-700/40 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
                 <Activity className="h-5 w-5 text-blue-400" />
@@ -363,22 +363,22 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
         </div>
 
         {/* Right Column - Order Summary & Execute */}
-        <div className="space-y-8">
+        <div className="space-y-4 h-full overflow-y-auto pl-2">
           {/* Order Summary */}
-          <Card className="p-8 bg-gray-800/60 border-gray-700/60">
-            <h4 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
-              <Calculator className="h-6 w-6 text-primary" />
+          <Card className="p-6 bg-gray-800/60 border-gray-700/60 h-fit">
+            <h4 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Calculator className="h-5 w-5 text-primary" />
               Order Summary
             </h4>
             
-            <div className="space-y-4 text-base">
+            <div className="space-y-3 text-sm">
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-medium">Order Type:</span>
                 <span className="text-white font-bold capitalize">{orderType}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-medium">Side:</span>
-                <span className={`font-bold text-lg ${side === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`font-bold ${side === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
                   {side.toUpperCase()}
                 </span>
               </div>
@@ -395,11 +395,11 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               {advancedMode && leverage[0] > 1 && (
                 <div className="flex justify-between items-center">
                   <span className="text-gray-300 font-medium">Leverage:</span>
-                  <span className="text-primary font-mono font-bold text-lg">{leverage[0]}x</span>
+                  <span className="text-primary font-mono font-bold">{leverage[0]}x</span>
                 </div>
               )}
               
-              <Separator className="bg-gray-700/60 my-4" />
+              <Separator className="bg-gray-700/60 my-3" />
               
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-medium">Est. Fee:</span>
@@ -407,7 +407,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-medium">Total Cost:</span>
-                <span className="text-white font-mono font-bold text-lg">
+                <span className="text-white font-mono font-bold">
                   ${amount ? (calculateTotal() + 2.5).toFixed(2) : '0.00'}
                 </span>
               </div>
@@ -425,12 +425,12 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
           {/* Risk Warning */}
           {advancedMode && leverage[0] > 5 && (
-            <div className="p-6 bg-orange-900/20 border border-orange-700/50 rounded-lg">
-              <div className="flex items-center gap-3 mb-3">
-                <AlertTriangle className="h-6 w-6 text-orange-400" />
-                <span className="text-orange-400 font-bold text-base">High Risk Warning</span>
+            <div className="p-4 bg-orange-900/20 border border-orange-700/50 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="h-5 w-5 text-orange-400" />
+                <span className="text-orange-400 font-bold">High Risk Warning</span>
               </div>
-              <p className="text-sm text-orange-200 font-medium leading-relaxed">
+              <p className="text-xs text-orange-200 font-medium">
                 Trading with high leverage ({leverage[0]}x) involves significant risk. 
                 You could lose more than your initial investment.
               </p>
@@ -439,18 +439,18 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
           {/* Execute Button */}
           <Button
-            className={`w-full h-24 text-2xl font-bold transition-all duration-300 shadow-2xl ${
+            className={`w-full h-16 text-lg font-bold transition-all duration-300 shadow-2xl ${
               side === 'buy' 
                 ? 'bg-gradient-to-br from-green-600 via-green-500 to-green-400 hover:from-green-700 hover:via-green-600 hover:to-green-500 shadow-green-500/30' 
                 : 'bg-gradient-to-br from-red-600 via-red-500 to-red-400 hover:from-red-700 hover:via-red-600 hover:to-red-500 shadow-red-500/30'
             }`}
             disabled={!amount || parseFloat(amount) <= 0}
           >
-            <div className="flex items-center gap-4">
-              <Zap className="h-8 w-8" />
+            <div className="flex items-center gap-3">
+              <Zap className="h-6 w-6" />
               <div className="text-left">
                 <div className="font-bold">{side === 'buy' ? t('trading.buyNow') : t('trading.sellNow')} {symbol}</div>
-                <div className="text-base opacity-90 font-medium">
+                <div className="text-sm opacity-90 font-medium">
                   {orderType === 'market' ? 'Instant Execution' : 'Place Order'}
                 </div>
               </div>
@@ -458,9 +458,9 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </Button>
 
           {/* Account Balance Info */}
-          <div className="p-6 bg-gray-800/40 border border-gray-700/40 rounded-lg">
-            <h5 className="text-base font-bold text-white mb-4 tracking-wide">Account Balance</h5>
-            <div className="space-y-3 text-sm">
+          <div className="p-4 bg-gray-800/40 border border-gray-700/40 rounded-lg overflow-hidden">
+            <h5 className="text-sm font-bold text-white mb-3 tracking-wide">Account Balance</h5>
+            <div className="space-y-2 text-xs overflow-hidden">
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-medium">Available USDT:</span>
                 <span className="text-white font-mono font-bold">$1,247.50</span>
