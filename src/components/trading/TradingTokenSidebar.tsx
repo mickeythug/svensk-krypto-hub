@@ -27,22 +27,14 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
 
-  // Filter and search tokens - limit to top 30 by default, all when searching
+  // Filter and search tokens - now showing ALL tokens
   const filteredTokens = useMemo(() => {
     if (!cryptoPrices) return [];
     let filtered = cryptoPrices;
-    
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = cryptoPrices.filter(token => 
-        token.symbol.toLowerCase().includes(query) || 
-        token.name.toLowerCase().includes(query)
-      );
-    } else {
-      // Limit to top 30 tokens when not searching
-      filtered = cryptoPrices.slice(0, 30);
+      filtered = cryptoPrices.filter(token => token.symbol.toLowerCase().includes(query) || token.name.toLowerCase().includes(query));
     }
-    
     return filtered;
   }, [cryptoPrices, searchQuery]);
   const handleTokenSelect = useCallback((symbol: string) => {
@@ -208,7 +200,8 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                                 ${formatPrice(token.price)}
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className={`text-xs font-bold ${token.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                <span className={`text-sm font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
+                                  {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                                   {formatChange(token.change24h)}
                                 </span>
                               </div>

@@ -193,15 +193,13 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   return (
     <div className="flex min-h-screen bg-gray-950">
       {/* Left Token Sidebar */}
-      <div className="flex-shrink-0">
-        <TradingTokenSidebar 
-          collapsed={tokenSidebarCollapsed}
-          onToggle={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
-        />
-      </div>
+      <TradingTokenSidebar 
+        collapsed={tokenSidebarCollapsed}
+        onToggle={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
+      />
 
       {/* Main Trading Area */}
-      <div className="flex-1 flex flex-col min-h-0 min-w-0">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Professional Header */}
         <div className="bg-gray-900/95 border-b border-gray-800/50 backdrop-blur-sm">
           <div className="p-4">
@@ -320,104 +318,97 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           </div>
         </div>
 
-        {/* Chart and Right Sidebar Container */}
-        <div className="flex flex-1 min-h-0">
-          {/* Chart Area */}
-          <div className="flex-1 min-h-0 min-w-0">
-            <div className="h-full p-4 pr-0">
-              <div className="h-full rounded-xl overflow-hidden border border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
-                <TradingViewChart 
-                  symbol={symbol} 
-                  currentPrice={realTimePrice}
-                  limitLines={limitLines} 
-                  coinGeckoId={crypto?.coinGeckoId} 
-                />
-              </div>
+        {/* Chart Area */}
+        <div className="flex-1 min-h-0">
+          <div className="h-full pr-4 pb-4">
+            <div className="h-full rounded-r-xl overflow-hidden border-r border-t border-b border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
+              <TradingViewChart 
+                symbol={symbol} 
+                currentPrice={realTimePrice}
+                limitLines={limitLines} 
+                coinGeckoId={crypto?.coinGeckoId} 
+              />
             </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="flex-shrink-0">
-            <motion.div 
-              className="bg-gray-900/95 border-l border-gray-800/50 backdrop-blur-sm h-full"
-              animate={{ width: sidebarCollapsed ? 60 : 400 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <div className="h-full flex flex-col">
-                {/* Sidebar Header */}
-                <div className="p-4 border-b border-gray-800/50">
-                  <div className="flex items-center justify-between">
-                    {!sidebarCollapsed && (
-                      <h3 className="text-lg font-semibold text-white">Market Depth</h3>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                      className="text-gray-400 hover:text-white"
-                    >
-                      {sidebarCollapsed ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                {!sidebarCollapsed && (
-                  <>
-                    {/* Modern Order Book */}
-                    <div className="flex-1 p-4 min-h-0">
-                      <ModernOrderBook 
-                        symbol={symbol}
-                        currentPrice={realTimePrice}
-                        orderBook={orderBook}
-                        isConnected={isConnected}
-                      />
-                    </div>
-
-                    {/* Modern Trading Panel with Auth */}
-                    {fullyAuthed ? (
-                      <div className="h-[500px] p-4 pt-2">
-                        <ModernTradingPanel 
-                          symbol={symbol}
-                          currentPrice={realTimePrice}
-                          tokenName={tokenName}
-                          balances={balances}
-                          solBalance={solBalance}
-                        />
-                      </div>
-                    ) : (
-                      <div className="p-4 pt-2">
-                        <div className="relative overflow-hidden bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.1] rounded-xl p-6 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
-                          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none"></div>
-                          <AlertTriangle className="h-12 w-12 text-primary mx-auto mb-4 relative z-10" />
-                          <h3 className="font-semibold mb-2 text-white relative z-10">Connect Wallet</h3>
-                          <p className="text-sm text-white/60 mb-4 relative z-10">
-                            Connect your wallet to start trading {symbol}
-                          </p>
-                          <div className="relative z-10">
-                            <ConnectWalletButton />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </motion.div>
           </div>
         </div>
 
         {/* Real Bottom Panels */}
-        <div className="flex-shrink-0">
-          <ProfessionalBottomPanels 
-            symbol={symbol}
-            dbOrders={dbOrders}
-            jupOrders={jupOrders}
-            history={history}
-            balances={balances}
-            solBalance={solBalance}
-          />
-        </div>
+        <ProfessionalBottomPanels 
+          symbol={symbol}
+          dbOrders={dbOrders}
+          jupOrders={jupOrders}
+          history={history}
+          balances={balances}
+          solBalance={solBalance}
+        />
       </div>
+
+      {/* Right Sidebar */}
+      <motion.div 
+        className="bg-gray-900/95 border-l border-gray-800/50 backdrop-blur-sm"
+        animate={{ width: sidebarCollapsed ? 60 : 400 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        <div className="h-full flex flex-col">
+          {/* Sidebar Header */}
+          <div className="p-4 border-b border-gray-800/50">
+            <div className="flex items-center justify-between">
+              {!sidebarCollapsed && (
+                <h3 className="text-lg font-semibold text-white">Market Depth</h3>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="text-gray-400 hover:text-white"
+              >
+                {sidebarCollapsed ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+
+          {!sidebarCollapsed && (
+            <>
+              {/* Modern Order Book */}
+              <div className="flex-1 p-4 min-h-0">
+                <ModernOrderBook 
+                  symbol={symbol}
+                  currentPrice={realTimePrice}
+                  orderBook={orderBook}
+                  isConnected={isConnected}
+                />
+              </div>
+
+              {/* Modern Trading Panel with Auth */}
+              {fullyAuthed ? (
+                <div className="h-[500px] p-4 pt-2">
+                  <ModernTradingPanel 
+                    symbol={symbol}
+                    currentPrice={realTimePrice}
+                    tokenName={tokenName}
+                    balances={balances}
+                    solBalance={solBalance}
+                  />
+                </div>
+              ) : (
+                <div className="p-4 pt-2">
+                  <div className="relative overflow-hidden bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.1] rounded-xl p-6 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none"></div>
+                    <AlertTriangle className="h-12 w-12 text-primary mx-auto mb-4 relative z-10" />
+                    <h3 className="font-semibold mb-2 text-white relative z-10">Connect Wallet</h3>
+                    <p className="text-sm text-white/60 mb-4 relative z-10">
+                      Connect your wallet to start trading {symbol}
+                    </p>
+                    <div className="relative z-10">
+                      <ConnectWalletButton />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 };
