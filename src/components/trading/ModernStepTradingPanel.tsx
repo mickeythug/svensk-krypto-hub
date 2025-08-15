@@ -137,11 +137,26 @@ const ModernStepTradingPanel: React.FC<ModernStepTradingPanelProps> = ({
   const stepIndex = steps.indexOf(currentStep);
 
   if (!isFullyAuthenticated) {
+    // Show the trading panel but with connect wallet prompt
     return (
-      <Card className="h-full max-h-[600px] bg-gray-800/30 border-gray-700/30 p-6 flex flex-col justify-center">
-        <div className="text-center space-y-4">
+      <Card className="h-full max-h-[600px] bg-gray-800/30 border-gray-700/30 p-6 flex flex-col"
+        style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-white">{t('trading.trade')} {symbol}</h3>
+            <p className="text-sm text-gray-400">{t('trading.currentPrice')}: ${currentPrice.toFixed(6)}</p>
+          </div>
+          <div className="text-sm text-gray-400">
+            {currentChain || 'Not Connected'}
+          </div>
+        </div>
+
+        {/* Connect Wallet Prompt */}
+        <div className="flex-1 flex flex-col justify-center text-center space-y-4">
           <AlertTriangle className="h-12 w-12 text-yellow-400 mx-auto" />
-          <h3 className="text-xl font-bold text-white">{t('trading.connectWalletMessage')}</h3>
+          <h4 className="text-lg font-semibold text-white">{t('trading.connectWalletMessage')}</h4>
           <p className="text-gray-400 text-sm">
             {t('trading.connectWalletSubMessage')} {symbol}
           </p>
@@ -349,54 +364,99 @@ const ModernStepTradingPanel: React.FC<ModernStepTradingPanelProps> = ({
           </div>
         )}
 
-        {/* Step 4: Order Summary */}
         {currentStep === 'summary' && (
-          <div className="space-y-4">
-            <h4 className="text-lg font-semibold text-white mb-4">
-              4. {t('trading.orderSummary')}
-            </h4>
-            
-            <div className="bg-gray-900/50 rounded-lg p-4 space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">{t('trading.orderType')}:</span>
-                <span className="text-white font-medium capitalize">{side} {symbol}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">{t('trading.amount')}:</span>
-                <span className="text-white font-mono">{amount || '0'} {baseCurrency}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">{t('trading.estimatedPrice')}:</span>
-                <span className="text-white font-mono">
-                  ${(currentPrice * (1 + (side === 'buy' ? slippage[0] : -slippage[0]) / 100)).toFixed(6)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">{t('trading.slippage')}:</span>
-                <span className="text-white font-mono">{slippage[0]}%</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">{t('trading.tradingFee')}:</span>
-                <span className="text-white font-mono">${fees.trading.toFixed(4)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Network Fee:</span>
-                <span className="text-white font-mono">${fees.network.toFixed(4)}</span>
-              </div>
-              {tip[0] > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">{t('trading.tip')}:</span>
-                  <span className="text-white font-mono">${fees.tip.toFixed(4)}</span>
+          <>
+            {!isFullyAuthenticated ? (
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-white mb-4">
+                  4. {t('trading.orderSummary')}
+                </h4>
+                
+                <div className="bg-gray-900/50 rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.orderType')}:</span>
+                    <span className="text-white font-medium capitalize">{side} {symbol}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.amount')}:</span>
+                    <span className="text-white font-mono">{amount || '0'} {baseCurrency}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.estimatedPrice')}:</span>
+                    <span className="text-white font-mono">
+                      ${(currentPrice * (1 + (side === 'buy' ? slippage[0] : -slippage[0]) / 100)).toFixed(6)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.slippage')}:</span>
+                    <span className="text-white font-mono">{slippage[0]}%</span>
+                  </div>
+                  <div className="border-t border-gray-600 pt-3">
+                    <div className="flex justify-between font-semibold">
+                      <span className="text-gray-300">{t('trading.total')}:</span>
+                      <span className="text-white font-mono text-lg">${calculateTotal().toFixed(4)}</span>
+                    </div>
+                  </div>
                 </div>
-              )}
-              <div className="border-t border-gray-600 pt-3">
-                <div className="flex justify-between font-semibold">
-                  <span className="text-gray-300">{t('trading.total')}:</span>
-                  <span className="text-white font-mono text-lg">${calculateTotal().toFixed(4)}</span>
+
+                {/* Connect Wallet to Continue */}
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">
+                  <AlertTriangle className="h-6 w-6 text-yellow-400 mx-auto mb-2" />
+                  <p className="text-sm text-yellow-200 mb-3">
+                    {t('trading.connectWalletMessage')}
+                  </p>
+                  <ConnectWalletButton />
                 </div>
               </div>
-            </div>
-          </div>
+            ) : (
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold text-white mb-4">
+                  4. {t('trading.orderSummary')}
+                </h4>
+                
+                <div className="bg-gray-900/50 rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.orderType')}:</span>
+                    <span className="text-white font-medium capitalize">{side} {symbol}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.amount')}:</span>
+                    <span className="text-white font-mono">{amount || '0'} {baseCurrency}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.estimatedPrice')}:</span>
+                    <span className="text-white font-mono">
+                      ${(currentPrice * (1 + (side === 'buy' ? slippage[0] : -slippage[0]) / 100)).toFixed(6)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.slippage')}:</span>
+                    <span className="text-white font-mono">{slippage[0]}%</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">{t('trading.tradingFee')}:</span>
+                    <span className="text-white font-mono">${fees.trading.toFixed(4)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Network Fee:</span>
+                    <span className="text-white font-mono">${fees.network.toFixed(4)}</span>
+                  </div>
+                  {tip[0] > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">{t('trading.tip')}:</span>
+                      <span className="text-white font-mono">${fees.tip.toFixed(4)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-600 pt-3">
+                    <div className="flex justify-between font-semibold">
+                      <span className="text-gray-300">{t('trading.total')}:</span>
+                      <span className="text-white font-mono text-lg">${calculateTotal().toFixed(4)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Step 5: Execute */}
@@ -465,7 +525,17 @@ const ModernStepTradingPanel: React.FC<ModernStepTradingPanelProps> = ({
           </Button>
         )}
         
-        {currentStep === 'summary' && (
+        {currentStep === 'summary' && !isFullyAuthenticated && (
+          <Button
+            onClick={() => {}}
+            disabled={true}
+            className="flex-1 bg-gray-600 text-gray-400 cursor-not-allowed"
+          >
+            {t('trading.connectWalletMessage')}
+          </Button>
+        )}
+        
+        {currentStep === 'summary' && isFullyAuthenticated && (
           <Button
             onClick={() => {
               setCurrentStep('execute');

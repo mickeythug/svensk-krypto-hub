@@ -393,22 +393,6 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   crypto={crypto}
                 />
               </div>
-              
-              {/* Trading Panel Auth Warning - Only if not authenticated */}
-              {!isFullyAuthenticated && (
-                <div className="p-4 pt-2 pb-6">
-                  <div className="relative overflow-hidden bg-gradient-to-br from-yellow-500/[0.08] to-amber-500/[0.02] backdrop-blur-xl border border-yellow-500/[0.2] rounded-xl p-4 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-yellow-500/[0.05] to-transparent pointer-events-none"></div>
-                    <AlertTriangle className="h-8 w-8 text-yellow-400 mx-auto mb-2 relative z-10" />
-                    <p className="text-xs text-yellow-200/80 mb-3 relative z-10">
-                      {t('trading.connectWalletMessage')}
-                    </p>
-                    <div className="relative z-10">
-                      <ConnectWalletButton />
-                    </div>
-                  </div>
-                </div>
-              )}
             </>
           )}
         </div>
