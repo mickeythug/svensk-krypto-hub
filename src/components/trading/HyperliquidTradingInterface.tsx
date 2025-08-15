@@ -364,43 +364,36 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
 
       {/* Right Sidebar - Enhanced */}
       <motion.div 
-        className="bg-card/95 border-l border-border backdrop-blur-sm shadow-elevation-3"
-        animate={{ width: sidebarCollapsed ? 60 : 380 }}
+        className="bg-card/95 border-l border-border backdrop-blur-sm shadow-elevation-3 overflow-hidden"
+        animate={{ width: sidebarCollapsed ? 0 : 380 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <div className="h-full flex flex-col">
-          {/* Sidebar Header - Enhanced */}
-          <div className="p-6 border-b border-border">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-foreground section-title">{t('trading.marketDepth')}</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 hover-scale"
-              >
-                {sidebarCollapsed ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
+        <AnimatePresence mode="wait">
+          {!sidebarCollapsed && (
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.2 }}
+              className="h-full flex flex-col w-[380px]"
+            >
+              {/* Sidebar Header - Enhanced */}
+              <div className="p-6 border-b border-border">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-semibold text-foreground section-title">{t('trading.marketDepth')}</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                    className="text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 hover-scale"
+                  >
+                    <EyeOff className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
 
-          {/* Trading content - Enhanced responsive behavior */}
-          {sidebarCollapsed ? (
-            // Collapsed view - Enhanced minimal
-            <div className="flex flex-col h-full justify-center items-center p-3 space-y-4">
-               <div className="text-center space-y-2">
-                 <div className="text-sm text-muted-foreground font-medium">{t('trading.currentPrice')}</div>
-                 <div className="font-binance text-foreground text-lg important-number">${realTimePrice.toFixed(6)}</div>
-               </div>
-               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                 <Activity className="h-4 w-4 text-primary animate-pulse" />
-               </div>
-            </div>
-          ) : (
-            // Expanded view - Enhanced trading interface
-            <div className="flex flex-col h-full">
               {/* Enhanced Order Book */}
-              <div className="flex-1 p-6 min-h-0">
+              <div className="flex-1 p-6 min-h-0 overflow-y-auto">
                 <ModernOrderBook 
                   symbol={symbol}
                   currentPrice={realTimePrice}
@@ -408,10 +401,44 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   isConnected={isConnected}
                 />
               </div>
-            </div>
+
+              {/* Exchange Indicator */}
+              <div className="p-6 border-t border-border">
+                <div className="text-center space-y-3">
+                  <div className="flex items-center justify-center gap-2">
+                    <Globe className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Exchange: {exchange || 'Binance'}</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Real-time market data
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </motion.div>
+
+      {/* Floating Sidebar Toggle when Collapsed */}
+      <AnimatePresence>
+        {sidebarCollapsed && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="fixed right-4 top-1/2 -translate-y-1/2 z-50"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSidebarCollapsed(false)}
+              className="h-12 w-12 rounded-full bg-card/95 border-border backdrop-blur-sm shadow-lg hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
+            >
+              <Eye className="h-5 w-5" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
