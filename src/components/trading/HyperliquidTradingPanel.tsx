@@ -16,9 +16,14 @@ import {
   AlertTriangle,
   Settings,
   Plus,
-  Minus
+  Minus,
+  Info,
+  DollarSign
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTradingCalculations } from '@/hooks/useTradingCalculations';
+import { useAccount } from 'wagmi';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 interface HyperliquidTradingPanelProps {
   symbol: string;
@@ -35,6 +40,9 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
   balances = [],
   solBalance = 0
 }) => {
+  const { address: evmAddress } = useAccount();
+  const { publicKey } = useWallet();
+  
   const [orderType, setOrderType] = useState<'market' | 'limit' | 'stop'>('market');
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
   const [amount, setAmount] = useState('');
@@ -42,13 +50,14 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
   const [stopPrice, setStopPrice] = useState('');
   const [reduceOnly, setReduceOnly] = useState(false);
   const [postOnly, setPostOnly] = useState(false);
-  const [slippage, setSlippage] = useState(0.5);
-
-  // Real wallet balance from backend
-  const [balance, setBalance] = useState({
-    usdt: balances.find(b => b.symbol === 'USDT')?.balance || 2450.00,
-    token: balances.find(b => b.symbol === symbol)?.balance || 0.0,
-    sol: solBalance
+  // Real-time trading calculations with backend data
+  const calculations = useTradingCalculations({
+    symbol,
+    side,
+    orderType,
+    amount,
+    price,
+    currentPrice
   });
 
   useEffect(() => {
@@ -63,33 +72,61 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
     return price.toFixed(2);
   };
 
-  const calculateTotal = () => {
-    const amt = parseFloat(amount) || 0;
-    const prc = parseFloat(price) || 0;
-    return amt * prc;
-  };
-
-  const calculateMaxAmount = () => {
-    if (side === 'buy') {
-      const prc = parseFloat(price) || 1;
-      return (balance.usdt / prc).toFixed(6);
-    }
-    return balance.token.toFixed(6);
+  const formatBalance = (balance: number, symbol: string) => {
+    if (balance < 0.001) return `${balance.toFixed(6)} ${symbol}`;
+    if (balance < 1) return `${balance.toFixed(4)} ${symbol}`;
+    return `${balance.toFixed(2)} ${symbol}`;
   };
 
   const setPercentage = (percent: number) => {
-    const maxAmount = parseFloat(calculateMaxAmount());
+    const maxAmount = side === 'buy' ? calculations.maxBuyAmount : calculations.maxSellAmount;
     setAmount((maxAmount * (percent / 100)).toString());
   };
 
-  const executeOrder = () => {
-    console.log('Executing order:', {
-      symbol,
-      side,
-      orderType,
-      amount,
-      price
-    });
+  const executeOrder = async () => {
+    if (!calculations.isValidAmount) return;
+    
+    try {
+      const tradeData = {
+        symbol,
+        side,
+        orderType,
+        amount: parseFloat(amount),
+        price: parseFloat(price),
+        userAddress: `${publicKey?.toBase58() || evmAddress || ''}`,
+        chain: symbol === 'SOL' ? 'SOL' : 'ETH',
+        estimatedTotal: calculations.estimatedTotal,
+        estimatedFee: calculations.estimatedFee,
+        netTotal: calculations.netTotal,
+        feeBreakdown: calculations.feeStructure
+      };
+
+      console.log('Executing trade with real backend:', tradeData);
+
+      // Call the execute-trade edge function
+      const response = await fetch('https://jcllcrvomxdrhtkqpcbr.supabase.co/functions/v1/execute-trade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tradeData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        console.log('Trade executed successfully:', result);
+        // You could show a success toast here
+        // Reset form
+        setAmount('');
+      } else {
+        console.error('Trade execution failed:', result.error);
+        // You could show an error toast here
+      }
+    } catch (error) {
+      console.error('Error executing trade:', error);
+      // You could show an error toast here
+    }
   };
 
   return (
@@ -155,7 +192,7 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
               />
             </div>
 
-            {/* Percentage Buttons */}
+            {/* Smart Percentage Buttons */}
             <div className="grid grid-cols-4 gap-2">
               {[25, 50, 75, 100].map((percent) => (
                 <Button
@@ -169,19 +206,34 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
                 </Button>
               ))}
             </div>
+            
+            {/* Max Amount Info */}
+            <div className="text-xs text-gray-400 text-center">
+              Max: {side === 'buy' ? 
+                `${calculations.maxBuyAmount.toFixed(6)} ${symbol}` : 
+                `${calculations.maxSellAmount.toFixed(6)} ${symbol}`
+              }
+            </div>
 
             <div className="bg-gray-800/30 rounded-lg p-4 space-y-3 border border-gray-700/20">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Est. Price</span>
-                <span className="text-white font-mono font-medium">${formatPrice(currentPrice)}</span>
+                <span className="text-white font-mono font-medium">${formatPrice(calculations.estimatedPrice)}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Est. Total</span>
-                <span className="text-white font-mono font-medium">${calculateTotal().toFixed(2)}</span>
+                <span className="text-white font-mono font-medium">${calculations.estimatedTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Max Slippage</span>
-                <span className="text-white font-mono">{slippage}%</span>
+                <span className="text-gray-400 flex items-center gap-1">
+                  Trading Fee
+                  <Info className="h-3 w-3" />
+                </span>
+                <span className="text-white font-mono">${calculations.feeStructure.tradingFee.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400">Network Fee</span>
+                <span className="text-white font-mono">${calculations.feeStructure.networkFee.toFixed(4)}</span>
               </div>
             </div>
           </div>
@@ -212,7 +264,7 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
               />
             </div>
 
-            {/* Percentage Buttons */}
+            {/* Smart Percentage Buttons */}
             <div className="grid grid-cols-4 gap-2">
               {[25, 50, 75, 100].map((percent) => (
                 <Button
@@ -225,6 +277,14 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
                   {percent}%
                 </Button>
               ))}
+            </div>
+            
+            {/* Max Amount Info */}
+            <div className="text-xs text-gray-400 text-center">
+              Max: {side === 'buy' ? 
+                `${calculations.maxBuyAmount.toFixed(6)} ${symbol}` : 
+                `${calculations.maxSellAmount.toFixed(6)} ${symbol}`
+              }
             </div>
 
             {/* Advanced Options */}
@@ -303,36 +363,52 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
       </Tabs>
 
 
-      {/* Order Summary */}
+      {/* Real-time Order Summary */}
       <div className="bg-gray-800/30 rounded-lg p-4 space-y-3 border border-gray-700/20">
         <div className="flex justify-between items-center">
           <span className="text-gray-400 text-sm">Available Balance</span>
           <span className="text-white font-mono font-medium">
-            {side === 'buy' ? `$${balance.usdt.toFixed(2)}` : `${balance.token.toFixed(6)} ${symbol}`}
+            {side === 'buy' ? (
+              symbol === 'SOL' ? 
+                `${formatBalance(calculations.availableSolBalance, 'SOL')}` :
+                `$${calculations.availableUsdBalance.toFixed(2)}`
+            ) : (
+              formatBalance(calculations.availableTokenBalance, symbol)
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-gray-400 text-sm">Est. Fee (0.1%)</span>
-          <span className="text-white font-mono">${(calculateTotal() * 0.001).toFixed(2)}</span>
+          <span className="text-gray-400 text-sm">Est. Fee ({calculations.feeStructure.totalFeePercent.toFixed(3)}%)</span>
+          <span className="text-white font-mono">${calculations.estimatedFee.toFixed(4)}</span>
         </div>
         <div className="flex justify-between items-center pt-2 border-t border-gray-700/30">
-          <span className="text-gray-300 font-medium">Total</span>
-          <span className="text-white font-mono font-bold text-lg">${calculateTotal().toFixed(2)}</span>
+          <span className="text-gray-300 font-medium">{side === 'buy' ? 'Total Cost' : 'You Receive'}</span>
+          <span className="text-white font-mono font-bold text-lg">${calculations.netTotal.toFixed(2)}</span>
         </div>
+        {!calculations.isValidAmount && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded p-2 mt-2">
+            <p className="text-red-400 text-xs">{calculations.errorMessage}</p>
+          </div>
+        )}
       </div>
 
-      {/* Execute Button */}
+      {/* Enhanced Execute Button */}
       <Button
         onClick={executeOrder}
-        disabled={!amount || parseFloat(amount) <= 0}
+        disabled={!amount || parseFloat(amount) <= 0 || !calculations.isValidAmount}
         className={`w-full font-bold py-6 text-lg transition-all duration-200 shadow-lg ${
           side === 'buy'
             ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white shadow-green-500/25'
             : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-red-500/25'
-        } disabled:opacity-50 disabled:cursor-not-allowed`}
+        } disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none`}
       >
         <Target className="h-5 w-5 mr-2" />
-        {side === 'buy' ? 'Buy' : 'Sell'} {symbol}
+        {side === 'buy' ? 'Buy' : 'Sell'} {amount ? parseFloat(amount).toFixed(4) : '0'} {symbol}
+        {calculations.netTotal > 0 && (
+          <span className="ml-2 opacity-80">
+            (${calculations.netTotal.toFixed(2)})
+          </span>
+        )}
       </Button>
 
       {/* Risk Warning */}
