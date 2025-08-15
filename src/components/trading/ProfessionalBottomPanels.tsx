@@ -127,7 +127,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
   };
 
   return (
-    <div className="h-[600px] px-6 pb-6 border-2 border-primary/60 shadow-[0_0_20px_hsl(var(--primary)/0.3)] rounded-lg">
+    <div className="h-[600px] px-6 pb-6">
       <Card className="h-full bg-card/95 border-2 border-primary/60 backdrop-blur-sm shadow-elevation-4 shadow-[0_0_15px_hsl(var(--primary)/0.2)] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
         <div className="relative z-10 h-full">
