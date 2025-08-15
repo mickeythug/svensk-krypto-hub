@@ -105,77 +105,77 @@ const CasinoMemeHero = () => {
       <FloatingIcon icon={Diamond} className="top-48 right-1/4 sm:top-60 sm:right-1/3 text-violet-400" delay={3000} />
       <FloatingIcon icon={Coins} className="bottom-48 right-4 sm:bottom-60 sm:right-10 text-slate-400" delay={4000} />
 
-      {/* Main Content with improved responsive spacing */}
-      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-12 sm:pb-16">
-        
-        {/* Epic Hero Header with enhanced typography */}
-        <div className="text-center mb-16 sm:mb-20">
-          {/* Main Title with premium responsive sizing */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 mb-8 sm:mb-12">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-premium-purple flex items-center justify-center shadow-glow-premium-purple animate-pulse">
-              <Crown className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+        {/* Main Content with optimized responsive spacing */}
+        <div className="relative z-10 w-full max-w-[1800px] mx-auto container-spacing-normal pt-20 sm:pt-28 pb-16 sm:pb-20">
+          
+          {/* Epic Hero Header with enhanced typography and spacing */}
+          <div className="text-center section-spacing-lg">
+            {/* Main Title with improved visual hierarchy */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 mb-12 sm:mb-16">
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-premium-purple flex items-center justify-center shadow-glow-premium-purple animate-pulse hover-lift">
+                <Crown className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
+              </div>
+              
+              <h1 className="responsive-title font-black bg-gradient-premium-purple bg-clip-text text-transparent text-glow tracking-tight">
+                MEME ZONE
+              </h1>
+              
+              <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-premium-cyan flex items-center justify-center shadow-glow-premium-cyan animate-pulse hover-lift">
+                <Rocket className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
+              </div>
             </div>
-            
-            <h1 className="responsive-title font-black bg-gradient-premium-purple bg-clip-text text-transparent text-glow">
-              MEME ZONE
-            </h1>
-            
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-premium-cyan flex items-center justify-center shadow-glow-premium-cyan animate-pulse">
-              <Rocket className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+
+            {/* Subtitle with enhanced readability and contrast */}
+            <p className="responsive-subtitle text-contrast-high max-w-5xl mx-auto mb-8 sm:mb-10 font-bold leading-relaxed px-4 tracking-wide">
+              ⚡ Premium Web3 Trading Platform for Solana Meme Tokens 💎
+            </p>
+
+            {/* Live Indicators with enhanced spacing and contrast */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 mb-12 sm:mb-16 px-4">
+              <div className="flex items-center gap-4 bg-purple-500/30 px-8 py-4 rounded-2xl border-2 border-purple-400/70 backdrop-blur-sm hover-lift">
+                <div className="w-5 h-5 bg-purple-400 rounded-full animate-pulse shadow-glow-premium-purple"></div>
+                <span className="text-contrast-high font-black text-lg sm:text-xl tracking-wide">LIVE TRADING</span>
+                <div className="w-5 h-5 bg-purple-400 rounded-full animate-pulse shadow-glow-premium-purple"></div>
+              </div>
+              <div className="flex items-center gap-4 bg-cyan-500/30 px-8 py-4 rounded-2xl border-2 border-cyan-400/70 backdrop-blur-sm hover-lift">
+                <Timer className="w-6 h-6 text-cyan-300" />
+                <span className="text-contrast-high font-black text-lg sm:text-xl tracking-wide">REAL-TIME DATA</span>
+              </div>
+            </div>
+
+            {/* Enhanced Stats Bar with better visual hierarchy */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-5xl mx-auto section-spacing-md">
+              <CasinoCard variant="golden" glow className="container-spacing-normal hover-lift">
+                <div className="text-center space-y-4">
+                  <Trophy className="w-10 h-10 mx-auto text-slate-300" />
+                  <div className="text-4xl font-black text-contrast-high number-display">
+                    {hottestTokens.length}
+                  </div>
+                  <div className="text-slate-300 font-bold text-lg tracking-wide">PREMIUM TOKENS</div>
+                </div>
+              </CasinoCard>
+              
+              <CasinoCard variant="platinum" glow className="container-spacing-normal hover-lift">
+                <div className="text-center space-y-4">
+                  <BarChart3 className="w-10 h-10 mx-auto text-cyan-400" />
+                  <div className="text-4xl font-black text-cyan-400 number-display">
+                    24/7
+                  </div>
+                  <div className="text-cyan-300 font-bold text-lg tracking-wide">LIVE ANALYTICS</div>
+                </div>
+              </CasinoCard>
+              
+              <CasinoCard variant="diamond" glow className="container-spacing-normal hover-lift">
+                <div className="text-center space-y-4">
+                  <Diamond className="w-10 h-10 mx-auto text-purple-400" />
+                  <div className="text-4xl font-black text-purple-400 number-display">
+                    💎
+                  </div>
+                  <div className="text-purple-300 font-bold text-lg tracking-wide">EXCLUSIVE</div>
+                </div>
+              </CasinoCard>
             </div>
           </div>
-
-          {/* Subtitle with premium readability */}
-          <p className="responsive-subtitle text-white/95 max-w-5xl mx-auto mb-6 sm:mb-8 font-bold leading-relaxed px-4">
-            ⚡ Premium Web3 Trading Platform for Solana Meme Tokens 💎
-          </p>
-
-          {/* Live Indicator with premium spacing */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-10 sm:mb-12 px-4">
-            <div className="flex items-center gap-3 bg-purple-500/25 px-6 py-3 rounded-full border border-purple-400/60 backdrop-blur-sm">
-              <div className="w-4 h-4 bg-purple-400 rounded-full animate-pulse shadow-glow-premium-purple"></div>
-              <span className="text-purple-300 font-bold text-base sm:text-lg">LIVE TRADING</span>
-              <div className="w-4 h-4 bg-purple-400 rounded-full animate-pulse shadow-glow-premium-purple"></div>
-            </div>
-            <div className="flex items-center gap-3 bg-cyan-500/25 px-6 py-3 rounded-full border border-cyan-400/60 backdrop-blur-sm">
-              <Timer className="w-5 h-5 text-cyan-300" />
-              <span className="text-cyan-300 font-bold text-base sm:text-lg">REAL-TIME DATA</span>
-            </div>
-          </div>
-
-          {/* Stats Bar */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
-            <CasinoCard variant="golden" glow className="p-6">
-              <div className="text-center">
-                <Trophy className="w-8 h-8 mx-auto mb-3 text-slate-300" />
-                <div className="text-3xl font-black text-slate-300 font-numbers">
-                  {hottestTokens.length}
-                </div>
-                <div className="text-slate-400 font-bold">PREMIUM TOKENS</div>
-              </div>
-            </CasinoCard>
-            
-            <CasinoCard variant="platinum" glow className="p-6">
-              <div className="text-center">
-                <BarChart3 className="w-8 h-8 mx-auto mb-3 text-cyan-400" />
-                <div className="text-3xl font-black text-cyan-400 font-numbers">
-                  24/7
-                </div>
-                <div className="text-cyan-300 font-bold">LIVE ANALYTICS</div>
-              </div>
-            </CasinoCard>
-            
-            <CasinoCard variant="diamond" glow className="p-6">
-              <div className="text-center">
-                <Diamond className="w-8 h-8 mx-auto mb-3 text-purple-400" />
-                <div className="text-3xl font-black text-purple-400 font-numbers">
-                  💎
-                </div>
-                <div className="text-purple-300 font-bold">EXCLUSIVE</div>
-              </div>
-            </CasinoCard>
-          </div>
-        </div>
 
         {/* Casino Token Cards Grid */}
         {loading ? (
@@ -210,28 +210,28 @@ const CasinoMemeHero = () => {
                   variant={cardVariant}
                   glow={isGolden}
                   animate={isJackpot}
-                  className="group cursor-pointer h-[480px] flex flex-col"
+                  className="group cursor-pointer h-[520px] flex flex-col hover-lift"
                   onClick={() => navigate(`/meme/token/${token.symbol.toLowerCase()}?address=${encodeURIComponent(token.id)}`)}
                 >
-                  {/* Header with Rank and Status */}
-                  <div className="relative p-4 flex justify-between items-start">
-                    <Badge className={`text-lg font-black px-4 py-3 shadow-lg ${
-                      isJackpot ? 'bg-gradient-premium-purple text-white animate-pulse' :
-                      isGolden ? 'bg-gradient-premium-silver text-slate-900' :
-                      isPlatinum ? 'bg-gradient-premium-cyan text-white' :
+                  {/* Header with enhanced spacing and better visual hierarchy */}
+                  <div className="relative container-spacing-tight flex justify-between items-start">
+                    <Badge className={`text-lg font-black px-5 py-3 shadow-lg rounded-xl ${
+                      isJackpot ? 'bg-gradient-premium-purple text-white animate-pulse shadow-glow-premium-purple' :
+                      isGolden ? 'bg-gradient-premium-silver text-slate-900 shadow-glow-premium-silver' :
+                      isPlatinum ? 'bg-gradient-premium-cyan text-white shadow-glow-premium-cyan' :
                       'bg-gradient-to-r from-slate-600 to-slate-700 text-white'
                     }`}>
                       {isJackpot && <Crown className="w-5 h-5 mr-2" />}
-                      <span className="font-numbers">#{index + 1}</span>
+                      <span className="number-display">#{index + 1}</span>
                     </Badge>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2">
                       {isJackpot && (
-                        <Badge className="bg-gradient-premium-purple text-white animate-pulse text-sm font-bold px-3 py-2">
+                        <Badge className="bg-gradient-premium-purple text-white animate-pulse text-sm font-bold px-4 py-2 rounded-lg shadow-glow-premium-purple">
                           💎 PREMIUM
                         </Badge>
                       )}
-                      <Badge className="bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold px-3 py-2">
+                      <Badge className="bg-gradient-to-r from-purple-600 to-violet-600 text-white text-sm font-bold px-4 py-2 rounded-lg">
                         ⚡ TRENDING
                       </Badge>
                     </div>

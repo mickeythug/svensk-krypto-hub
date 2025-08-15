@@ -521,13 +521,24 @@ All colors MUST be HSL.
   animation: shimmer 1.5s infinite;
 }
 
-  /* Professional spacing system - 8px grid */
+  /* Professional spacing system - 8px grid with improved consistency */
   .spacing-xs { margin: 0.25rem; padding: 0.25rem; } /* 4px */
   .spacing-sm { margin: 0.5rem; padding: 0.5rem; }   /* 8px */
   .spacing-md { margin: 1rem; padding: 1rem; }       /* 16px */
   .spacing-lg { margin: 1.5rem; padding: 1.5rem; }   /* 24px */
   .spacing-xl { margin: 2rem; padding: 2rem; }       /* 32px */
   .spacing-2xl { margin: 3rem; padding: 3rem; }      /* 48px */
+
+  /* Enhanced container spacing utilities for consistent layouts */
+  .container-spacing-tight { padding: 1rem 1.25rem; }  /* 16px 20px - Tighter for mobile */
+  .container-spacing-normal { padding: 1.5rem 2rem; }  /* 24px 32px - Standard desktop */
+  .container-spacing-spacious { padding: 2rem 3rem; }  /* 32px 48px - Hero sections */
+
+  /* Section spacing for better visual hierarchy */
+  .section-spacing-sm { margin-bottom: 2rem; }         /* 32px between small sections */
+  .section-spacing-md { margin-bottom: 3rem; }         /* 48px between medium sections */
+  .section-spacing-lg { margin-bottom: 4rem; }         /* 64px between large sections */
+  .section-spacing-xl { margin-bottom: 6rem; }         /* 96px between hero sections */
 
   /* Enhanced microanimations for professional feel */
   .micro-bounce {
@@ -593,24 +604,31 @@ All colors MUST be HSL.
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 
-  /* Enhanced focus states for accessibility */
+  /* Enhanced focus states for accessibility with premium feel */
   .focus-ring:focus {
     outline: none;
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.5);
+    box-shadow: 0 0 0 3px hsl(var(--meme-premium-purple) / 0.6);
+    border-color: hsl(var(--meme-premium-purple));
   }
 
-  /* Professional number formatting */
+  .focus-ring:focus-visible {
+    outline: 2px solid hsl(var(--meme-premium-purple));
+    outline-offset: 2px;
+  }
+
+  /* Professional number formatting with improved readability */
   .number-display {
     font-feature-settings: 'tnum' 1, 'zero' 1;
     font-variant-numeric: tabular-nums slashed-zero;
     letter-spacing: 0.025em;
+    line-height: 1.2; /* Tighter for numbers */
   }
 
-  /* Enhanced loading states */
+  /* Enhanced loading states with premium feel */
   .casino-loading {
     background: linear-gradient(90deg, 
       transparent, 
-      rgba(255,255,255,0.1), 
+      hsl(var(--meme-premium-purple) / 0.15), 
       transparent
     );
     background-size: 200% 100%;
@@ -620,6 +638,22 @@ All colors MUST be HSL.
   @keyframes casinoShimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
+  }
+
+  /* Improved text contrast utilities */
+  .text-contrast-high { 
+    color: hsl(0 0% 98%); 
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  }
+  
+  .text-contrast-medium { 
+    color: hsl(0 0% 85%); 
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+
+  .text-contrast-subtle { 
+    color: hsl(0 0% 70%); 
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
 
   /* Premium glass effects */

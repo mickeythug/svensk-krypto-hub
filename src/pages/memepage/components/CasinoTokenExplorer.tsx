@@ -370,23 +370,23 @@ const CasinoTokenExplorer = () => {
   return (
     <section 
       data-section="token-explorer" 
-      className="relative w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-black py-20"
+      className="relative w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-black section-spacing-xl"
     >
-      {/* Background Effects */}
+      {/* Enhanced Background Effects with better performance */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-meme-energy opacity-10 animate-pulse"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,hsl(330_100%_65%/0.2)_0%,transparent_50%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(186_100%_60%/0.2)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-gradient-premium-dark opacity-20 animate-pulse"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,hsl(270_70%_45%/0.15)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(190_75%_50%/0.12)_0%,transparent_50%)]"></div>
       </div>
 
-      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto container-spacing-normal">
         
-        {/* Header with enhanced typography */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="responsive-title font-black bg-gradient-casino-rainbow bg-clip-text text-transparent mb-4 sm:mb-6 text-glow">
+        {/* Header with improved typography and spacing */}
+        <div className="text-center section-spacing-lg">
+          <h2 className="responsive-title font-black bg-gradient-premium-purple bg-clip-text text-transparent mb-6 sm:mb-8 text-glow tracking-tight">
             🎰 TOKEN CASINO 🎰
           </h2>
-          <p className="responsive-subtitle text-white/90 max-w-3xl mx-auto font-bold px-4">
+          <p className="responsive-subtitle text-contrast-high max-w-4xl mx-auto font-bold px-4 leading-relaxed tracking-wide">
             Place your bets on the hottest Solana meme tokens. Live odds, real-time action!
           </p>
         </div>

@@ -47,39 +47,40 @@ export const NeonButton = React.forwardRef<HTMLButtonElement, NeonButtonProps>(
       <Button
         ref={ref}
         className={cn(
-          // Base neon button styles with professional spacing
-          'relative overflow-hidden font-bold transition-all duration-300 ease-out',
+          // Base neon button styles with optimized spacing
+          'relative overflow-hidden font-bold transition-all duration-250 ease-out',
           'border-2 rounded-xl backdrop-blur-sm casino-button focus-ring',
-          'transform-gpu perspective-1000',
+          'transform-gpu will-change-transform perspective-1000',
           
-          // Size variants
+          // Size variants with improved proportions
           sizes[size],
           
-          // Enhanced hover effects
-          'hover:scale-[1.05] hover:rotate-1 hover:-translate-y-1',
-          'active:scale-[0.98] active:rotate-0 active:translate-y-0',
+          // Refined hover effects for better UX
+          'hover:scale-[1.03] hover:rotate-[0.5deg] hover:-translate-y-0.5',
+          'active:scale-[0.98] active:rotate-0 active:translate-y-0 active:duration-100',
           
-          // Variant colors with better contrast
+          // Variant colors with enhanced contrast
           variants[variant],
           
-          // Glow effects with improved intensity
+          // Glow effects with optimized performance
           glow && glowVariants[variant],
           
-          // Pulse animation
+          // Pulse animation with smoother timing
           pulse && 'animate-pulse-glow',
           
-          // Enhanced shimmer effect
+          // Enhanced shimmer effect with better timing
           'before:absolute before:inset-0 before:bg-gradient-to-r',
-          'before:from-transparent before:via-white/25 before:to-transparent',
+          'before:from-transparent before:via-white/30 before:to-transparent',
           'before:translate-x-[-100%] hover:before:translate-x-[100%]',
-          'before:transition-transform before:duration-700 before:ease-out',
+          'before:transition-transform before:duration-600 before:ease-out',
+          'before:z-0',
           
-          // Professional focus state
+          // Professional focus state with better contrast
           'focus:outline-none focus:ring-2 focus:ring-offset-2',
           'focus:ring-offset-black focus:ring-current',
           
-          // Better disabled state
-          'disabled:opacity-50 disabled:cursor-not-allowed',
+          // Enhanced disabled state
+          'disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale',
           'disabled:hover:scale-100 disabled:hover:rotate-0 disabled:hover:translate-y-0',
           
           className

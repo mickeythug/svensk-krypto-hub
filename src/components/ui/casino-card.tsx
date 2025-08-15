@@ -37,46 +37,46 @@ export const CasinoCard = React.forwardRef<HTMLDivElement, CasinoCardProps>(
       <div
         ref={ref}
         className={cn(
-          // Base casino card styles with professional spacing
+          // Base casino card styles with premium spacing and performance
           'relative overflow-hidden rounded-2xl border-2 backdrop-blur-xl',
-          'transition-all duration-500 ease-out transform-gpu',
+          'transition-all duration-300 ease-out transform-gpu will-change-transform',
           
-          // Enhanced glass morphism
+          // Enhanced glass morphism with better depth
           'glass-premium',
           
-          // 3D Transform effects with better performance
+          // 3D Transform effects optimized for mobile
           'perspective-1000',
           
-          // Variant styles
+          // Variant styles with improved contrast
           variants[variant],
           
-          // Glow effects
+          // Glow effects with better performance
           glow && glowVariants[variant],
           
-          // Interactive states
+          // Interactive states with refined hover behavior
           interactive && [
             'cursor-pointer focus-ring',
-            'hover:scale-[1.03] hover:rotate-1 hover:shadow-2xl',
-            'hover:border-opacity-80 hover:bg-opacity-95',
-            'active:scale-[0.98] active:rotate-0',
-            'transition-transform duration-300 ease-out'
+            'hover:scale-[1.02] hover:rotate-[0.5deg] hover:shadow-2xl',
+            'hover:border-opacity-90 hover:bg-opacity-98',
+            'active:scale-[0.99] active:rotate-0 active:duration-100',
+            'transition-all duration-300 ease-out'
           ],
           
-          // Animation
+          // Animation with better performance
           animate && 'animate-pulse-glow',
           
-          // Professional shadow system
-          'shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]',
+          // Professional shadow system with depth layers
+          'shadow-[0_4px_16px_0_rgba(0,0,0,0.3),_0_8px_32px_0_rgba(0,0,0,0.2)]',
           
-          // Enhanced inner glow with better contrast
+          // Enhanced inner glow with improved visibility
           'before:absolute before:inset-0 before:rounded-2xl before:z-0',
-          'before:bg-gradient-to-br before:from-white/[0.12] before:to-transparent',
-          'before:pointer-events-none',
+          'before:bg-gradient-to-br before:from-white/[0.15] before:via-white/[0.08] before:to-transparent',
+          'before:pointer-events-none before:opacity-80',
           
-          // Subtle border enhancement
+          // Subtle border enhancement with better contrast
           'after:absolute after:inset-0 after:rounded-2xl after:z-0',
-          'after:bg-gradient-to-br after:from-transparent after:via-white/[0.05] after:to-transparent',
-          'after:pointer-events-none',
+          'after:bg-gradient-to-br after:from-transparent after:via-white/[0.08] after:to-transparent',
+          'after:pointer-events-none after:border after:border-white/10 after:rounded-2xl',
           
           className
         )}
