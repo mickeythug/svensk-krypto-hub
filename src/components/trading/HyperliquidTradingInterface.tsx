@@ -56,13 +56,7 @@ import { useTradingViewSymbol } from '@/hooks/useTradingViewSymbol';
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import { useBinanceTicker } from '@/hooks/useBinanceTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
-import ReferenceOrderBook from './ReferenceOrderBook';
-import ReferenceTradingPanel from './ReferenceTradingPanel';
-import ReferenceMarketStats from './ReferenceMarketStats';
-import ReferenceTokenInfo from './ReferenceTokenInfo';
-import ProfessionalBottomPanels from './ProfessionalBottomPanels';
-import TokenSearchBar from '../TokenSearchBar';
-import TradingTokenSidebar from './TradingTokenSidebar';
+import ProductionTradingInterface from './ProductionTradingInterface';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HyperliquidTradingInterfaceProps {
@@ -197,100 +191,13 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0B0F]">
-      {/* Reference Trading Interface Grid Layout */}
-      <div className="grid grid-cols-[300px_1fr_350px] grid-rows-[60px_1fr_200px] gap-3 h-screen p-3">
-        
-        {/* Header Spanning All Columns */}
-        <div className="col-span-3 bg-[#12131A] border border-gray-800 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            {/* Token Info */}
-            <div className="flex items-center gap-4">
-              {crypto?.image && (
-                <img
-                  src={crypto.image}
-                  alt={`${tokenName} logo`}
-                  className="h-10 w-10 rounded-full"
-                />
-              )}
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold text-white">{symbol}</span>
-                  <Badge className={`px-2 py-1 text-xs ${
-                    realTickerData.priceChange24h >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                  }`}>
-                    {realTickerData.priceChange24h >= 0 ? '+' : ''}{realTickerData.priceChange24h.toFixed(2)}%
-                  </Badge>
-                </div>
-                <div className="text-xs text-gray-400">
-                  Price: ${formatPrice(realTimePrice)} | Liquidity: $28.6K | Supply: 1B
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <TokenSearchBar 
-                currentSymbol={symbol}
-                placeholder="Search tokens..."
-              />
-              <Button variant="outline" size="sm" className="bg-gray-800 border-gray-700 text-gray-300">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Order Book - Left Column */}
-        <div className="row-span-2 bg-[#12131A] border border-gray-800 rounded-lg overflow-hidden">
-          <ReferenceOrderBook 
-            symbol={symbol}
-            currentPrice={realTimePrice}
-            orderBook={orderBook}
-            isConnected={isConnected}
-          />
-        </div>
-
-        {/* Chart - Center Column */}
-        <div className="bg-[#12131A] border border-gray-800 rounded-lg overflow-hidden">
-          <TradingViewChart 
-            symbol={symbol} 
-            currentPrice={realTimePrice}
-            limitLines={limitLines} 
-            coinGeckoId={crypto?.coinGeckoId} 
-          />
-        </div>
-
-        {/* Trading Panel - Right Column */}
-        <div className="bg-[#12131A] border border-gray-800 rounded-lg overflow-hidden">
-          <ReferenceTradingPanel 
-            symbol={symbol}
-            currentPrice={realTimePrice}
-            tokenName={tokenName}
-            volume24h={realTickerData.volume24h}
-            priceChange24h={realTickerData.priceChange24h}
-          />
-        </div>
-
-        {/* Market Stats - Center Bottom */}
-        <div className="bg-[#12131A] border border-gray-800 rounded-lg overflow-hidden">
-          <ReferenceMarketStats 
-            marketCap={realTickerData.marketCap}
-            volume={realTickerData.volume24h}
-            marketCapChange={-3.24}
-            volumeChange={7.70}
-          />
-        </div>
-
-        {/* Token Info - Right Bottom */}
-        <div className="bg-[#12131A] border border-gray-800 rounded-lg overflow-hidden">
-          <ReferenceTokenInfo 
-            tokenName={tokenName}
-            symbol={symbol}
-          />
-        </div>
-      </div>
-    </div>
+    <ProductionTradingInterface 
+      symbol={symbol}
+      currentPrice={realTimePrice}
+      priceChange24h={realTickerData.priceChange24h}
+      tokenName={tokenName}
+      crypto={crypto}
+    />
   );
 };
 
