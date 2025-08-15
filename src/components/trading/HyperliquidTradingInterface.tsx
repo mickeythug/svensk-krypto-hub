@@ -32,7 +32,8 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Menu
 } from "lucide-react";
 import TradingViewChart from "../TradingViewChart";
 import { useCryptoData } from '@/hooks/useCryptoData';
@@ -57,6 +58,7 @@ import HyperliquidTradingPanel from './HyperliquidTradingPanel';
 import ModernMarketStats from './ModernMarketStats';
 import ProfessionalBottomPanels from './ProfessionalBottomPanels';
 import TokenSearchBar from '../TokenSearchBar';
+import TradingTokenSidebar from './TradingTokenSidebar';
 
 interface HyperliquidTradingInterfaceProps {
   symbol: string;
@@ -77,6 +79,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [showAdvancedStats, setShowAdvancedStats] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [tokenSidebarCollapsed, setTokenSidebarCollapsed] = useState(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   const [liveDataEnabled, setLiveDataEnabled] = useState(true);
   const [limitLines, setLimitLines] = useState<{ price: number; side: 'buy'|'sell' }[]>([]);
@@ -177,6 +180,12 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
 
   return (
     <div className="flex min-h-screen bg-gray-950">
+      {/* Left Token Sidebar */}
+      <TradingTokenSidebar 
+        collapsed={tokenSidebarCollapsed}
+        onToggle={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
+      />
+
       {/* Main Trading Area */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* Professional Header */}
@@ -185,6 +194,16 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
             {/* Top Row */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-6">
+                {/* Sidebar Toggle */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
+                  className="h-10 px-3 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+
                 {/* Token Info */}
                 <div className="flex items-center gap-3">
                   {crypto?.image && (
