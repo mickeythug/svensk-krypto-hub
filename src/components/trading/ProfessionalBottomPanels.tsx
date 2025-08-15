@@ -127,51 +127,51 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
   };
 
   return (
-    <div className="h-[600px] px-4 pb-4">
-      <Card className="h-full bg-black border-primary/30 backdrop-blur-sm shadow-2xl shadow-primary/10 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
+    <div className="h-[600px] px-6 pb-6">
+      <Card className="h-full bg-card/95 border-border backdrop-blur-sm shadow-elevation-4 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
         <div className="relative z-10 h-full">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <div className="p-4 pb-0">
-              <TabsList className="bg-black/80 border border-primary/30 rounded-lg p-1 backdrop-blur-sm animate-fade-in">
+            <div className="p-6 pb-0">
+              <TabsList className="bg-muted/80 border border-border rounded-xl p-1.5 backdrop-blur-sm animate-fade-in shadow-elevation-2">
                 <TabsTrigger 
                   value="trade" 
-                  className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-md transition-all duration-300 hover-scale text-white hover:bg-primary/20"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  {t('trading.trade')}
+                  <BarChart3 className="h-5 w-5 mr-2" />
+                  <span className="text-binance-body">{t('trading.trade')}</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="positions" 
-                  className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-md transition-all duration-300 hover-scale text-white hover:bg-primary/20"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
-                  <Target className="h-4 w-4 mr-2" />
-                  {t('trading.positions')}
-                  <Badge variant="outline" className="ml-2 text-xs bg-primary/10 border-primary/40 text-primary animate-pulse">
+                  <Target className="h-5 w-5 mr-2" />
+                  <span className="text-binance-body">{t('trading.positions')}</span>
+                  <Badge variant="outline" className="ml-3 text-xs bg-primary/10 border-primary/40 text-primary animate-pulse">
                     {positions.length}
                   </Badge>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="orders" 
-                  className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-md transition-all duration-300 hover-scale text-white hover:bg-primary/20"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
-                  <Clock className="h-4 w-4 mr-2" />
-                  {t('trading.openOrders')}
-                  <Badge variant="outline" className="ml-2 text-xs bg-primary/10 border-primary/40 text-primary animate-pulse">
+                  <Clock className="h-5 w-5 mr-2" />
+                  <span className="text-binance-body">{t('trading.openOrders')}</span>
+                  <Badge variant="outline" className="ml-3 text-xs bg-primary/10 border-primary/40 text-primary animate-pulse">
                     {openOrders.length}
                   </Badge>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="balances" 
-                  className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-black data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-md transition-all duration-300 hover-scale text-white hover:bg-primary/20"
+                  className="px-8 py-3 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg data-[state=active]:shadow-primary/20 rounded-lg transition-all duration-300 hover-scale text-foreground hover:bg-accent/50"
                 >
-                  <Wallet className="h-4 w-4 mr-2" />
-                  {t('trading.walletBalances')}
+                  <Wallet className="h-5 w-5 mr-2" />
+                  <span className="text-binance-body">{t('trading.walletBalances')}</span>
                 </TabsTrigger>
               </TabsList>
             </div>
             
-            <div className="flex-1 min-h-0 p-4 pt-3">
+            <div className="flex-1 min-h-0 p-6 pt-4">
               <TabsContent value="trade" className="h-full m-0 animate-fade-in">
                 <ComprehensiveTradingPanel 
                   symbol={symbol}
@@ -184,23 +184,23 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
               
               <TabsContent value="positions" className="h-full m-0 animate-fade-in">
                 <div className="h-full flex flex-col">
-                  {/* Header */}
-                  <div className="grid grid-cols-8 gap-4 text-xs font-medium text-primary/80 mb-3 pb-2 border-b border-primary/20">
-                    <span>Symbol</span>
-                    <span>Side</span>
-                    <span>Size</span>
-                    <span>Entry Price</span>
-                    <span>Mark Price</span>
-                    <span>PnL</span>
-                    <span>Margin</span>
-                    <span>Actions</span>
+                  {/* Header - Enhanced Typography */}
+                  <div className="grid grid-cols-8 gap-6 text-sm font-medium text-muted-foreground mb-4 pb-3 border-b border-border">
+                    <span className="text-binance-secondary">Symbol</span>
+                    <span className="text-binance-secondary">Side</span>
+                    <span className="text-binance-secondary">Size</span>
+                    <span className="text-binance-secondary">Entry Price</span>
+                    <span className="text-binance-secondary">Mark Price</span>
+                    <span className="text-binance-secondary">PnL</span>
+                    <span className="text-binance-secondary">Margin</span>
+                    <span className="text-binance-secondary">Actions</span>
                   </div>
 
                   {/* Positions */}
-                  <div className="flex-1 space-y-2 overflow-y-auto">
+                  <div className="flex-1 space-y-3 overflow-y-auto">
                     {positions.length === 0 ? (
-                      <div className="flex items-center justify-center h-32 text-primary/60">
-                        <p>No open positions</p>
+                      <div className="flex items-center justify-center h-32 text-muted-foreground">
+                        <p className="text-binance-body">No open positions</p>
                       </div>
                     ) : (
                       positions.map((position: any, index: number) => (
@@ -248,45 +248,45 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
 
               <TabsContent value="orders" className="h-full m-0 animate-fade-in">
                 <div className="h-full flex flex-col">
-                  {/* Header */}
-                  <div className="grid grid-cols-8 gap-4 text-xs font-medium text-primary/80 mb-3 pb-2 border-b border-primary/20">
-                    <span>Symbol</span>
-                    <span>Side</span>
-                    <span>Type</span>
-                    <span>Amount</span>
-                    <span>Price</span>
-                    <span>Status</span>
-                    <span>Time</span>
-                    <span>Actions</span>
+                  {/* Header - Enhanced Typography */}
+                  <div className="grid grid-cols-8 gap-6 text-sm font-medium text-muted-foreground mb-4 pb-3 border-b border-border">
+                    <span className="text-binance-secondary">Symbol</span>
+                    <span className="text-binance-secondary">Side</span>
+                    <span className="text-binance-secondary">Type</span>
+                    <span className="text-binance-secondary">Amount</span>
+                    <span className="text-binance-secondary">Price</span>
+                    <span className="text-binance-secondary">Status</span>
+                    <span className="text-binance-secondary">Time</span>
+                    <span className="text-binance-secondary">Actions</span>
                   </div>
 
                   {/* Open Orders */}
-                  <div className="flex-1 space-y-2 overflow-y-auto">
+                  <div className="flex-1 space-y-3 overflow-y-auto">
                     {openOrders.length === 0 ? (
-                      <div className="flex items-center justify-center h-32 text-primary/60">
-                        <p>No open orders</p>
+                      <div className="flex items-center justify-center h-32 text-muted-foreground">
+                        <p className="text-binance-body">No open orders</p>
                       </div>
                     ) : (
                       openOrders.map((order: any, index: number) => (
                         <motion.div
                           key={order.id}
-                          className="grid grid-cols-8 gap-4 items-center py-3 px-3 rounded-lg bg-black/60 border border-primary/10 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 hover-scale"
+                          className="grid grid-cols-8 gap-6 items-center py-4 px-4 rounded-xl bg-muted/30 border border-border hover:border-primary/30 hover:bg-accent/10 transition-all duration-300 hover-scale"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
                         >
-                          <span className="text-white font-medium">{order.symbol}</span>
+                          <span className="text-foreground font-medium text-binance-body">{order.symbol}</span>
                           <span className={getSideColor(order.side)}>{order.side.toUpperCase()}</span>
-                          <span className="text-primary/80 uppercase">{order.type}</span>
-                          <span className="text-primary/80 font-mono">{order.amount}</span>
-                          <span className="text-primary/80 font-mono">${formatPrice(order.price)}</span>
-                          <div className="flex items-center gap-1">
+                          <span className="text-muted-foreground uppercase text-binance-secondary">{order.type}</span>
+                          <span className="text-foreground font-mono important-number">{order.amount}</span>
+                          <span className="text-foreground font-mono important-number">${formatPrice(order.price)}</span>
+                          <div className="flex items-center gap-2">
                             {getStatusIcon(order.status)}
-                            <span className="text-primary/80 capitalize">{order.status}</span>
+                            <span className="text-muted-foreground capitalize text-binance-secondary">{order.status}</span>
                           </div>
-                          <span className="text-primary/60 font-mono text-xs">{order.time}</span>
-                          <div className="flex gap-1">
-                            <Button variant="outline" size="sm" className="h-8 px-2 text-xs bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300">
+                          <span className="text-muted-foreground font-mono text-binance-secondary">{order.time}</span>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" className="h-9 px-3 text-sm bg-destructive/10 border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all duration-300">
                               Cancel
                             </Button>
                           </div>
@@ -346,32 +346,32 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
 
               <TabsContent value="balances" className="h-full m-0 animate-fade-in">
                 <div className="h-full flex flex-col">
-                  {/* Header */}
-                  <div className="grid grid-cols-4 gap-4 text-xs font-medium text-primary/80 mb-3 pb-2 border-b border-primary/20">
-                    <span>Asset</span>
-                    <span>Free</span>
-                    <span>Locked</span>
-                    <span>Total</span>
+                  {/* Header - Enhanced Typography */}
+                  <div className="grid grid-cols-4 gap-6 text-sm font-medium text-muted-foreground mb-4 pb-3 border-b border-border">
+                    <span className="text-binance-secondary">Asset</span>
+                    <span className="text-binance-secondary">Free</span>
+                    <span className="text-binance-secondary">Locked</span>
+                    <span className="text-binance-secondary">Total</span>
                   </div>
 
                   {/* Real Balances */}
-                  <div className="flex-1 space-y-2 overflow-y-auto">
+                  <div className="flex-1 space-y-3 overflow-y-auto">
                     {realBalances.map((balance: any, index: number) => (
                       <motion.div
                         key={balance.asset}
-                        className="grid grid-cols-4 gap-4 items-center py-3 px-3 rounded-lg bg-black/60 border border-primary/10 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300 hover-scale"
+                        className="grid grid-cols-4 gap-6 items-center py-4 px-4 rounded-xl bg-muted/30 border border-border hover:border-primary/30 hover:bg-accent/10 transition-all duration-300 hover-scale"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-bold text-primary">{balance.asset[0]}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-primary/20 border border-primary/30 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-bold text-primary">{balance.asset[0]}</span>
                           </div>
-                          <span className="text-white font-medium">{balance.asset}</span>
+                          <span className="text-foreground font-medium text-binance-body">{balance.asset}</span>
                         </div>
-                        <span className="text-primary/80 font-mono">{balance.free.toFixed(6)}</span>
-                        <span className="text-primary/80 font-mono">{balance.locked.toFixed(6)}</span>
+                        <span className="text-foreground font-mono important-number">{balance.free.toFixed(6)}</span>
+                        <span className="text-foreground font-mono important-number">{balance.locked.toFixed(6)}</span>
                         <span className="text-primary font-mono font-semibold">{balance.total.toFixed(6)}</span>
                       </motion.div>
                     ))}

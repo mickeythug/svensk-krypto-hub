@@ -198,7 +198,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-950">
+    <div className="flex min-h-screen bg-background">
       {/* Left Token Sidebar */}
       <TradingTokenSidebar 
         collapsed={tokenSidebarCollapsed}
@@ -207,71 +207,73 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
 
       {/* Main Trading Area */}
       <div className="flex-1 flex flex-col max-w-[calc(100vw-360px)]">
-        {/* Professional Header */}
-        <div className="bg-gray-900/95 border-b border-gray-800/50 backdrop-blur-sm">
-          <div className="p-4">
-            {/* Top Row */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-6">
-                {/* Sidebar Toggle */}
+        {/* Professional Header - Enhanced */}
+        <div className="bg-card/95 border-b border-border backdrop-blur-sm shadow-elevation-2">
+          <div className="p-6">
+            {/* Top Row - Enhanced Typography & Spacing */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-8">
+                {/* Sidebar Toggle - Modern Design */}
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
-                  className="h-10 px-3 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                  className="h-12 px-4 bg-muted/50 border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
                 >
-                  <Menu className="h-4 w-4" />
+                  <Menu className="h-5 w-5" />
                 </Button>
 
-                {/* Token Info */}
-                <div className="flex items-center gap-3">
+                {/* Token Info - Enhanced Visual Hierarchy */}
+                <div className="flex items-center gap-4">
                   {crypto?.image && (
-                    <div className="relative">
+                    <div className="relative group">
+                      <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg group-hover:bg-primary/30 transition-all duration-300"></div>
                       <img
                         src={crypto.image}
                         alt={`${tokenName} logo`}
-                        className="h-12 w-12 rounded-full ring-2 ring-primary/20 shadow-lg"
+                        className="relative h-16 w-16 rounded-full ring-2 ring-primary/30 shadow-elevation-3 group-hover:ring-primary/50 transition-all duration-300"
                       />
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-background shadow-lg animate-pulse"></div>
                     </div>
                   )}
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h1 className="text-2xl font-bold text-white font-mono">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-3xl font-bold text-foreground font-binance important-number">
                         ${formatPrice(realTimePrice)}
                       </h1>
                       <Badge 
                         variant={realTickerData.priceChange24h >= 0 ? "default" : "destructive"}
-                        className="px-2 py-1 text-xs font-medium"
+                        className="px-3 py-2 text-sm font-medium shadow-lg animate-fade-in"
                       >
-                        {realTickerData.priceChange24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                        {realTickerData.priceChange24h >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
                         {realTickerData.priceChange24h >= 0 ? '+' : ''}{realTickerData.priceChange24h.toFixed(2)}%
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <span className="font-medium">{symbol}/USDT</span>
-                      <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-4 text-base text-muted-foreground">
+                      <span className="font-medium text-binance-body">{symbol}/USDT</span>
+                      <div className="flex items-center gap-2 group hover:text-foreground transition-colors duration-300">
                         {live ? (
-                          <Wifi className="h-3 w-3 text-green-400" />
+                          <Wifi className="h-4 w-4 text-success animate-pulse" />
                         ) : (
-                          <WifiOff className="h-3 w-3 text-red-400" />
+                          <WifiOff className="h-4 w-4 text-destructive" />
                         )}
-                        <span className="text-xs">{live ? t('trading.live') : t('trading.offline')}</span>
+                        <span className="text-sm font-medium">{live ? t('trading.live') : t('trading.offline')}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Activity className="h-3 w-3 text-blue-400" />
-                        <span className="text-xs">{realTickerData.orderCount} {t('trading.orders')}</span>
+                      <div className="flex items-center gap-2 group hover:text-foreground transition-colors duration-300">
+                        <Activity className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">{realTickerData.orderCount} {t('trading.orders')}</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3 text-primary" />
-                        <span className="text-xs">{realTickerData.traders} {t('trading.traders')}</span>
+                      <div className="flex items-center gap-2 group hover:text-foreground transition-colors duration-300">
+                        <Users className="h-4 w-4 text-accent" />
+                        <span className="text-sm font-medium">{realTickerData.traders} {t('trading.traders')}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Real Search Bar */}
-                <div className="relative w-80">
+                {/* Enhanced Search Bar */}
+                <div className="relative w-96 group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 blur-sm"></div>
                   <TokenSearchBar 
                     currentSymbol={symbol}
                     placeholder="Search tokens..."
@@ -279,40 +281,44 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              {/* Action Buttons - Premium Design */}
+              <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setIsWatchlisted(!isWatchlisted)}
-                  className={`h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 ${
-                    isWatchlisted ? 'text-yellow-400 border-yellow-400/30' : 'text-gray-300'
+                  className={`h-12 px-5 bg-muted/50 border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale ${
+                    isWatchlisted ? 'text-warning border-warning/30 bg-warning/10' : ''
                   }`}
                 >
-                  <Star className={`h-4 w-4 ${isWatchlisted ? 'fill-current' : ''}`} />
+                  <Star className={`h-4 w-4 mr-2 ${isWatchlisted ? 'fill-current' : ''}`} />
+                  <span className="font-medium">{isWatchlisted ? 'Watching' : 'Watch'}</span>
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                  className="h-12 px-5 bg-muted/50 border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
                   onClick={() => copyToClipboard(window.location.href)}
                 >
-                  <Share className="h-4 w-4" />
+                  <Share className="h-4 w-4 mr-2" />
+                  <span className="font-medium">Share</span>
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                  className="h-12 px-5 bg-muted/50 border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
                 >
-                  <Bell className="h-4 w-4" />
+                  <Bell className="h-4 w-4 mr-2" />
+                  <span className="font-medium">Alerts</span>
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                  className="h-12 px-5 bg-muted/50 border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
                   onClick={() => setShowAdvancedStats(!showAdvancedStats)}
                 >
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-4 w-4 mr-2" />
+                  <span className="font-medium">Settings</span>
                 </Button>
               </div>
             </div>
@@ -325,9 +331,10 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           </div>
         </div>
 
-        {/* Chart Area - Original Size */}
-        <div className="h-[950px] p-4">
-          <div className="h-full w-full rounded-xl overflow-hidden border border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
+        {/* Chart Area - Premium Container */}
+        <div className="h-[950px] p-6">
+          <div className="h-full w-full rounded-2xl overflow-hidden border border-border shadow-elevation-4 bg-card backdrop-blur-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none rounded-2xl"></div>
             <TradingViewChart 
               symbol={symbol} 
               currentPrice={realTimePrice}
@@ -352,42 +359,45 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
         />
       </div>
 
-      {/* Right Sidebar */}
+      {/* Right Sidebar - Enhanced */}
       <motion.div 
-        className="bg-gray-900/95 border-l border-gray-800/50 backdrop-blur-sm"
-        animate={{ width: sidebarCollapsed ? 50 : 320 }}
+        className="bg-card/95 border-l border-border backdrop-blur-sm shadow-elevation-3"
+        animate={{ width: sidebarCollapsed ? 60 : 380 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <div className="h-full flex flex-col">
-          {/* Sidebar Header */}
-          <div className="p-4 border-b border-gray-800/50">
+          {/* Sidebar Header - Enhanced */}
+          <div className="p-6 border-b border-border">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">{t('trading.marketDepth')}</h3>
+              <h3 className="text-xl font-semibold text-foreground section-title">{t('trading.marketDepth')}</h3>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="text-gray-400 hover:text-white"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent transition-all duration-300 hover-scale"
               >
-                {sidebarCollapsed ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {sidebarCollapsed ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
               </Button>
             </div>
           </div>
 
-          {/* Trading content - always show, but adapt to collapsed state */}
+          {/* Trading content - Enhanced responsive behavior */}
           {sidebarCollapsed ? (
-            // Collapsed view - minimal
-            <div className="flex flex-col h-full justify-center items-center p-2 space-y-2">
-               <div className="text-xs text-gray-400 text-center">
-                 <div className="mb-1">{t('trading.currentPrice')}</div>
-                 <div className="font-mono text-white text-sm">${realTimePrice.toFixed(6)}</div>
+            // Collapsed view - Enhanced minimal
+            <div className="flex flex-col h-full justify-center items-center p-3 space-y-4">
+               <div className="text-center space-y-2">
+                 <div className="text-sm text-muted-foreground font-medium">{t('trading.currentPrice')}</div>
+                 <div className="font-binance text-foreground text-lg important-number">${realTimePrice.toFixed(6)}</div>
+               </div>
+               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                 <Activity className="h-4 w-4 text-primary animate-pulse" />
                </div>
             </div>
           ) : (
-            // Expanded view - full trading interface
+            // Expanded view - Enhanced trading interface
             <div className="flex flex-col h-full">
-              {/* Modern Order Book - Full sidebar */}
-              <div className="flex-1 p-4 min-h-0">
+              {/* Enhanced Order Book */}
+              <div className="flex-1 p-6 min-h-0">
                 <ModernOrderBook 
                   symbol={symbol}
                   currentPrice={realTimePrice}
