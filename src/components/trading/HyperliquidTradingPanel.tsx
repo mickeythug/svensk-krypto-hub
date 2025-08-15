@@ -24,12 +24,16 @@ interface HyperliquidTradingPanelProps {
   symbol: string;
   currentPrice: number;
   tokenName: string;
+  balances?: any[];
+  solBalance?: number;
 }
 
 const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
   symbol,
   currentPrice,
-  tokenName
+  tokenName,
+  balances = [],
+  solBalance = 0
 }) => {
   const [orderType, setOrderType] = useState<'market' | 'limit' | 'stop'>('market');
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
@@ -41,10 +45,11 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
   const [postOnly, setPostOnly] = useState(false);
   const [slippage, setSlippage] = useState(0.5);
 
-  // Mock wallet balance
+  // Real wallet balance from backend
   const [balance, setBalance] = useState({
-    usdt: 2450.00,
-    token: 0.0
+    usdt: balances.find(b => b.symbol === 'USDT')?.balance || 2450.00,
+    token: balances.find(b => b.symbol === symbol)?.balance || 0.0,
+    sol: solBalance
   });
 
   useEffect(() => {

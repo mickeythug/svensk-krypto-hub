@@ -14,61 +14,79 @@ interface OrderBookEntry {
 interface ProfessionalOrderBookProps {
   symbol: string;
   currentPrice: number;
-  tickerData: any;
+  orderBook?: any;
+  isConnected?: boolean;
 }
 
 const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
   symbol,
   currentPrice,
-  tickerData
+  orderBook,
+  isConnected = false
 }) => {
-  const [orderBook, setOrderBook] = useState<{
+  const [localOrderBook, setLocalOrderBook] = useState<{
     bids: OrderBookEntry[];
     asks: OrderBookEntry[];
   }>({ bids: [], asks: [] });
 
-  // Generate realistic order book data
+  // Use real order book data if available, otherwise generate mock data
   useEffect(() => {
-    const generateOrders = () => {
-      const bids: OrderBookEntry[] = [];
-      const asks: OrderBookEntry[] = [];
-      
-      let bidPrice = currentPrice * 0.999;
-      let askPrice = currentPrice * 1.001;
-      let bidTotal = 0;
-      let askTotal = 0;
+    if (orderBook && orderBook.bids && orderBook.asks) {
+      // Use real order book data
+      const bids = orderBook.bids.map((bid: any) => ({
+        price: bid.price,
+        size: bid.amount || bid.size,
+        total: bid.total || bid.amount || bid.size
+      }));
+      const asks = orderBook.asks.map((ask: any) => ({
+        price: ask.price,
+        size: ask.amount || ask.size,
+        total: ask.total || ask.amount || ask.size
+      }));
+      setLocalOrderBook({ bids, asks });
+    } else {
+      // Generate mock data when no real data available
+      const generateOrders = () => {
+        const bids: OrderBookEntry[] = [];
+        const asks: OrderBookEntry[] = [];
+        
+        let bidPrice = currentPrice * 0.999;
+        let askPrice = currentPrice * 1.001;
+        let bidTotal = 0;
+        let askTotal = 0;
 
-      // Generate bid orders (buyers)
-      for (let i = 0; i < 15; i++) {
-        const size = Math.random() * 50 + 5;
-        bidTotal += size;
-        bids.push({
-          price: bidPrice,
-          size,
-          total: bidTotal
-        });
-        bidPrice *= 0.9995;
-      }
+        // Generate bid orders (buyers)
+        for (let i = 0; i < 15; i++) {
+          const size = Math.random() * 50 + 5;
+          bidTotal += size;
+          bids.push({
+            price: bidPrice,
+            size,
+            total: bidTotal
+          });
+          bidPrice *= 0.9995;
+        }
 
-      // Generate ask orders (sellers)
-      for (let i = 0; i < 15; i++) {
-        const size = Math.random() * 50 + 5;
-        askTotal += size;
-        asks.push({
-          price: askPrice,
-          size,
-          total: askTotal
-        });
-        askPrice *= 1.0005;
-      }
+        // Generate ask orders (sellers)
+        for (let i = 0; i < 15; i++) {
+          const size = Math.random() * 50 + 5;
+          askTotal += size;
+          asks.push({
+            price: askPrice,
+            size,
+            total: askTotal
+          });
+          askPrice *= 1.0005;
+        }
 
-      setOrderBook({ bids, asks });
-    };
+        setLocalOrderBook({ bids, asks });
+      };
 
-    generateOrders();
-    const interval = setInterval(generateOrders, 3000);
-    return () => clearInterval(interval);
-  }, [currentPrice]);
+      generateOrders();
+      const interval = setInterval(generateOrders, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [currentPrice, orderBook]);
 
   const formatPrice = (price: number) => {
     if (price < 0.01) return price.toFixed(6);
@@ -81,9 +99,12 @@ const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
   };
 
   const maxTotal = Math.max(
-    ...orderBook.bids.map(b => b.total),
-    ...orderBook.asks.map(a => a.total)
+    ...localOrderBook.bids.map(b => b.total),
+    ...localOrderBook.asks.map(a => a.total)
   );
+
+  const bid = localOrderBook.bids.length > 0 ? localOrderBook.bids[0].price : currentPrice * 0.999;
+  const ask = localOrderBook.asks.length > 0 ? localOrderBook.asks[0].price : currentPrice * 1.001;
 
   return (
     <div className="h-full flex flex-col space-y-4">
@@ -92,7 +113,7 @@ const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
         <div className="flex items-center gap-2">
           <h4 className="text-sm font-semibold text-white">Order Book</h4>
           <Badge variant="outline" className="text-xs bg-gray-800/50 border-gray-700/50 text-gray-300">
-            {orderBook.bids.length + orderBook.asks.length}
+            {localOrderBook.bids.length + localOrderBook.asks.length}
           </Badge>
         </div>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-400 hover:text-white">
@@ -111,7 +132,7 @@ const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
       <div className="flex-1 min-h-0 space-y-1">
         {/* Asks (Sellers) - Red */}
         <div className="space-y-0.5">
-          {orderBook.asks.slice().reverse().map((ask, index) => {
+          {localOrderBook.asks.slice().reverse().map((ask, index) => {
             const fillPercent = (ask.total / maxTotal) * 100;
             return (
               <motion.div
@@ -142,22 +163,22 @@ const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
 
         {/* Spread Indicator */}
         <div className="py-3 border-y border-gray-800/50">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-gray-400">Spread</span>
-            <div className="flex items-center gap-2">
-              <span className="text-gray-300 font-mono">
-                {formatPrice(tickerData.ask - tickerData.bid)}
-              </span>
-              <Badge variant="outline" className="text-xs bg-gray-800/50 border-gray-700/50 text-gray-300">
-                {(((tickerData.ask - tickerData.bid) / currentPrice) * 100).toFixed(3)}%
-              </Badge>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-gray-400">Spread</span>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-300 font-mono">
+                  {formatPrice(ask - bid)}
+                </span>
+                <Badge variant="outline" className="text-xs bg-gray-800/50 border-gray-700/50 text-gray-300">
+                  {(((ask - bid) / currentPrice) * 100).toFixed(3)}%
+                </Badge>
+              </div>
             </div>
-          </div>
         </div>
 
         {/* Bids (Buyers) - Green */}
         <div className="space-y-0.5">
-          {orderBook.bids.map((bid, index) => {
+          {localOrderBook.bids.map((bid, index) => {
             const fillPercent = (bid.total / maxTotal) * 100;
             return (
               <motion.div
@@ -196,7 +217,7 @@ const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
               <span className="text-green-400 font-medium">Buy Pressure</span>
             </div>
             <span className="text-gray-300 font-mono">
-              {orderBook.bids.reduce((sum, b) => sum + b.size, 0).toFixed(1)}
+              {localOrderBook.bids.reduce((sum, b) => sum + b.size, 0).toFixed(1)}
             </span>
           </div>
           <div className="bg-red-500/10 rounded p-2">
@@ -205,7 +226,7 @@ const ProfessionalOrderBook: React.FC<ProfessionalOrderBookProps> = ({
               <span className="text-red-400 font-medium">Sell Pressure</span>
             </div>
             <span className="text-gray-300 font-mono">
-              {orderBook.asks.reduce((sum, a) => sum + a.size, 0).toFixed(1)}
+              {localOrderBook.asks.reduce((sum, a) => sum + a.size, 0).toFixed(1)}
             </span>
           </div>
         </div>

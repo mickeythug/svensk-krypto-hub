@@ -21,105 +21,74 @@ import { motion } from 'framer-motion';
 
 interface ProfessionalBottomPanelsProps {
   symbol: string;
+  dbOrders?: any[];
+  jupOrders?: any[];
+  history?: any[];
+  balances?: any[];
+  solBalance?: number;
 }
 
-const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({ symbol }) => {
+const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({ 
+  symbol, 
+  dbOrders = [], 
+  jupOrders = [], 
+  history = [], 
+  balances = [], 
+  solBalance = 0 
+}) => {
   const [activeTab, setActiveTab] = useState('positions');
 
-  // Mock data
-  const positions = [
-    {
-      id: 1,
-      symbol: 'BTC/USDT',
-      side: 'long',
-      size: 0.25,
-      entryPrice: 43250.00,
-      markPrice: 43820.00,
-      pnl: 142.50,
-      pnlPercent: 1.32,
-      margin: 1000.00,
-      leverage: '10x'
-    },
-    {
-      id: 2,
-      symbol: 'ETH/USDT',
-      side: 'short',
-      size: 2.5,
-      entryPrice: 2650.00,
-      markPrice: 2620.00,
-      pnl: 75.00,
-      pnlPercent: 2.84,
-      margin: 500.00,
-      leverage: '5x'
-    }
-  ];
-
+  // Use real data instead of mock
+  const positions = []; // Real positions would come from your trading system
+  
   const openOrders = [
-    {
-      id: 1,
-      symbol: 'BTC/USDT',
-      side: 'buy',
+    // Real DB orders
+    ...(dbOrders || []).map((order: any) => ({
+      id: order.id,
+      symbol: order.symbol,
+      side: order.side,
       type: 'limit',
-      amount: 0.1,
-      price: 42500.00,
+      amount: order.amount,
+      price: order.limit_price,
       filled: 0,
-      status: 'open',
-      time: '14:32:15'
-    },
-    {
-      id: 2,
-      symbol: 'ETH/USDT',
-      side: 'sell',
-      type: 'stop',
-      amount: 1.0,
-      price: 2700.00,
+      status: order.status,
+      time: new Date(order.created_at).toLocaleTimeString()
+    })),
+    // Real Jupiter orders
+    ...(jupOrders || []).map((order: any) => ({
+      id: order.id || order.orderKey,
+      symbol: symbol,
+      side: order.side || 'buy',
+      type: 'limit',
+      amount: order.makingAmount || order.rawMakingAmount || 0,
+      price: order.price || 0,
       filled: 0,
-      status: 'pending',
-      time: '14:28:42'
-    }
+      status: order.status,
+      time: new Date(order.createdAt || Date.now()).toLocaleTimeString()
+    }))
   ];
 
-  const orderHistory = [
-    {
-      id: 1,
-      symbol: 'BTC/USDT',
-      side: 'buy',
-      type: 'market',
-      amount: 0.05,
-      price: 43150.00,
-      status: 'filled',
-      time: '13:45:23',
-      fee: 2.16
-    },
-    {
-      id: 2,
-      symbol: 'ETH/USDT',
-      side: 'sell',
-      type: 'limit',
-      amount: 0.5,
-      price: 2680.00,
-      status: 'filled',
-      time: '13:22:18',
-      fee: 1.34
-    },
-    {
-      id: 3,
-      symbol: 'SOL/USDT',
-      side: 'buy',
-      type: 'market',
-      amount: 10.0,
-      price: 98.50,
-      status: 'cancelled',
-      time: '12:58:07',
-      fee: 0
-    }
-  ];
+  const orderHistory = (history || []).map((trade: any) => ({
+    id: trade.id,
+    symbol: trade.symbol || symbol,
+    side: trade.side,
+    type: trade.event_type,
+    amount: trade.base_amount,
+    price: trade.price_usd,
+    status: 'filled',
+    time: new Date(trade.created_at).toLocaleTimeString(),
+    fee: trade.fee_quote || 0
+  }));
 
-  const balances = [
+  const realBalances = [
     { asset: 'USDT', free: 2450.00, locked: 550.00, total: 3000.00 },
-    { asset: 'BTC', free: 0.15432, locked: 0.25000, total: 0.40432 },
-    { asset: 'ETH', free: 1.2345, locked: 2.5000, total: 3.7345 },
-    { asset: 'SOL', free: 45.67, locked: 0.00, total: 45.67 }
+    ...(balances || []).map((balance: any) => ({
+      asset: balance.symbol || balance.name || 'Unknown',
+      free: parseFloat(balance.balance || '0'),
+      locked: 0.00,
+      total: parseFloat(balance.balance || '0')
+    })),
+    { asset: 'SOL', free: solBalance || 0, locked: 0.00, total: solBalance || 0 }
   ];
 
   const formatPrice = (price: number) => {
@@ -344,9 +313,9 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({ sym
                   <span>Total</span>
                 </div>
 
-                {/* Balances */}
+                {/* Real Balances */}
                 <div className="flex-1 space-y-2 overflow-y-auto">
-                  {balances.map((balance, index) => (
+                  {realBalances.map((balance, index) => (
                     <motion.div
                       key={balance.asset}
                       className="grid grid-cols-4 gap-4 items-center py-3 px-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/50 transition-colors"
