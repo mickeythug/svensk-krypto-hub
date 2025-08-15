@@ -89,8 +89,9 @@ export default {
 				'glow-rainbow': 'var(--shadow-glow-rainbow)',
 			},
 			fontFamily: {
-				sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+				sans: ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
 				mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
+				'binance': ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

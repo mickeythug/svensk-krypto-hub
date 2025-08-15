@@ -1,3 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+  font-family: "Binance PLEX";
+  src: url("https://db.onlinewebfonts.com/t/d05c19ccecf7003d248c60ffd6b5e8f7.woff2") format("woff2"),
+       url("https://db.onlinewebfonts.com/t/d05c19ccecf7003d248c60ffd6b5e8f7.woff") format("woff"),
+       url("https://db.onlinewebfonts.com/t/d05c19ccecf7003d248c60ffd6b5e8f7.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -188,10 +200,36 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
     overflow-x: hidden; /* Only hide horizontal scroll */
     overflow-y: auto; /* Ensure vertical scroll is enabled */
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Binance PLEX", "IBM Plex Sans", "Barlow", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  /* Typography classes following Binance standards */
+  .secondary-text {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  .important-number {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0;
   }
 
   .text-shadow-lg {
