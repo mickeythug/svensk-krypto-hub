@@ -85,7 +85,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   const isMobile = useIsMobile();
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [showAdvancedStats, setShowAdvancedStats] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false); // Always start expanded
   const [tokenSidebarCollapsed, setTokenSidebarCollapsed] = useState(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1D');
   const [liveDataEnabled, setLiveDataEnabled] = useState(true);
@@ -358,9 +358,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           {/* Sidebar Header */}
           <div className="p-4 border-b border-gray-800/50">
             <div className="flex items-center justify-between">
-              {!sidebarCollapsed && (
-                <h3 className="text-lg font-semibold text-white">{t('trading.marketDepth')}</h3>
-              )}
+              <h3 className="text-lg font-semibold text-white">{t('trading.marketDepth')}</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -372,7 +370,17 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
             </div>
           </div>
 
-          {!sidebarCollapsed && (
+          {/* Trading content - always show, but adapt to collapsed state */}
+          {sidebarCollapsed ? (
+            // Collapsed view - minimal
+            <div className="flex flex-col h-full justify-center items-center p-2 space-y-2">
+              <div className="text-xs text-gray-400 text-center">
+                <div className="mb-1">{t('trading.currentPrice')}</div>
+                <div className="font-mono text-white text-sm">${formatPrice(realTimePrice)}</div>
+              </div>
+            </div>
+          ) : (
+            // Expanded view - full trading interface
             <>
               {/* Modern Order Book */}
               <div className="flex-1 p-4 min-h-0">
