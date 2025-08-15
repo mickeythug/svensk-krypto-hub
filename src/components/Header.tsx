@@ -96,6 +96,11 @@ const Header = ({
     icon: TrendingUp,
     route: true
   }, {
+    name: t('nav.news'),
+    href: "/nyheter",
+    icon: Newspaper,
+    route: true
+  }, {
     name: t('nav.portfolio'),
     href: "/portfolio",
     icon: PieChart,
@@ -159,14 +164,14 @@ const Header = ({
           <button onClick={() => navigate('/')} className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer ml-2">
             <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className={`${isMobile ? 'h-10 w-10 object-contain' : 'h-12 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`} />
             {!isMobile && <div>
-                <h1 className="font-orbitron text-lg font-bold">
+                 <h1 className="font-tech text-lg font-bold">
                   <span className="text-brand-turquoise">CRY</span>
                   <span className="text-brand-white">PTO</span>
                   <span> </span>
                   <span className="text-brand-white">NET</span>
                   <span className="text-brand-turquoise">WORK</span>
                 </h1>
-                <p className="font-orbitron text-xs text-muted-foreground">
+                <p className="font-future text-xs text-muted-foreground">
                   SWEDEN
                 </p>
               </div>}
@@ -175,8 +180,8 @@ const Header = ({
           {/* Desktop Navigation */}
           {!isMobile && <nav className="hidden lg:flex items-center space-x-8">
               {mainNavItems.map(item => {
-            return <button key={item.name} onClick={() => handleNavigation(item)} className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors font-orbitron font-bold tracking-wider uppercase text-sm">
-                    <span>{item.name}</span>
+            return <button key={item.name} onClick={() => handleNavigation(item)} className="flex items-center space-x-2 text-foreground hover:text-primary transition-all duration-300 font-tech font-bold tracking-wider uppercase text-sm hover:scale-105 hover:glow">
+                    <span className="font-future font-semibold">{item.name}</span>
                   </button>;
           })}
             </nav>}
@@ -199,14 +204,14 @@ const Header = ({
                 }} className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
                       <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className="h-8 w-auto" />
                       <div>
-                        <h1 className="font-orbitron text-sm font-bold">
+                        <h1 className="font-tech text-sm font-bold">
                           <span className="text-brand-turquoise">CRY</span>
                           <span className="text-brand-white">PTO</span>
                           <span> </span>
                           <span className="text-brand-white">NET</span>
                           <span className="text-brand-turquoise">WORK</span>
                         </h1>
-                        <p className="font-orbitron text-xs text-muted-foreground">
+                        <p className="font-future text-xs text-muted-foreground">
                           SWEDEN
                         </p>
                       </div>
@@ -222,19 +227,19 @@ const Header = ({
                     
                     {/* Wallet Connect Section */}
                     <div className="p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-orbitron text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
+                      <div className="font-tech text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
                       <ConnectWalletButton />
                     </div>
                     {/* Complete Navigation Menu */}
                     <div>
-                      <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
+                      <h3 className="font-tech text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
                       <nav className="space-y-2">
                         {allPages.map(item => {
                       const isActive = location.pathname === item.href || item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto');
-                      return <button key={item.name} onClick={() => handleNavigation(item)} className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-200 group ${isActive ? 'bg-primary/10 border border-primary/20 text-primary' : 'hover:bg-muted/50 border border-transparent'}`}>
+                      return <button key={item.name} onClick={() => handleNavigation(item)} className={`flex items-center justify-between w-full p-4 rounded-xl transition-all duration-300 group ${isActive ? 'bg-primary/10 border border-primary/20 text-primary' : 'hover:bg-muted/50 border border-transparent'}`}>
                               <div className="flex items-center space-x-3">
                                 <div className="text-left">
-                                  <div className="font-orbitron font-bold tracking-wider uppercase text-sm">
+                                  <div className="font-tech font-bold tracking-wider uppercase text-sm">
                                     {item.name}
                                   </div>
                                   

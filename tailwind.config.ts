@@ -90,9 +90,14 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Orbitron', 'sans-serif'],
-				mono: ['Roboto Mono', 'monospace'],
+				mono: ['JetBrains Mono', 'Roboto Mono', 'monospace'],
 				orbitron: ['Orbitron', 'sans-serif'],
 				inter: ['Inter', 'system-ui', 'sans-serif'],
+				rajdhani: ['Rajdhani', 'sans-serif'],
+				oxanium: ['Oxanium', 'sans-serif'],
+				'space-grotesk': ['Space Grotesk', 'sans-serif'],
+				'tech': ['Oxanium', 'Rajdhani', 'Orbitron', 'sans-serif'],
+				'future': ['Space Grotesk', 'Oxanium', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
