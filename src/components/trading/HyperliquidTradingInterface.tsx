@@ -49,9 +49,11 @@ import { useSolBalance } from '@/hooks/useSolBalance';
 import { useTradeHistory } from '@/hooks/useTradeHistory';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 import { useOpenOrders } from '@/hooks/useOpenOrders';
-import { useOrderbook } from "@/hooks/useOrderbook";
-import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
+import { useOrderHistory } from '@/hooks/useOrderHistory';
+import { useOrderbook } from '@/hooks/useOrderbook';
+import { useTradingViewSymbol } from '@/hooks/useTradingViewSymbol';
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
+import { useBinanceTicker } from '@/hooks/useBinanceTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import ProfessionalOrderBook from './ProfessionalOrderBook';
 import HyperliquidTradingPanel from './HyperliquidTradingPanel';
@@ -109,6 +111,12 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   const solRow = useMemo(() => cryptoPrices?.find?.((c: any) => (c.symbol || '').toUpperCase() === 'SOL'), [cryptoPrices]);
   const solUsd = solRow?.price ? Number(solRow.price) : 0;
 
+  // Real Backend Integration - Get real-time price from Binance
+  const { tickerData: binanceTicker } = useBinanceTicker(symbol);
+  
+  // Use real-time Binance price when available, fallback to props
+  const realTimePrice = binanceTicker?.price || currentPrice;
+  
   // Real Backend Integration - Exchange-aware orderbook data
   const { orderBook, isConnected, error } = useOrderbook(symbol, crypto?.coinGeckoId, 15);
   const { exchange } = useTradingViewSymbol(symbol, crypto?.coinGeckoId);
@@ -152,19 +160,21 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
     }
   }, [dbOrders, jupOrders, solInfo?.mint, solInfo?.decimals, solUsd]);
 
-  // Real ticker data from backend
+  // Real ticker data from backend - use real-time price
   const realTickerData = useMemo(() => ({
-    volume24h: ticker?.volumeQuote || crypto?.volume || 0,
-    high24h: ticker?.high24h || currentPrice * 1.05,
-    low24h: ticker?.low24h || currentPrice * 0.95,
-    lastTrade: currentPrice,
-    bid: currentPrice * 0.999,
-    ask: currentPrice * 1.001,
+    volume24h: binanceTicker?.volumeQuote || ticker?.volumeQuote || crypto?.volume || 0,
+    high24h: binanceTicker?.high24h || ticker?.high24h || realTimePrice * 1.05,
+    low24h: binanceTicker?.low24h || ticker?.low24h || realTimePrice * 0.95,
+    lastTrade: realTimePrice,
+    bid: binanceTicker?.bidPrice || realTimePrice * 0.999,
+    ask: binanceTicker?.askPrice || realTimePrice * 1.001,
     spread: Number((ticker && 'spread' in ticker ? ticker.spread : undefined) || 0.02),
     orderCount: (orderBook?.asks?.length || 0) + (orderBook?.bids?.length || 0),
     traders: Math.floor(Math.random() * 100) + 50, // This could come from your backend
-    marketCap: crypto?.marketCap || 0
-  }), [ticker, crypto, currentPrice, orderBook]);
+    marketCap: crypto?.marketCap || 0,
+    priceChange24h: binanceTicker?.priceChangePercent || priceChange24h,
+    volume: binanceTicker?.volume || crypto?.volume || 0
+  }), [binanceTicker, ticker, crypto, realTimePrice, orderBook, priceChange24h]);
 
   const formatPrice = (price: number) => {
     if (price < 0.01) return price.toFixed(6);
@@ -221,14 +231,14 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <h1 className="text-2xl font-bold text-white font-mono">
-                        ${formatPrice(currentPrice)}
+                        ${formatPrice(realTimePrice)}
                       </h1>
                       <Badge 
-                        variant={priceChange24h >= 0 ? "default" : "destructive"}
+                        variant={realTickerData.priceChange24h >= 0 ? "default" : "destructive"}
                         className="px-2 py-1 text-xs font-medium"
                       >
-                        {priceChange24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                        {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
+                        {realTickerData.priceChange24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                        {realTickerData.priceChange24h >= 0 ? '+' : ''}{realTickerData.priceChange24h.toFixed(2)}%
                       </Badge>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-gray-400">
@@ -314,7 +324,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
             <div className="h-full rounded-r-xl overflow-hidden border-r border-t border-b border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
               <TradingViewChart 
                 symbol={symbol} 
-                currentPrice={currentPrice} 
+                currentPrice={realTimePrice}
                 limitLines={limitLines} 
                 coinGeckoId={crypto?.coinGeckoId} 
               />
@@ -363,7 +373,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
               <div className="flex-1 p-4 min-h-0">
                 <ModernOrderBook 
                   symbol={symbol}
-                  currentPrice={currentPrice}
+                  currentPrice={realTimePrice}
                   orderBook={orderBook}
                   isConnected={isConnected}
                 />
@@ -374,7 +384,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                 <div className="h-[500px] p-4 pt-2">
                   <ModernTradingPanel 
                     symbol={symbol}
-                    currentPrice={currentPrice}
+                    currentPrice={realTimePrice}
                     tokenName={tokenName}
                     balances={balances}
                     solBalance={solBalance}

@@ -155,8 +155,8 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
             <div className="text-lg font-bold text-white font-mono">
               ${formatPrice(currentPrice)}
             </div>
-            <div className="text-xs text-primary font-medium">
-              Current Price
+            <div className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-md border border-primary/20">
+              Current Price • Live
             </div>
           </div>
         </div>
