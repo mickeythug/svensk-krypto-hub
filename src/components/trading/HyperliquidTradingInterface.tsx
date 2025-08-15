@@ -56,7 +56,14 @@ import { useTradingViewSymbol } from '@/hooks/useTradingViewSymbol';
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import { useBinanceTicker } from '@/hooks/useBinanceTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
-import UltimateTradingInterface from './UltimateTradingInterface';
+import ProfessionalOrderBook from './ProfessionalOrderBook';
+import WorldClassTradingPanel from './WorldClassTradingPanel';
+import ModernMarketStats from './ModernMarketStats';
+import ProfessionalBottomPanels from './ProfessionalBottomPanels';
+import TokenSearchBar from '../TokenSearchBar';
+import TradingTokenSidebar from './TradingTokenSidebar';
+import ModernOrderBook from './ModernOrderBook';
+import ModernTradingPanel from './ModernTradingPanel';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HyperliquidTradingInterfaceProps {
@@ -191,13 +198,215 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   }
 
   return (
-    <UltimateTradingInterface 
-      symbol={symbol}
-      currentPrice={realTimePrice}
-      priceChange24h={realTickerData.priceChange24h}
-      tokenName={tokenName}
-      crypto={crypto}
-    />
+    <div className="flex min-h-screen bg-gray-950">
+      {/* Left Token Sidebar */}
+      <TradingTokenSidebar 
+        collapsed={tokenSidebarCollapsed}
+        onToggle={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
+      />
+
+      {/* Main Trading Area */}
+      <div className="flex-1 flex flex-col max-w-[calc(100vw-360px)]">
+        {/* Professional Header */}
+        <div className="bg-gray-900/95 border-b border-gray-800/50 backdrop-blur-sm">
+          <div className="p-4">
+            {/* Top Row */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-6">
+                {/* Sidebar Toggle */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setTokenSidebarCollapsed(!tokenSidebarCollapsed)}
+                  className="h-10 px-3 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+
+                {/* Token Info */}
+                <div className="flex items-center gap-3">
+                  {crypto?.image && (
+                    <div className="relative">
+                      <img
+                        src={crypto.image}
+                        alt={`${tokenName} logo`}
+                        className="h-12 w-12 rounded-full ring-2 ring-primary/20 shadow-lg"
+                      />
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                    </div>
+                  )}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h1 className="text-2xl font-bold text-white font-mono">
+                        ${formatPrice(realTimePrice)}
+                      </h1>
+                      <Badge 
+                        variant={realTickerData.priceChange24h >= 0 ? "default" : "destructive"}
+                        className="px-2 py-1 text-xs font-medium"
+                      >
+                        {realTickerData.priceChange24h >= 0 ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
+                        {realTickerData.priceChange24h >= 0 ? '+' : ''}{realTickerData.priceChange24h.toFixed(2)}%
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-gray-400">
+                      <span className="font-medium">{symbol}/USDT</span>
+                      <div className="flex items-center gap-1">
+                        {live ? (
+                          <Wifi className="h-3 w-3 text-green-400" />
+                        ) : (
+                          <WifiOff className="h-3 w-3 text-red-400" />
+                        )}
+                        <span className="text-xs">{live ? t('trading.live') : t('trading.offline')}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Activity className="h-3 w-3 text-blue-400" />
+                        <span className="text-xs">{realTickerData.orderCount} {t('trading.orders')}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="h-3 w-3 text-primary" />
+                        <span className="text-xs">{realTickerData.traders} {t('trading.traders')}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Real Search Bar */}
+                <div className="relative w-80">
+                  <TokenSearchBar 
+                    currentSymbol={symbol}
+                    placeholder="Search tokens..."
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsWatchlisted(!isWatchlisted)}
+                  className={`h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 ${
+                    isWatchlisted ? 'text-yellow-400 border-yellow-400/30' : 'text-gray-300'
+                  }`}
+                >
+                  <Star className={`h-4 w-4 ${isWatchlisted ? 'fill-current' : ''}`} />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                  onClick={() => copyToClipboard(window.location.href)}
+                >
+                  <Share className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                >
+                  <Bell className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-10 px-4 bg-gray-800/50 border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+                  onClick={() => setShowAdvancedStats(!showAdvancedStats)}
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Real Market Stats Row */}
+            <ModernMarketStats 
+              tickerData={realTickerData}
+              showAdvanced={showAdvancedStats}
+            />
+          </div>
+        </div>
+
+        {/* Chart Area */}
+        <div className="h-[950px] p-4">
+          <div className="h-full w-full rounded-xl overflow-hidden border border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
+            <TradingViewChart 
+              symbol={symbol} 
+              currentPrice={realTimePrice}
+              limitLines={limitLines} 
+              coinGeckoId={crypto?.coinGeckoId} 
+            />
+          </div>
+        </div>
+
+        {/* Real Bottom Panels */}
+        <ProfessionalBottomPanels 
+          symbol={symbol}
+          dbOrders={dbOrders}
+          jupOrders={jupOrders}
+          history={history}
+          balances={balances}
+          solBalance={solBalance}
+        />
+      </div>
+
+      {/* Right Sidebar */}
+      <motion.div 
+        className="bg-gray-900/95 border-l border-gray-800/50 backdrop-blur-sm"
+        animate={{ width: sidebarCollapsed ? 50 : 320 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      >
+        <div className="h-full flex flex-col">
+          {/* Sidebar Header */}
+          <div className="p-4 border-b border-gray-800/50">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-white">{t('trading.marketDepth')}</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="text-gray-400 hover:text-white"
+              >
+                {sidebarCollapsed ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </div>
+          </div>
+
+          {/* Trading content - always show, but adapt to collapsed state */}
+          {sidebarCollapsed ? (
+            // Collapsed view - minimal
+            <div className="flex flex-col h-full justify-center items-center p-2 space-y-2">
+               <div className="text-xs text-gray-400 text-center">
+                 <div className="mb-1">{t('trading.currentPrice')}</div>
+                 <div className="font-mono text-white text-sm">${realTimePrice.toFixed(6)}</div>
+               </div>
+            </div>
+          ) : (
+            // Expanded view - full trading interface
+            <div className="flex flex-col h-full">
+              {/* Modern Order Book - ALLTID ÖVERST */}
+              <div className="flex-1 p-4 min-h-0 border-b border-gray-800/50">
+                <ModernOrderBook 
+                  symbol={symbol}
+                  currentPrice={realTimePrice}
+                  orderBook={orderBook}
+                  isConnected={isConnected}
+                />
+              </div>
+
+              {/* World Class Trading Panel - UNDER ORDERBOOK */}
+              <div className="h-[400px] p-4">
+                <WorldClassTradingPanel 
+                  symbol={symbol}
+                  currentPrice={realTimePrice}
+                  tokenName={tokenName}
+                  volume24h={realTickerData.volume24h}
+                  priceChange24h={realTickerData.priceChange24h}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
