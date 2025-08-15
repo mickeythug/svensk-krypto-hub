@@ -369,16 +369,19 @@ class CryptoAPIClient {
   private readonly circuitBreakerTimeout = 30000; // 30s
 
 async fetchCryptoPrices(): Promise<CryptoPrice[]> {
+  console.log('🚀 fetchCryptoPrices called - starting fetch...');
+  
   // Circuit breaker check
   if (this.isCircuitOpen()) {
+    console.log('❌ Circuit breaker is open');
     throw new Error('Circuit breaker is open - too many recent failures');
   }
 
   const cacheKey = 'crypto-prices-cache-v2';
   const projectRef = 'jcllcrvomxdrhtkqpcbr';
-  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=50&refresh=true`;
+  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=50&refresh=true&_ts=${Date.now()}`;
   
-  console.log('Fetching crypto data with URL:', fnUrl);
+  console.log('🌐 Fetching crypto data with URL:', fnUrl);
 
   // Attempt via Edge Function (DB-backed, refreshed every 3 min via cron)
   const controller = new AbortController();
@@ -413,7 +416,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     }));
 
     const finalData: CryptoPrice[] = transformed;
-    console.log(`Received ${finalData.length} tokens from edge function`);
+    console.log(`✅ Received ${finalData.length} tokens from edge function`);
 
     // Persist to localStorage as 1h fallback
     try {
@@ -424,6 +427,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     this.failureCount = 0;
     
     // Return ALL tokens from CoinGecko
+    console.log(`🎯 Final return: ${this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData()).length} tokens`);
     return this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData());
   } catch (error: any) {
     clearTimeout(timer);
@@ -542,7 +546,7 @@ export const useCryptoData = () => {
   } = useQuery<CryptoPrice[], Error>({
     queryKey: [CACHE_KEYS.CRYPTO_PRICES],
     queryFn: apiClient.fetchCryptoPrices.bind(apiClient),
-    staleTime: CACHE_DURATIONS.CRYPTO_PRICES,
+    staleTime: 0, // Force fresh data - no cache
     gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
     refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
     refetchIntervalInBackground: true,
