@@ -160,130 +160,181 @@ serve(async (req) => {
       console.log(`[dexscreener-proxy] Processing profiles request: sort=${sortKey}, order=${order}, limit=${limit}`);
 
       try {
-        // Use the CORRECT DexScreener API endpoints that actually work
-        const qs = new URLSearchParams({ 
-          chainIds: 'solana', 
-          order: String(order), 
-          sort: String(sortKey)
-        });
+        // Use working DexScreener API endpoints - try multiple approaches
+        console.log(`[dexscreener-proxy] Trying multiple endpoints for profiles...`);
         
-        if (minLiquidity) qs.set('minLiquidity', String(minLiquidity));
-        if (minMarketCap) qs.set('minMarketCap', String(minMarketCap));
+        // Method 1: Try the trending pairs endpoint
+        let url = `https://api.dexscreener.com/latest/dex/search/?q=solana`;
+        console.log(`[dexscreener-proxy] Fetching from trending search: ${url}`);
         
-        const url = `https://api.dexscreener.com/token-profiles/latest/v1/latest?${qs.toString()}`;
-        console.log(`[dexscreener-proxy] Fetching from URL: ${url}`);
+        try {
+          const json = await fetchJsonCached(url, TTL_TOKEN);
+          console.log(`[dexscreener-proxy] Search response:`, JSON.stringify(json).substring(0, 500));
+          
+          if (json && Array.isArray(json.pairs) && json.pairs.length > 0) {
+            let pairs = json.pairs.slice(0, limit);
+            console.log(`[dexscreener-proxy] Found ${pairs.length} pairs from search`);
+            
+            // Filter by Solana only
+            pairs = pairs.filter((p: any) => p.chainId === 'solana');
+            
+            // Apply additional filters if provided
+            if (minLiquidity) {
+              pairs = pairs.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
+            }
+            if (minMarketCap) {
+              pairs = pairs.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
+            }
+            
+            console.log(`[dexscreener-proxy] After filtering: ${pairs.length} pairs`);
+            return new Response(JSON.stringify({ data: pairs }), { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            });
+          }
+        } catch (e) {
+          console.error('[dexscreener-proxy] Search method failed:', e);
+        }
+
+        // Method 2: Try the latest pairs endpoint directly 
+        url = `https://api.dexscreener.com/latest/dex/pairs/solana`;
+        console.log(`[dexscreener-proxy] Fetching from pairs endpoint: ${url}`);
         
-        const json = await fetchJsonCached(url, TTL_TOKEN);
-        console.log(`[dexscreener-proxy] Raw response:`, JSON.stringify(json).substring(0, 500));
-        
-        // Check for the actual response structure from DexScreener
-        let tokens = [];
-        if (Array.isArray(json)) {
-          tokens = json;
-        } else if (json && Array.isArray(json.tokens)) {
-          tokens = json.tokens;
-        } else if (json && Array.isArray(json.data)) {
-          tokens = json.data;
-        } else if (json && Array.isArray(json.pairs)) {
-          tokens = json.pairs;
+        try {
+          const json = await fetchJsonCached(url, TTL_TOKEN);
+          console.log(`[dexscreener-proxy] Pairs response:`, JSON.stringify(json).substring(0, 500));
+          
+          if (json && Array.isArray(json.pairs) && json.pairs.length > 0) {
+            let pairs = json.pairs;
+            console.log(`[dexscreener-proxy] Found ${pairs.length} pairs from pairs endpoint`);
+            
+            // Apply filters
+            if (minLiquidity) {
+              pairs = pairs.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
+            }
+            if (minMarketCap) {
+              pairs = pairs.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
+            }
+            
+            // Sort and limit
+            const sortedPairs = pairs.sort((a, b) => {
+              let valA = 0, valB = 0;
+              
+              switch (String(sortKey)) {
+                case 'priceChange':
+                  valA = asNum(a?.priceChange?.h24) ?? 0;
+                  valB = asNum(b?.priceChange?.h24) ?? 0;
+                  break;
+                case 'volume':
+                  valA = asNum(a?.volume?.h24) ?? 0;
+                  valB = asNum(b?.volume?.h24) ?? 0;
+                  break;
+                case 'liquidity':
+                  valA = asNum(a?.liquidity?.usd) ?? 0;
+                  valB = asNum(b?.liquidity?.usd) ?? 0;
+                  break;
+                case 'marketCap':
+                  valA = asNum(a?.marketCap) ?? 0;
+                  valB = asNum(b?.marketCap) ?? 0;
+                  break;
+                case 'txns':
+                  valA = (asNum(a?.txns?.h24?.buys) ?? 0) + (asNum(a?.txns?.h24?.sells) ?? 0);
+                  valB = (asNum(b?.txns?.h24?.buys) ?? 0) + (asNum(b?.txns?.h24?.sells) ?? 0);
+                  break;
+                case 'createdAt':
+                  valA = asNum(a?.pairCreatedAt) ?? 0;
+                  valB = asNum(b?.pairCreatedAt) ?? 0;
+                  break;
+                case 'trendingScore':
+                default:
+                  // Trending score calculation
+                  const t1A = ((asNum(a?.txns?.h1?.buys) ?? 0) + (asNum(a?.txns?.h1?.sells) ?? 0)) * 1000;
+                  const pcA = (asNum(a?.priceChange?.h1) ?? 0) * 100;
+                  const liqA = (asNum(a?.liquidity?.usd) ?? 0) * 0.001;
+                  valA = t1A + pcA + liqA;
+                  
+                  const t1B = ((asNum(b?.txns?.h1?.buys) ?? 0) + (asNum(b?.txns?.h1?.sells) ?? 0)) * 1000;
+                  const pcB = (asNum(b?.priceChange?.h1) ?? 0) * 100;
+                  const liqB = (asNum(b?.liquidity?.usd) ?? 0) * 0.001;
+                  valB = t1B + pcB + liqB;
+                  break;
+              }
+              
+              return order === 'asc' ? valA - valB : valB - valA;
+            });
+            
+            const finalTokens = sortedPairs.slice(0, limit);
+            console.log(`[dexscreener-proxy] Returning ${finalTokens.length} tokens from pairs endpoint`);
+            
+            return new Response(JSON.stringify({ data: finalTokens }), { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+            });
+          }
+        } catch (e) {
+          console.error('[dexscreener-proxy] Pairs method failed:', e);
         }
         
-        console.log(`[dexscreener-proxy] Found ${tokens.length} tokens`);
+      } catch (e) {
+        console.error('[dexscreener-proxy] All profile methods failed:', e);
+      }
+
+      // Method 3: Final fallback - use hardcoded popular Solana tokens
+      console.log(`[dexscreener-proxy] Using final fallback with hardcoded tokens`);
+      
+      try {
+        // Popular Solana meme/tokens for fallback
+        const popularTokens = [
+          'So11111111111111111111111111111111111111112', // SOL
+          'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USDC
+          'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT
+          '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU', // POPCAT
+          'DUSTawucrTsGU8hcqRdHDCbuYhCPADMLM2VcCb8VnFnQ', // DUST
+          '5z3EqYQo9HiCEs3R84RCDMu2n7anpDMxRhdK8PSWmrRC', // BONK (old)
+          'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', // BONK 
+          'A8C3xuqscfmyLrte3VmTqrAq8kgMASius9AFNANwpump', // PNUT
+          'HeLp6NuQkmYB4pYWo2zYs22mESHXPQYzXbB8n4V98jwC', // AI16Z
+          'HZLGzWaKRuD6g1SEyKqsKgWRnbBXVQRN7ZCiNyVCaEb7', // GOAT
+        ];
         
-        if (tokens.length > 0) {
-          const limitedTokens = tokens.slice(0, limit);
-          console.log(`[dexscreener-proxy] Returning ${limitedTokens.length} tokens`);
-          return new Response(JSON.stringify({ data: limitedTokens }), { 
+        const tokenRequests = popularTokens.slice(0, 10).map(async (address) => {
+          try {
+            const url = `https://api.dexscreener.com/latest/dex/tokens/${address}`;
+            const response = await fetchJsonCached(url, TTL_TOKEN);
+            if (response && Array.isArray(response.pairs) && response.pairs.length > 0) {
+              const best = pickBestPair(response.pairs.filter((p: any) => p.chainId === 'solana'));
+              return best;
+            }
+            return null;
+          } catch (e) {
+            console.error(`[dexscreener-proxy] Failed to fetch token ${address}:`, e);
+            return null;
+          }
+        });
+        
+        const results = await Promise.all(tokenRequests);
+        const validTokens = results.filter(Boolean);
+        
+        console.log(`[dexscreener-proxy] Fallback found ${validTokens.length} valid tokens`);
+        
+        if (validTokens.length > 0) {
+          return new Response(JSON.stringify({ data: validTokens.slice(0, limit) }), { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           });
         }
         
-        console.log(`[dexscreener-proxy] No tokens found in response, falling back to pairs`);
-        
       } catch (e) {
-        console.error('[dexscreener-proxy] Token-profiles endpoint failed:', e);
+        console.error('[dexscreener-proxy] Hardcoded fallback failed:', e);
       }
-
-      // Fallback: use pairs endpoint and transform the data
-      try {
-        console.log(`[dexscreener-proxy] Using fallback pairs endpoint`);
-        const pairsUrl = `https://api.dexscreener.com/latest/dex/pairs/solana`;
-        const pairsJson = await fetchJsonCached(pairsUrl, TTL_TOKEN);
-        
-        let pairs: any[] = Array.isArray(pairsJson?.pairs) ? pairsJson.pairs : [];
-        console.log(`[dexscreener-proxy] Found ${pairs.length} pairs from fallback`);
-        
-        if (minLiquidity) {
-          pairs = pairs.filter((p: any) => (asNum(p?.liquidity?.usd) ?? 0) >= Number(minLiquidity));
-        }
-        if (minMarketCap) {
-          pairs = pairs.filter((p: any) => (asNum(p?.marketCap) ?? 0) >= Number(minMarketCap));
-        }
-        
-        // Sort pairs according to the requested sort key
-        const sortedPairs = pairs.sort((a, b) => {
-          let valA = 0, valB = 0;
-          
-          switch (String(sortKey)) {
-            case 'priceChange':
-              valA = asNum(a?.priceChange?.h24) ?? 0;
-              valB = asNum(b?.priceChange?.h24) ?? 0;
-              break;
-            case 'volume':
-              valA = asNum(a?.volume?.h24) ?? 0;
-              valB = asNum(b?.volume?.h24) ?? 0;
-              break;
-            case 'liquidity':
-              valA = asNum(a?.liquidity?.usd) ?? 0;
-              valB = asNum(b?.liquidity?.usd) ?? 0;
-              break;
-            case 'marketCap':
-              valA = asNum(a?.marketCap) ?? 0;
-              valB = asNum(b?.marketCap) ?? 0;
-              break;
-            case 'txns':
-              valA = (asNum(a?.txns?.h24?.buys) ?? 0) + (asNum(a?.txns?.h24?.sells) ?? 0);
-              valB = (asNum(b?.txns?.h24?.buys) ?? 0) + (asNum(b?.txns?.h24?.sells) ?? 0);
-              break;
-            case 'createdAt':
-              valA = asNum(a?.pairCreatedAt) ?? 0;
-              valB = asNum(b?.pairCreatedAt) ?? 0;
-              break;
-            case 'trendingScore':
-            default:
-              // Trending score approximation
-              const t1A = ((asNum(a?.txns?.h1?.buys) ?? 0) + (asNum(a?.txns?.h1?.sells) ?? 0)) * 1000;
-              const pcA = (asNum(a?.priceChange?.h1) ?? 0) * 100;
-              const liqA = (asNum(a?.liquidity?.usd) ?? 0) * 0.001;
-              valA = t1A + pcA + liqA;
-              
-              const t1B = ((asNum(b?.txns?.h1?.buys) ?? 0) + (asNum(b?.txns?.h1?.sells) ?? 0)) * 1000;
-              const pcB = (asNum(b?.priceChange?.h1) ?? 0) * 100;
-              const liqB = (asNum(b?.liquidity?.usd) ?? 0) * 0.001;
-              valB = t1B + pcB + liqB;
-              break;
-          }
-          
-          return order === 'asc' ? valA - valB : valB - valA;
-        });
-        
-        const finalTokens = sortedPairs.slice(0, limit);
-        console.log(`[dexscreener-proxy] Returning ${finalTokens.length} tokens from fallback`);
-        
-        return new Response(JSON.stringify({ data: finalTokens }), { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        });
-        
-      } catch (e) {
-        console.error('[dexscreener-proxy] Fallback also failed:', e);
-        return new Response(JSON.stringify({ 
-          data: [], 
-          error: 'Both primary and fallback endpoints failed',
-          notice: 'profiles_fallback_failed' 
-        }), { 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        });
-      }
+      
+      // Last resort: return empty but valid response
+      console.log(`[dexscreener-proxy] All methods failed, returning empty response`);
+      return new Response(JSON.stringify({ 
+        data: [], 
+        error: 'All data sources temporarily unavailable',
+        notice: 'api_endpoints_down',
+        fallback: true
+      }), { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      });
     }
 
     if (action === 'pairsList') {
