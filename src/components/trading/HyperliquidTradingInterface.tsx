@@ -256,7 +256,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                         <span className="text-xs">{realTickerData.orderCount} orders</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3 text-purple-400" />
+                        <Users className="h-3 w-3 text-primary" />
                         <span className="text-xs">{realTickerData.traders} traders</span>
                       </div>
                     </div>

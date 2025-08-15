@@ -74,8 +74,8 @@ const ModernMarketStats: React.FC<ModernMarketStatsProps> = ({ tickerData, showA
       label: 'Market Cap',
       value: formatVolume(tickerData.marketCap),
       icon: DollarSign,
-      color: 'text-purple-400',
-      bgColor: 'bg-purple-500/10'
+      color: 'text-primary',
+      bgColor: 'bg-primary/10'
     }
   ];
 
