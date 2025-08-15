@@ -127,7 +127,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
   };
 
   return (
-    <div className="h-[550px] pr-4 pb-4">
+    <div className="h-[600px] px-4 pb-4">
       <Card className="h-full bg-gray-900/95 border-gray-800/50 backdrop-blur-sm">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
           <div className="p-4 pb-0">

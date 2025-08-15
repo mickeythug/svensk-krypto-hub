@@ -21,7 +21,6 @@ import {
   Clock,
   Shield,
   Activity,
-  TrendingUpIcon,
   Calculator,
   Lock,
   Unlock,
@@ -88,117 +87,122 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
   };
 
   return (
-    <div className="h-[500px] p-6 bg-gray-900/95 border-gray-800/50 backdrop-blur-sm">
-      <div className="grid grid-cols-3 gap-8 h-full">
+    <div className="p-8 bg-gray-900/98 border border-gray-800/60 backdrop-blur-sm rounded-xl">
+      <div className="grid grid-cols-3 gap-12 h-full">
         
         {/* Left Column - Order Entry */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Token Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h3 className="text-2xl font-bold text-white">{symbol}</h3>
+          <div className="flex items-center justify-between pb-6 border-b border-gray-800/50">
+            <div className="flex items-center gap-4">
+              <h3 className="text-3xl font-bold text-white font-sans tracking-tight">{symbol}</h3>
               <Badge 
                 variant={priceChange24h >= 0 ? "default" : "destructive"}
-                className="px-3 py-1 text-sm"
+                className="px-4 py-2 text-sm font-semibold"
               >
-                {priceChange24h >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+                {priceChange24h >= 0 ? <TrendingUp className="h-4 w-4 mr-2" /> : <TrendingDown className="h-4 w-4 mr-2" />}
                 {priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%
               </Badge>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-mono font-bold text-white">
+              <div className="text-4xl font-mono font-bold text-white tracking-tight">
                 ${formatPrice(currentPrice)}
               </div>
-              <div className="text-sm text-gray-400">
+              <div className="text-sm text-gray-400 font-medium mt-1">
                 Vol: {formatVolume(volume24h)}
               </div>
             </div>
           </div>
 
           {/* Buy/Sell Toggle */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <Button
               variant={side === 'buy' ? 'default' : 'outline'}
               onClick={() => setSide('buy')}
-              className={`h-16 text-lg font-bold transition-all ${
+              className={`h-20 text-lg font-bold transition-all duration-300 ${
                 side === 'buy' 
                   ? 'bg-gradient-to-br from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white border-0 shadow-xl shadow-green-500/30' 
-                  : 'bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/50'
+                  : 'bg-gray-800/60 border-gray-700/60 text-gray-300 hover:bg-gray-700/60 hover:border-gray-600/60'
               }`}
             >
-              <TrendingUp className="h-6 w-6 mr-3" />
-              <div>
-                <div>{t('trading.buy')}</div>
-                <div className="text-xs opacity-80">Long Position</div>
+              <TrendingUp className="h-6 w-6 mr-4" />
+              <div className="text-left">
+                <div className="font-bold">{t('trading.buy')}</div>
+                <div className="text-xs opacity-90 font-medium">Long Position</div>
               </div>
             </Button>
             <Button
               variant={side === 'sell' ? 'default' : 'outline'}
               onClick={() => setSide('sell')}
-              className={`h-16 text-lg font-bold transition-all ${
+              className={`h-20 text-lg font-bold transition-all duration-300 ${
                 side === 'sell' 
                   ? 'bg-gradient-to-br from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white border-0 shadow-xl shadow-red-500/30' 
-                  : 'bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/50'
+                  : 'bg-gray-800/60 border-gray-700/60 text-gray-300 hover:bg-gray-700/60 hover:border-gray-600/60'
               }`}
             >
-              <TrendingDown className="h-6 w-6 mr-3" />
-              <div>
-                <div>{t('trading.sell')}</div>
-                <div className="text-xs opacity-80">Short Position</div>
+              <TrendingDown className="h-6 w-6 mr-4" />
+              <div className="text-left">
+                <div className="font-bold">{t('trading.sell')}</div>
+                <div className="text-xs opacity-90 font-medium">Short Position</div>
               </div>
             </Button>
           </div>
 
           {/* Order Type & Advanced Mode */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label className="text-gray-300 mb-2 block text-sm font-medium">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label className="text-white font-semibold text-sm tracking-wide">
                 {t('trading.orderType')}
               </Label>
               <Select value={orderType} onValueChange={setOrderType}>
-                <SelectTrigger className="h-12 bg-gray-800/50 border-gray-700/50 text-white">
+                <SelectTrigger className="h-14 bg-gray-800/60 border-gray-700/60 text-white font-medium text-base">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-700">
-                  <SelectItem value="market" className="text-white hover:bg-gray-700">
-                    <div className="flex items-center gap-2">
+                  <SelectItem value="market" className="text-white hover:bg-gray-700 py-3">
+                    <div className="flex items-center gap-3">
                       <Zap className="h-4 w-4" />
-                      {t('trading.market')}
+                      <span className="font-medium">{t('trading.market')}</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="limit" className="text-white hover:bg-gray-700">
-                    <div className="flex items-center gap-2">
+                  <SelectItem value="limit" className="text-white hover:bg-gray-700 py-3">
+                    <div className="flex items-center gap-3">
                       <Target className="h-4 w-4" />
-                      {t('trading.limit')}
+                      <span className="font-medium">{t('trading.limit')}</span>
                     </div>
                   </SelectItem>
-                  <SelectItem value="stop" className="text-white hover:bg-gray-700">
-                    <div className="flex items-center gap-2">
+                  <SelectItem value="stop" className="text-white hover:bg-gray-700 py-3">
+                    <div className="flex items-center gap-3">
                       <Shield className="h-4 w-4" />
-                      Stop Loss
+                      <span className="font-medium">Stop Loss</span>
                     </div>
                   </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
-            <div className="flex items-end">
-              <div className="flex items-center space-x-2 bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
-                <Switch
-                  checked={advancedMode}
-                  onCheckedChange={setAdvancedMode}
-                  className="data-[state=checked]:bg-primary"
-                />
-                <Label className="text-gray-300 text-sm">
-                  Advanced Mode
-                </Label>
+            <div className="space-y-3">
+              <Label className="text-white font-semibold text-sm tracking-wide">
+                Mode
+              </Label>
+              <div className="flex items-center justify-center h-14 bg-gray-800/60 border border-gray-700/60 rounded-lg px-4">
+                <div className="flex items-center space-x-3">
+                  <Switch
+                    checked={advancedMode}
+                    onCheckedChange={setAdvancedMode}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                  <Label className="text-white font-medium text-sm">
+                    Advanced Mode
+                  </Label>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Amount Input */}
-          <div>
-            <Label className="text-gray-300 mb-2 block text-sm font-medium">
+          <div className="space-y-4">
+            <Label className="text-white font-semibold text-sm tracking-wide">
               {t('trading.amount')} (USDT)
             </Label>
             <Input
@@ -206,17 +210,17 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               placeholder="0.00"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="h-14 bg-gray-800/50 border-gray-700/50 text-white text-xl font-mono placeholder:text-gray-500"
+              className="h-16 bg-gray-800/60 border-gray-700/60 text-white text-xl font-mono placeholder:text-gray-500 font-semibold tracking-wide"
             />
             
             {/* Quick Amount Buttons */}
-            <div className="grid grid-cols-4 gap-2 mt-3">
+            <div className="grid grid-cols-4 gap-3 mt-4">
               {quickAmounts.map((pct) => (
                 <Button
                   key={pct}
                   variant="outline"
                   size="sm"
-                  className="h-10 bg-gray-800/30 border-gray-700/30 text-gray-300 hover:bg-primary hover:text-primary-foreground transition-colors"
+                  className="h-12 bg-gray-800/40 border-gray-700/40 text-white font-semibold hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
                   onClick={() => {
                     const percentage = parseInt(pct) / 100;
                     const availableBalance = 1000;
@@ -231,16 +235,16 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
           {/* Leverage Slider */}
           {advancedMode && (
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <Label className="text-gray-300 text-sm font-medium">
+            <div className="space-y-4 p-6 bg-gray-800/30 border border-gray-700/40 rounded-lg">
+              <div className="flex items-center justify-between">
+                <Label className="text-white font-semibold text-sm tracking-wide">
                   Leverage
                 </Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-primary font-mono text-lg font-bold">
+                <div className="flex items-center gap-3">
+                  <span className="text-primary font-mono text-xl font-bold">
                     {leverage[0]}x
                   </span>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs font-medium">
                     Max: 20x
                   </Badge>
                 </div>
@@ -251,9 +255,9 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 max={20}
                 min={1}
                 step={1}
-                className="w-full"
+                className="w-full py-2"
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <div className="flex justify-between text-xs text-gray-400 font-medium mt-3">
                 {leverageOptions.map(lev => (
                   <span key={lev}>{lev}x</span>
                 ))}
@@ -263,11 +267,11 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
         </div>
 
         {/* Middle Column - Price & Risk Management */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Price Input (if limit order) */}
           {orderType === 'limit' && (
-            <div>
-              <Label className="text-gray-300 mb-2 block text-sm font-medium">
+            <div className="space-y-4">
+              <Label className="text-white font-semibold text-sm tracking-wide">
                 {t('trading.price')} (USDT)
               </Label>
               <Input
@@ -275,17 +279,17 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 placeholder="0.00"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="h-14 bg-gray-800/50 border-gray-700/50 text-white text-xl font-mono placeholder:text-gray-500"
+                className="h-16 bg-gray-800/60 border-gray-700/60 text-white text-xl font-mono placeholder:text-gray-500 font-semibold tracking-wide"
               />
             </div>
           )}
 
           {/* Stop Loss & Take Profit */}
           {advancedMode && (
-            <div className="space-y-4">
-              <div>
-                <Label className="text-gray-300 mb-2 block text-sm font-medium">
-                  <Shield className="h-4 w-4 inline mr-1" />
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <Label className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-red-400" />
                   Stop Loss (USDT)
                 </Label>
                 <Input
@@ -293,13 +297,13 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                   placeholder="0.00"
                   value={stopLoss}
                   onChange={(e) => setStopLoss(e.target.value)}
-                  className="h-12 bg-red-900/20 border-red-700/50 text-white font-mono placeholder:text-gray-500"
+                  className="h-14 bg-red-900/20 border-red-700/60 text-white font-mono placeholder:text-gray-500 font-semibold"
                 />
               </div>
               
-              <div>
-                <Label className="text-gray-300 mb-2 block text-sm font-medium">
-                  <Target className="h-4 w-4 inline mr-1" />
+              <div className="space-y-4">
+                <Label className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
+                  <Target className="h-4 w-4 text-green-400" />
                   Take Profit (USDT)
                 </Label>
                 <Input
@@ -307,20 +311,20 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                   placeholder="0.00"
                   value={takeProfit}
                   onChange={(e) => setTakeProfit(e.target.value)}
-                  className="h-12 bg-green-900/20 border-green-700/50 text-white font-mono placeholder:text-gray-500"
+                  className="h-14 bg-green-900/20 border-green-700/60 text-white font-mono placeholder:text-gray-500 font-semibold"
                 />
               </div>
             </div>
           )}
 
           {/* Slippage */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <Label className="text-gray-300 text-sm font-medium">
-                <Percent className="h-4 w-4 inline mr-1" />
+          <div className="space-y-4 p-6 bg-gray-800/30 border border-gray-700/40 rounded-lg">
+            <div className="flex items-center justify-between">
+              <Label className="text-white font-semibold text-sm tracking-wide flex items-center gap-2">
+                <Percent className="h-4 w-4 text-blue-400" />
                 {t('trading.slippage')}
               </Label>
-              <span className="text-primary font-mono text-sm">
+              <span className="text-primary font-mono text-base font-bold">
                 {slippage[0]}%
               </span>
             </div>
@@ -330,9 +334,9 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               max={5}
               min={0.1}
               step={0.1}
-              className="w-full"
+              className="w-full py-2"
             />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
+            <div className="flex justify-between text-xs text-gray-400 font-medium mt-2">
               <span>0.1%</span>
               <span>2.5%</span>
               <span>5%</span>
@@ -340,11 +344,11 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </div>
 
           {/* Auto Trading */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-2">
+          <div className="p-6 bg-blue-900/20 border border-blue-700/40 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-3">
                 <Activity className="h-5 w-5 text-blue-400" />
-                <Label className="text-gray-300 font-medium">Auto Trading</Label>
+                <Label className="text-white font-semibold">Auto Trading</Label>
               </div>
               <Switch
                 checked={autoTrade}
@@ -352,66 +356,66 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 className="data-[state=checked]:bg-blue-600"
               />
             </div>
-            <p className="text-xs text-gray-400">
+            <p className="text-sm text-blue-200 font-medium">
               Enable AI-powered automatic trading based on market conditions
             </p>
           </div>
         </div>
 
         {/* Right Column - Order Summary & Execute */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Order Summary */}
-          <Card className="p-6 bg-gray-800/50 border-gray-700/50">
-            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Calculator className="h-5 w-5" />
+          <Card className="p-8 bg-gray-800/60 border-gray-700/60">
+            <h4 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+              <Calculator className="h-6 w-6 text-primary" />
               Order Summary
             </h4>
             
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Order Type:</span>
-                <span className="text-white capitalize font-mono">{orderType}</span>
+            <div className="space-y-4 text-base">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Order Type:</span>
+                <span className="text-white font-bold capitalize">{orderType}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Side:</span>
-                <span className={`font-semibold ${side === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Side:</span>
+                <span className={`font-bold text-lg ${side === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
                   {side.toUpperCase()}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Amount:</span>
-                <span className="text-white font-mono">{amount || '0.00'} USDT</span>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Amount:</span>
+                <span className="text-white font-mono font-bold">{amount || '0.00'} USDT</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Price:</span>
-                <span className="text-white font-mono">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Price:</span>
+                <span className="text-white font-mono font-bold">
                   ${orderType === 'market' ? formatPrice(currentPrice) : (price || '0.00')}
                 </span>
               </div>
               {advancedMode && leverage[0] > 1 && (
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Leverage:</span>
-                  <span className="text-primary font-mono font-bold">{leverage[0]}x</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300 font-medium">Leverage:</span>
+                  <span className="text-primary font-mono font-bold text-lg">{leverage[0]}x</span>
                 </div>
               )}
               
-              <Separator className="bg-gray-700/50" />
+              <Separator className="bg-gray-700/60 my-4" />
               
-              <div className="flex justify-between">
-                <span className="text-gray-400">Est. Fee:</span>
-                <span className="text-white font-mono">$2.50</span>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Est. Fee:</span>
+                <span className="text-white font-mono font-bold">$2.50</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Total Cost:</span>
-                <span className="text-white font-mono font-semibold">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Total Cost:</span>
+                <span className="text-white font-mono font-bold text-lg">
                   ${amount ? (calculateTotal() + 2.5).toFixed(2) : '0.00'}
                 </span>
               </div>
               
               {advancedMode && leverage[0] > 1 && (
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Potential PnL:</span>
-                  <span className="text-green-400 font-mono">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-300 font-medium">Potential PnL:</span>
+                  <span className="text-green-400 font-mono font-bold">
                     ${calculatePnL().toFixed(2)}
                   </span>
                 </div>
@@ -421,12 +425,12 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
           {/* Risk Warning */}
           {advancedMode && leverage[0] > 5 && (
-            <div className="p-4 bg-orange-900/20 border border-orange-700/50 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="h-5 w-5 text-orange-400" />
-                <span className="text-orange-400 font-semibold">High Risk Warning</span>
+            <div className="p-6 bg-orange-900/20 border border-orange-700/50 rounded-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <AlertTriangle className="h-6 w-6 text-orange-400" />
+                <span className="text-orange-400 font-bold text-base">High Risk Warning</span>
               </div>
-              <p className="text-xs text-orange-300">
+              <p className="text-sm text-orange-200 font-medium leading-relaxed">
                 Trading with high leverage ({leverage[0]}x) involves significant risk. 
                 You could lose more than your initial investment.
               </p>
@@ -435,18 +439,18 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
 
           {/* Execute Button */}
           <Button
-            className={`w-full h-20 text-xl font-bold transition-all shadow-2xl ${
+            className={`w-full h-24 text-2xl font-bold transition-all duration-300 shadow-2xl ${
               side === 'buy' 
                 ? 'bg-gradient-to-br from-green-600 via-green-500 to-green-400 hover:from-green-700 hover:via-green-600 hover:to-green-500 shadow-green-500/30' 
                 : 'bg-gradient-to-br from-red-600 via-red-500 to-red-400 hover:from-red-700 hover:via-red-600 hover:to-red-500 shadow-red-500/30'
             }`}
             disabled={!amount || parseFloat(amount) <= 0}
           >
-            <div className="flex items-center gap-3">
-              <Zap className="h-6 w-6" />
-              <div>
-                <div>{side === 'buy' ? t('trading.buyNow') : t('trading.sellNow')} {symbol}</div>
-                <div className="text-sm opacity-90">
+            <div className="flex items-center gap-4">
+              <Zap className="h-8 w-8" />
+              <div className="text-left">
+                <div className="font-bold">{side === 'buy' ? t('trading.buyNow') : t('trading.sellNow')} {symbol}</div>
+                <div className="text-base opacity-90 font-medium">
                   {orderType === 'market' ? 'Instant Execution' : 'Place Order'}
                 </div>
               </div>
@@ -454,20 +458,20 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
           </Button>
 
           {/* Account Balance Info */}
-          <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
-            <h5 className="text-sm font-semibold text-gray-300 mb-3">Account Balance</h5>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Available USDT:</span>
-                <span className="text-white font-mono">$1,247.50</span>
+          <div className="p-6 bg-gray-800/40 border border-gray-700/40 rounded-lg">
+            <h5 className="text-base font-bold text-white mb-4 tracking-wide">Account Balance</h5>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Available USDT:</span>
+                <span className="text-white font-mono font-bold">$1,247.50</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Available {symbol}:</span>
-                <span className="text-white font-mono">2.45891</span>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Available {symbol}:</span>
+                <span className="text-white font-mono font-bold">2.45891</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Buying Power:</span>
-                <span className="text-green-400 font-mono">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-300 font-medium">Buying Power:</span>
+                <span className="text-green-400 font-mono font-bold">
                   ${leverage[0] > 1 ? (1247.50 * leverage[0]).toFixed(2) : '1,247.50'}
                 </span>
               </div>
