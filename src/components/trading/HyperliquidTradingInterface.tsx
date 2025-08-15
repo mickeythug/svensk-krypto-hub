@@ -381,9 +381,9 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
             </div>
           ) : (
             // Expanded view - full trading interface
-            <>
-              {/* Modern Order Book */}
-              <div className="flex-1 p-4 min-h-0">
+            <div className="flex flex-col h-full">
+              {/* Modern Order Book - ALLTID ÖVERST */}
+              <div className="flex-1 p-4 min-h-0 border-b border-gray-800/50">
                 <ModernOrderBook 
                   symbol={symbol}
                   currentPrice={realTimePrice}
@@ -392,8 +392,8 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                 />
               </div>
 
-              {/* Modern Step Trading Panel - Always Visible */}
-              <div className="h-full">
+              {/* Modern Step Trading Panel - UNDER ORDERBOOK */}
+              <div className="h-[400px] p-4">
                 <ModernStepTradingPanel 
                   symbol={symbol}
                   currentPrice={realTimePrice}
@@ -401,7 +401,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   crypto={crypto}
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
       </motion.div>
