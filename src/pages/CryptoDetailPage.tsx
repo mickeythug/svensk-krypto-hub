@@ -24,7 +24,7 @@ import {
   Star
 } from "lucide-react";
 import TradingPanel from "@/components/TradingPanel";
-import DesktopTradingInterface from "@/components/DesktopTradingInterface";
+import HyperliquidTradingInterface from "@/components/trading/HyperliquidTradingInterface";
 import MobileTradingPanel from "@/components/MobileTradingPanel";
 import MobileChart from "@/components/MobileChart";
 import MobileHeader from "@/components/mobile/MobileHeader";
@@ -162,10 +162,10 @@ const CryptoDetailPage = () => {
     );
   }
 
-  // Desktop view
+  // Desktop view - Hyperliquid Style
   return (
-    <div className="container mx-auto px-4 pt-4">
-      <DesktopTradingInterface 
+    <div className="min-h-screen bg-gray-950">
+      <HyperliquidTradingInterface 
         symbol={symbol!.toUpperCase()} 
         currentPrice={crypto.price}
         priceChange24h={crypto.change24h}
