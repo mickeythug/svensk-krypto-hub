@@ -121,7 +121,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
               <div className="w-3 h-3 bg-gradient-to-r from-primary to-primary-glow rounded-full animate-pulse shadow-lg shadow-primary/50"></div>
               <div className="absolute inset-0 w-3 h-3 bg-gradient-to-r from-primary to-primary-glow rounded-full animate-ping opacity-30"></div>
             </div>
-            <h2 className="text-xl font-bold text-foreground font-orbitron tracking-wide bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
+            <h2 className="text-2xl font-bold text-foreground font-orbitron tracking-wide bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent section-title">
               MARKETS
             </h2>
           </div>
@@ -195,24 +195,24 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                             {/* Token Info - Left Side */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-bold text-foreground text-sm font-mono tracking-wide">
+                                <span className="font-bold text-foreground text-lg font-mono tracking-wide important-number">
                                   {token.symbol}
                                 </span>
-                                {isWatchlisted && <Star className="h-3 w-3 text-warning fill-current drop-shadow-sm shadow-warning/50" />}
+                                {isWatchlisted && <Star className="h-4 w-4 text-warning fill-current drop-shadow-sm shadow-warning/50" />}
                               </div>
-                              <div className="text-xs text-muted-foreground font-inter">
+                              <div className="text-sm text-muted-foreground font-inter">
                                 {token.name}
                               </div>
                             </div>
 
                             {/* Price & Change - Right Side */}
-                            <div className="flex flex-col items-end gap-1 min-w-[80px]">
-                              <div className="font-mono text-sm text-foreground font-semibold tracking-tight">
+                            <div className="flex flex-col items-end gap-1 min-w-[90px]">
+                              <div className="font-mono text-lg text-foreground font-semibold tracking-tight important-number">
                                 ${formatPrice(token.price)}
                               </div>
                               <div className="flex items-center gap-1">
-                                <span className={`text-xs font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
-                                  {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                                <span className={`text-sm font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
+                                  {token.change24h >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                                   {formatChange(token.change24h)}
                                 </span>
                               </div>
@@ -255,10 +255,10 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
 
       {/* Token Count Footer */}
       <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
-        <div className="text-xs text-muted-foreground font-mono text-center">
+        <div className="text-sm text-muted-foreground font-mono text-center">
           {displayedCount} of {totalCount} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
           {hasMore && !searchQuery && (
-            <div className="text-xs text-primary/70 mt-1">
+            <div className="text-sm text-primary/70 mt-1">
               Scroll for more tokens
             </div>
           )}
