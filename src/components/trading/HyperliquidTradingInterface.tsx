@@ -319,7 +319,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
         </div>
 
         {/* Chart Area */}
-        <div className="h-[850px] p-4">
+        <div className="h-[950px] p-4">
           <div className="h-full w-full rounded-xl overflow-hidden border border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
             <TradingViewChart 
               symbol={symbol} 
