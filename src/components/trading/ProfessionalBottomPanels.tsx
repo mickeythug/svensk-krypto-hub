@@ -18,6 +18,7 @@ import {
   MoreHorizontal
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ProfessionalBottomPanelsProps {
   symbol: string;
@@ -36,6 +37,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
   balances = [], 
   solBalance = 0 
 }) => {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('positions');
 
   // Use real data instead of mock
@@ -126,7 +128,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
                 className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
               >
                 <Target className="h-4 w-4 mr-2" />
-                Positions
+                {t('trading.positions')}
                 <Badge variant="outline" className="ml-2 text-xs bg-gray-700/50 border-gray-600/50 text-gray-300">
                   {positions.length}
                 </Badge>
@@ -136,7 +138,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
                 className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
               >
                 <Clock className="h-4 w-4 mr-2" />
-                Open Orders
+                {t('trading.openOrders')}
                 <Badge variant="outline" className="ml-2 text-xs bg-gray-700/50 border-gray-600/50 text-gray-300">
                   {openOrders.length}
                 </Badge>
@@ -146,14 +148,14 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
                 className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
               >
                 <Activity className="h-4 w-4 mr-2" />
-                Order History
+                {t('trading.orderHistory')}
               </TabsTrigger>
               <TabsTrigger 
                 value="balances" 
                 className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
               >
                 <Wallet className="h-4 w-4 mr-2" />
-                Balances
+                {t('trading.walletBalances')}
               </TabsTrigger>
             </TabsList>
           </div>

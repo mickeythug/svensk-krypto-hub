@@ -361,6 +361,13 @@ const translations = {
     'trading.tradingWarning': 'Trading Warning',
     'trading.tradingWarningText': 'Cryptocurrency trading involves high risks and you may lose your entire invested capital. Trade only with funds you can afford to lose.',
     'trading.limitPrice': 'Limit Price',
+    'trading.marketDepth': 'Marknadsdjup',
+    'trading.orders': 'order',
+    'trading.traders': 'handlare',
+    'trading.connected': 'Ansluten',
+    'trading.disconnected': 'Frånkopplad',
+    'trading.connectWalletMessage': 'Anslut plånbok',
+    'trading.connectWalletSubMessage': 'Anslut din plånbok för att börja handla',
     
     // News Section
     'news.title': 'Senaste Nyheterna',
@@ -1301,6 +1308,13 @@ const translations = {
     'trading.tradingWarning': 'Trading Warning',
     'trading.tradingWarningText': 'Cryptocurrency trading involves high risks and you may lose your entire invested capital. Trade only with funds you can afford to lose.',
     'trading.limitPrice': 'Limit Price',
+    'trading.marketDepth': 'Market Depth',
+    'trading.orders': 'orders',
+    'trading.traders': 'traders',
+    'trading.connected': 'Connected',
+    'trading.disconnected': 'Disconnected',
+    'trading.connectWalletMessage': 'Connect Wallet',
+    'trading.connectWalletSubMessage': 'Connect your wallet to start trading',
     // News Section
     'news.title': 'Latest News',
     'news.readMore': 'Read more',

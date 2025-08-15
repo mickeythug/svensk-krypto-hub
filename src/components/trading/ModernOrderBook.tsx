@@ -1,6 +1,7 @@
 import React from 'react';
 import { GlassCard } from '@/components/ui/glass-card';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ProcessedOrder {
   price: number;
@@ -29,6 +30,7 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
   orderBook,
   isConnected = false
 }) => {
+  const { t } = useLanguage();
   // Process order book data
   const processOrders = (orders: any[], side: 'buy' | 'sell'): ProcessedOrder[] => {
     if (!orders) return [];
@@ -127,7 +129,7 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
               isConnected ? "bg-emerald-400 animate-pulse" : "bg-red-400"
             )} />
             <span className="text-xs text-white/60">
-              {isConnected ? 'Live' : 'Disconnected'}
+              {isConnected ? t('trading.live') : t('trading.disconnected')}
             </span>
           </div>
         </div>
@@ -156,7 +158,7 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
               ${formatPrice(currentPrice)}
             </div>
             <div className="text-xs text-primary font-medium bg-primary/10 px-2 py-1 rounded-md border border-primary/20">
-              Current Price • Live
+              {t('trading.currentPrice')} • {t('trading.live')}
             </div>
           </div>
         </div>

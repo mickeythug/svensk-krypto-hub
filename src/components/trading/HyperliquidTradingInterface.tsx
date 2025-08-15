@@ -63,6 +63,7 @@ import TokenSearchBar from '../TokenSearchBar';
 import TradingTokenSidebar from './TradingTokenSidebar';
 import ModernOrderBook from './ModernOrderBook';
 import ModernTradingPanel from './ModernTradingPanel';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HyperliquidTradingInterfaceProps {
   symbol: string;
@@ -79,6 +80,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   tokenName, 
   crypto 
 }) => {
+  const { t } = useLanguage();
   const isMobile = useIsMobile();
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const [showAdvancedStats, setShowAdvancedStats] = useState(false);
@@ -249,15 +251,15 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                         ) : (
                           <WifiOff className="h-3 w-3 text-red-400" />
                         )}
-                        <span className="text-xs">{live ? 'Live' : 'Offline'}</span>
+                        <span className="text-xs">{live ? t('trading.live') : t('trading.offline')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Activity className="h-3 w-3 text-blue-400" />
-                        <span className="text-xs">{realTickerData.orderCount} orders</span>
+                        <span className="text-xs">{realTickerData.orderCount} {t('trading.orders')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Users className="h-3 w-3 text-primary" />
-                        <span className="text-xs">{realTickerData.traders} traders</span>
+                        <span className="text-xs">{realTickerData.traders} {t('trading.traders')}</span>
                       </div>
                     </div>
                   </div>
@@ -352,7 +354,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           <div className="p-4 border-b border-gray-800/50">
             <div className="flex items-center justify-between">
               {!sidebarCollapsed && (
-                <h3 className="text-lg font-semibold text-white">Market Depth</h3>
+                <h3 className="text-lg font-semibold text-white">{t('trading.marketDepth')}</h3>
               )}
               <Button
                 variant="ghost"
@@ -393,9 +395,9 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   <div className="relative overflow-hidden bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/[0.1] rounded-xl p-6 text-center shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]">
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.05] to-transparent pointer-events-none"></div>
                     <AlertTriangle className="h-12 w-12 text-primary mx-auto mb-4 relative z-10" />
-                    <h3 className="font-semibold mb-2 text-white relative z-10">Connect Wallet</h3>
+                    <h3 className="font-semibold mb-2 text-white relative z-10">{t('trading.connectWalletMessage')}</h3>
                     <p className="text-sm text-white/60 mb-4 relative z-10">
-                      Connect your wallet to start trading {symbol}
+                      {t('trading.connectWalletSubMessage')} {symbol}
                     </p>
                     <div className="relative z-10">
                       <ConnectWalletButton />
