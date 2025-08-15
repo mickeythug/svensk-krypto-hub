@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -32,7 +31,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
   const [orderType, setOrderType] = useState('market');
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState(currentPrice.toString());
-  const [slippage, setSlippage] = useState([0.5]);
+  const [slippage, setSlippage] = useState(0.5);
   const [stopLoss, setStopLoss] = useState('');
   const [takeProfit, setTakeProfit] = useState('');
   const [advancedMode, setAdvancedMode] = useState(false);
@@ -202,14 +201,21 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 {t('trading.slippage')}
               </Label>
               <span className="text-primary font-mono text-base font-bold">
-                {slippage[0]}%
+                {slippage}%
               </span>
             </div>
-            <Slider value={slippage} onValueChange={setSlippage} max={5} min={0.1} step={0.1} className="w-full py-2" />
-            <div className="flex justify-between text-xs text-gray-400 font-medium mt-2">
-              <span>0.1%</span>
-              <span>2.5%</span>
-              <span>5%</span>
+            <div className="grid grid-cols-4 gap-2">
+              {[0.1, 0.5, 1.0, 2.0].map(value => 
+                <Button 
+                  key={value} 
+                  variant={slippage === value ? "default" : "outline"} 
+                  size="sm" 
+                  className="h-8 text-xs font-semibold"
+                  onClick={() => setSlippage(value)}
+                >
+                  {value}%
+                </Button>
+              )}
             </div>
           </div>
 
