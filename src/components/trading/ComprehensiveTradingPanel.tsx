@@ -35,9 +35,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
   const [slippage, setSlippage] = useState([0.5]);
   const [stopLoss, setStopLoss] = useState('');
   const [takeProfit, setTakeProfit] = useState('');
-  const [leverage, setLeverage] = useState([1]);
   const [advancedMode, setAdvancedMode] = useState(false);
-  const [autoTrade, setAutoTrade] = useState(false);
   const formatPrice = (price: number) => {
     if (price < 0.01) return price.toFixed(6);
     if (price < 1) return price.toFixed(4);
@@ -50,16 +48,11 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
     return `$${volume.toFixed(2)}`;
   };
   const quickAmounts = ['25%', '50%', '75%', '100%'];
-  const leverageOptions = [1, 2, 5, 10, 20];
+  
   const calculateTotal = () => {
     const amountValue = parseFloat(amount) || 0;
     const priceValue = orderType === 'market' ? currentPrice : parseFloat(price) || 0;
     return amountValue * priceValue;
-  };
-  const calculatePnL = () => {
-    const total = calculateTotal();
-    const leverageValue = leverage[0];
-    return total * leverageValue * 0.1; // Example calculation
   };
   return <div className="h-full w-full p-4 bg-gray-900/98 border border-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden">
       <div className="grid grid-cols-3 gap-6 h-full max-h-[500px]">
@@ -170,26 +163,6 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
             </div>
           </div>
 
-          {/* Leverage Slider */}
-          {advancedMode && <div className="space-y-3 p-4 bg-gray-800/30 border border-gray-700/40 rounded-lg">
-              <div className="flex items-center justify-between">
-                <Label className="text-white font-semibold text-sm tracking-wide">
-                  Leverage
-                </Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-primary font-mono text-lg font-bold">
-                    {leverage[0]}x
-                  </span>
-                  <Badge variant="outline" className="text-xs font-medium">
-                    Max: 20x
-                  </Badge>
-                </div>
-              </div>
-              <Slider value={leverage} onValueChange={setLeverage} max={20} min={1} step={1} className="w-full py-2" />
-              <div className="flex justify-between text-xs text-gray-400 font-medium mt-2">
-                {leverageOptions.map(lev => <span key={lev}>{lev}x</span>)}
-              </div>
-            </div>}
         </div>
 
         {/* Middle Column - Price & Risk Management */}
@@ -274,10 +247,6 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                   ${orderType === 'market' ? formatPrice(currentPrice) : price || '0.00'}
                 </span>
               </div>
-              {advancedMode && leverage[0] > 1 && <div className="flex justify-between items-center">
-                  <span className="text-gray-300 font-medium">Leverage:</span>
-                  <span className="text-primary font-mono font-bold">{leverage[0]}x</span>
-                </div>}
               
               <Separator className="bg-gray-700/60 my-3" />
               
@@ -292,26 +261,9 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 </span>
               </div>
               
-              {advancedMode && leverage[0] > 1 && <div className="flex justify-between items-center">
-                  <span className="text-gray-300 font-medium">Potential PnL:</span>
-                  <span className="text-green-400 font-mono font-bold">
-                    ${calculatePnL().toFixed(2)}
-                  </span>
-                </div>}
             </div>
           </Card>
 
-          {/* Risk Warning */}
-          {advancedMode && leverage[0] > 5 && <div className="p-4 bg-orange-900/20 border border-orange-700/50 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
-                <AlertTriangle className="h-5 w-5 text-orange-400" />
-                <span className="text-orange-400 font-bold">High Risk Warning</span>
-              </div>
-              <p className="text-xs text-orange-200 font-medium">
-                Trading with high leverage ({leverage[0]}x) involves significant risk. 
-                You could lose more than your initial investment.
-              </p>
-            </div>}
 
           {/* Execute Button */}
           <Button className={`w-full h-16 text-lg font-bold transition-all duration-300 shadow-2xl ${side === 'buy' ? 'bg-gradient-to-br from-green-600 via-green-500 to-green-400 hover:from-green-700 hover:via-green-600 hover:to-green-500 shadow-green-500/30' : 'bg-gradient-to-br from-red-600 via-red-500 to-red-400 hover:from-red-700 hover:via-red-600 hover:to-red-500 shadow-red-500/30'}`} disabled={!amount || parseFloat(amount) <= 0}>
@@ -341,7 +293,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               <div className="flex justify-between items-center">
                 <span className="text-gray-300 font-medium">Buying Power:</span>
                 <span className="text-green-400 font-mono font-bold">
-                  ${leverage[0] > 1 ? (1247.50 * leverage[0]).toFixed(2) : '1,247.50'}
+                  $1,247.50
                 </span>
               </div>
             </div>
