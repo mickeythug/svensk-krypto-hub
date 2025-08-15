@@ -378,19 +378,22 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
               className="h-full flex flex-col w-[380px]"
             >
               {/* Sidebar Header - Enhanced */}
-              <div className="p-6 border-b border-border relative">
-                {/* Hide Button - Positioned on the left side */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className="absolute -left-6 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full bg-card/95 border-border backdrop-blur-sm shadow-lg hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
-                >
-                  <EyeOff className="h-5 w-5" />
-                </Button>
-                
-                <div className="flex items-center justify-center">
+              <div className="p-6 border-b border-border">
+                <div className="flex items-center justify-between">
+                  {/* Hide Button - Positioned on the left side */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                    className="h-8 w-8 rounded-full bg-card/95 border-border backdrop-blur-sm shadow-lg hover:bg-accent hover:text-accent-foreground transition-all duration-300 hover-scale"
+                  >
+                    <EyeOff className="h-4 w-4" />
+                  </Button>
+                  
                   <h3 className="text-xl font-semibold text-foreground section-title">{t('trading.marketDepth')}</h3>
+                  
+                  {/* Empty div for spacing balance */}
+                  <div className="w-8"></div>
                 </div>
               </div>
 
