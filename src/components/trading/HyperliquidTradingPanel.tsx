@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Slider } from "@/components/ui/slider";
+
 import { 
   Wallet, 
   TrendingUp, 
@@ -40,7 +40,6 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
   const [amount, setAmount] = useState('');
   const [price, setPrice] = useState(currentPrice.toString());
   const [stopPrice, setStopPrice] = useState('');
-  const [leverage, setLeverage] = useState([1]);
   const [reduceOnly, setReduceOnly] = useState(false);
   const [postOnly, setPostOnly] = useState(false);
   const [slippage, setSlippage] = useState(0.5);
@@ -84,19 +83,17 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
   };
 
   const executeOrder = () => {
-    // Mock order execution
     console.log('Executing order:', {
       symbol,
       side,
       orderType,
       amount,
-      price,
-      leverage: leverage[0]
+      price
     });
   };
 
   return (
-    <div className="h-full flex flex-col space-y-4">
+    <div className="h-full flex flex-col space-y-5">
       {/* Trading Panel Header */}
       <div className="flex items-center justify-between">
         <h4 className="text-lg font-semibold text-white">Trade {symbol}</h4>
@@ -107,15 +104,15 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
       </div>
 
       {/* Buy/Sell Tabs */}
-      <div className="grid grid-cols-2 gap-1 p-1 bg-gray-800/50 rounded-lg">
+      <div className="grid grid-cols-2 gap-2 p-1 bg-gray-800/50 rounded-xl border border-gray-700/30">
         <Button
           variant={side === 'buy' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setSide('buy')}
-          className={`font-semibold ${
+          className={`font-bold py-3 transition-all duration-200 ${
             side === 'buy' 
-              ? 'bg-green-600 text-white hover:bg-green-700' 
-              : 'text-gray-300 hover:bg-gray-700/50'
+              ? 'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg shadow-green-500/25' 
+              : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
           }`}
         >
           <TrendingUp className="h-4 w-4 mr-2" />
@@ -125,10 +122,10 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
           variant={side === 'sell' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setSide('sell')}
-          className={`font-semibold ${
+          className={`font-bold py-3 transition-all duration-200 ${
             side === 'sell' 
-              ? 'bg-red-600 text-white hover:bg-red-700' 
-              : 'text-gray-300 hover:bg-gray-700/50'
+              ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg shadow-red-500/25' 
+              : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
           }`}
         >
           <TrendingDown className="h-4 w-4 mr-2" />
@@ -138,10 +135,10 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
 
       {/* Order Type Selection */}
       <Tabs value={orderType} onValueChange={(value) => setOrderType(value as any)}>
-        <TabsList className="grid w-full grid-cols-3 bg-gray-800/50">
-          <TabsTrigger value="market" className="text-xs data-[state=active]:bg-primary">Market</TabsTrigger>
-          <TabsTrigger value="limit" className="text-xs data-[state=active]:bg-primary">Limit</TabsTrigger>
-          <TabsTrigger value="stop" className="text-xs data-[state=active]:bg-primary">Stop</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 bg-gray-800/50 border border-gray-700/30 rounded-xl p-1">
+          <TabsTrigger value="market" className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:shadow-lg transition-all duration-200">Market</TabsTrigger>
+          <TabsTrigger value="limit" className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:shadow-lg transition-all duration-200">Limit</TabsTrigger>
+          <TabsTrigger value="stop" className="text-sm font-medium data-[state=active]:bg-primary data-[state=active]:shadow-lg transition-all duration-200">Stop</TabsTrigger>
         </TabsList>
 
         <TabsContent value="market" className="space-y-4 mt-4">
@@ -159,30 +156,30 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
             </div>
 
             {/* Percentage Buttons */}
-            <div className="grid grid-cols-4 gap-1">
+            <div className="grid grid-cols-4 gap-2">
               {[25, 50, 75, 100].map((percent) => (
                 <Button
                   key={percent}
                   variant="outline"
                   size="sm"
                   onClick={() => setPercentage(percent)}
-                  className="text-xs bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/50"
+                  className="text-xs font-medium bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/70 hover:text-white hover:border-gray-600 transition-all duration-200"
                 >
                   {percent}%
                 </Button>
               ))}
             </div>
 
-            <div className="bg-gray-800/30 rounded-lg p-3 space-y-2">
-              <div className="flex justify-between text-sm">
+            <div className="bg-gray-800/30 rounded-lg p-4 space-y-3 border border-gray-700/20">
+              <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Est. Price</span>
-                <span className="text-white font-mono">${formatPrice(currentPrice)}</span>
+                <span className="text-white font-mono font-medium">${formatPrice(currentPrice)}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Est. Total</span>
-                <span className="text-white font-mono">${calculateTotal().toFixed(2)}</span>
+                <span className="text-white font-mono font-medium">${calculateTotal().toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Max Slippage</span>
                 <span className="text-white font-mono">{slippage}%</span>
               </div>
@@ -216,14 +213,14 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
             </div>
 
             {/* Percentage Buttons */}
-            <div className="grid grid-cols-4 gap-1">
+            <div className="grid grid-cols-4 gap-2">
               {[25, 50, 75, 100].map((percent) => (
                 <Button
                   key={percent}
                   variant="outline"
                   size="sm"
                   onClick={() => setPercentage(percent)}
-                  className="text-xs bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/50"
+                  className="text-xs font-medium bg-gray-800/50 border-gray-700/50 text-gray-300 hover:bg-gray-700/70 hover:text-white hover:border-gray-600 transition-all duration-200"
                 >
                   {percent}%
                 </Button>
@@ -305,68 +302,46 @@ const HyperliquidTradingPanel: React.FC<HyperliquidTradingPanelProps> = ({
         </TabsContent>
       </Tabs>
 
-      {/* Leverage Slider */}
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <Label className="text-sm text-gray-300">Leverage</Label>
-          <Badge variant="outline" className="bg-gray-800/50 border-gray-700/50 text-gray-300">
-            {leverage[0]}x
-          </Badge>
-        </div>
-        <Slider
-          value={leverage}
-          onValueChange={setLeverage}
-          max={10}
-          min={1}
-          step={1}
-          className="w-full"
-        />
-        <div className="flex justify-between text-xs text-gray-400">
-          <span>1x</span>
-          <span>5x</span>
-          <span>10x</span>
-        </div>
-      </div>
 
       {/* Order Summary */}
-      <div className="bg-gray-800/30 rounded-lg p-3 space-y-2 text-sm">
-        <div className="flex justify-between">
-          <span className="text-gray-400">Available Balance</span>
-          <span className="text-white font-mono">
+      <div className="bg-gray-800/30 rounded-lg p-4 space-y-3 border border-gray-700/20">
+        <div className="flex justify-between items-center">
+          <span className="text-gray-400 text-sm">Available Balance</span>
+          <span className="text-white font-mono font-medium">
             {side === 'buy' ? `$${balance.usdt.toFixed(2)}` : `${balance.token.toFixed(6)} ${symbol}`}
           </span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-gray-400">Est. Fee</span>
-          <span className="text-white font-mono">$0.12</span>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-400 text-sm">Est. Fee (0.1%)</span>
+          <span className="text-white font-mono">${(calculateTotal() * 0.001).toFixed(2)}</span>
         </div>
-        <div className="flex justify-between font-semibold">
-          <span className="text-gray-300">Total</span>
-          <span className="text-white font-mono">${calculateTotal().toFixed(2)}</span>
+        <div className="flex justify-between items-center pt-2 border-t border-gray-700/30">
+          <span className="text-gray-300 font-medium">Total</span>
+          <span className="text-white font-mono font-bold text-lg">${calculateTotal().toFixed(2)}</span>
         </div>
       </div>
 
       {/* Execute Button */}
       <Button
         onClick={executeOrder}
-        disabled={!amount}
-        className={`w-full font-semibold py-6 text-lg ${
+        disabled={!amount || parseFloat(amount) <= 0}
+        className={`w-full font-bold py-6 text-lg transition-all duration-200 shadow-lg ${
           side === 'buy'
-            ? 'bg-green-600 hover:bg-green-700 text-white'
-            : 'bg-red-600 hover:bg-red-700 text-white'
-        }`}
+            ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white shadow-green-500/25'
+            : 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white shadow-red-500/25'
+        } disabled:opacity-50 disabled:cursor-not-allowed`}
       >
         <Target className="h-5 w-5 mr-2" />
         {side === 'buy' ? 'Buy' : 'Sell'} {symbol}
       </Button>
 
       {/* Risk Warning */}
-      <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
-        <div className="flex items-start gap-2">
+      <div className="bg-orange-500/5 border border-orange-500/20 rounded-lg p-3 backdrop-blur-sm">
+        <div className="flex items-start gap-3">
           <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5 flex-shrink-0" />
-          <div className="text-xs text-gray-300">
-            <p className="font-medium text-orange-400 mb-1">Risk Warning</p>
-            <p>Trading cryptocurrencies involves substantial risk and may result in significant losses.</p>
+          <div className="text-xs text-gray-300 leading-relaxed">
+            <p className="font-semibold text-orange-400 mb-1">Risk Warning</p>
+            <p>Trading cryptocurrencies involves substantial risk. Only trade with funds you can afford to lose.</p>
           </div>
         </div>
       </div>
