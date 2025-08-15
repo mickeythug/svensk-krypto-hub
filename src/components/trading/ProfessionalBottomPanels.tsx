@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import SimpleTradingPanel from './SimpleTradingPanel';
+import ComprehensiveTradingPanel from './ComprehensiveTradingPanel';
 
 interface ProfessionalBottomPanelsProps {
   symbol: string;
@@ -127,7 +127,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
   };
 
   return (
-    <div className="h-80 pr-4 pb-4">
+    <div className="h-[550px] pr-4 pb-4">
       <Card className="h-full bg-gray-900/95 border-gray-800/50 backdrop-blur-sm">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
           <div className="p-4 pb-0">
@@ -171,7 +171,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
           
           <div className="flex-1 min-h-0 p-4 pt-3">
             <TabsContent value="trade" className="h-full m-0">
-              <SimpleTradingPanel 
+              <ComprehensiveTradingPanel 
                 symbol={symbol}
                 currentPrice={currentPrice}
                 tokenName={tokenName}
