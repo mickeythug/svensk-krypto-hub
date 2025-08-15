@@ -56,7 +56,7 @@ import { useTradingViewSymbol } from '@/hooks/useTradingViewSymbol';
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
 import { useBinanceTicker } from '@/hooks/useBinanceTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
-import ProductionTradingInterface from './ProductionTradingInterface';
+import UltimateTradingInterface from './UltimateTradingInterface';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface HyperliquidTradingInterfaceProps {
@@ -191,7 +191,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   }
 
   return (
-    <ProductionTradingInterface 
+    <UltimateTradingInterface 
       symbol={symbol}
       currentPrice={realTimePrice}
       priceChange24h={realTickerData.priceChange24h}
