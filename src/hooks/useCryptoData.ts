@@ -374,7 +374,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
 
   const cacheKey = 'crypto-prices-cache-v2';
   const projectRef = 'jcllcrvomxdrhtkqpcbr';
-  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=5&refresh=true`;
+  const fnUrl = `https://${projectRef}.supabase.co/functions/v1/token-prices-refresh?pages=50&refresh=true`;
 
   // Attempt via Edge Function (DB-backed, refreshed every 3 min via cron)
   const controller = new AbortController();
@@ -418,7 +418,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     // Reset circuit breaker on success
     this.failureCount = 0;
     
-    // HARD OVERRIDE: ENDAST dessa 16 tokens returneras
+    // Return ALL tokens from CoinGecko
     return this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData());
   } catch (error: any) {
     clearTimeout(timer);
@@ -457,63 +457,41 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     }));
   }
 
-  // Enforce exact token set and order - ONLY these 16 tokens
+  // Return ALL tokens instead of filtering to specific ones
   private filterAllowed(data: CryptoPrice[]): CryptoPrice[] {
-    const allowedOrder = ['BTC','ETH','HBAR','ALGO','SUI','XRP','DOGE','BONK','SOL','LINK','APT','BNB','ADA','HYPE','TRX','AVAX'] as const;
-    const orderMap = new Map(allowedOrder.map((s, i) => [s, i]));
-    
-    // Filter to ONLY allowed tokens, deduplicate by symbol
+    // Remove duplicates by symbol and sort by market cap rank
     const seen = new Set<string>();
     const filtered = data.filter(d => {
-      const isAllowed = orderMap.has(d.symbol as any);
-      const isNotSeen = !seen.has(d.symbol);
-      if (isAllowed && isNotSeen) {
+      if (!seen.has(d.symbol)) {
         seen.add(d.symbol);
         return true;
       }
       return false;
     });
     
-    // Sort according to allowed order
-    filtered.sort((a,b) => (orderMap.get(a.symbol as any)! - orderMap.get(b.symbol as any)!));
-    
-    // If we don't have all 16, fill missing ones with fallback data
-    const missing = allowedOrder.filter(symbol => !filtered.find(f => f.symbol === symbol));
-    if (missing.length > 0) {
-      const fallback = this.getFallbackData();
-      missing.forEach(symbol => {
-        const fallbackToken = fallback.find(f => f.symbol === symbol);
-        if (fallbackToken) {
-          filtered.push(fallbackToken);
-        }
-      });
-      // Re-sort after adding missing tokens
-      filtered.sort((a,b) => (orderMap.get(a.symbol as any)! - orderMap.get(b.symbol as any)!));
-    }
+    // Sort by market cap rank (ascending)
+    filtered.sort((a, b) => (a.rank || 999) - (b.rank || 999));
     
     return filtered;
   }
 
   private getFallbackData(): CryptoPrice[] {
-    // ENDAST dessa 16 tokens - inga andra!
-    return [
-      { symbol: 'BTC', name: 'Bitcoin', price: 97234.56, change24h: 2.45, coinGeckoId: 'bitcoin', rank: 1, lastUpdated: new Date().toISOString(), marketCap: '1.92T', volume: '45.2B', image: 'https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png' },
-      { symbol: 'ETH', name: 'Ethereum', price: 3456.78, change24h: -1.23, coinGeckoId: 'ethereum', rank: 2, lastUpdated: new Date().toISOString(), marketCap: '415B', volume: '23.1B', image: 'https://assets.coingecko.com/coins/images/279/thumb/ethereum.png' },
-      { symbol: 'HBAR', name: 'Hedera', price: 0.2890, change24h: 2.67, coinGeckoId: 'hedera-hashgraph', rank: 3, lastUpdated: new Date().toISOString(), marketCap: '12.3B', volume: '891M', image: 'https://assets.coingecko.com/coins/images/3688/thumb/hbar.png' },
-      { symbol: 'ALGO', name: 'Algorand', price: 0.4567, change24h: -0.89, coinGeckoId: 'algorand', rank: 4, lastUpdated: new Date().toISOString(), marketCap: '3.8B', volume: '234M', image: 'https://assets.coingecko.com/coins/images/4380/thumb/download.png' },
-      { symbol: 'SUI', name: 'Sui', price: 4.23, change24h: 6.78, coinGeckoId: 'sui', rank: 5, lastUpdated: new Date().toISOString(), marketCap: '12.1B', volume: '1.2B', image: 'https://assets.coingecko.com/coins/images/26375/thumb/sui.jpg' },
-      { symbol: 'XRP', name: 'XRP', price: 2.34, change24h: -0.56, coinGeckoId: 'ripple', rank: 6, lastUpdated: new Date().toISOString(), marketCap: '134B', volume: '8.9B', image: 'https://assets.coingecko.com/coins/images/44/thumb/xrp-symbol-white-128.png' },
-      { symbol: 'DOGE', name: 'Dogecoin', price: 0.3567, change24h: 8.90, coinGeckoId: 'dogecoin', rank: 7, lastUpdated: new Date().toISOString(), marketCap: '52.4B', volume: '2.1B', image: 'https://assets.coingecko.com/coins/images/5/thumb/dogecoin.png' },
-      { symbol: 'BONK', name: 'Bonk', price: 0.00003456, change24h: 15.67, coinGeckoId: 'bonk', rank: 8, lastUpdated: new Date().toISOString(), marketCap: '2.8B', volume: '456M', image: 'https://assets.coingecko.com/coins/images/28600/thumb/bonk.jpg' },
-      { symbol: 'SOL', name: 'Solana', price: 234.56, change24h: 5.67, coinGeckoId: 'solana', rank: 9, lastUpdated: new Date().toISOString(), marketCap: '112B', volume: '4.5B', image: 'https://assets.coingecko.com/coins/images/4128/thumb/solana.png' },
-      { symbol: 'LINK', name: 'Chainlink', price: 23.45, change24h: 4.12, coinGeckoId: 'chainlink', rank: 10, lastUpdated: new Date().toISOString(), marketCap: '14.2B', volume: '1.1B', image: 'https://assets.coingecko.com/coins/images/877/thumb/chainlink-new-logo.png' },
-      { symbol: 'APT', name: 'Aptos', price: 12.34, change24h: 3.21, coinGeckoId: 'aptos', rank: 11, lastUpdated: new Date().toISOString(), marketCap: '5.8B', volume: '678M', image: 'https://assets.coingecko.com/coins/images/26455/thumb/aptos_round.png' },
-      { symbol: 'BNB', name: 'BNB', price: 567.89, change24h: 1.89, coinGeckoId: 'binancecoin', rank: 12, lastUpdated: new Date().toISOString(), marketCap: '85.1B', volume: '1.8B', image: 'https://assets.coingecko.com/coins/images/825/thumb/bnb-icon2_2x.png' },
-      { symbol: 'ADA', name: 'Cardano', price: 1.23, change24h: 3.45, coinGeckoId: 'cardano', rank: 13, lastUpdated: new Date().toISOString(), marketCap: '43.2B', volume: '1.9B', image: 'https://assets.coingecko.com/coins/images/975/thumb/cardano.png' },
-      { symbol: 'HYPE', name: 'Hyperliquid', price: 28.90, change24h: -3.45, coinGeckoId: 'hyperliquid', rank: 14, lastUpdated: new Date().toISOString(), marketCap: '9.7B', volume: '890M', image: 'https://assets.coingecko.com/coins/images/34344/thumb/hype.png' },
-      { symbol: 'TRX', name: 'TRON', price: 0.2345, change24h: -1.45, coinGeckoId: 'tron', rank: 15, lastUpdated: new Date().toISOString(), marketCap: '20.1B', volume: '1.4B', image: 'https://assets.coingecko.com/coins/images/1094/thumb/tron-logo.png' },
-      { symbol: 'AVAX', name: 'Avalanche', price: 45.67, change24h: -2.10, coinGeckoId: 'avalanche-2', rank: 16, lastUpdated: new Date().toISOString(), marketCap: '18.9B', volume: '1.7B', image: 'https://assets.coingecko.com/coins/images/12559/thumb/Avalanche_Circle_RedWhite_Trans.png' }
-    ];
+    // Return top 100 fallback tokens for when API is unavailable
+    return TOP_100_COINS.map((coinId, index) => {
+      const info = getCoinInfo(coinId, index + 1);
+      return {
+        symbol: info.symbol,
+        name: info.name,
+        price: Math.random() * 1000 + 1, // Random fallback prices
+        change24h: (Math.random() - 0.5) * 20, // Random change between -10% and +10%
+        coinGeckoId: coinId,
+        rank: index + 1,
+        lastUpdated: new Date().toISOString(),
+        marketCap: `${(Math.random() * 1000).toFixed(1)}B`,
+        volume: `${(Math.random() * 100).toFixed(1)}B`,
+        image: `https://assets.coingecko.com/coins/images/1/thumb/${coinId}.png`
+      };
+    });
   }
 
   private recordFailure(): void {
