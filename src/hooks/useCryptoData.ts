@@ -391,6 +391,7 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
     if (!res.ok) throw new Error(`Edge error: ${res.status} ${res.statusText}`);
 
     const body = await res.json();
+    console.log('🚀 CryptoData Response:', { count: body?.data?.length, body });
     const rows = (body?.data ?? []) as any[];
 
     const transformed: CryptoPrice[] = rows.map((r: any, idx: number) => ({
@@ -408,17 +409,24 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       coinGeckoId: r.coin_gecko_id ?? r.id,
     }));
 
+    console.log('🔢 Transformed CryptoData:', { count: transformed.length, first5: transformed.slice(0, 5).map(t => t.symbol) });
     const finalData: CryptoPrice[] = transformed;
 
     // Persist to localStorage as 1h fallback
     try {
-      localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), data: finalData }));
+      // Clear all old cache first to ensure fresh data
+      globalCache.clear();
+      localStorage.removeItem('crypto-prices-cache-v2');
+      localStorage.removeItem('crypto-prices-cache'); // Clear any old versions
+      localStorage.setItem('crypto-prices-cache-v2', JSON.stringify({ ts: Date.now(), data: finalData }));
+      console.log('💾 Saved fresh cache with', finalData.length, 'tokens');
     } catch {}
 
     // Reset circuit breaker on success
     this.failureCount = 0;
     
     // Return ALL tokens from CoinGecko
+    console.log('✅ Final CryptoData Result:', { count: finalData.length });
     return this.filterAllowed(finalData.length > 0 ? finalData : this.getFallbackData());
   } catch (error: any) {
     clearTimeout(timer);
@@ -429,8 +437,13 @@ async fetchCryptoPrices(): Promise<CryptoPrice[]> {
       const raw = localStorage.getItem(cacheKey);
       if (raw) {
         const parsed = JSON.parse(raw);
+        console.log('📦 Found localStorage cache:', { count: parsed.data?.length, age: Date.now() - parsed.ts });
         if (Date.now() - parsed.ts <= CACHE_DURATIONS.STALE_WHILE_REVALIDATE) {
+          console.log('🔄 Using localStorage cache with', parsed.data?.length, 'tokens');
           return this.filterAllowed(parsed.data as CryptoPrice[]);
+        } else {
+          console.log('🗑️ localStorage cache expired, removing');
+          localStorage.removeItem(cacheKey);
         }
       }
     } catch {}
