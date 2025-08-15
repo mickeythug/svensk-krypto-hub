@@ -346,7 +346,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
       {/* Right Sidebar */}
       <motion.div 
         className="bg-gray-900/95 border-l border-gray-800/50 backdrop-blur-sm"
-        animate={{ width: sidebarCollapsed ? 60 : 400 }}
+        animate={{ width: sidebarCollapsed ? 50 : 320 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <div className="h-full flex flex-col">
@@ -381,7 +381,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
 
               {/* Modern Trading Panel with Auth */}
               {fullyAuthed ? (
-                <div className="h-[500px] p-4 pt-2">
+                <div className="h-[400px] p-4 pt-2">
                   <ModernTradingPanel 
                     symbol={symbol}
                     currentPrice={realTimePrice}
