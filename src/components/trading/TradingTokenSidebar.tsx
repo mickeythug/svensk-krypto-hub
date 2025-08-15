@@ -27,13 +27,13 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
 
-  // Filter and search tokens - now showing ALL tokens
+  // Filter and search tokens - show top 30 tokens
   const filteredTokens = useMemo(() => {
     if (!cryptoPrices) return [];
-    let filtered = cryptoPrices;
+    let filtered = cryptoPrices.slice(0, 30); // Limit to top 30 tokens
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = cryptoPrices.filter(token => token.symbol.toLowerCase().includes(query) || token.name.toLowerCase().includes(query));
+      filtered = cryptoPrices.filter(token => token.symbol.toLowerCase().includes(query) || token.name.toLowerCase().includes(query)).slice(0, 30);
     }
     return filtered;
   }, [cryptoPrices, searchQuery]);
@@ -127,7 +127,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
 
       {/* Token List */}
       <div className="flex-1 min-h-0">
-        <ScrollArea className="h-full max-h-[calc(16*4.5rem)]">
+        <ScrollArea className="h-full max-h-[calc(30*4.5rem)]">
           <div className="p-2">
             <AnimatePresence mode="wait">
               {isLoading ? <motion.div initial={{
@@ -199,10 +199,9 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                               <div className="font-mono text-sm text-foreground font-semibold tracking-tight">
                                 ${formatPrice(token.price)}
                               </div>
-                              <div className="flex items-center gap-1">
-                                <span className={`text-sm font-medium font-inter flex items-center gap-1 ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
-                                  {token.change24h >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                                  {formatChange(token.change24h)}
+                              <div className="flex items-center gap-1 justify-end">
+                                <span className={`text-sm font-bold font-mono tracking-tight ${token.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                  {token.change24h >= 0 ? '+' : ''}{formatChange(token.change24h)}
                                 </span>
                               </div>
                             </div>
@@ -224,7 +223,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
       {/* Token Count Footer */}
       <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <div className="text-xs text-muted-foreground font-mono text-center">
-          Showing {Math.min(filteredTokens.length, 16)} of {filteredTokens.length} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
+          Showing {Math.min(filteredTokens.length, 30)} of {filteredTokens.length} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
         </div>
       </div>
     </motion.div>;
