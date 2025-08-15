@@ -33,6 +33,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const CryptoDetailPage = () => {
   const { symbol } = useParams<{ symbol: string }>();
@@ -46,6 +47,13 @@ const CryptoDetailPage = () => {
   const [activeTab, setActiveTab] = useState("chart");
   const [isWatchlisted, setIsWatchlisted] = useState(false);
   const { publicKey } = useWallet();
+
+  // Dynamic title for trading page
+  useDynamicTitle({
+    symbol: symbol?.toUpperCase(),
+    pageType: 'trading',
+    enabled: true
+  });
 
   const crypto = cryptoPrices?.find(c => 
     c.symbol.toLowerCase() === symbol?.toLowerCase()
@@ -62,11 +70,9 @@ const CryptoDetailPage = () => {
     return () => clearInterval(refreshInterval);
   }, [handleRefresh]);
 
-  // SEO and Meta Tags
+  // SEO and Meta Tags (keeping original meta description)
   useEffect(() => {
     if (crypto) {
-      document.title = `${crypto.name} (${crypto.symbol.toUpperCase()}) ${t('nav.price')} - Live Trading | Crypto Network Sweden`;
-      
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute('content', 

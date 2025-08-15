@@ -32,6 +32,7 @@ import { ProfessionalTokenHeader } from './components/ProfessionalTokenHeader';
 import { ProfessionalTradingChart } from './components/ProfessionalTradingChart';
 import { ProfessionalTradingSidebar } from './components/ProfessionalTradingSidebar';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 // Import cover images
 import c1 from '@/assets/meme-covers/meme-cover-1.jpg';
@@ -50,6 +51,13 @@ const MemeTokenDetailPage = () => {
   const { tokens } = useMemeTokens('all');
   const { toast } = useToast();
   const { t } = useLanguage();
+  
+  // Dynamic title for meme page
+  useDynamicTitle({
+    symbol: symbol?.toUpperCase(),
+    pageType: 'meme',
+    enabled: true
+  });
   
   // Resolve address from query and fetch full details
   const [searchParams] = useSearchParams();
