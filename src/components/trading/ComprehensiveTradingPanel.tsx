@@ -133,7 +133,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                 onClick={() => setSide('buy')} 
                 className={`h-14 text-base font-semibold transition-all duration-300 relative overflow-hidden ${
                   side === 'buy' 
-                    ? 'bg-gradient-to-br from-success to-success/80 hover:from-success/90 hover:to-success/70 text-white border-0 shadow-lg shadow-success/25' 
+                    ? 'bg-gradient-to-br from-green-800 to-green-900 hover:from-green-700 hover:to-green-800 text-white border-0 shadow-lg shadow-green-800/25' 
                     : 'bg-muted/50 border-border text-muted-foreground hover:bg-accent/50 hover:text-foreground'
                 }`}
               >
