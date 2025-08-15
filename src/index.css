@@ -117,16 +117,51 @@ All colors MUST be HSL.
     --shadow-elevation-3: 0 10px 20px hsl(0 0% 0% / 0.15), 0 3px 6px hsl(0 0% 0% / 0.10);
     --shadow-elevation-4: 0 15px 25px hsl(0 0% 0% / 0.15), 0 5px 10px hsl(0 0% 0% / 0.05);
     
-    /* Meme token specific colors */
-    --meme-pink: 330 100% 70%;
-    --meme-cyan: 165 85% 45%; /* Changed from blue to our green */
-    --meme-lime: 90 100% 60%;
-    --meme-orange: 30 100% 60%;
+  /* Meme Zone Casino Colors - Vibrant Neon Palette */
+  --meme-neon-pink: 330 100% 65%;
+  --meme-neon-cyan: 186 100% 60%;
+  --meme-neon-lime: 90 100% 50%;
+  --meme-neon-orange: 30 100% 55%;
+  --meme-neon-purple: 270 100% 65%;
+  --meme-neon-blue: 218 100% 65%;
+  --meme-casino-gold: 45 100% 55%;
+  --meme-casino-red: 0 100% 65%;
+  
+  /* Casino/Web3 Gradient Backgrounds */
+  --gradient-casino-rainbow: linear-gradient(135deg, 
+    hsl(330 100% 65%) 0%, 
+    hsl(270 100% 65%) 16%, 
+    hsl(218 100% 65%) 33%, 
+    hsl(186 100% 60%) 50%, 
+    hsl(90 100% 50%) 66%, 
+    hsl(30 100% 55%) 83%, 
+    hsl(0 100% 65%) 100%);
+  
+  --gradient-casino-gold: linear-gradient(135deg, 
+    hsl(45 100% 55%) 0%, 
+    hsl(30 100% 55%) 50%, 
+    hsl(15 100% 55%) 100%);
+    
+  --gradient-web3-cyber: linear-gradient(135deg, 
+    hsl(186 100% 60%) 0%, 
+    hsl(270 100% 65%) 50%, 
+    hsl(330 100% 65%) 100%);
+    
+  --gradient-meme-energy: linear-gradient(135deg, 
+    hsl(0 100% 65%) 0%, 
+    hsl(30 100% 55%) 25%, 
+    hsl(90 100% 50%) 50%, 
+    hsl(186 100% 60%) 75%, 
+    hsl(270 100% 65%) 100%);
 
-    /* Enhanced glowing effects - Stronger neon */
-    --glow-primary: 0 0 50px hsl(165 85% 45% / 1), 0 0 100px hsl(165 85% 45% / 0.8);
-    --glow-secondary: 0 0 40px hsl(165 85% 45% / 0.9), 0 0 80px hsl(165 85% 45% / 0.7);
-    --glow-rainbow: 0 0 60px hsl(165 85% 45% / 0.8), 0 0 120px hsl(165 70% 60% / 0.6);
+  /* Casino/Web3 Glow Effects - Ultra Vibrant */
+  --glow-casino-gold: 0 0 30px hsl(45 100% 55% / 0.8), 0 0 60px hsl(45 100% 55% / 0.6), 0 0 90px hsl(45 100% 55% / 0.4);
+  --glow-neon-pink: 0 0 30px hsl(330 100% 65% / 0.8), 0 0 60px hsl(330 100% 65% / 0.6);
+  --glow-neon-cyan: 0 0 30px hsl(186 100% 60% / 0.8), 0 0 60px hsl(186 100% 60% / 0.6);
+  --glow-neon-purple: 0 0 30px hsl(270 100% 65% / 0.8), 0 0 60px hsl(270 100% 65% / 0.6);
+  --glow-rainbow: 0 0 40px hsl(330 100% 65% / 0.6), 0 0 80px hsl(186 100% 60% / 0.4), 0 0 120px hsl(270 100% 65% / 0.3);
+  --glow-primary: 0 0 50px hsl(165 85% 45% / 1), 0 0 100px hsl(165 85% 45% / 0.8);
+  --glow-secondary: 0 0 40px hsl(165 85% 45% / 0.9), 0 0 80px hsl(165 85% 45% / 0.7);
 
     /* Meme backgrounds - Changed from purple to dark neutral */
     --meme-grid-bg: 214 32% 5%;
