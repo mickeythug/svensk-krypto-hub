@@ -265,11 +265,12 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
           className={cn(
             "pl-12 pr-4 py-3 text-base font-medium rounded-2xl transition-all duration-300",
             "bg-gradient-to-r from-background/90 to-background/70 backdrop-blur-xl",
-            "border-2 border-border/30 hover:border-primary/30 focus:border-primary/50",
+            "border-2 border-primary/60 hover:border-primary/80 focus:border-primary",
             "shadow-lg hover:shadow-xl focus:shadow-2xl",
             "ring-0 focus:ring-4 focus:ring-primary/10",
             "placeholder:text-muted-foreground placeholder:font-medium",
-            isOpen && "border-primary/50 shadow-2xl ring-4 ring-primary/10"
+            "shadow-[0_0_20px_hsl(var(--primary)/0.3)] hover:shadow-[0_0_25px_hsl(var(--primary)/0.4)] focus:shadow-[0_0_30px_hsl(var(--primary)/0.5)]",
+            isOpen && "border-primary shadow-2xl ring-4 ring-primary/10 shadow-[0_0_35px_hsl(var(--primary)/0.6)]"
           )}
         />
         <div className={cn(
