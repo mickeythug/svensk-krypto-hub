@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { TrendingUp, TrendingDown, Zap, Target, Settings, Wallet, BarChart3, DollarSign, Percent, Clock, Shield, Activity, Calculator, Lock, Unlock, AlertTriangle, CheckCircle, Info } from 'lucide-react';
-import { motion } from 'framer-motion';
+// Updated component - removed leverage functionality
 import { useLanguage } from '@/contexts/LanguageContext';
 interface ComprehensiveTradingPanelProps {
   symbol: string;
