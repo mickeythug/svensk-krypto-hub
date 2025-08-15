@@ -8,30 +8,36 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Ultra Modern Futuristic Color Scheme - Exact Reference Match */
-    --background: 0 0% 2%; /* Ultra deep black */
-    --foreground: 0 0% 98%; /* Pure white text */
+    /* Reference Image Exact Color Scheme */
+    --background: 222 47% 3%; /* #0A0B0F */
+    --foreground: 0 0% 100%; /* #FFFFFF */
 
-    /* Glass Morphism Cards */
-    --card: 0 0% 4%; /* Deep black cards */
-    --card-foreground: 0 0% 98%;
-    --card-glass: 0 0% 8% / 0.6; /* Transparent glass effect */
+    /* Panel Backgrounds */
+    --card: 225 31% 8%; /* #12131A */
+    --card-foreground: 0 0% 100%;
+    --card-secondary: 225 25% 11%; /* #1A1B24 */
+    --card-hover: 225 20% 13%; /* #1F2029 */
     
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 225 31% 8%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Modern Turquoise Brand Theme - #12E19F */
-    --primary: 165 85% 45%; /* Brand turquoise #12E19F */
+    /* Trading Colors from Reference */
+    --buy-primary: 258 100% 61%; /* #7B3FF2 */
+    --buy-secondary: 258 100% 71%; /* #9D5FFE */
+    --sell-primary: 348 100% 61%; /* #FF3B5C */
+    --positive: 159 100% 42%; /* #00D395 */
+    --negative: 348 100% 61%; /* #FF3B5C */
+    
+    --primary: 258 100% 61%; /* #7B3FF2 */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 165 85% 65%; /* Lighter turquoise glow */
-    --primary-dark: 165 85% 35%; /* Darker turquoise */
+    --primary-glow: 258 100% 71%; /* #9D5FFE */
     
-    /* Neon Accents with Brand Turquoise */
-    --neon-turquoise: 165 85% 45%; /* Brand color */
-    --neon-cyan: 180 100% 50%;
-    --neon-blue: 218 100% 58%;
-    --neon-green: 142 76% 50%;
-    --neon-red: 0 84% 60%;
+    /* Text Colors from Reference */
+    --text-primary: 0 0% 100%; /* #FFFFFF */
+    --text-secondary: 224 18% 59%; /* #8B8CA7 */
+    --text-muted: 224 18% 45%;
+    --text-price-positive: 159 100% 42%; /* #00D395 */
+    --text-price-negative: 348 100% 61%; /* #FF3B5C */
     
     /* Ultra Dark Grays */
     --gray-50: 0 0% 98%;
@@ -188,10 +194,10 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-inter;
     overflow-x: hidden; /* Only hide horizontal scroll */
     overflow-y: auto; /* Ensure vertical scroll is enabled */
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   .text-shadow-lg {

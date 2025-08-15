@@ -89,15 +89,10 @@ export default {
 				'glow-rainbow': 'var(--shadow-glow-rainbow)',
 			},
 			fontFamily: {
-				sans: ['Orbitron', 'sans-serif'],
-				mono: ['JetBrains Mono', 'Roboto Mono', 'monospace'],
-				orbitron: ['Orbitron', 'sans-serif'],
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				mono: ['JetBrains Mono', 'Inter', 'monospace'],
 				inter: ['Inter', 'system-ui', 'sans-serif'],
-				rajdhani: ['Rajdhani', 'sans-serif'],
-				oxanium: ['Oxanium', 'sans-serif'],
-				'space-grotesk': ['Space Grotesk', 'sans-serif'],
-				'tech': ['Oxanium', 'Rajdhani', 'Orbitron', 'sans-serif'],
-				'future': ['Space Grotesk', 'Oxanium', 'sans-serif'],
+				trading: ['Inter', 'system-ui', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
