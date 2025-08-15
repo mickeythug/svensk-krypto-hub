@@ -149,13 +149,13 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
           ))}
         </div>
 
-        {/* Current price separator */}
-        <div className="px-4 py-2 border-y border-white/[0.05] bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+        {/* Current price separator with brand turquoise */}
+        <div className="px-4 py-2 border-y border-white/[0.05] bg-gradient-to-r from-primary/10 to-primary-glow/10">
           <div className="text-center">
             <div className="text-lg font-bold text-white font-mono">
               ${formatPrice(currentPrice)}
             </div>
-            <div className="text-xs text-purple-400 font-medium">
+            <div className="text-xs text-primary font-medium">
               Current Price
             </div>
           </div>

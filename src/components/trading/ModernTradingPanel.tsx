@@ -40,7 +40,7 @@ const ModernTradingPanel: React.FC<ModernTradingPanelProps> = ({
       <div className="p-4 border-b border-white/[0.05]">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center">
               <span className="text-xs font-bold text-white">
                 {symbol?.slice(0, 2)}
               </span>
@@ -77,7 +77,7 @@ const ModernTradingPanel: React.FC<ModernTradingPanelProps> = ({
           </div>
           <div>
             <div className="text-xs text-white/40">24h Vol</div>
-            <div className="text-xs font-mono text-purple-400">$4.71%</div>
+            <div className="text-xs font-mono text-primary">$4.71%</div>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@ const ModernTradingPanel: React.FC<ModernTradingPanelProps> = ({
               className={cn(
                 "px-3 py-1.5 rounded-lg font-medium transition-all duration-300",
                 orderType === type.toLowerCase()
-                  ? "bg-purple-600/30 text-purple-300 border border-purple-500/30"
+                  ? "bg-primary/30 text-primary border border-primary/30"
                   : "text-white/50 hover:text-white/80 hover:bg-white/[0.05]"
               )}
             >
@@ -162,7 +162,7 @@ const ModernTradingPanel: React.FC<ModernTradingPanelProps> = ({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs text-white/60 font-medium">% Slippage</span>
-            <span className="text-xs text-purple-400 font-mono">{slippage}%</span>
+            <span className="text-xs text-primary font-mono">{slippage}%</span>
           </div>
           
           {/* Slippage Slider */}

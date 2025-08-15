@@ -20,15 +20,15 @@ All colors MUST be HSL.
     --popover: 0 0% 4%;
     --popover-foreground: 0 0% 98%;
 
-    /* Modern Purple/Violet Theme from Reference */
-    --primary: 271 81% 56%; /* Purple/violet from reference */
+    /* Modern Turquoise Brand Theme - #12E19F */
+    --primary: 165 85% 45%; /* Brand turquoise #12E19F */
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 271 81% 70%; /* Lighter purple glow */
-    --primary-dark: 271 81% 40%; /* Darker purple */
+    --primary-glow: 165 85% 65%; /* Lighter turquoise glow */
+    --primary-dark: 165 85% 35%; /* Darker turquoise */
     
-    /* Neon Accents */
-    --neon-purple: 271 81% 56%;
-    --neon-pink: 312 73% 55%;
+    /* Neon Accents with Brand Turquoise */
+    --neon-turquoise: 165 85% 45%; /* Brand color */
+    --neon-cyan: 180 100% 50%;
     --neon-blue: 218 100% 58%;
     --neon-green: 142 76% 50%;
     --neon-red: 0 84% 60%;
@@ -72,29 +72,30 @@ All colors MUST be HSL.
 
     --border: 0 0% 12%; /* Subtle borders */
     --input: 0 0% 6%; /* Ultra dark inputs */
-    --ring: 271 81% 56%; /* Purple focus ring */
+    --ring: 165 85% 45%; /* Brand turquoise focus ring */
 
     --radius: 0.75rem; /* Rounded corners from reference */
 
     /* Futuristic Glass Gradients */
     --gradient-glass: linear-gradient(145deg, hsla(0 0% 100% / 0.1) 0%, hsla(0 0% 100% / 0.02) 100%);
-    --gradient-glass-border: linear-gradient(145deg, hsla(271 81% 56% / 0.3) 0%, hsla(0 0% 100% / 0.1) 100%);
+    --gradient-glass-border: linear-gradient(145deg, hsla(165 85% 45% / 0.3) 0%, hsla(0 0% 100% / 0.1) 100%);
     
-    /* Purple Trading Gradients from Reference */
-    --gradient-buy: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(312 73% 55%) 100%);
-    --gradient-sell: linear-gradient(135deg, hsl(312 73% 55%) 0%, hsl(271 81% 56%) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(271 81% 56%) 0%, hsl(312 73% 55%) 100%);
+    /* Turquoise Brand Gradients */
+    --gradient-buy: linear-gradient(135deg, hsl(165 85% 45%) 0%, hsl(165 85% 65%) 100%);
+    --gradient-sell: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(15 100% 55%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(165 85% 45%) 0%, hsl(165 85% 65%) 100%);
     
     /* Dark Surface Gradients */
     --gradient-surface: linear-gradient(145deg, hsl(0 0% 4%) 0%, hsl(0 0% 8%) 100%);
     --gradient-panel: linear-gradient(145deg, hsl(0 0% 3%) 0%, hsl(0 0% 6%) 100%);
     --gradient-input: linear-gradient(145deg, hsl(0 0% 6%) 0%, hsl(0 0% 4%) 100%);
     
-    /* Neon Glow Effects */
-    --glow-purple: 0 0 20px hsl(271 81% 56% / 0.5), 0 0 40px hsl(271 81% 56% / 0.3);
+    /* Neon Glow Effects with Brand Turquoise */
+    --glow-turquoise: 0 0 20px hsl(165 85% 45% / 0.5), 0 0 40px hsl(165 85% 45% / 0.3);
+    --glow-primary: 0 0 20px hsl(165 85% 45% / 0.5), 0 0 40px hsl(165 85% 45% / 0.3);
     --glow-green: 0 0 20px hsl(142 76% 50% / 0.5), 0 0 40px hsl(142 76% 50% / 0.3);
     --glow-red: 0 0 20px hsl(0 84% 60% / 0.5), 0 0 40px hsl(0 84% 60% / 0.3);
-    --glow-soft: 0 0 30px hsl(271 81% 56% / 0.2);
+    --glow-soft: 0 0 30px hsl(165 85% 45% / 0.2);
     
     /* Glass Morphism Shadows */
     --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4);

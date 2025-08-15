@@ -20,14 +20,14 @@ const ModernInput = React.forwardRef<HTMLInputElement, ModernInputProps>(
             
             // Border with subtle glow
             "border border-white/[0.08]",
-            "focus:border-purple-500/50",
+            "focus:border-primary/50",
             
             // Text styling
             "text-white placeholder:text-white/40",
             
-            // Focus effects
-            "focus:outline-none focus:ring-2 focus:ring-purple-500/20",
-            "focus:shadow-[0_0_20px_rgba(139,92,246,0.3)]",
+            // Focus effects with brand turquoise
+            "focus:outline-none focus:ring-2 focus:ring-primary/20",
+            "focus:shadow-[0_0_20px_hsl(var(--primary)/0.3)]",
             
             // Transition
             "transition-all duration-300",
@@ -44,9 +44,9 @@ const ModernInput = React.forwardRef<HTMLInputElement, ModernInputProps>(
         {/* Subtle inner shadow */}
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-transparent to-black/[0.05] pointer-events-none" />
         
-        {/* Focus glow ring */}
+        {/* Focus glow ring with brand color */}
         <div className="absolute inset-0 rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none">
-          <div className="absolute inset-0 rounded-xl shadow-[0_0_30px_rgba(139,92,246,0.2)]" />
+          <div className="absolute inset-0 rounded-xl shadow-[0_0_30px_hsl(var(--primary)/0.2)]" />
         </div>
       </div>
     );

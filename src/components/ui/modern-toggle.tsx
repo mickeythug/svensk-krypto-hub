@@ -16,13 +16,13 @@ const ModernToggle = React.forwardRef<
       "border border-white/[0.1]",
       "backdrop-blur-xl",
       
-      // Active state with purple gradient
-      "data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-600 data-[state=checked]:to-pink-600",
-      "data-[state=checked]:shadow-[0_0_15px_rgba(139,92,246,0.4)]",
-      "data-[state=checked]:border-purple-500/30",
+      // Active state with brand turquoise gradient
+      "data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-primary-glow",
+      "data-[state=checked]:shadow-[0_0_15px_hsl(var(--primary)/0.4)]",
+      "data-[state=checked]:border-primary/30",
       
-      // Hover effects
-      "hover:shadow-[0_0_10px_rgba(139,92,246,0.2)]",
+      // Hover effects with brand color
+      "hover:shadow-[0_0_10px_hsl(var(--primary)/0.2)]",
       
       className
     )}
@@ -41,8 +41,8 @@ const ModernToggle = React.forwardRef<
         // Position transitions
         "translate-x-1 data-[state=checked]:translate-x-6",
         
-        // Active state styling
-        "data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-white data-[state=checked]:to-purple-100",
+        // Active state styling with brand colors
+        "data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-white data-[state=checked]:to-primary-glow/20",
         "data-[state=checked]:shadow-[0_0_10px_rgba(255,255,255,0.3)]"
       )}
     />

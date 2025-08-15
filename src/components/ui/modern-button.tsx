@@ -8,14 +8,14 @@ const modernButtonVariants = cva(
   {
     variants: {
       variant: {
-        // Purple gradient from reference image
+        // Turquoise brand gradient from reference image
         primary: [
-          "bg-gradient-to-r from-purple-600 to-pink-600",
+          "bg-gradient-to-r from-primary to-primary-glow",
           "text-white font-semibold",
-          "shadow-[0_0_20px_rgba(139,92,246,0.4)]",
-          "hover:shadow-[0_0_30px_rgba(139,92,246,0.6)]",
+          "shadow-[0_0_20px_hsl(var(--primary)/0.4)]",
+          "hover:shadow-[0_0_30px_hsl(var(--primary)/0.6)]",
           "hover:scale-[1.02]",
-          "border border-purple-500/30",
+          "border border-primary/30",
         ],
         // Glass style buttons
         glass: [
