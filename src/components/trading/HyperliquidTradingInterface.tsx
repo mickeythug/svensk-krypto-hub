@@ -374,10 +374,10 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           {sidebarCollapsed ? (
             // Collapsed view - minimal
             <div className="flex flex-col h-full justify-center items-center p-2 space-y-2">
-              <div className="text-xs text-gray-400 text-center">
-                <div className="mb-1">{t('trading.currentPrice')}</div>
-                <div className="font-mono text-white text-sm">${formatPrice(realTimePrice)}</div>
-              </div>
+               <div className="text-xs text-gray-400 text-center">
+                 <div className="mb-1">{t('trading.currentPrice')}</div>
+                 <div className="font-mono text-white text-sm">${realTimePrice.toFixed(6)}</div>
+               </div>
             </div>
           ) : (
             // Expanded view - full trading interface

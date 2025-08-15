@@ -136,35 +136,7 @@ const ModernStepTradingPanel: React.FC<ModernStepTradingPanelProps> = ({
   const steps = ['select', 'amount', 'settings', 'summary'];
   const stepIndex = steps.indexOf(currentStep);
 
-  if (!isFullyAuthenticated) {
-    // Show the trading panel but with connect wallet prompt
-    return (
-      <Card className="h-full max-h-[600px] bg-gray-800/30 border-gray-700/30 p-6 flex flex-col"
-        style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-        
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="text-xl font-bold text-white">{t('trading.trade')} {symbol}</h3>
-            <p className="text-sm text-gray-400">{t('trading.currentPrice')}: ${currentPrice.toFixed(6)}</p>
-          </div>
-          <div className="text-sm text-gray-400">
-            {currentChain || 'Not Connected'}
-          </div>
-        </div>
-
-        {/* Connect Wallet Prompt */}
-        <div className="flex-1 flex flex-col justify-center text-center space-y-4">
-          <AlertTriangle className="h-12 w-12 text-yellow-400 mx-auto" />
-          <h4 className="text-lg font-semibold text-white">{t('trading.connectWalletMessage')}</h4>
-          <p className="text-gray-400 text-sm">
-            {t('trading.connectWalletSubMessage')} {symbol}
-          </p>
-          <ConnectWalletButton />
-        </div>
-      </Card>
-    );
-  }
+  // Always show the trading panel interface
 
   return (
     <Card className="h-full max-h-[600px] bg-gray-800/30 border-gray-700/30 p-6 flex flex-col"
