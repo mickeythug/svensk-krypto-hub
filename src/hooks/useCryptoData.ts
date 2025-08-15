@@ -535,23 +535,39 @@ export const useCryptoData = () => {
     isStale
   } = useQuery<CryptoPrice[], Error>({
     queryKey: [CACHE_KEYS.CRYPTO_PRICES],
-    queryFn: apiClient.fetchCryptoPrices.bind(apiClient),
+    queryFn: async () => {
+      console.log('🚀 React Query calling fetchCryptoPrices...');
+      const result = await apiClient.fetchCryptoPrices();
+      console.log('✅ React Query received:', { count: result.length });
+      return result;
+    },
     staleTime: CACHE_DURATIONS.CRYPTO_PRICES,
     gcTime: CACHE_DURATIONS.STALE_WHILE_REVALIDATE,
     refetchInterval: CACHE_DURATIONS.BACKGROUND_REFRESH,
     refetchIntervalInBackground: true,
     // Seed immediately from cache (localStorage) to avoid any loading flashes
     initialData: () => {
+      console.log('🔍 Checking for initialData in localStorage...');
       try {
         const raw = localStorage.getItem('crypto-prices-cache-v2');
-        if (!raw) return undefined;
+        if (!raw) {
+          console.log('❌ No localStorage cache found');
+          return undefined;
+        }
         const parsed = JSON.parse(raw);
         if (Date.now() - parsed.ts <= CACHE_DURATIONS.STALE_WHILE_REVALIDATE) {
+          console.log('✅ Using localStorage cache with', parsed.data?.length, 'tokens');
           return parsed.data as CryptoPrice[];
+        } else {
+          console.log('⏰ localStorage cache expired');
         }
-      } catch {}
+      } catch (e) {
+        console.log('💥 localStorage parse error:', e);
+      }
       // Fallback to any in-memory cached data
-      return queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined;
+      const queryData = queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined;
+      console.log('🔄 Using query cache with', queryData?.length || 0, 'tokens');
+      return queryData;
     },
     placeholderData: () => queryClient.getQueryData([CACHE_KEYS.CRYPTO_PRICES]) as CryptoPrice[] | undefined,
     retry: (failureCount, error) => {
@@ -598,6 +614,16 @@ export const useCryptoData = () => {
       }
     };
   }, [queryClient, cryptoPrices.length, isLoading]);
+
+  // Debug logging för att förstå state
+  useEffect(() => {
+    console.log('🔎 useCryptoData state:', { 
+      tokensCount: cryptoPrices.length, 
+      isLoading, 
+      error: error?.message,
+      isStale 
+    });
+  }, [cryptoPrices.length, isLoading, error, isStale]);
 
   // Optimized return object
   return useMemo(() => ({
