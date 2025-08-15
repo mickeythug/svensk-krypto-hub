@@ -224,7 +224,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
       {/* Token Count Footer */}
       <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <div className="text-xs text-muted-foreground font-mono text-center">
-          {filteredTokens.length} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
+          Showing {Math.min(filteredTokens.length, 16)} of {filteredTokens.length} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
         </div>
       </div>
     </motion.div>;
