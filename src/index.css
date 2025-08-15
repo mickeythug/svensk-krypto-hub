@@ -206,37 +206,45 @@ All colors MUST be HSL.
     font-family: "Binance PLEX", "IBM Plex Sans", "Barlow", sans-serif;
     font-size: 16px; /* Increased from 14px */
     font-weight: 400;
-    line-height: 1.4;
-    letter-spacing: 0;
+    line-height: 1.5; /* Improved line height for better readability */
+    letter-spacing: 0.01em; /* Subtle letter spacing for better readability */
   }
 
-  /* Typography classes following Binance standards - LARGER for better visibility */
+  /* Enhanced Typography classes following Binance standards with better accessibility */
   .text-primary-body {
     font-size: 16px; /* Increased from 14px */
     font-weight: 400;
-    line-height: 1.4;
-    letter-spacing: 0;
+    line-height: 1.5; /* Better line height */
+    letter-spacing: 0.01em;
   }
 
-  .text-secondary {
+  .text-secondary, .text-binance-secondary {
     font-size: 14px; /* Increased from 12px */
-    font-weight: 300;
-    line-height: 1.4;
-    letter-spacing: 0;
+    font-weight: 400; /* Increased font weight for better readability */
+    line-height: 1.5;
+    letter-spacing: 0.01em;
   }
 
-  .text-important-number {
-    font-size: 20px; /* Increased from 16px */
+  .text-important-number, .important-number {
+    font-size: 22px; /* Increased from 20px */
     font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: 0.5px;
+    line-height: 1.3;
+    letter-spacing: 0.025em; /* Enhanced spacing for numbers */
+    font-variant-numeric: tabular-nums slashed-zero;
   }
 
-  .text-section-title {
-    font-size: 22px; /* Increased from 18px */
-    font-weight: 500;
+  .text-section-title, .section-title {
+    font-size: 24px; /* Increased from 22px */
+    font-weight: 600; /* Increased weight for better hierarchy */
     line-height: 1.3;
-    letter-spacing: 0;
+    letter-spacing: 0.01em;
+  }
+
+  .text-binance-body {
+    font-size: 16px;
+    font-weight: 500; /* Medium weight for body text */
+    line-height: 1.5;
+    letter-spacing: 0.01em;
   }
 
   /* Legacy classes for backward compatibility */
@@ -409,11 +417,12 @@ All colors MUST be HSL.
   }
 }
 
-/* Numbers Font - Tydlig, läsbar font för alla numeriska värden */
-.font-numbers {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-feature-settings: 'tnum' 1; /* Tabular numbers for consistent width */
-  font-variant-numeric: tabular-nums;
+/* Enhanced Numbers Font for Trading - Tydlig, läsbar font för alla numeriska värden */
+.font-numbers, .tabular-nums, .important-number {
+  font-family: "Binance PLEX", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-feature-settings: 'tnum' 1, 'zero' 1; /* Tabular numbers + slashed zero */
+  font-variant-numeric: tabular-nums slashed-zero;
+  letter-spacing: 0.025em; /* Slightly wider spacing for better readability */
 }
 
 /* Mobile Safe Areas and Enhanced Layout Classes */

@@ -45,16 +45,30 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
   }, [currentPrice, orderType]);
 
   const formatPrice = (price: number) => {
-    if (price < 0.01) return price.toFixed(6);
-    if (price < 1) return price.toFixed(4);
-    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // Use Intl.NumberFormat for proper comma separators and consistent formatting
+    if (price < 0.01) {
+      return new Intl.NumberFormat('en-US', { 
+        minimumFractionDigits: 6, 
+        maximumFractionDigits: 6 
+      }).format(price);
+    }
+    if (price < 1) {
+      return new Intl.NumberFormat('en-US', { 
+        minimumFractionDigits: 4, 
+        maximumFractionDigits: 4 
+      }).format(price);
+    }
+    return new Intl.NumberFormat('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    }).format(price);
   };
 
   const formatVolume = (volume: number) => {
-    if (volume >= 1e9) return `$${(volume / 1e9).toFixed(2)}B`;
-    if (volume >= 1e6) return `$${(volume / 1e6).toFixed(2)}M`;
-    if (volume >= 1e3) return `$${(volume / 1e3).toFixed(2)}K`;
-    return `$${volume.toFixed(2)}`;
+    if (volume >= 1e9) return `$${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(volume / 1e9)}B`;
+    if (volume >= 1e6) return `$${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(volume / 1e6)}M`;
+    if (volume >= 1e3) return `$${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(volume / 1e3)}K`;
+    return `$${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(volume)}`;
   };
 
   const quickAmounts = ['25%', '50%', '75%', 'MAX'];
@@ -99,7 +113,7 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
               </Badge>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-binance font-bold text-foreground important-number">
+              <div className="text-4xl font-binance font-bold text-foreground important-number tabular-nums">
                 ${formatPrice(currentPrice)}
               </div>
               <div className="text-sm text-muted-foreground font-medium mt-1">
@@ -383,27 +397,31 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
                   {side.toUpperCase()}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center py-2">
                 <span className="text-muted-foreground font-medium text-binance-secondary">Amount:</span>
-                <span className="text-foreground font-binance important-number">{amount || '0.00'} USDT</span>
+                <span className="text-foreground font-bold text-binance-body tabular-nums">
+                  {amount || '0.00'} USDT
+                </span>
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center py-2">
                 <span className="text-muted-foreground font-medium text-binance-secondary">Price:</span>
-                <span className="text-foreground font-binance important-number">
-                  ${orderType === 'market' ? formatPrice(currentPrice) : price || '0.00'}
+                <span className="text-foreground font-bold text-binance-body tabular-nums">
+                  ${formatPrice(orderType === 'market' ? currentPrice : parseFloat(price) || 0)}
                 </span>
               </div>
               
               <Separator className="bg-border my-3" />
               
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground font-medium text-binance-secondary">Est. Fee:</span>
-                <span className="text-foreground font-binance important-number">$2.50</span>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground font-medium text-binance-secondary">Est. Total:</span>
+                <span className="text-primary font-bold text-lg important-number tabular-nums">
+                  ${formatPrice(calculateTotal())}
+                </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground font-medium text-binance-secondary">Total Cost:</span>
-                <span className="text-foreground font-binance important-number">
-                  ${amount ? (calculateTotal() + 2.5).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
+              <div className="flex justify-between items-center py-2">
+                <span className="text-muted-foreground font-medium text-binance-secondary">Est. Fee:</span>
+                <span className="text-muted-foreground font-medium text-binance-body tabular-nums">
+                  ${formatPrice(calculateTotal() * 0.001)}
                 </span>
               </div>
             </div>
@@ -476,15 +494,15 @@ const ComprehensiveTradingPanel: React.FC<ComprehensiveTradingPanelProps> = ({
             <div className="space-y-2 text-xs">
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground font-medium text-binance-secondary">Available USDT:</span>
-                <span className="text-foreground font-binance important-number">$1,247.50</span>
+                <span className="text-foreground font-binance important-number tabular-nums">$1,247.50</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground font-medium text-binance-secondary">Available {symbol}:</span>
-                <span className="text-foreground font-binance important-number">2.45891</span>
+                <span className="text-foreground font-binance important-number tabular-nums">2.45891</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground font-medium text-binance-secondary">Buying Power:</span>
-                <span className="text-success font-binance important-number">
+                <span className="text-success font-binance important-number tabular-nums">
                   $1,247.50
                 </span>
               </div>

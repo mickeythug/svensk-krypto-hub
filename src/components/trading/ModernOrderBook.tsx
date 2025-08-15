@@ -66,22 +66,36 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
   const bids = processOrders(orderBook?.bids || [], 'buy');
   
   const formatPrice = (price: number) => {
-    if (price < 0.01) return price.toFixed(6);
-    if (price < 1) return price.toFixed(4);
-    return price.toFixed(2);
+    // Use Intl.NumberFormat for proper comma separators
+    if (price < 0.01) {
+      return new Intl.NumberFormat('en-US', { 
+        minimumFractionDigits: 6, 
+        maximumFractionDigits: 6 
+      }).format(price);
+    }
+    if (price < 1) {
+      return new Intl.NumberFormat('en-US', { 
+        minimumFractionDigits: 4, 
+        maximumFractionDigits: 4 
+      }).format(price);
+    }
+    return new Intl.NumberFormat('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    }).format(price);
   };
 
   const formatAmount = (amount: number) => {
-    if (amount > 1000000) return `${(amount / 1000000).toFixed(2)}M`;
-    if (amount > 1000) return `${(amount / 1000).toFixed(2)}K`;
-    return amount.toFixed(3);
+    if (amount > 1000000) return `${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount / 1000000)}M`;
+    if (amount > 1000) return `${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount / 1000)}K`;
+    return new Intl.NumberFormat('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(amount);
   };
 
   const OrderRow: React.FC<{ order: ProcessedOrder; maxTotal: number }> = ({ order, maxTotal }) => {
     const fillPercentage = (order.total / maxTotal) * 100;
     
     return (
-      <div className="relative group h-8 flex items-center text-base font-mono cursor-pointer hover:bg-white/[0.02] transition-colors duration-200">
+      <div className="relative group h-9 flex items-center text-lg font-mono cursor-pointer hover:bg-white/[0.05] transition-colors duration-200">
         {/* Background fill indicator */}
         <div 
           className={cn(
@@ -94,17 +108,17 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
         />
         
         {/* Order data */}
-        <div className="relative z-10 w-full flex justify-between px-2">
+        <div className="relative z-10 w-full flex justify-between px-3">
           <span className={cn(
-            "font-semibold text-lg important-number",
+            "font-bold text-xl important-number tabular-nums",
             order.side === 'buy' ? "text-emerald-400" : "text-red-400"
           )}>
             ${formatPrice(order.price)}
           </span>
-          <span className="text-white/60 text-base important-number">
+          <span className="text-white/70 text-lg important-number tabular-nums">
             {formatAmount(order.amount)}
           </span>
-          <span className="text-white/40 text-base">
+          <span className="text-white/50 text-lg tabular-nums">
             {formatAmount(order.total)}
           </span>
         </div>
@@ -152,12 +166,12 @@ const ModernOrderBook: React.FC<ModernOrderBookProps> = ({
         </div>
 
         {/* Current price separator with brand turquoise */}
-        <div className="px-4 py-2 border-y border-white/[0.05] bg-gradient-to-r from-primary/10 to-primary-glow/10">
+        <div className="px-4 py-3 border-y border-white/[0.1] bg-gradient-to-r from-primary/15 to-primary-glow/15">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white font-mono important-number">
+            <div className="text-3xl font-bold text-white font-mono important-number tabular-nums">
               ${formatPrice(currentPrice)}
             </div>
-            <div className="text-base text-primary font-medium bg-primary/10 px-2 py-1 rounded-md border border-primary/20">
+            <div className="text-lg text-primary font-semibold bg-primary/15 px-3 py-1.5 rounded-lg border border-primary/30 mt-2 backdrop-blur-sm">
               {t('trading.currentPrice')} • {t('trading.live')}
             </div>
           </div>

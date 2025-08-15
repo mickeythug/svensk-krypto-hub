@@ -184,9 +184,23 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   }), [binanceTicker, ticker, crypto, realTimePrice, orderBook, priceChange24h]);
 
   const formatPrice = (price: number) => {
-    if (price < 0.01) return price.toFixed(6);
-    if (price < 1) return price.toFixed(4);
-    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // Use Intl.NumberFormat for proper comma separators
+    if (price < 0.01) {
+      return new Intl.NumberFormat('en-US', { 
+        minimumFractionDigits: 6, 
+        maximumFractionDigits: 6 
+      }).format(price);
+    }
+    if (price < 1) {
+      return new Intl.NumberFormat('en-US', { 
+        minimumFractionDigits: 4, 
+        maximumFractionDigits: 4 
+      }).format(price);
+    }
+    return new Intl.NumberFormat('en-US', { 
+      minimumFractionDigits: 2, 
+      maximumFractionDigits: 2 
+    }).format(price);
   };
 
   const copyToClipboard = (text: string) => {
@@ -241,20 +255,20 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                   )}
                   <div className="space-y-2">
                     <div className="flex items-center gap-3 mb-2">
-                      <h1 className="text-3xl font-bold text-foreground font-binance important-number">
+                      <h1 className="text-4xl font-bold text-foreground font-binance important-number tabular-nums">
                         ${formatPrice(realTimePrice)}
                       </h1>
                       <Badge 
                         variant={realTickerData.priceChange24h >= 0 ? "default" : "destructive"}
-                        className="px-3 py-2 text-sm font-medium shadow-lg animate-fade-in"
+                        className="px-4 py-2 text-base font-semibold shadow-lg animate-fade-in hover-scale"
                       >
                         {realTickerData.priceChange24h >= 0 ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
                         {realTickerData.priceChange24h >= 0 ? '+' : ''}{realTickerData.priceChange24h.toFixed(2)}%
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-4 text-base text-muted-foreground">
-                      <span className="font-medium text-binance-body">{symbol}/USDT</span>
-                      <div className="flex items-center gap-2 group hover:text-foreground transition-colors duration-300">
+                    <div className="flex items-center gap-6 text-lg text-muted-foreground">
+                      <span className="font-semibold text-binance-body text-foreground">{symbol}/USDT</span>
+                      <div className="flex items-center gap-2 group hover:text-foreground transition-colors duration-300 hover-scale">
                         {live ? (
                           <Wifi className="h-4 w-4 text-success animate-pulse" />
                         ) : (
