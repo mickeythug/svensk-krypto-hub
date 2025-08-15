@@ -19,9 +19,14 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import SimpleTradingPanel from './SimpleTradingPanel';
 
 interface ProfessionalBottomPanelsProps {
   symbol: string;
+  currentPrice: number;
+  tokenName: string;
+  volume24h?: number;
+  priceChange24h?: number;
   dbOrders?: any[];
   jupOrders?: any[];
   history?: any[];
@@ -31,6 +36,10 @@ interface ProfessionalBottomPanelsProps {
 
 const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({ 
   symbol, 
+  currentPrice,
+  tokenName,
+  volume24h = 0,
+  priceChange24h = 0,
   dbOrders = [], 
   jupOrders = [], 
   history = [], 
@@ -38,7 +47,7 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
   solBalance = 0 
 }) => {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState('positions');
+  const [activeTab, setActiveTab] = useState('trade');
 
   // Use real data instead of mock
   const positions = []; // Real positions would come from your trading system
@@ -124,6 +133,13 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
           <div className="p-4 pb-0">
             <TabsList className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-1">
               <TabsTrigger 
+                value="trade" 
+                className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                {t('trading.trade')}
+              </TabsTrigger>
+              <TabsTrigger 
                 value="positions" 
                 className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
               >
@@ -144,13 +160,6 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
                 </Badge>
               </TabsTrigger>
               <TabsTrigger 
-                value="history" 
-                className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
-              >
-                <Activity className="h-4 w-4 mr-2" />
-                {t('trading.orderHistory')}
-              </TabsTrigger>
-              <TabsTrigger 
                 value="balances" 
                 className="px-6 py-2 font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md"
               >
@@ -161,6 +170,16 @@ const ProfessionalBottomPanels: React.FC<ProfessionalBottomPanelsProps> = ({
           </div>
           
           <div className="flex-1 min-h-0 p-4 pt-3">
+            <TabsContent value="trade" className="h-full m-0">
+              <SimpleTradingPanel 
+                symbol={symbol}
+                currentPrice={currentPrice}
+                tokenName={tokenName}
+                volume24h={volume24h}
+                priceChange24h={priceChange24h}
+              />
+            </TabsContent>
+            
             <TabsContent value="positions" className="h-full m-0">
               <div className="h-full flex flex-col">
                 {/* Header */}

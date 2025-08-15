@@ -326,7 +326,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
         </div>
 
         {/* Chart Area */}
-        <div className="h-[950px] p-4">
+        <div className="h-[600px] p-4">
           <div className="h-full w-full rounded-xl overflow-hidden border border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
             <TradingViewChart 
               symbol={symbol} 
@@ -337,9 +337,13 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           </div>
         </div>
 
-        {/* Real Bottom Panels */}
+        {/* Bottom Panels with Trading Panel First */}
         <ProfessionalBottomPanels 
           symbol={symbol}
+          currentPrice={realTimePrice}
+          tokenName={tokenName}
+          volume24h={realTickerData.volume24h}
+          priceChange24h={realTickerData.priceChange24h}
           dbOrders={dbOrders}
           jupOrders={jupOrders}
           history={history}
@@ -382,24 +386,13 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           ) : (
             // Expanded view - full trading interface
             <div className="flex flex-col h-full">
-              {/* Modern Order Book - ALLTID ÖVERST */}
-              <div className="flex-1 p-4 min-h-0 border-b border-gray-800/50">
+              {/* Modern Order Book - Full sidebar */}
+              <div className="flex-1 p-4 min-h-0">
                 <ModernOrderBook 
                   symbol={symbol}
                   currentPrice={realTimePrice}
                   orderBook={orderBook}
                   isConnected={isConnected}
-                />
-              </div>
-
-              {/* World Class Trading Panel - UNDER ORDERBOOK */}
-              <div className="h-[400px] p-4">
-                <WorldClassTradingPanel 
-                  symbol={symbol}
-                  currentPrice={realTimePrice}
-                  tokenName={tokenName}
-                  volume24h={realTickerData.volume24h}
-                  priceChange24h={realTickerData.priceChange24h}
                 />
               </div>
             </div>
