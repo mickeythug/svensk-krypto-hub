@@ -186,7 +186,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
   const formatPrice = (price: number) => {
     if (price < 0.01) return price.toFixed(6);
     if (price < 1) return price.toFixed(4);
-    return price.toFixed(2);
+    return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const copyToClipboard = (text: string) => {
@@ -226,14 +226,13 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
                 {/* Token Info - Enhanced Visual Hierarchy */}
                 <div className="flex items-center gap-4">
                   {crypto?.image && (
-                    <div className="relative group">
-                      <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg group-hover:bg-primary/30 transition-all duration-300"></div>
+                    <div className="relative">
                       <img
                         src={crypto.image}
                         alt={`${tokenName} logo`}
-                        className="relative h-16 w-16 rounded-full ring-2 ring-primary/30 shadow-elevation-3 group-hover:ring-primary/50 transition-all duration-300"
+                        className="h-16 w-16 rounded-full ring-2 ring-primary/30 shadow-elevation-3"
                       />
-                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-background shadow-lg animate-pulse"></div>
+                      <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-background shadow-lg"></div>
                     </div>
                   )}
                   <div className="space-y-2">
