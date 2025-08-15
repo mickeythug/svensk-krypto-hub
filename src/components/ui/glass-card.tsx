@@ -19,22 +19,22 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
           'bg-black',
           'backdrop-blur-xl',
           
-          // Neon turquoise glowing border
-          border && 'border-2 border-primary',
-          border && 'shadow-[0_0_30px_hsl(var(--primary)/0.8),inset_0_0_30px_hsl(var(--primary)/0.1)]',
+          // Subtle neon turquoise glowing border
+          border && 'border border-primary/60',
+          border && 'shadow-[0_0_15px_hsl(var(--primary)/0.4),inset_0_0_15px_hsl(var(--primary)/0.05)]',
           
           // Rounded corners
           'rounded-xl',
           
-          // Enhanced shadow effects with neon glow
+          // Enhanced shadow effects with subtle neon glow
           'shadow-[0_8px_32px_0_rgba(0,0,0,0.9)]',
           
-          // Ultra strong glow effect
-          glow && 'shadow-[0_0_60px_hsl(var(--primary)/1),0_0_120px_hsl(var(--primary)/0.8)]',
+          // Subtle glow effect
+          glow && 'shadow-[0_0_25px_hsl(var(--primary)/0.6),0_0_50px_hsl(var(--primary)/0.3)]',
           
-          // Neon inner glow effect
+          // Subtle neon inner glow effect
           'before:absolute before:inset-0 before:rounded-xl',
-          'before:bg-gradient-to-br before:from-primary/[0.1] before:to-transparent',
+          'before:bg-gradient-to-br before:from-primary/[0.05] before:to-transparent',
           'before:pointer-events-none',
           
           className

@@ -90,12 +90,12 @@ All colors MUST be HSL.
     --gradient-panel: linear-gradient(145deg, hsl(0 0% 0%) 0%, hsl(0 0% 1%) 100%);
     --gradient-input: linear-gradient(145deg, hsl(0 0% 1%) 0%, hsl(0 0% 0%) 100%);
     
-    /* Ultra Strong Neon Glow Effects with Brand Turquoise */
-    --glow-turquoise: 0 0 60px hsl(165 85% 45% / 1), 0 0 120px hsl(165 85% 45% / 0.8), 0 0 180px hsl(165 85% 45% / 0.6);
-    --glow-primary: 0 0 60px hsl(165 85% 45% / 1), 0 0 120px hsl(165 85% 45% / 0.8), 0 0 180px hsl(165 85% 45% / 0.6);
-    --glow-green: 0 0 40px hsl(142 76% 50% / 0.9), 0 0 80px hsl(142 76% 50% / 0.7);
-    --glow-red: 0 0 40px hsl(0 84% 60% / 0.9), 0 0 80px hsl(0 84% 60% / 0.7);
-    --glow-soft: 0 0 80px hsl(165 85% 45% / 0.6);
+    /* Subtle Neon Glow Effects with Brand Turquoise */
+    --glow-turquoise: 0 0 20px hsl(165 85% 45% / 0.6), 0 0 40px hsl(165 85% 45% / 0.3);
+    --glow-primary: 0 0 20px hsl(165 85% 45% / 0.6), 0 0 40px hsl(165 85% 45% / 0.3);
+    --glow-green: 0 0 15px hsl(142 76% 50% / 0.5), 0 0 30px hsl(142 76% 50% / 0.3);
+    --glow-red: 0 0 15px hsl(0 84% 60% / 0.5), 0 0 30px hsl(0 84% 60% / 0.3);
+    --glow-soft: 0 0 25px hsl(165 85% 45% / 0.3);
     
     /* Glass Morphism Shadows */
     --shadow-glass: 0 8px 32px 0 hsl(0 0% 0% / 0.4);
@@ -111,10 +111,10 @@ All colors MUST be HSL.
     --meme-lime: 90 100% 60%;
     --meme-orange: 30 100% 60%;
 
-    /* Ultra Strong glowing effects - Maximum neon intensity */
-    --glow-primary: 0 0 80px hsl(165 85% 45% / 1), 0 0 160px hsl(165 85% 45% / 0.9), 0 0 240px hsl(165 85% 45% / 0.7);
-    --glow-secondary: 0 0 60px hsl(165 85% 45% / 1), 0 0 120px hsl(165 85% 45% / 0.8);
-    --glow-rainbow: 0 0 100px hsl(165 85% 45% / 1), 0 0 200px hsl(165 70% 60% / 0.8);
+    /* Subtle glowing effects - Moderate neon intensity */
+    --glow-primary: 0 0 30px hsl(165 85% 45% / 0.7), 0 0 60px hsl(165 85% 45% / 0.4);
+    --glow-secondary: 0 0 25px hsl(165 85% 45% / 0.6), 0 0 50px hsl(165 85% 45% / 0.3);
+    --glow-rainbow: 0 0 35px hsl(165 85% 45% / 0.6), 0 0 70px hsl(165 70% 60% / 0.4);
 
     /* Meme backgrounds - Changed from purple to dark neutral */
     --meme-grid-bg: 214 32% 5%;

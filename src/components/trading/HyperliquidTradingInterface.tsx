@@ -201,7 +201,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
       {/* Main Trading Area */}
       <div className="flex-1 flex flex-col min-h-0">
         {/* Professional Header */}
-        <div className="bg-gray-900/95 border-b border-gray-800/50 backdrop-blur-sm">
+        <div className="border-b border-primary/60 bg-black shadow-[0_0_15px_hsl(var(--primary)/0.3)]">
           <div className="p-4">
             {/* Top Row */}
             <div className="flex items-center justify-between mb-4">
@@ -321,7 +321,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
         {/* Chart Area */}
         <div className="flex-1 min-h-0">
           <div className="h-full pr-4 pb-4">
-            <div className="h-full rounded-r-xl overflow-hidden border-r border-t border-b border-gray-800/50 shadow-2xl bg-[#0a0a0a]">
+            <div className="h-full rounded-r-xl overflow-hidden border border-primary/60 shadow-[0_0_20px_hsl(var(--primary)/0.4)] bg-black">
               <TradingViewChart 
                 symbol={symbol} 
                 currentPrice={realTimePrice}
@@ -370,7 +370,7 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
           {!sidebarCollapsed && (
             <>
               {/* Modern Order Book */}
-              <div className="flex-1 p-4 min-h-0">
+              <div className="flex-1 p-4 min-h-0 bg-black rounded-xl border border-primary/60 shadow-[0_0_20px_hsl(var(--primary)/0.4)]">
                 <ModernOrderBook 
                   symbol={symbol}
                   currentPrice={realTimePrice}
