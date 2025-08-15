@@ -31,17 +31,21 @@ interface ModernMarketStatsProps {
 }
 
 const ModernMarketStats: React.FC<ModernMarketStatsProps> = ({ tickerData, showAdvanced }) => {
-  const formatPrice = (price: number) => {
-    if (price < 0.01) return price.toFixed(6);
-    if (price < 1) return price.toFixed(4);
-    return price.toFixed(2);
+  const formatPrice = (price: number | string | undefined | null) => {
+    const numPrice = typeof price === 'number' ? price : parseFloat(String(price)) || 0;
+    
+    if (numPrice < 0.01) return numPrice.toFixed(6);
+    if (numPrice < 1) return numPrice.toFixed(4);
+    return numPrice.toFixed(2);
   };
 
-  const formatVolume = (volume: number) => {
-    if (volume >= 1e9) return `$${(volume / 1e9).toFixed(2)}B`;
-    if (volume >= 1e6) return `$${(volume / 1e6).toFixed(2)}M`;
-    if (volume >= 1e3) return `$${(volume / 1e3).toFixed(2)}K`;
-    return `$${volume.toFixed(2)}`;
+  const formatVolume = (volume: number | string | undefined | null) => {
+    const numVolume = typeof volume === 'number' ? volume : parseFloat(String(volume)) || 0;
+    
+    if (numVolume >= 1e9) return `$${(numVolume / 1e9).toFixed(2)}B`;
+    if (numVolume >= 1e6) return `$${(numVolume / 1e6).toFixed(2)}M`;
+    if (numVolume >= 1e3) return `$${(numVolume / 1e3).toFixed(2)}K`;
+    return `$${numVolume.toFixed(2)}`;
   };
 
   const basicStats = [
@@ -92,21 +96,21 @@ const ModernMarketStats: React.FC<ModernMarketStatsProps> = ({ tickerData, showA
     },
     {
       label: 'Spread',
-      value: `${tickerData.spread.toFixed(3)}%`,
+      value: `${(typeof tickerData.spread === 'number' ? tickerData.spread : 0).toFixed(3)}%`,
       icon: Activity,
       color: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10'
     },
     {
       label: 'Orders',
-      value: tickerData.orderCount.toLocaleString(),
+      value: (typeof tickerData.orderCount === 'number' ? tickerData.orderCount : 0).toLocaleString(),
       icon: Clock,
       color: 'text-cyan-400',
       bgColor: 'bg-cyan-500/10'
     },
     {
       label: 'Traders',
-      value: tickerData.traders.toLocaleString(),
+      value: (typeof tickerData.traders === 'number' ? tickerData.traders : 0).toLocaleString(),
       icon: Users,
       color: 'text-indigo-400',
       bgColor: 'bg-indigo-500/10'
