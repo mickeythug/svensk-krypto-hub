@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import UltraModernMemeHero from './components/UltraModernMemeHero';
+
 import SlotMachineTokenGrid from './components/SlotMachineTokenGrid';
 import CasinoControlPanel from './components/CasinoControlPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -79,10 +79,7 @@ const MemePage: React.FC = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-pink-500/10 to-transparent rounded-full animate-pulse" style={{ animationDelay: '3s' }}></div>
       </div>
       
-      <main className="relative z-10 w-full min-h-screen">
-        {/* Ultra Modern Hero Section */}
-        <UltraModernMemeHero />
-
+      <main className="relative z-10 w-full min-h-screen pt-8">
         {/* Casino Control Panel */}
         <section data-section="meme-explorer" className="py-16">
           <CasinoControlPanel />
