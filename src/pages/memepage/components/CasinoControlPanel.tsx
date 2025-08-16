@@ -147,7 +147,7 @@ const DraggableMemeImage: React.FC<{
       onMouseDown={handleMouseDown}
     >
       <div 
-        className={`w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg ${!isDragging ? 'animate-float' : ''}`}
+        className={`w-20 h-20 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-xl ${!isDragging ? 'animate-float' : ''}`}
         style={{ animationDelay: isDragging ? '0s' : animationDelay }}
       >
         <img 
