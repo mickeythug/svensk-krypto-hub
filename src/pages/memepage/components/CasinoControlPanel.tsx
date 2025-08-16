@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { Search, Filter, TrendingUp, Flame, Crown, Diamond, Shuffle, RotateCcw } from 'lucide-react';
+import { Search, Filter, TrendingUp, Flame, Crown, Diamond, Shuffle, RotateCcw, Grid3X3, List, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 interface CasinoControlPanelProps {
   onSearch?: (query: string) => void;
   onFilterChange?: (filter: string) => void;
   onSortChange?: (sort: string) => void;
+  onViewChange?: (view: 'grid' | 'list' | 'compact') => void;
+  currentView?: 'grid' | 'list' | 'compact';
 }
 
 // Casino filter buttons
@@ -79,7 +82,9 @@ const LiveStatsTicker: React.FC = () => {
 const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
   onSearch,
   onFilterChange,
-  onSortChange
+  onSortChange,
+  onViewChange,
+  currentView = 'grid'
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
@@ -102,12 +107,48 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
 
       {/* Main Control Panel */}
       <div className="bg-black/80 backdrop-blur-xl border-2 border-primary/30 rounded-3xl p-8 shadow-2xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-black bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent mb-4">MEME ZONE</h2>
-          <p className="text-white/80 text-lg">
-            Filter, sort, and discover the hottest meme tokens
-          </p>
+        {/* Golden Header Box */}
+        <div className="relative mb-12">
+          {/* Multi-layer golden box effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-yellow-400/30 to-yellow-500/20 rounded-3xl blur-2xl animate-pulse"></div>
+          <div className="absolute inset-1 bg-gradient-to-r from-yellow-600/30 via-yellow-400/40 to-yellow-600/30 rounded-3xl blur-xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+          <div className="absolute inset-2 bg-gradient-to-r from-yellow-700/20 via-yellow-500/30 to-yellow-700/20 rounded-3xl blur-lg animate-pulse" style={{ animationDelay: '1s' }}></div>
+          
+          {/* Main golden box container */}
+          <div className="relative bg-gradient-to-br from-yellow-500/90 via-yellow-400/95 to-yellow-600/90 backdrop-blur-xl border-4 border-yellow-400/50 rounded-3xl p-8 shadow-2xl">
+            {/* Inner glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/40 via-transparent to-yellow-600/40 rounded-3xl"></div>
+            
+            {/* Gold texture overlay */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJnb2xkIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgo8cGF0aCBkPSJNMzAgMEwzNiAxOEgxOEwyNCAwaDE2eiIgZmlsbD0icmdiYSgyNTUsIDIxNSwgMCwgMC4xKSIvPgo8L3BhdHRlcm4+CjwvZGVmcz4KPHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dvbGQpIiAvPgo8L3N2Zz4=')] opacity-30 rounded-3xl"></div>
+            
+            {/* Content */}
+            <div className="relative z-10 text-center">
+              <div className="inline-flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center shadow-lg animate-float">
+                  <Crown className="w-8 h-8 text-yellow-900" />
+                </div>
+                
+                <h1 className="text-8xl font-black bg-gradient-to-br from-yellow-900 via-yellow-800 to-yellow-900 bg-clip-text text-transparent drop-shadow-2xl tracking-wider">
+                  MEME ZONE
+                </h1>
+                
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center shadow-lg animate-float" style={{ animationDelay: '0.5s' }}>
+                  <Diamond className="w-8 h-8 text-yellow-900" />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-center gap-2 text-yellow-900 font-bold text-2xl mb-4">
+                <Flame className="w-6 h-6 animate-bounce" />
+                <span>Ultimate Meme Token Casino Experience</span>
+                <Flame className="w-6 h-6 animate-bounce" style={{ animationDelay: '0.3s' }} />
+              </div>
+              
+              <p className="text-yellow-800/90 text-lg font-medium max-w-2xl mx-auto">
+                Filter, sort, and discover the hottest meme tokens with casino-level excitement
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -154,8 +195,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
           </div>
         </div>
 
-        {/* Sort Options */}
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        {/* Sort & View Options */}
+        <div className="flex items-center justify-between flex-wrap gap-6">
           <div className="flex items-center gap-4">
             <RotateCcw className="w-6 h-6 text-primary" />
             <span className="text-white font-black text-lg">Sort by:</span>
@@ -184,8 +225,49 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             </Select>
           </div>
 
-          {/* Quick Stats */}
-          
+          {/* View Toggle */}
+          <div className="flex items-center gap-4">
+            <Eye className="w-6 h-6 text-primary" />
+            <span className="text-white font-black text-lg">View:</span>
+            
+            <div className="flex bg-black/60 border-2 border-primary/50 rounded-xl p-1">
+              <Button
+                onClick={() => onViewChange?.('grid')}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                  currentView === 'grid'
+                    ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black'
+                    : 'bg-transparent text-white hover:bg-primary/20'
+                }`}
+              >
+                <Grid3X3 className="w-5 h-5 mr-2" />
+                🎰 Cards
+              </Button>
+              
+              <Button
+                onClick={() => onViewChange?.('list')}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                  currentView === 'list'
+                    ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black'
+                    : 'bg-transparent text-white hover:bg-primary/20'
+                }`}
+              >
+                <List className="w-5 h-5 mr-2" />
+                📋 List
+              </Button>
+              
+              <Button
+                onClick={() => onViewChange?.('compact')}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                  currentView === 'compact'
+                    ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black'
+                    : 'bg-transparent text-white hover:bg-primary/20'
+                }`}
+              >
+                <Diamond className="w-5 h-5 mr-2" />
+                💎 Compact
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>;

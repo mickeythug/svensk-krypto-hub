@@ -220,17 +220,54 @@ const SlotMachineCard: React.FC<{
   );
 };
 
-const SlotMachineTokenGrid = () => {
+interface SlotMachineTokenGridProps {
+  view?: 'grid' | 'list' | 'compact';
+  searchQuery?: string;
+  filterType?: string;
+  sortBy?: string;
+}
+
+const SlotMachineTokenGrid: React.FC<SlotMachineTokenGridProps> = ({ 
+  view = 'grid', 
+  searchQuery = '', 
+  filterType = 'all', 
+  sortBy = 'hotness' 
+}) => {
   const navigate = useNavigate();
   const { tokens, loading, error } = useMemeTokens('trending', 20, 1);
 
-  // Sort tokens by hotness score
-  const sortedTokens = tokens
-    .filter(token => token.volume24h && token.change24h)
+  // Filter and sort tokens
+  const filteredAndSortedTokens = tokens
+    .filter(token => {
+      // Search filter
+      const matchesSearch = !searchQuery || 
+        token.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        token.symbol.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Category filter
+      const matchesFilter = filterType === 'all' || 
+        (filterType === 'trending' && token.change24h > 10) ||
+        (filterType === 'hot' && token.volume24h > 100000) ||
+        (filterType === 'premium' && token.marketCap > 1000000) ||
+        (filterType === 'new' && true); // All tokens for now
+      
+      return matchesSearch && matchesFilter && token.volume24h && token.change24h;
+    })
     .sort((a, b) => {
-      const scoreA = (a.volume24h || 0) * Math.abs(a.change24h || 0);
-      const scoreB = (b.volume24h || 0) * Math.abs(b.change24h || 0);
-      return scoreB - scoreA;
+      switch (sortBy) {
+        case 'volume':
+          return (b.volume24h || 0) - (a.volume24h || 0);
+        case 'change':
+          return Math.abs(b.change24h || 0) - Math.abs(a.change24h || 0);
+        case 'marketcap':
+          return (b.marketCap || 0) - (a.marketCap || 0);
+        case 'newest':
+          return Math.random() - 0.5; // Random for now
+        default: // hotness
+          const scoreA = (a.volume24h || 0) * Math.abs(a.change24h || 0);
+          const scoreB = (b.volume24h || 0) * Math.abs(b.change24h || 0);
+          return scoreB - scoreA;
+      }
     });
 
   const getTier = (index: number): 'jackpot' | 'premium' | 'gold' | 'silver' | 'standard' => {
@@ -255,11 +292,13 @@ const SlotMachineTokenGrid = () => {
     );
   }
 
-  if (error || sortedTokens.length === 0) {
+  if (error || filteredAndSortedTokens.length === 0) {
     return (
       <div className="text-center py-20">
         <div className="text-8xl mb-8">🎰</div>
-        <p className="text-white/80 text-3xl mb-12">Loading The Casino...</p>
+        <p className="text-white/80 text-3xl mb-12">
+          {searchQuery || filterType !== 'all' ? 'No tokens match your filters...' : 'Loading The Casino...'}
+        </p>
         <Button className="bg-gradient-to-r from-primary to-purple-600 text-white font-black text-xl px-12 py-6 rounded-2xl">
           🎲 Retry 🎲
         </Button>
@@ -267,9 +306,21 @@ const SlotMachineTokenGrid = () => {
     );
   }
 
+  // Grid layouts based on view type
+  const getGridLayout = () => {
+    switch (view) {
+      case 'list':
+        return 'grid grid-cols-1 gap-4 p-8';
+      case 'compact':
+        return 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-8';
+      default: // grid
+        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8';
+    }
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8">
-      {sortedTokens.map((token, index) => (
+    <div className={getGridLayout()}>
+      {filteredAndSortedTokens.map((token, index) => (
         <SlotMachineCard
           key={token.id}
           token={token}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import SlotMachineTokenGrid from './components/SlotMachineTokenGrid';
 import CasinoControlPanel from './components/CasinoControlPanel';
@@ -10,6 +10,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
   const { t } = useLanguage();
+  const [currentView, setCurrentView] = useState<'grid' | 'list' | 'compact'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [sortBy, setSortBy] = useState('hotness');
 
   useEffect(() => {
     const title = t('meme.main.title') + ' | Crypto Network Sweden';
@@ -82,12 +86,23 @@ const MemePage: React.FC = () => {
       <main className="relative z-10 w-full min-h-screen pt-8">
         {/* Casino Control Panel */}
         <section data-section="meme-explorer" className="py-16">
-          <CasinoControlPanel />
+          <CasinoControlPanel 
+            onSearch={setSearchQuery}
+            onFilterChange={setFilterType}
+            onSortChange={setSortBy}
+            onViewChange={setCurrentView}
+            currentView={currentView}
+          />
         </section>
 
-        {/* Slot Machine Token Grid */}
+        {/* Dynamic Token Display */}
         <section className="pb-20">
-          <SlotMachineTokenGrid />
+          <SlotMachineTokenGrid 
+            view={currentView}
+            searchQuery={searchQuery}
+            filterType={filterType}
+            sortBy={sortBy}
+          />
         </section>
       </main>
       

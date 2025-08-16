@@ -645,6 +645,29 @@ All colors MUST be HSL.
     100% { background-position: 200% 0; }
   }
 
+  /* Casino Animation Keyframes */
+  @keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes slot-spin {
+    0% { transform: rotateY(0deg); }
+    25% { transform: rotateY(-90deg); }
+    50% { transform: rotateY(-180deg); }
+    75% { transform: rotateY(-270deg); }
+    100% { transform: rotateY(-360deg); }
+  }
+
+  @keyframes elastic-pop {
+    0% { transform: scale(1); }
+    20% { transform: scale(1.15); }
+    40% { transform: scale(0.95); }
+    60% { transform: scale(1.05); }
+    80% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+  }
+
   /* Improved text contrast utilities */
   .text-contrast-high { 
     color: hsl(0 0% 98%); 
@@ -782,6 +805,36 @@ All colors MUST be HSL.
 
 .casino-button:hover::before {
   left: 100%;
+}
+
+/* Casino & Slot Machine Effects */
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}
+
+.animate-slot-spin {
+  animation: slot-spin 2s ease-in-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-elastic-pop {
+  animation: elastic-pop 0.6s ease-out;
+}
+
+/* Golden Box Effects */
+.golden-text-shadow {
+  text-shadow: 0 2px 4px rgba(180, 83, 9, 0.5), 0 4px 8px rgba(180, 83, 9, 0.3), 0 8px 16px rgba(180, 83, 9, 0.2);
 }
 
 /* Container spacing standards */
