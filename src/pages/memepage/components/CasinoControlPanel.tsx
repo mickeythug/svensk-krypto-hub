@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Search, Filter, TrendingUp, Flame, Crown, Diamond, Shuffle, RotateCcw, Grid3X3, List, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -80,7 +81,7 @@ const LiveStatsTicker: React.FC = () => {
     </div>;
 };
 
-// Draggable Meme Image Component with Position Saving
+// Draggable Meme Image Component with Backend Position Saving
 const DraggableMemeImage: React.FC<{
   src: string;
   alt: string;
@@ -88,11 +89,12 @@ const DraggableMemeImage: React.FC<{
   id: string; // unique identifier for saving position
   size?: number;
   animationDelay?: string;
-}> = ({ src, alt, initialPosition, id, size = 12, animationDelay = '0s' }) => {
-  // Load saved position from localStorage or use initial position
+  savedPositions?: Record<string, { x: number; y: number }>;
+  onPositionChange?: (id: string, position: { x: number; y: number }) => void;
+}> = ({ src, alt, initialPosition, id, size = 12, animationDelay = '0s', savedPositions, onPositionChange }) => {
+  // Use saved position from backend or fall back to initial position
   const getSavedPosition = () => {
-    const saved = localStorage.getItem(`meme-position-${id}`);
-    return saved ? JSON.parse(saved) : initialPosition;
+    return savedPositions?.[id] || initialPosition;
   };
 
   const [position, setPosition] = useState(getSavedPosition);
@@ -100,9 +102,22 @@ const DraggableMemeImage: React.FC<{
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const dragRef = useRef<HTMLDivElement>(null);
 
-  // Save position to localStorage whenever it changes
-  const savePosition = (newPosition: { x: number; y: number }) => {
-    localStorage.setItem(`meme-position-${id}`, JSON.stringify(newPosition));
+  // Save position to backend
+  const savePosition = async (newPosition: { x: number; y: number }) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return; // Don't save if not authenticated
+
+      await supabase.functions.invoke('save-meme-position', {
+        body: {
+          imageId: id,
+          position: newPosition
+        }
+      });
+      onPositionChange?.(id, newPosition);
+    } catch (error) {
+      console.error('Failed to save position:', error);
+    }
   };
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -136,7 +151,7 @@ const DraggableMemeImage: React.FC<{
   }, [position]);
 
   // Add global mouse listeners when dragging
-  React.useEffect(() => {
+  useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
@@ -148,11 +163,11 @@ const DraggableMemeImage: React.FC<{
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  // Load saved positions on component mount
-  React.useEffect(() => {
+  // Update position when saved positions change
+  useEffect(() => {
     const savedPosition = getSavedPosition();
     setPosition(savedPosition);
-  }, []);
+  }, [savedPositions]);
 
   return (
     <div 
@@ -190,6 +205,33 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
+  const [savedPositions, setSavedPositions] = useState<Record<string, { x: number; y: number }>>({});
+
+  // Load saved positions from backend on component mount
+  useEffect(() => {
+    const loadPositions = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return; // Don't load if not authenticated
+
+        const { data, error } = await supabase.functions.invoke('load-meme-positions');
+        if (!error && data?.positions) {
+          setSavedPositions(data.positions);
+        }
+      } catch (error) {
+        console.error('Failed to load positions:', error);
+      }
+    };
+
+    loadPositions();
+  }, []);
+
+  const handlePositionChange = (id: string, position: { x: number; y: number }) => {
+    setSavedPositions(prev => ({
+      ...prev,
+      [id]: position
+    }));
+  };
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     onSearch?.(value);
@@ -231,6 +273,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 80, y: 8 }}
               size={12}
               animationDelay="0s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -240,6 +284,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 250, y: 8 }}
               size={12}
               animationDelay="0.5s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -249,6 +295,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 420, y: 8 }}
               size={12}
               animationDelay="1s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -258,6 +306,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 8, y: 64 }}
               size={12}
               animationDelay="1.5s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -267,6 +317,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 8, y: 120 }}
               size={12}
               animationDelay="2s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -276,6 +328,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 8, y: 180 }}
               size={12}
               animationDelay="2.5s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -285,6 +339,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 470, y: 64 }}
               size={12}
               animationDelay="3s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -294,6 +350,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 470, y: 120 }}
               size={12}
               animationDelay="3.5s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -303,6 +361,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 470, y: 180 }}
               size={12}
               animationDelay="4s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -312,6 +372,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 80, y: 230 }}
               size={12}
               animationDelay="4.5s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
             
             <DraggableMemeImage 
@@ -321,6 +383,8 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               initialPosition={{ x: 420, y: 230 }}
               size={12}
               animationDelay="5s"
+              savedPositions={savedPositions}
+              onPositionChange={handlePositionChange}
             />
 
             {/* Content */}
