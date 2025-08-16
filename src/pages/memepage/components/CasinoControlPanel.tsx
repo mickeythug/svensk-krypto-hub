@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Search, Filter, TrendingUp, Flame, Crown, Diamond, Shuffle, RotateCcw, Grid3X3, List, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -79,6 +79,87 @@ const LiveStatsTicker: React.FC = () => {
       </div>
     </div>;
 };
+
+// Draggable Meme Image Component
+const DraggableMemeImage: React.FC<{
+  src: string;
+  alt: string;
+  initialPosition: { x: number; y: number };
+  size?: number;
+  animationDelay?: string;
+}> = ({ src, alt, initialPosition, size = 12, animationDelay = '0s' }) => {
+  const [position, setPosition] = useState(initialPosition);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  }, [position]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    
+    const newPosition = {
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    };
+    
+    // Keep within bounds (rough container bounds)
+    newPosition.x = Math.max(-200, Math.min(window.innerWidth - 200, newPosition.x));
+    newPosition.y = Math.max(-100, Math.min(300, newPosition.y));
+    
+    setPosition(newPosition);
+  }, [isDragging, dragStart]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Add global mouse listeners when dragging
+  React.useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  return (
+    <div 
+      ref={dragRef}
+      className={`absolute z-20 cursor-move ${isDragging ? 'z-50' : ''}`}
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        transform: isDragging ? 'scale(1.1)' : 'scale(1)',
+        transition: isDragging ? 'none' : 'transform 0.2s ease'
+      }}
+      onMouseDown={handleMouseDown}
+    >
+      <div 
+        className={`w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg ${!isDragging ? 'animate-float' : ''}`}
+        style={{ animationDelay: isDragging ? '0s' : animationDelay }}
+      >
+        <img 
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover pointer-events-none"
+          draggable={false}
+        />
+      </div>
+    </div>
+  );
+};
 const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
   onSearch,
   onFilterChange,
@@ -122,121 +203,94 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             {/* Gold texture overlay */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJnb2xkIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgo8cGF0aCBkPSJNMzAgMEwzNiAxOEgxOEwyNCAwaDE2eiIgZmlsbD0icmdiYSgyNTUsIDIxNSwgMCwgMC4xKSIvPgo8L3BhdHRlcm4+CjwvZGVmcz4KPHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dvbGQpIiAvPgo8L3N2Zz4=')] opacity-30 rounded-3xl"></div>
             
-            {/* Small Meme Token Images - Spread evenly around entire golden box */}
+            {/* Draggable Meme Token Images */}
+            <DraggableMemeImage 
+              src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png"
+              alt="Doge Coin"
+              initialPosition={{ x: 80, y: 8 }}
+              size={12}
+              animationDelay="0s"
+            />
             
-            {/* Top edge - evenly spaced */}
-            <div className="absolute left-20 top-2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float">
-                <img 
-                  src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png" 
-                  alt="Doge Coin" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/e660102d-e987-4f64-96f3-f76ab8ec4403.png"
+              alt="Pepe Token"
+              initialPosition={{ x: 250, y: 8 }}
+              size={12}
+              animationDelay="0.5s"
+            />
             
-            <div className="absolute left-1/2 top-2 -translate-x-1/2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '0.5s' }}>
-                <img 
-                  src="/lovable-uploads/e660102d-e987-4f64-96f3-f76ab8ec4403.png" 
-                  alt="Pepe Token" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/8a8828a6-0dbb-48a6-81af-ca55fc919fa8.png"
+              alt="Doge Hat"
+              initialPosition={{ x: 420, y: 8 }}
+              size={12}
+              animationDelay="1s"
+            />
             
-            <div className="absolute right-20 top-2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '1s' }}>
-                <img 
-                  src="/lovable-uploads/8a8828a6-0dbb-48a6-81af-ca55fc919fa8.png" 
-                  alt="Doge Hat" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png"
+              alt="Shiba Token"
+              initialPosition={{ x: 8, y: 64 }}
+              size={12}
+              animationDelay="1.5s"
+            />
             
-            {/* Left edge - evenly spaced */}
-            <div className="absolute left-2 top-16 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '1.5s' }}>
-                <img 
-                  src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png" 
-                  alt="Shiba Token" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/94b0349d-079b-424d-94cb-8a413b837e00.png"
+              alt="Troll Face"
+              initialPosition={{ x: 8, y: 120 }}
+              size={12}
+              animationDelay="2s"
+            />
             
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '2s' }}>
-                <img 
-                  src="/lovable-uploads/94b0349d-079b-424d-94cb-8a413b837e00.png" 
-                  alt="Troll Face" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/a3f0dc47-8e45-4b7f-9796-a96a131be6e9.png"
+              alt="Penguin Token"
+              initialPosition={{ x: 8, y: 180 }}
+              size={12}
+              animationDelay="2.5s"
+            />
             
-            <div className="absolute left-2 bottom-16 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '2.5s' }}>
-                <img 
-                  src="/lovable-uploads/a3f0dc47-8e45-4b7f-9796-a96a131be6e9.png" 
-                  alt="Penguin Token" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png"
+              alt="Doge Classic"
+              initialPosition={{ x: 470, y: 64 }}
+              size={12}
+              animationDelay="3s"
+            />
             
-            {/* Right edge - evenly spaced */}
-            <div className="absolute right-2 top-16 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '3s' }}>
-                <img 
-                  src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png" 
-                  alt="Doge Classic" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/9c239256-5ae0-4130-bb8d-4db1d635a895.png"
+              alt="Pepe Classic"
+              initialPosition={{ x: 470, y: 120 }}
+              size={12}
+              animationDelay="3.5s"
+            />
             
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '3.5s' }}>
-                <img 
-                  src="/lovable-uploads/9c239256-5ae0-4130-bb8d-4db1d635a895.png" 
-                  alt="Pepe Classic" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/97799556-fa2f-4a22-a6a4-e443dfea0e26.png"
+              alt="Blue Penguin"
+              initialPosition={{ x: 470, y: 180 }}
+              size={12}
+              animationDelay="4s"
+            />
             
-            <div className="absolute right-2 bottom-16 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '4s' }}>
-                <img 
-                  src="/lovable-uploads/97799556-fa2f-4a22-a6a4-e443dfea0e26.png" 
-                  alt="Blue Penguin" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/72aba719-0de9-41fe-a71b-e1fb98f448aa.png"
+              alt="Green Wojak"
+              initialPosition={{ x: 80, y: 230 }}
+              size={12}
+              animationDelay="4.5s"
+            />
             
-            {/* Bottom edge - evenly spaced */}
-            <div className="absolute left-20 bottom-2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '4.5s' }}>
-                <img 
-                  src="/lovable-uploads/72aba719-0de9-41fe-a71b-e1fb98f448aa.png" 
-                  alt="Green Wojak" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            
-            <div className="absolute right-20 bottom-2 z-20">
-              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-lg animate-float" style={{ animationDelay: '5s' }}>
-                <img 
-                  src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png" 
-                  alt="Doge Coin 2" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
+            <DraggableMemeImage 
+              src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png"
+              alt="Doge Coin 2"
+              initialPosition={{ x: 420, y: 230 }}
+              size={12}
+              animationDelay="5s"
+            />
 
             {/* Content */}
             <div className="relative z-10 text-center">
