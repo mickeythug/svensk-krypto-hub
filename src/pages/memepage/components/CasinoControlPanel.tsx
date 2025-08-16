@@ -122,6 +122,27 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             {/* Gold texture overlay */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJnb2xkIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgo8cGF0aCBkPSJNMzAgMEwzNiAxOEgxOEwyNCAwaDE2eiIgZmlsbD0icmdiYSgyNTUsIDIxNSwgMCwgMC4xKSIvPgo8L3BhdHRlcm4+CjwvZGVmcz4KPHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dvbGQpIiAvPgo8L3N2Zz4=')] opacity-30 rounded-3xl"></div>
             
+            {/* Meme Token Images - Left and Right */}
+            <div className="absolute left-8 top-1/2 -translate-y-1/2 z-20">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-yellow-400/70 shadow-2xl animate-float">
+                <img 
+                  src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png" 
+                  alt="Shiba Token" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '1s' }}>
+                <img 
+                  src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png" 
+                  alt="Doge Classic" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
             {/* Content */}
             <div className="relative z-10 text-center">
               <div className="inline-flex items-center gap-4 mb-6">
