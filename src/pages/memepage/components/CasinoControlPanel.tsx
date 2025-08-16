@@ -126,7 +126,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             <div className="absolute left-8 top-1/2 -translate-y-1/2 z-20">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-yellow-400/70 shadow-2xl animate-float">
                 <img 
-                  src="/lovable-uploads/7ab43e2c-1cf6-423c-91da-e82c01ee56ba.png" 
+                  src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png" 
                   alt="Shiba Token" 
                   className="w-full h-full object-cover"
                 />
