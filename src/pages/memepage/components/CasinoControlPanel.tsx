@@ -122,7 +122,19 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             {/* Gold texture overlay */}
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJnb2xkIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgo8cGF0aCBkPSJNMzAgMEwzNiAxOEgxOEwyNCAwaDE2eiIgZmlsbD0icmdiYSgyNTUsIDIxNSwgMCwgMC4xKSIvPgo8L3BhdHRlcm4+CjwvZGVmcz4KPHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dvbGQpIiAvPgo8L3N2Zz4=')] opacity-30 rounded-3xl"></div>
             
-            {/* Meme Token Images - Left and Right */}
+            {/* Meme Token Images - Distributed around golden box */}
+            
+            {/* Left side images */}
+            <div className="absolute left-4 top-8 z-20">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-2xl animate-float">
+                <img 
+                  src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png" 
+                  alt="Doge Coin" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
             <div className="absolute left-8 top-1/2 -translate-y-1/2 z-20">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-yellow-400/70 shadow-2xl animate-float">
                 <img 
@@ -133,11 +145,83 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               </div>
             </div>
             
+            <div className="absolute left-4 bottom-8 z-20">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '2s' }}>
+                <img 
+                  src="/lovable-uploads/e660102d-e987-4f64-96f3-f76ab8ec4403.png" 
+                  alt="Pepe Token" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            <div className="absolute left-16 bottom-20 z-20">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '2.5s' }}>
+                <img 
+                  src="/lovable-uploads/94b0349d-079b-424d-94cb-8a413b837e00.png" 
+                  alt="Troll Face" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            {/* Right side images */}
+            <div className="absolute right-4 top-8 z-20">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '0.5s' }}>
+                <img 
+                  src="/lovable-uploads/8a8828a6-0dbb-48a6-81af-ca55fc919fa8.png" 
+                  alt="Doge Hat" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
             <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '1s' }}>
                 <img 
                   src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png" 
                   alt="Doge Classic" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            <div className="absolute right-4 bottom-8 z-20">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '1.5s' }}>
+                <img 
+                  src="/lovable-uploads/a3f0dc47-8e45-4b7f-9796-a96a131be6e9.png" 
+                  alt="Penguin Token" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            <div className="absolute right-16 bottom-20 z-20">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '3s' }}>
+                <img 
+                  src="/lovable-uploads/9c239256-5ae0-4130-bb8d-4db1d635a895.png" 
+                  alt="Pepe Classic" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            {/* Additional floating memes in corners */}
+            <div className="absolute left-20 top-16 z-20">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '3.5s' }}>
+                <img 
+                  src="/lovable-uploads/97799556-fa2f-4a22-a6a4-e443dfea0e26.png" 
+                  alt="Blue Penguin" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            
+            <div className="absolute right-20 top-16 z-20">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-yellow-400/70 shadow-2xl animate-float" style={{ animationDelay: '4s' }}>
+                <img 
+                  src="/lovable-uploads/72aba719-0de9-41fe-a71b-e1fb98f448aa.png" 
+                  alt="Green Wojak" 
                   className="w-full h-full object-cover"
                 />
               </div>
