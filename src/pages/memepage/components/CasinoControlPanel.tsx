@@ -80,18 +80,30 @@ const LiveStatsTicker: React.FC = () => {
     </div>;
 };
 
-// Draggable Meme Image Component
+// Draggable Meme Image Component with Position Saving
 const DraggableMemeImage: React.FC<{
   src: string;
   alt: string;
   initialPosition: { x: number; y: number };
+  id: string; // unique identifier for saving position
   size?: number;
   animationDelay?: string;
-}> = ({ src, alt, initialPosition, size = 12, animationDelay = '0s' }) => {
-  const [position, setPosition] = useState(initialPosition);
+}> = ({ src, alt, initialPosition, id, size = 12, animationDelay = '0s' }) => {
+  // Load saved position from localStorage or use initial position
+  const getSavedPosition = () => {
+    const saved = localStorage.getItem(`meme-position-${id}`);
+    return saved ? JSON.parse(saved) : initialPosition;
+  };
+
+  const [position, setPosition] = useState(getSavedPosition);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const dragRef = useRef<HTMLDivElement>(null);
+
+  // Save position to localStorage whenever it changes
+  const savePosition = (newPosition: { x: number; y: number }) => {
+    localStorage.setItem(`meme-position-${id}`, JSON.stringify(newPosition));
+  };
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -119,7 +131,9 @@ const DraggableMemeImage: React.FC<{
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  }, []);
+    // Save the final position when dragging ends
+    savePosition(position);
+  }, [position]);
 
   // Add global mouse listeners when dragging
   React.useEffect(() => {
@@ -133,6 +147,12 @@ const DraggableMemeImage: React.FC<{
       };
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  // Load saved positions on component mount
+  React.useEffect(() => {
+    const savedPosition = getSavedPosition();
+    setPosition(savedPosition);
+  }, []);
 
   return (
     <div 
@@ -205,6 +225,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             
             {/* Draggable Meme Token Images */}
             <DraggableMemeImage 
+              id="doge-coin-1"
               src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png"
               alt="Doge Coin"
               initialPosition={{ x: 80, y: 8 }}
@@ -213,6 +234,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="pepe-token"
               src="/lovable-uploads/e660102d-e987-4f64-96f3-f76ab8ec4403.png"
               alt="Pepe Token"
               initialPosition={{ x: 250, y: 8 }}
@@ -221,6 +243,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="doge-hat"
               src="/lovable-uploads/8a8828a6-0dbb-48a6-81af-ca55fc919fa8.png"
               alt="Doge Hat"
               initialPosition={{ x: 420, y: 8 }}
@@ -229,6 +252,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="shiba-token"
               src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png"
               alt="Shiba Token"
               initialPosition={{ x: 8, y: 64 }}
@@ -237,6 +261,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="troll-face"
               src="/lovable-uploads/94b0349d-079b-424d-94cb-8a413b837e00.png"
               alt="Troll Face"
               initialPosition={{ x: 8, y: 120 }}
@@ -245,6 +270,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="penguin-token"
               src="/lovable-uploads/a3f0dc47-8e45-4b7f-9796-a96a131be6e9.png"
               alt="Penguin Token"
               initialPosition={{ x: 8, y: 180 }}
@@ -253,6 +279,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="doge-classic"
               src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png"
               alt="Doge Classic"
               initialPosition={{ x: 470, y: 64 }}
@@ -261,6 +288,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="pepe-classic"
               src="/lovable-uploads/9c239256-5ae0-4130-bb8d-4db1d635a895.png"
               alt="Pepe Classic"
               initialPosition={{ x: 470, y: 120 }}
@@ -269,6 +297,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="blue-penguin"
               src="/lovable-uploads/97799556-fa2f-4a22-a6a4-e443dfea0e26.png"
               alt="Blue Penguin"
               initialPosition={{ x: 470, y: 180 }}
@@ -277,6 +306,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="green-wojak"
               src="/lovable-uploads/72aba719-0de9-41fe-a71b-e1fb98f448aa.png"
               alt="Green Wojak"
               initialPosition={{ x: 80, y: 230 }}
@@ -285,6 +315,7 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             />
             
             <DraggableMemeImage 
+              id="doge-coin-2"
               src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png"
               alt="Doge Coin 2"
               initialPosition={{ x: 420, y: 230 }}
