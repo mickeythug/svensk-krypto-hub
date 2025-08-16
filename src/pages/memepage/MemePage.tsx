@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import CasinoMemeHero from './components/CasinoMemeHero';
-import CasinoTokenExplorer from './components/CasinoTokenExplorer';
+import UltraModernMemeHero from './components/UltraModernMemeHero';
+import SlotMachineTokenGrid from './components/SlotMachineTokenGrid';
+import CasinoControlPanel from './components/CasinoControlPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
-import hexPattern from '@/assets/hex-pattern.jpg';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const MemePage: React.FC = () => {
@@ -64,24 +64,34 @@ const MemePage: React.FC = () => {
   // Desktop version - Ultra Modern Casino Design
   return (
     <div className="meme-page font-sans bg-black min-h-screen overflow-x-hidden">
-      {/* Casino Background Effects */}
+      {/* Ultra Casino Background Effects */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-casino-rainbow opacity-15 animate-shimmer"></div>
-        <div className="absolute inset-0 bg-gradient-web3-cyber opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-meme-energy opacity-8 animate-pulse"></div>
+        {/* Multi-layer neon background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-tl from-cyan-500/8 via-transparent to-yellow-500/8 animate-pulse" style={{ animationDelay: '1s' }}></div>
         
-        {/* Animated grid pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,hsl(330_100%_65%/0.3)_0%,transparent_30%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_75%,hsl(186_100%_60%/0.3)_0%,transparent_30%)]"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(270_100%_65%/0.2)_0%,transparent_40%)]"></div>
+        {/* Dynamic casino grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,225,159,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(18,225,159,0.05)_1px,transparent_1px)] bg-[size:100px_100px] opacity-30"></div>
+        
+        {/* Floating lights */}
+        <div className="absolute top-1/4 left-1/6 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-pink-500/10 to-transparent rounded-full animate-pulse" style={{ animationDelay: '3s' }}></div>
       </div>
       
       <main className="relative z-10 w-full min-h-screen">
-        {/* Casino Hero Section */}
-        <CasinoMemeHero />
+        {/* Ultra Modern Hero Section */}
+        <UltraModernMemeHero />
 
-        {/* Casino Token Explorer */}
-        <CasinoTokenExplorer />
+        {/* Casino Control Panel */}
+        <section data-section="meme-explorer" className="py-16">
+          <CasinoControlPanel />
+        </section>
+
+        {/* Slot Machine Token Grid */}
+        <section className="pb-20">
+          <SlotMachineTokenGrid />
+        </section>
       </main>
       
       {/* Mobile Navigation */}
