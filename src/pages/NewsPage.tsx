@@ -382,8 +382,8 @@ const NewsPage = () => {
             
             <div className={`${isMobile ? 'text-center' : 'flex flex-col lg:flex-row lg:items-start lg:justify-between'} gap-8`}>
               <div className="flex-1">
-                <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} leading-tight animate-fade-in`}>
-                  {t('news.page.title')}
+                <h1 className={`${isMobile ? 'text-2xl sm:text-3xl' : 'text-3xl md:text-5xl lg:text-6xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} leading-tight animate-fade-in font-orbitron tracking-wider`}>
+                  <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">NYH</span><span className="text-white">ETE</span><span className="text-[#12E19F]">R</span>
                 </h1>
                 <p className={`text-muted-foreground font-display ${isMobile ? 'text-sm px-2' : 'text-lg md:text-xl'} leading-relaxed ${isMobile ? 'max-w-sm mx-auto' : 'max-w-3xl'} animate-fade-in`}>
                   {t('news.page.description')}

@@ -290,8 +290,8 @@ const MarketOverviewPage = () => {
           {/* Header Section */}
           <div className="bg-gradient-to-r from-background via-background to-secondary/5 border-b border-border/30">
             <div className="max-w-7xl mx-auto px-6 py-8">
-              <h1 className="font-crypto text-4xl lg:text-6xl font-bold mb-3 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                {t('market.title').toUpperCase()}
+              <h1 className="font-orbitron text-4xl lg:text-6xl font-bold mb-3 tracking-wider">
+                <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">MAR</span><span className="text-white">KNA</span><span className="text-[#12E19F]">D</span>
               </h1>
               <p className="font-display text-lg text-muted-foreground">
                 {t('market.description')}
@@ -372,8 +372,8 @@ const MarketOverviewPage = () => {
                 
                 {/* Title */}
                 <div>
-                  <h2 className="font-crypto text-2xl font-bold text-primary mb-1">
-                    {t('market.cryptocurrencies').toUpperCase()}
+                  <h2 className="font-orbitron text-2xl font-bold mb-1 tracking-wider">
+                    <span className="text-white">KRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white">VAL</span><span className="text-[#12E19F]">UTO</span><span className="text-white">R</span>
                   </h2>
                   <p className="text-sm text-muted-foreground">
                     {t('market.showing')} {startIndex + 1}-{Math.min(endIndex, filteredData.length)} {t('market.of')} {filteredData.length} {t('market.cryptocurrencies').toLowerCase()}

@@ -118,8 +118,8 @@ const CommunityPage = () => {
                 <span className="text-sm font-medium text-primary">{t('community.page.subtitle')}</span>
               </div>
               
-              <h1 className={`font-crypto ${isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent`}>
-                {t('community.page.title')}
+              <h1 className={`font-orbitron ${isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} tracking-wider`}>
+                <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">COM</span><span className="text-white">MUN</span><span className="text-[#12E19F]">ITY</span>
               </h1>
               
               <p className={`${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-2xl mx-auto ${isMobile ? 'mb-8' : 'mb-10'} leading-relaxed`}>

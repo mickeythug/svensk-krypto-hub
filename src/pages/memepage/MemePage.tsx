@@ -66,8 +66,8 @@ const MemePage: React.FC = () => {
         <section className="py-8 px-4 lg:px-8">
           <div className="w-full">
             <div className="mb-8">
-              <h1 className="font-orbitron font-bold text-4xl lg:text-6xl text-foreground mb-4 tracking-wider">
-                MEME TOKEN ZONE
+              <h1 className="font-orbitron font-bold text-4xl lg:text-6xl mb-4 tracking-wider">
+                <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">MEM</span><span className="text-white">E Z</span><span className="text-[#12E19F]">ONE</span>
               </h1>
               
             </div>

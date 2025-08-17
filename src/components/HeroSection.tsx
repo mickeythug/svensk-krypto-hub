@@ -48,11 +48,11 @@ const HeroSection = () => {
               />
             </div>
             
-            <h1 className={`font-orbitron ${isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'} font-bold ${isMobile ? 'mb-2' : 'mb-4'} text-foreground tracking-wider`}>
-              CRYPTO NETWORK
+            <h1 className={`font-orbitron ${isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'} font-bold ${isMobile ? 'mb-2' : 'mb-4'} tracking-wider`}>
+              <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK</span>
             </h1>
-            <h2 className={`font-orbitron ${isMobile ? 'text-lg' : 'text-2xl md:text-4xl'} text-muted-foreground ${isMobile ? 'mb-4' : 'mb-6'} tracking-widest`}>
-              SWEDEN
+            <h2 className={`font-orbitron ${isMobile ? 'text-lg' : 'text-2xl md:text-4xl'} ${isMobile ? 'mb-4' : 'mb-6'} tracking-widest`}>
+              <span className="text-white">SWE</span><span className="text-[#12E19F]">DEN</span>
             </h2>
           </div>
 

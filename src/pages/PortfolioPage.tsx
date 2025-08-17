@@ -132,8 +132,8 @@ const PortfolioPage = () => {
         {/* Header Section */}
         <div className={`${isMobile ? 'flex flex-col space-y-4 mb-6' : 'flex items-center justify-between mb-8'}`}>
           <div>
-            <h1 className={`font-crypto ${isMobile ? 'text-2xl sm:text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3`}>
-              <span className="text-brand-turquoise">{t('portfolio.title')}</span>
+            <h1 className={`font-orbitron ${isMobile ? 'text-2xl sm:text-3xl' : 'text-4xl lg:text-6xl'} font-bold mb-3 tracking-wider`}>
+              <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">POR</span><span className="text-white">TFO</span><span className="text-[#12E19F]">LIO</span>
             </h1>
             <p className={`font-display ${isMobile ? 'text-sm' : 'text-lg'} text-muted-foreground`}>
               {t('portfolio.overview')}
