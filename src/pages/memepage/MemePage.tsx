@@ -5,20 +5,19 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
 import { useLanguage } from '@/contexts/LanguageContext';
-
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
+  const {
+    t
+  } = useLanguage();
   const [currentView, setCurrentView] = useState<'grid' | 'list' | 'compact'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
-
   useEffect(() => {
     const title = t('meme.main.title') + ' | Crypto Network Sweden';
     const description = t('meme.main.description');
     document.title = title;
-
     const ensureTag = (selector: string, create: () => HTMLElement) => {
       const existing = document.head.querySelector(selector);
       if (existing) return existing as HTMLElement;
@@ -26,14 +25,12 @@ const MemePage: React.FC = () => {
       document.head.appendChild(el);
       return el;
     };
-
     const md = ensureTag('meta[name="description"]', () => {
       const m = document.createElement('meta');
       m.setAttribute('name', 'description');
       return m;
     });
     md.setAttribute('content', description);
-
     const canonical = ensureTag('link[rel="canonical"]', () => {
       const l = document.createElement('link');
       l.setAttribute('rel', 'canonical');
@@ -41,11 +38,9 @@ const MemePage: React.FC = () => {
     });
     const origin = window.location.origin || 'https://cryptonetworksweden.se';
     canonical.setAttribute('href', `${origin}/meme`);
-
     const ldId = 'ld-json-meme-page';
     const oldLd = document.getElementById(ldId);
     if (oldLd) oldLd.remove();
-
     const ld = document.createElement('script');
     ld.type = 'application/ld+json';
     ld.id = ldId;
@@ -65,8 +60,7 @@ const MemePage: React.FC = () => {
   }
 
   // Desktop version - Modern Professional Design
-  return (
-    <div className="meme-zone min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
+  return <div className="meme-zone min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
       <main className="relative">
         {/* Professional Control Panel */}
         <section className="py-8 px-4 lg:px-8">
@@ -75,35 +69,20 @@ const MemePage: React.FC = () => {
               <h1 className="font-orbitron font-bold text-4xl lg:text-6xl text-foreground mb-4 tracking-wider">
                 MEME TOKEN ZONE
               </h1>
-              <p className="text-muted-foreground text-lg font-medium">
-                Upptäck och handla med de hetaste meme-tokens på marknaden
-              </p>
+              
             </div>
             
-            <ModernControlPanel 
-              onSearch={setSearchQuery}
-              onFilterChange={setFilterType}
-              onSortChange={setSortBy}
-              onViewChange={setCurrentView}
-              currentView={currentView}
-            />
+            <ModernControlPanel onSearch={setSearchQuery} onFilterChange={setFilterType} onSortChange={setSortBy} onViewChange={setCurrentView} currentView={currentView} />
           </div>
         </section>
 
         {/* Token Display Section */}
         <section className="pb-20 px-4 lg:px-8">
           <div className="w-full">
-            <ModernTokenGrid 
-              view={currentView}
-              searchQuery={searchQuery}
-              filterType={filterType}
-              sortBy={sortBy}
-            />
+            <ModernTokenGrid view={currentView} searchQuery={searchQuery} filterType={filterType} sortBy={sortBy} />
           </div>
         </section>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default MemePage;
