@@ -88,10 +88,10 @@ const CommunitySection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
-            {t('community.page.title')}
+            VÅR COMMUNITY
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            {t('community.page.description')}
+            Anslut till vår växande Telegram-community. Ställ frågor, lär dig, tradea tillsammans och hitta nya möjligheter - helt gratis!
           </p>
         </div>
 
@@ -133,7 +133,7 @@ const CommunitySection = () => {
                   className="h-20 w-20 mx-auto mb-4"
                 />
                 <h3 className="font-crypto text-3xl font-bold mb-4">
-                  {t('community.joinTelegramCommunity').toUpperCase()}
+                  GÅ MED I TELEGRAM COMMUNITY
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
                   {t('community.page.description')}
@@ -155,7 +155,7 @@ const CommunitySection = () => {
                     alt="Telegram" 
                     className="h-6 w-6 mr-3"
                   />
-                  {t('community.joinNowFree')}
+                  GÅ MED NU - GRATIS!
                 </Button>
               </a>
               
