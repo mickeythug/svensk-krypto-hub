@@ -11,7 +11,7 @@ const SocialMediaSection = () => {
     {
       name: "Telegram",
       icon: MessageCircle,
-      description: "Ställ frågor, lär dig, få gratis krypto-information och hjälp. Vi hjälps åt att hitta möjligheter tillsammans!",
+      description: t('social.telegram.description'),
       link: "https://t.me/cryptonetworksweden",
       color: "text-blue-400",
       bgColor: "bg-blue-400/10"
@@ -19,7 +19,7 @@ const SocialMediaSection = () => {
     {
       name: "TikTok",
       icon: Video,
-      description: "Följ våra senaste krypto-tips, analyser och utbildningsinnehåll",
+      description: t('social.tiktok.description'),
       link: "#",
       color: "text-pink-400",
       bgColor: "bg-pink-400/10"
@@ -27,7 +27,7 @@ const SocialMediaSection = () => {
     {
       name: "Twitter/X",
       icon: Twitter,
-      description: t('social.telegram.description'),
+      description: t('social.twitter.description'),
       link: "#",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
@@ -39,14 +39,15 @@ const SocialMediaSection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
           <h2 className={`font-orbitron ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-foreground tracking-wider`}>
-            FÖLJ OSS ÖVERALLT
+            {t('social.title')}
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-6'}`}>
-            Vi tänker bli den största krypto-communityn i Sverige! Gå med i våra sociala kanaler där vi hjälps åt att hitta möjligheter tillsammans.
-            En gemenskap med ett och samma mål - att växa och lära inom krypto.
+            {t('social.subtitle')}
+            {' '}
+            {t('social.communityGoal')}
           </p>
           <p className={`font-display ${isMobile ? 'text-sm' : 'text-base'} text-muted-foreground/80 max-w-2xl mx-auto`}>
-            Hör alltid av dig på Telegram för frågor, lärande och gratis krypto-information. Vi hjälps åt!
+            {t('social.telegramCall')}
           </p>
         </div>
 
@@ -75,7 +76,7 @@ const SocialMediaSection = () => {
                     className="w-full border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300"
                     onClick={() => window.open(platform.link, '_blank')}
                   >
-                    Följ oss
+                    {t('social.followUs')}
                   </Button>
                 </div>
               </Card>

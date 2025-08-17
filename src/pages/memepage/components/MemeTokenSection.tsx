@@ -2,11 +2,13 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { TrendingUp, TrendingDown, Flame, Star, Zap } from "lucide-react";
 import memeTokens from "@/assets/meme-tokens.jpg";
 
 const MemeTokenSection = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const memeCoins = [
     {
       symbol: "DOGE",
@@ -98,11 +100,10 @@ const MemeTokenSection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-6' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
           <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
-            MEME TOKEN ZON
+            {t('meme.tokenZone')}
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Håll koll på de roligaste och mest volatila meme-tokens på marknaden. 
-            From classics like DOGE to new sensations like PEPE!
+            {t('meme.tokenZoneDesc')}
           </p>
         </div>
 
@@ -117,25 +118,24 @@ const MemeTokenSection = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <Badge className="bg-primary text-primary-foreground mb-2">
-                    🚀 Trending Now
+                    {t('meme.trendingNow')}
                   </Badge>
                   <h3 className="font-crypto text-lg font-bold text-foreground">
-                    Meme Season is Here!
+                    {t('meme.seasonHere')}
                   </h3>
                 </div>
               </div>
               
               <div className={`${isMobile ? 'p-4' : 'p-6'}`}>
                 <p className="text-muted-foreground text-sm mb-4">
-                  Meme-tokens har blivit en betydande del av kryptomarknaden. 
-                  Följ de senaste trenderna och upptäck nästa stora meme-coin!
+                  {t('meme.seasonDesc')}
                 </p>
                 
                 <Button 
                   className="w-full bg-gradient-primary hover:shadow-glow-primary"
                   onClick={() => window.location.href = '/meme'}
                 >
-                  Se vad som trendar
+                  {t('meme.seeWhisTrending')}
                 </Button>
               </div>
             </Card>
@@ -146,10 +146,10 @@ const MemeTokenSection = () => {
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border`}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-crypto text-xl font-bold text-primary">
-                  TRENDANDE MEME TOKENS
+                  {t('meme.trendingTokens')}
                 </h3>
                 <Badge variant="outline" className="font-crypto">
-                  Live Data
+                  {t('meme.liveData')}
                 </Badge>
               </div>
               
@@ -206,12 +206,11 @@ const MemeTokenSection = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <Zap className="h-4 w-4 text-warning" />
                   <span className="font-display font-semibold text-warning text-sm">
-                    Riskvarning
+                    {t('meme.riskWarning')}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Meme-tokens är extremt volatila och spekulativa. Investera aldrig mer än du har råd att förlora. 
-                  DYOR (Do Your Own Research) and trade at your own risk.
+                  {t('meme.riskWarningText')}
                 </p>
               </div>
             </Card>
@@ -223,19 +222,19 @@ const MemeTokenSection = () => {
           <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">🚀</div>
             <h4 className="font-numbers text-lg font-bold text-primary mb-1">500+</h4>
-            <p className="text-muted-foreground text-sm">Aktiva Meme Tokens</p>
+            <p className="text-muted-foreground text-sm">{t('meme.activeTokens')}</p>
           </Card>
           
           <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">💎</div>
             <h4 className="font-numbers text-lg font-bold text-primary mb-1">50B+</h4>
-            <p className="text-muted-foreground text-sm">Total Marknadskapital</p>
+            <p className="text-muted-foreground text-sm">{t('meme.totalMarketCap')}</p>
           </Card>
           
           <Card className={`${isMobile ? 'p-4' : 'p-6'} text-center bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300`}>
             <div className="text-3xl mb-2">🎯</div>
             <h4 className="font-numbers text-lg font-bold text-primary mb-1">1000%+</h4>
-            <p className="text-muted-foreground text-sm">Genomsnittlig Volatilitet</p>
+            <p className="text-muted-foreground text-sm">{t('meme.avgVolatility')}</p>
           </Card>
         </div>
       </div>

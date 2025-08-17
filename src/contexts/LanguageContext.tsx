@@ -274,6 +274,31 @@ const translations = {
     // Footer translations
     'footer.followUs': 'FÖLJ OSS PÅ SOCIALA MEDIER',
     'footer.riskWarning': 'Riskvarning:',
+    
+    // Social Media Section translations
+    'social.title': 'FÖLJ OSS ÖVERALLT',
+    'social.subtitle': 'Vi tänker bli den största krypto-communityn i Sverige! Gå med i våra sociala kanaler där vi hjälps åt att hitta möjligheter tillsammans.',
+    'social.communityGoal': 'En gemenskap med ett och samma mål - att växa och lära inom krypto.',
+    'social.telegramCall': 'Hör alltid av dig på Telegram för frågor, lärande och gratis krypto-information. Vi hjälps åt!',
+    'social.telegram.description': 'Ställ frågor, lär dig, få gratis krypto-information och hjälp. Vi hjälps åt att hitta möjligheter tillsammans!',
+    'social.tiktok.description': 'Följ våra senaste krypto-tips, analyser och utbildningsinnehåll',
+    'social.twitter.description': 'Håll dig uppdaterad med de senaste nyheterna och marknadsanalyser',
+    'social.followUs': 'Följ oss',
+    
+    // Meme Token Section translations
+    'meme.tokenZone': 'MEME TOKEN ZON',
+    'meme.tokenZoneDesc': 'Håll koll på de roligaste och mest volatila meme-tokens på marknaden. From classics like DOGE to new sensations like PEPE!',
+    'meme.trendingNow': '🚀 Trending Now',
+    'meme.seasonHere': 'Meme Season is Here!',
+    'meme.seasonDesc': 'Meme-tokens har blivit en betydande del av kryptomarknaden. Följ de senaste trenderna och upptäck nästa stora meme-coin!',
+    'meme.seeWhisTrending': 'Se vad som trendar',
+    'meme.trendingTokens': 'TRENDANDE MEME TOKENS',
+    'meme.liveData': 'Live Data',
+    'meme.riskWarning': 'Riskvarning',
+    'meme.riskWarningText': 'Meme-tokens är extremt volatila och spekulativa. Investera aldrig mer än du har råd att förlora. DYOR (Do Your Own Research) and trade at your own risk.',
+    'meme.activeTokens': 'Aktiva Meme Tokens',
+    'meme.totalMarketCap': 'Total Marknadskapital',
+    'meme.avgVolatility': 'Genomsnittlig Volatilitet',
     'footer.riskDescription': 'Handel med kryptovalutor är förknippat med höga risker. Investeringar kan både öka och minska i värde. Investera aldrig mer än vad du har råd att förlora. Crypto Network Sweden tillhandahåller endast utbildningsinnehåll och är inte finansiell rådgivning.',
     'footer.privacyPolicy': 'Integritetspolicy',
     'footer.termsOfService': 'Användarvillkor',
@@ -465,16 +490,11 @@ const translations = {
     'meme.heroAlt': 'Färgglad meme crypto collage hero bild',
     'meme.heroDescription': '🎉 Välkommen till den vildaste delen av crypto! Upptäck trendiga meme tokens, småcap-pärlor och community-drivna coins som tar internet med storm!',
     'meme.exploreTokens': 'Utforska Tokens',
-    'meme.trendingNow': 'Trending Nu',
-    'meme.memeTokens': 'Meme Tokens',
-    'meme.liveData': 'Live Data',
     'meme.avgDailyMove': 'Genomsnittlig Daglig Rörelse',
     
     // News
     'news.categories.general': 'Allmänt',
     
-    // Social Media
-    'social.telegram.description': 'Håll dig uppdaterad med senaste nyheterna och marknadsanalyser',
     
     // Trading
     'trading.securedBy': 'Säkrad av Li.Fi & CryptoNetwork Sweden',
@@ -1283,6 +1303,31 @@ const translations = {
     // Footer translations
     'footer.followUs': 'FOLLOW US ON SOCIAL MEDIA',
     'footer.riskWarning': 'Risk Warning:',
+    
+    // Social Media Section translations
+    'social.title': 'FOLLOW US EVERYWHERE',
+    'social.subtitle': 'We aim to become the largest crypto community in Sweden! Join our social channels where we help each other find opportunities together.',
+    'social.communityGoal': 'A community with one goal - to grow and learn within crypto.',
+    'social.telegramCall': 'Always reach out on Telegram for questions, learning and free crypto information. We help each other!',
+    'social.telegram.description': 'Ask questions, learn, get free crypto information and help. We help each other find opportunities together!',
+    'social.tiktok.description': 'Follow our latest crypto tips, analysis and educational content',
+    'social.twitter.description': 'Stay updated with the latest news and market analysis',
+    'social.followUs': 'Follow us',
+    
+    // Meme Token Section translations
+    'meme.tokenZone': 'MEME TOKEN ZONE',
+    'meme.tokenZoneDesc': 'Keep track of the funniest and most volatile meme tokens on the market. From classics like DOGE to new sensations like PEPE!',
+    'meme.trendingNow': '🚀 Trending Now',
+    'meme.seasonHere': 'Meme Season is Here!',
+    'meme.seasonDesc': 'Meme tokens have become a significant part of the crypto market. Follow the latest trends and discover the next big meme coin!',
+    'meme.seeWhisTrending': 'See what\'s trending',
+    'meme.trendingTokens': 'TRENDING MEME TOKENS',
+    'meme.liveData': 'Live Data',
+    'meme.riskWarning': 'Risk Warning',
+    'meme.riskWarningText': 'Meme tokens are extremely volatile and speculative. Never invest more than you can afford to lose. DYOR (Do Your Own Research) and trade at your own risk.',
+    'meme.activeTokens': 'Active Meme Tokens',
+    'meme.totalMarketCap': 'Total Market Cap',
+    'meme.avgVolatility': 'Average Volatility',
     'footer.riskDescription': 'Trading cryptocurrencies involves high risks. Investments can both increase and decrease in value. Never invest more than you can afford to lose. Crypto Network Sweden provides only educational content and is not financial advice.',
     'footer.privacyPolicy': 'Privacy Policy',
     'footer.termsOfService': 'Terms of Service',
@@ -1453,16 +1498,11 @@ const translations = {
     'meme.heroAlt': 'Colorful meme crypto collage hero image',
     'meme.heroDescription': '🎉 Welcome to the wildest part of crypto! Discover trending meme tokens, small-cap gems and community-driven coins that are taking the internet by storm!',
     'meme.exploreTokens': 'Explore Tokens',
-    'meme.trendingNow': 'Trending Now',
-    'meme.memeTokens': 'Meme Tokens',
-    'meme.liveData': 'Live Data',
     'meme.avgDailyMove': 'Avg Daily Move',
     
     // News
     'news.categories.general': 'General',
     
-    // Social Media
-    'social.telegram.description': 'Stay updated with the latest news and market analysis',
     
     // Trading
     'trading.securedBy': 'Secured by Li.Fi & CryptoNetwork Sweden',
