@@ -11,27 +11,27 @@ const CommunitySection = () => {
   const communityFeatures = [
     {
       icon: MessageCircle,
-      title: t('community.telegramCommunity.title'),
-      description: t('community.telegramCommunity.description'),
-      count: t('community.features.telegram.count')
+      title: 'Telegram Community',
+      description: 'Chatta med andra krypto-entusiaster',
+      count: '2,500+ medlemmar'
     },
     {
       icon: Users, 
-      title: t('community.voiceChat.title'),
-      description: t('community.voiceChat.description'),
-      count: t('community.features.voiceChat.count')
+      title: 'Voice Chat',
+      description: 'Lär dig genom voice calls',
+      count: 'Dagliga samtal'
     },
     {
       icon: Trophy,
-      title: t('community.memeScanning.title'), 
-      description: t('community.memeScanning.description'),
-      count: t('community.features.memeScanning.count')
+      title: 'Meme Scanning',
+      description: 'Hitta de bästa meme tokens',
+      count: '24/7 scanning'
     },
     {
       icon: Heart,
-      title: t('community.newFriends.title'),
-      description: t('community.newFriends.description'),
-      count: t('community.features.newFriends.count')
+      title: 'Nya Vänner',
+      description: 'Träffa likasinnade personer',
+      count: '100+ aktiva'
     }
   ];
 
@@ -136,7 +136,7 @@ const CommunitySection = () => {
                   GÅ MED I TELEGRAM COMMUNITY
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
-                  {t('community.page.description')}
+                  Anslut till vår växande Telegram-community. Ställ frågor, lär dig, tradea tillsammans och hitta nya möjligheter - helt gratis!
                 </p>
               </div>
               
@@ -148,7 +148,7 @@ const CommunitySection = () => {
               >
                 <Button 
                   size="lg" 
-                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 text-xl px-12 py-6 h-auto font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                  className="bg-black text-white hover:bg-black/90 text-xl px-12 py-6 h-auto font-bold shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                 >
                   <img 
                     src="/lovable-uploads/9749ce60-cc5c-4316-bb4e-d89a819b14cd.png" 
@@ -161,20 +161,20 @@ const CommunitySection = () => {
               
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm opacity-90">
                 <div>
-                  <div className="font-bold">{t('community.voiceChat.title')}</div>
-                  <div>{t('community.events.voiceChatTime')}</div>
+                  <div className="font-bold">Voice Chat</div>
+                  <div>Varje dag 20:00</div>
                 </div>
                 <div>
-                  <div className="font-bold">{t('community.memeScanning.title')}</div>
-                  <div>{t('community.features.memeScanning.count')} {t('common.support')}</div>
+                  <div className="font-bold">Token Scanning</div>
+                  <div>24/7 Support</div>
                 </div>
                 <div>
-                  <div className="font-bold">{t('community.events.qa')}</div>
-                  <div>{t('community.events.qaTime')}</div>
+                  <div className="font-bold">Frågor & Svar</div>
+                  <div>Dagligen</div>
                 </div>
                 <div>
-                  <div className="font-bold">{t('community.newFriends.title')}</div>
-                  <div>{t('community.features.newFriends.count')}</div>
+                  <div className="font-bold">Nya Vänner</div>
+                  <div>100+ aktiva</div>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ const CommunitySection = () => {
         {/* Testimonials */}
         <div className="mb-16">
           <h3 className="font-crypto text-2xl font-bold text-center mb-8 text-primary">
-            {t('community.whatMembersSay')}
+            VAD VÅRA MEDLEMMAR SÄGER
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
