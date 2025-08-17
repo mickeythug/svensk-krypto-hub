@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import ModernMemeZoneHero from './components/ModernMemeZoneHero';
-import SlotMachineTokenGrid from './components/SlotMachineTokenGrid';
-import CasinoControlPanel from './components/CasinoControlPanel';
+import ModernTokenGrid from './components/SlotMachineTokenGrid';
+import ModernControlPanel from './components/ModernControlPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
@@ -67,30 +66,40 @@ const MemePage: React.FC = () => {
 
   // Desktop version - Modern Professional Design
   return (
-    <div className="meme-page min-h-screen bg-background">
-      {/* Modern Hero Section */}
-      <ModernMemeZoneHero />
-      
-      <main className="relative z-10">
-        {/* Modern Control Panel */}
-        <section data-section="meme-explorer" className="py-16 bg-gradient-to-b from-background/50 to-background">
-          <CasinoControlPanel 
-            onSearch={setSearchQuery}
-            onFilterChange={setFilterType}
-            onSortChange={setSortBy}
-            onViewChange={setCurrentView}
-            currentView={currentView}
-          />
+    <div className="meme-zone min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
+      <main className="relative">
+        {/* Professional Control Panel */}
+        <section className="py-8 px-4 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <h1 className="font-orbitron font-bold text-4xl lg:text-6xl text-foreground mb-4 tracking-wider">
+                MEME TOKEN ZONE
+              </h1>
+              <p className="text-muted-foreground text-lg font-medium">
+                Upptäck och handla med de hetaste meme-tokens på marknaden
+              </p>
+            </div>
+            
+            <ModernControlPanel 
+              onSearch={setSearchQuery}
+              onFilterChange={setFilterType}
+              onSortChange={setSortBy}
+              onViewChange={setCurrentView}
+              currentView={currentView}
+            />
+          </div>
         </section>
 
         {/* Token Display Section */}
-        <section className="pb-20 bg-background">
-          <SlotMachineTokenGrid 
-            view={currentView}
-            searchQuery={searchQuery}
-            filterType={filterType}
-            sortBy={sortBy}
-          />
+        <section className="pb-20">
+          <div className="max-w-7xl mx-auto">
+            <ModernTokenGrid 
+              view={currentView}
+              searchQuery={searchQuery}
+              filterType={filterType}
+              sortBy={sortBy}
+            />
+          </div>
         </section>
       </main>
     </div>
