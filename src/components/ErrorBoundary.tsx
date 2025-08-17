@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  t: (key: string) => string;
 }
 
 interface State {
@@ -13,7 +14,7 @@ interface State {
   error?: Error;
 }
 
-class ErrorBoundary extends Component<Props, State> {
+class ErrorBoundaryInner extends Component<Props, State> {
   public state: State = {
     hasError: false
   };
@@ -38,6 +39,8 @@ class ErrorBoundary extends Component<Props, State> {
   };
 
   public render() {
+    const { t } = this.props;
+    
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback;
@@ -49,17 +52,17 @@ class ErrorBoundary extends Component<Props, State> {
             <AlertTriangle className="h-16 w-16 text-destructive mx-auto mb-6" />
             
             <h2 className="font-crypto text-2xl font-bold mb-4 text-destructive">
-              Något gick fel
+              {t('error.title')}
             </h2>
             
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              Ett oväntat fel inträffade. Detta har rapporterats automatiskt och vårt team kommer att undersöka problemet.
+              {t('error.description')}
             </p>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="text-left mb-6 p-4 bg-muted rounded-lg text-sm">
                 <summary className="cursor-pointer font-medium text-destructive mb-2">
-                  Teknisk information (endast synlig i utvecklingsmiljö)
+                  {t('error.technicalInfo')}
                 </summary>
                 <pre className="whitespace-pre-wrap break-words text-xs">
                   {this.state.error.stack}
@@ -74,19 +77,19 @@ class ErrorBoundary extends Component<Props, State> {
                 className="flex items-center gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
-                Försök igen
+                {t('error.tryAgain')}
               </Button>
               
               <Button 
                 onClick={this.handleReload}
                 className="bg-gradient-primary flex items-center gap-2"
               >
-                Ladda om sidan
+                {t('error.reloadPage')}
               </Button>
             </div>
 
             <p className="text-xs text-muted-foreground mt-6">
-              Om problemet kvarstår, kontakta oss via{' '}
+              {t('error.contactUs')}{' '}
               <a 
                 href="https://t.me/cryptonetworksweden" 
                 target="_blank" 
@@ -104,5 +107,23 @@ class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+// Wrapper component to provide translations
+import { useLanguage } from '@/contexts/LanguageContext';
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ children, fallback }) => {
+  const { t } = useLanguage();
+  
+  return (
+    <ErrorBoundaryInner t={t} fallback={fallback}>
+      {children}
+    </ErrorBoundaryInner>
+  );
+};
 
 export default ErrorBoundary;

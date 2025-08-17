@@ -6,6 +6,7 @@ import { useCryptoData } from "@/hooks/useCryptoData";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TokenSearchBarProps {
   currentSymbol?: string;
@@ -15,9 +16,10 @@ interface TokenSearchBarProps {
 
 const TokenSearchBar: React.FC<TokenSearchBarProps> = ({ 
   currentSymbol, 
-  placeholder = "Sök token", 
+  placeholder, 
   className 
 }) => {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
@@ -154,9 +156,9 @@ const TokenSearchBar: React.FC<TokenSearchBarProps> = ({
       >
         <div className="flex items-center gap-2 px-4 py-3 border-b border-primary/10 bg-gradient-to-r from-primary/5 to-transparent">
           <Zap className="h-4 w-4 text-primary animate-pulse" />
-          <span className="text-sm font-display font-semibold text-primary">Sökresultat</span>
+          <span className="text-sm font-display font-semibold text-primary">{t('common.searchResults')}</span>
           <div className="ml-auto text-xs text-muted-foreground bg-primary/10 px-2 py-1 rounded-full">
-            {filteredTokens.length} resultat
+            {filteredTokens.length} {t('common.results')}
           </div>
         </div>
         

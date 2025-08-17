@@ -136,13 +136,13 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
               </p>
               <Button onClick={reloadChart} variant="outline" size="sm">
                 <RefreshCw size={14} className="mr-2" />
-                Försök igen
+                {t('common.retry')}
               </Button>
             </div>
           ) : isLoading ? (
             <div className="text-center">
               <RefreshCw className="animate-spin h-8 w-8 text-primary mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">Laddar chart...</p>
+              <p className="text-sm text-muted-foreground">{t('common.loadingChart')}</p>
             </div>
           ) : (
             <div className="text-center p-8">

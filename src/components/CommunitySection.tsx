@@ -11,27 +11,27 @@ const CommunitySection = () => {
   const communityFeatures = [
     {
       icon: MessageCircle,
-      title: 'Telegram Community',
-      description: 'Chatta med andra krypto-entusiaster',
-      count: '2,500+ medlemmar'
+      title: t('community.features.telegram.title'),
+      description: t('community.features.telegram.description'),
+      count: t('community.features.telegram.count')
     },
     {
       icon: Users, 
-      title: 'Voice Chat',
-      description: 'Lär dig genom voice calls',
-      count: 'Dagliga samtal'
+      title: t('community.features.voiceChat.title'),
+      description: t('community.features.voiceChat.description'),
+      count: t('community.features.voiceChat.count')
     },
     {
       icon: Trophy,
-      title: 'Meme Scanning',
-      description: 'Hitta de bästa meme tokens',
-      count: '24/7 scanning'
+      title: t('community.features.memeScan.title'),
+      description: t('community.features.memeScan.description'),
+      count: t('community.features.memeScan.count')
     },
     {
       icon: Heart,
-      title: 'Nya Vänner',
-      description: 'Träffa likasinnade personer',
-      count: '100+ aktiva'
+      title: t('community.features.friends.title'),
+      description: t('community.features.friends.description'),
+      count: t('community.features.friends.count')
     }
   ];
 
