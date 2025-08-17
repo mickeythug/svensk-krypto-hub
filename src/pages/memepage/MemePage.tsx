@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import ModernMemeZoneHero from './components/ModernMemeZoneHero';
 import SlotMachineTokenGrid from './components/SlotMachineTokenGrid';
 import CasinoControlPanel from './components/CasinoControlPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -65,27 +65,15 @@ const MemePage: React.FC = () => {
     return <MobileMemeZoneApp />;
   }
 
-  // Desktop version - Ultra Modern Casino Design
+  // Desktop version - Modern Professional Design
   return (
-    <div className="meme-page font-sans bg-black min-h-screen overflow-x-hidden">
-      {/* Ultra Casino Background Effects */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {/* Multi-layer neon background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 animate-pulse"></div>
-        <div className="absolute inset-0 bg-gradient-to-tl from-cyan-500/8 via-transparent to-yellow-500/8 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
-        {/* Dynamic casino grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,225,159,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(18,225,159,0.05)_1px,transparent_1px)] bg-[size:100px_100px] opacity-30"></div>
-        
-        {/* Floating lights */}
-        <div className="absolute top-1/4 left-1/6 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-pink-500/10 to-transparent rounded-full animate-pulse" style={{ animationDelay: '3s' }}></div>
-      </div>
+    <div className="meme-page min-h-screen bg-background">
+      {/* Modern Hero Section */}
+      <ModernMemeZoneHero />
       
-      <main className="relative z-10 w-full min-h-screen pt-8">
-        {/* Casino Control Panel */}
-        <section data-section="meme-explorer" className="py-16">
+      <main className="relative z-10">
+        {/* Modern Control Panel */}
+        <section data-section="meme-explorer" className="py-16 bg-gradient-to-b from-background/50 to-background">
           <CasinoControlPanel 
             onSearch={setSearchQuery}
             onFilterChange={setFilterType}
@@ -95,8 +83,8 @@ const MemePage: React.FC = () => {
           />
         </section>
 
-        {/* Dynamic Token Display */}
-        <section className="pb-20">
+        {/* Token Display Section */}
+        <section className="pb-20 bg-background">
           <SlotMachineTokenGrid 
             view={currentView}
             searchQuery={searchQuery}
@@ -105,9 +93,6 @@ const MemePage: React.FC = () => {
           />
         </section>
       </main>
-      
-      {/* Mobile Navigation */}
-      {isMobile && <MemeZoneBottomNavigation />}
     </div>
   );
 };
