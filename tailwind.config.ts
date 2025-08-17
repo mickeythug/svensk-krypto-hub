@@ -106,11 +106,9 @@ export default {
 				'glow-rainbow': 'var(--glow-rainbow)',
 			},
 			fontFamily: {
-				sans: ['Orbitron', 'Inter', 'system-ui', 'sans-serif'],
+				sans: ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
 				mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
 				'binance': ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
-				'orbitron': ['Orbitron', 'sans-serif'],
-				'numbers': ['Inter', 'system-ui', 'sans-serif'], // Preserve current font for numbers/crypto names
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
