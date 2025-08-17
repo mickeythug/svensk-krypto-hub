@@ -232,11 +232,86 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     overflow-x: hidden; /* Only hide horizontal scroll */
     overflow-y: auto; /* Ensure vertical scroll is enabled */
-    font-family: "Binance PLEX", "IBM Plex Sans", "Barlow", sans-serif;
-    font-size: 16px; /* Increased from 14px */
-    font-weight: 400;
-    line-height: 1.5; /* Improved line height for better readability */
+    font-family: 'Orbit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(15px, 1.5vw, 17px); /* Larger, fluid body text */
+    font-weight: 500; /* Thicker body text */
+    line-height: 1.55; /* Better line height for readability */
     letter-spacing: 0.01em; /* Subtle letter spacing for better readability */
+  }
+
+  /* Headings use Orbit with progressively larger sizes and higher weights */
+  h1, .h1 {
+    font-family: 'Orbit', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: clamp(28px, 4vw, 48px) !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  h2, .h2 {
+    font-family: 'Orbit', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: clamp(22px, 3vw, 32px) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  h3, .h3 {
+    font-family: 'Orbit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: clamp(18px, 2vw, 24px) !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  h4, .h4 {
+    font-family: 'Orbit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: clamp(16px, 1.8vw, 20px) !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.005em !important;
+  }
+
+  h5, .h5 {
+    font-family: 'Orbit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: clamp(14px, 1.5vw, 18px) !important;
+    line-height: 1.3 !important;
+  }
+
+  h6, .h6 {
+    font-family: 'Orbit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: clamp(13px, 1.3vw, 16px) !important;
+    line-height: 1.35 !important;
+  }
+
+  /* Body text uses Orbit with larger, clearer sizing */
+  p, span, div, label, .text-base {
+    font-family: 'Orbit', sans-serif;
+    font-weight: 500;
+    font-size: clamp(15px, 1.5vw, 17px);
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+  }
+
+  /* Preserve current fonts for numbers, tokens, and crypto names */
+  .text-numbers, .font-numbers,
+  [class*="price"], [class*="amount"], [class*="balance"],
+  .ticker, .symbol, .crypto-name,
+  [data-testid*="price"], [data-testid*="amount"], [data-testid*="balance"] {
+    font-family: 'Inter', sans-serif !important;
+    font-variant-numeric: tabular-nums lining-nums !important;
+    font-weight: 600 !important;
+  }
+
+  /* Crypto symbols and token names preserve current styling */
+  .token-symbol, .crypto-symbol, .ticker-symbol,
+  [class*="btc"], [class*="eth"], [class*="sol"], [class*="doge"], 
+  [class*="bitcoin"], [class*="ethereum"], [class*="solana"] {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    font-variant-numeric: tabular-nums lining-nums !important;
   }
 
   /* Enhanced Typography classes following Binance standards with better accessibility */

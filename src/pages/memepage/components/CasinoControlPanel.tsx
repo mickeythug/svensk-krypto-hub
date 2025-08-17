@@ -67,7 +67,12 @@ const LiveStatsTicker: React.FC = () => {
     value: '12',
     icon: '💎'
   }];
-  return;
+  
+  return (
+    <div className="ticker-section">
+      {/* Ticker implementation can be added here */}
+    </div>
+  );
 };
 
 // Draggable Meme Image Component with Backend Position Saving
