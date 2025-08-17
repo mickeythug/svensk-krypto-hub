@@ -70,7 +70,7 @@ const MemePage: React.FC = () => {
       <main className="relative">
         {/* Professional Control Panel */}
         <section className="py-8 px-4 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+          <div className="w-full">
             <div className="mb-8">
               <h1 className="font-orbitron font-bold text-4xl lg:text-6xl text-foreground mb-4 tracking-wider">
                 MEME TOKEN ZONE
@@ -91,8 +91,8 @@ const MemePage: React.FC = () => {
         </section>
 
         {/* Token Display Section */}
-        <section className="pb-20">
-          <div className="max-w-7xl mx-auto">
+        <section className="pb-20 px-4 lg:px-8">
+          <div className="w-full">
             <ModernTokenGrid 
               view={currentView}
               searchQuery={searchQuery}
