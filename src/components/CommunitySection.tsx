@@ -91,7 +91,7 @@ const CommunitySection = () => {
             <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">COM</span><span className="text-white">MUN</span><span className="text-[#12E19F]">ITY</span>
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            Anslut till vår växande Telegram-community. Ställ frågor, lär dig, tradea tillsammans och hitta nya möjligheter - helt gratis!
+            {t('community.page.description')}
           </p>
         </div>
 
@@ -133,10 +133,10 @@ const CommunitySection = () => {
                   className="h-20 w-20 mx-auto mb-4"
                 />
                 <h3 className="font-orbitron text-3xl font-bold mb-4 tracking-wider">
-                  GÅ MED I TELEGRAM COMMUNITY
+                  {t('community.joinTelegramCommunity')}
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
-                  Anslut till vår växande Telegram-community. Ställ frågor, lär dig, tradea tillsammans och hitta nya möjligheter - helt gratis!
+                  {t('community.page.description')}
                 </p>
               </div>
               
@@ -155,26 +155,26 @@ const CommunitySection = () => {
                     alt="Telegram" 
                     className="h-6 w-6 mr-3"
                   />
-                  GÅ MED NU - GRATIS!
+                  {t('community.joinNowFree')}
                 </Button>
               </a>
               
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm opacity-90">
                 <div>
-                  <div className="font-bold">Voice Chat</div>
-                  <div>Varje dag 20:00</div>
+                  <div className="font-bold">{t('community.voiceChat.title')}</div>
+                  <div>{t('community.voiceChat.schedule')}</div>
                 </div>
                 <div>
-                  <div className="font-bold">Token Scanning</div>
-                  <div>24/7 Support</div>
+                  <div className="font-bold">{t('community.tokenScanning.title')}</div>
+                  <div>{t('community.tokenScanning.availability')}</div>
                 </div>
                 <div>
-                  <div className="font-bold">Frågor & Svar</div>
-                  <div>Dagligen</div>
+                  <div className="font-bold">{t('community.qa.title')}</div>
+                  <div>{t('community.qa.schedule')}</div>
                 </div>
                 <div>
-                  <div className="font-bold">Nya Vänner</div>
-                  <div>100+ aktiva</div>
+                  <div className="font-bold">{t('community.newFriends.title')}</div>
+                  <div>{t('community.newFriends.count')}</div>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ const CommunitySection = () => {
         {/* Testimonials */}
         <div className="mb-16">
           <h3 className="font-orbitron text-2xl font-bold text-center mb-8 text-primary tracking-wider">
-            VAD VÅRA MEDLEMMAR SÄGER
+            {t('community.whatMembersSay').toUpperCase()}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

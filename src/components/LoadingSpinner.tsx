@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -9,9 +10,12 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: FC<LoadingSpinnerProps> = ({ 
   size = 'md', 
-  text = 'Laddar...', 
+  text, 
   className = '' 
 }) => {
+  const { t } = useLanguage();
+  const displayText = text || t('common.loading');
+  
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6', 
@@ -27,11 +31,9 @@ const LoadingSpinner: FC<LoadingSpinnerProps> = ({
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <Loader2 className={`${sizeClasses[size]} animate-spin text-primary`} />
-      {text && (
-        <p className={`${textSizeClasses[size]} text-muted-foreground animate-pulse`}>
-          {text}
-        </p>
-      )}
+      <p className={`${textSizeClasses[size]} text-muted-foreground animate-pulse`}>
+        {displayText}
+      </p>
     </div>
   );
 };
