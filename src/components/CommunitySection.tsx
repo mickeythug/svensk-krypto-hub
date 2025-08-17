@@ -87,7 +87,7 @@ const CommunitySection = () => {
     <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
-          <h2 className={`font-crypto ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
+          <h2 className={`font-orbitron ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tracking-wider`}>
             VÅR COMMUNITY
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
@@ -132,7 +132,7 @@ const CommunitySection = () => {
                   alt="Telegram" 
                   className="h-20 w-20 mx-auto mb-4"
                 />
-                <h3 className="font-crypto text-3xl font-bold mb-4">
+                <h3 className="font-orbitron text-3xl font-bold mb-4 tracking-wider">
                   GÅ MED I TELEGRAM COMMUNITY
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
@@ -183,7 +183,7 @@ const CommunitySection = () => {
 
         {/* Testimonials */}
         <div className="mb-16">
-          <h3 className="font-crypto text-2xl font-bold text-center mb-8 text-primary">
+          <h3 className="font-orbitron text-2xl font-bold text-center mb-8 text-primary tracking-wider">
             VAD VÅRA MEDLEMMAR SÄGER
           </h3>
           

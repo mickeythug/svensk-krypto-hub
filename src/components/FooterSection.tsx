@@ -21,7 +21,7 @@ const FooterSection = () => {
 
         {/* Social Media Links */}
         <div className="border-t border-border pt-8 mb-8">
-          <h4 className="font-crypto font-bold text-primary text-center mb-6">
+          <h4 className="font-orbitron font-bold text-primary text-center mb-6 tracking-wider">
             {t('footer.followUs')}
           </h4>
           

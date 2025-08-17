@@ -109,6 +109,7 @@ export default {
 				sans: ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
 				mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
 				'binance': ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
+				'orbitron': ['Orbitron', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

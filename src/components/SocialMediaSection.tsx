@@ -36,7 +36,7 @@ const SocialMediaSection = () => {
     <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
-          <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-foreground`}>
+          <h2 className={`font-orbitron ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-foreground tracking-wider`}>
             FÖLJ OSS ÖVERALLT
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-6'}`}>
