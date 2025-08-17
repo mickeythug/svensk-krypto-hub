@@ -75,14 +75,11 @@ const HeroSection = () => {
             </a>
             <Button
               onClick={() => {
-                const element = document.querySelector('#market');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                window.location.href = '/marknad';
               }}
-              variant="outline"
+              variant="ghost"
               size={isMobile ? "default" : "lg"}
-              className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}
+              className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}
             >
               {t('hero.exploreMarket')}
             </Button>
