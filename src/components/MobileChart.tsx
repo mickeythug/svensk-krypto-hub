@@ -17,6 +17,7 @@ import {
   Maximize2,
   RefreshCw
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface MobileChartProps {
   symbol: string;
@@ -27,6 +28,7 @@ interface MobileChartProps {
 }
 
 const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }: MobileChartProps) => {
+  const { t } = useLanguage();
   const [timeframe, setTimeframe] = useState("1D");
   const [isLoading, setIsLoading] = useState(false);
   const [chartError, setChartError] = useState(false);
@@ -130,9 +132,9 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
           {chartError ? (
             <div className="text-center p-6">
               <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground mb-3" />
-              <h3 className="font-semibold mb-2">Chart kunde inte laddas</h3>
+              <h3 className="font-semibold mb-2">{t('common.chartLoadError')}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Prova att uppdatera för att ladda om charten.
+                {t('common.chartLoadErrorDescription')}
               </p>
               <Button onClick={reloadChart} variant="outline" size="sm">
                 <RefreshCw size={14} className="mr-2" />
@@ -149,7 +151,7 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
               <BarChart3 className="mx-auto h-16 w-16 text-primary/50 mb-4" />
               <h3 className="text-lg font-semibold mb-2">TradingView Chart</h3>
               <p className="text-muted-foreground mb-4">
-                Chart för {symbol} kommer att visas här
+                {t('common.chartDescription')} {symbol}
               </p>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="bg-secondary/20 rounded-lg p-3">
@@ -179,7 +181,7 @@ const MobileChart = ({ symbol, currentPrice, priceChange24h, tokenName, crypto }
       {/* Chart Indicators */}
       <div className="p-4 border-t border-border/20">
         <div className="flex justify-between items-center mb-3">
-          <h3 className="font-semibold text-sm">Tekniska indikatorer</h3>
+          <h3 className="font-semibold text-sm">{t('common.technicalIndicators')}</h3>
           <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
             <MoreHorizontal className="h-4 w-4" />
           </Button>
