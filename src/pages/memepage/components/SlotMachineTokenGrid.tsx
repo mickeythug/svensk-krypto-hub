@@ -36,13 +36,15 @@ interface ModernTokenGridProps {
   searchQuery?: string;
   filterType?: string;
   sortBy?: string;
+  activeSection?: string;
 }
 
 const ModernTokenGrid: React.FC<ModernTokenGridProps> = ({ 
   view = 'grid', 
   searchQuery = '', 
   filterType = 'all', 
-  sortBy = 'hotness' 
+  sortBy = 'hotness',
+  activeSection = 'trending'
 }) => {
   const navigate = useNavigate();
   const { tokens, loading, error } = useMemeTokens('trending', 50, 1);

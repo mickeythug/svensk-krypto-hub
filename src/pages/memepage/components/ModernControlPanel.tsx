@@ -88,17 +88,6 @@ const ModernControlPanel: React.FC<ModernControlPanelProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Create Token Button */}
-      <div className="flex justify-center mb-8">
-        <Button 
-          onClick={() => navigate('/meme/create')}
-          className="bg-gradient-to-r from-primary via-primary/90 to-secondary text-primary-foreground font-bold text-xl px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-          size="lg"
-        >
-          <Plus className="w-6 h-6 mr-3" />
-          SKAPA DIN TOKEN
-        </Button>
-      </div>
 
       {/* Main Control Panel */}
       <div className="bg-card/90 backdrop-blur-sm border border-border rounded-2xl p-6 shadow-lg">

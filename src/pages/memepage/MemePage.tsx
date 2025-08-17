@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import ModernTokenGrid from './components/SlotMachineTokenGrid';
 import ModernControlPanel from './components/ModernControlPanel';
+import TelegramMonitor from './components/TelegramMonitor';
+import EnhancedCreateTokenButton from './components/EnhancedCreateTokenButton';
+import MemeZoneSectionNavigation from './components/MemeZoneSectionNavigation';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
@@ -14,6 +17,7 @@ const MemePage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
+  const [activeSection, setActiveSection] = useState('trending');
   useEffect(() => {
     const title = t('meme.main.title') + ' | Crypto Network Sweden';
     const description = t('meme.main.description');
@@ -59,30 +63,59 @@ const MemePage: React.FC = () => {
     return <MobileMemeZoneApp />;
   }
 
-  // Desktop version - Modern Professional Design
-  return <div className="meme-zone min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
-      <main className="relative">
-        {/* Professional Control Panel */}
-        <section className="py-8 px-4 lg:px-8">
-          <div className="w-full">
-            <div className="mb-8">
-              <h1 className="font-orbitron font-bold text-4xl lg:text-6xl mb-4 tracking-wider">
-                <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">MEM</span><span className="text-white">E Z</span><span className="text-[#12E19F]">ONE</span>
-              </h1>
+  // Desktop version - Modern Professional Design with Telegram Monitor
+  return (
+    <div className="meme-zone min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 flex">
+      {/* Telegram Monitor Sidebar */}
+      <TelegramMonitor />
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden">
+        <main className="relative h-full">
+          {/* Professional Header Section */}
+          <section className="py-8 px-4 lg:px-8">
+            <div className="w-full">
+              <div className="mb-8">
+                <h1 className="font-orbitron font-bold text-4xl lg:text-6xl mb-4 tracking-wider">
+                  <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">MEM</span><span className="text-white">E Z</span><span className="text-[#12E19F]">ONE</span>
+                </h1>
+              </div>
               
+              {/* Enhanced Create Token Button */}
+              <EnhancedCreateTokenButton />
+              
+              {/* Section Navigation */}
+              <MemeZoneSectionNavigation 
+                activeSection={activeSection}
+                onSectionChange={setActiveSection}
+              />
+              
+              {/* Modern Control Panel */}
+              <ModernControlPanel 
+                onSearch={setSearchQuery} 
+                onFilterChange={setFilterType} 
+                onSortChange={setSortBy} 
+                onViewChange={setCurrentView} 
+                currentView={currentView} 
+              />
             </div>
-            
-            <ModernControlPanel onSearch={setSearchQuery} onFilterChange={setFilterType} onSortChange={setSortBy} onViewChange={setCurrentView} currentView={currentView} />
-          </div>
-        </section>
+          </section>
 
-        {/* Token Display Section */}
-        <section className="pb-20 px-4 lg:px-8">
-          <div className="w-full">
-            <ModernTokenGrid view={currentView} searchQuery={searchQuery} filterType={filterType} sortBy={sortBy} />
-          </div>
-        </section>
-      </main>
-    </div>;
+          {/* Token Display Section */}
+          <section className="pb-20 px-4 lg:px-8">
+            <div className="w-full">
+              <ModernTokenGrid 
+                view={currentView} 
+                searchQuery={searchQuery} 
+                filterType={filterType} 
+                sortBy={sortBy}
+                activeSection={activeSection}
+              />
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  );
 };
 export default MemePage;
