@@ -77,9 +77,9 @@ const HeroSection = () => {
               onClick={() => {
                 window.location.href = '/marknad';
               }}
-              variant="ghost"
+              variant="outline"
               size={isMobile ? "default" : "lg"}
-              className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300`}
+              className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-[#12E19F] text-muted-foreground hover:bg-[#12E19F] hover:text-white transition-all duration-300`}
             >
               {t('hero.exploreMarket')}
             </Button>
