@@ -8,6 +8,7 @@ import OptimizedImage from '@/components/OptimizedImage';
 import { useNavigate } from 'react-router-dom';
 import { useMemeTokens } from '../hooks/useMemeTokens';
 import { Skeleton } from '@/components/ui/skeleton';
+import ModernMemeTokenList from './ModernMemeTokenList';
 
 // Format utilities
 function formatPrice(n: number) {
@@ -283,6 +284,36 @@ const SlotMachineTokenGrid: React.FC<SlotMachineTokenGridProps> = ({
   };
 
   if (loading) {
+    if (view === 'list') {
+      return (
+        <div className="space-y-3 px-8 pb-8">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="bg-black/60 border border-white/10 rounded-2xl px-6 py-4">
+              <div className="hidden lg:grid lg:grid-cols-12 gap-6 items-center">
+                <Skeleton className="col-span-1 h-8 w-12 bg-white/10" />
+                <Skeleton className="col-span-3 h-12 bg-white/10" />
+                <Skeleton className="col-span-2 h-6 bg-white/10" />
+                <Skeleton className="col-span-2 h-6 bg-white/10" />
+                <Skeleton className="col-span-2 h-6 bg-white/10" />
+                <Skeleton className="col-span-1 h-6 bg-white/10" />
+                <Skeleton className="col-span-1 h-8 w-12 bg-white/10" />
+              </div>
+              <div className="lg:hidden space-y-3">
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-12 w-32 bg-white/10" />
+                  <Skeleton className="h-6 w-16 bg-white/10" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Skeleton className="h-4 bg-white/10" />
+                  <Skeleton className="h-4 bg-white/10" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-8">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -306,11 +337,14 @@ const SlotMachineTokenGrid: React.FC<SlotMachineTokenGridProps> = ({
     );
   }
 
+  // If list view, use the modern list component
+  if (view === 'list') {
+    return <ModernMemeTokenList tokens={filteredAndSortedTokens} />;
+  }
+
   // Grid layouts based on view type
   const getGridLayout = () => {
     switch (view) {
-      case 'list':
-        return 'grid grid-cols-1 gap-4 p-8';
       case 'compact':
         return 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-8';
       default: // grid
