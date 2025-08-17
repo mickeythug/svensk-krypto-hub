@@ -22,6 +22,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 import { formatUsd } from "@/lib/utils";
 import { useExchangeTicker } from '@/hooks/useExchangeTicker';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface MobileTradingViewProps {
   symbol: string;
@@ -40,6 +41,7 @@ const MobileTradingView = ({
 }: MobileTradingViewProps) => {
   const [activeTab, setActiveTab] = useState("chart");
   const [watchlist, setWatchlist] = useState(false);
+  const { t } = useLanguage();
   
   const isPositive = priceChange24h >= 0;
   const { connected: solConnected } = useWallet();
@@ -276,7 +278,7 @@ const MobileTradingView = ({
                 <div className="space-y-5">
                   <div className="grid grid-cols-1 gap-4">
                     <Card className="p-4 bg-background/70 backdrop-blur-sm border-border/50 rounded-xl">
-                      <div className="text-muted-foreground text-sm mb-2 font-medium">Marknadskapital</div>
+                      <div className="text-muted-foreground text-sm mb-2 font-medium">{t('market.cap')}</div>
                       <div className="font-mono font-bold text-lg text-foreground">
                         {typeof crypto?.marketCap === 'string' ? `$${crypto.marketCap}` : 
                          typeof crypto?.marketCap === 'number' ? `$${crypto.marketCap.toLocaleString()}` : 'N/A'}

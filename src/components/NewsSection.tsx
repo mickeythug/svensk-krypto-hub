@@ -31,10 +31,10 @@ const NewsSection = () => {
   const normalize = (s: string = "") => s.toLowerCase();
   const hasAny = (s: string, patterns: RegExp[]) => patterns.some((re) => re.test(s));
   const classifyCategory = (title: string, summary: string, tags: string[] = []) => {
-    const t = normalize(title);
-    const d = normalize(summary);
+    const titleNorm = normalize(title);
+    const summaryNorm = normalize(summary);
     const tagStr = normalize(tags.join(" "));
-    const text = `${t} ${d} ${tagStr}`;
+    const text = `${titleNorm} ${summaryNorm} ${tagStr}`;
 
     const reBTC = [/\bbitcoin\b/i, /\bbtc\b/i, /\bxbt\b/i, /\blightning\b/i, /\bhalving\b/i];
     const reETH = [/\bethereum\b/i, /\beth\b/i, /\beth2\b/i, /\berc-?20\b/i, /\bevm\b/i, /\bvitalik\b/i];
@@ -45,7 +45,7 @@ const NewsSection = () => {
     if (hasAny(text, reETH)) return "Ethereum";
     if (hasAny(text, reMEME)) return "Meme Tokens";
     if (hasAny(text, rePOL)) return "Politik";
-    return "Allmänt";
+    return t('news.categories.general');
   };
 
   const isTrending = (title: string, summary: string, publishedAt: string, source?: string) => {
@@ -53,9 +53,9 @@ const NewsSection = () => {
     const ts = new Date(publishedAt).getTime();
     const minutes = Math.max(0, Math.floor((now - ts) / 60000));
 
-    const t = normalize(title);
-    const d = normalize(summary);
-    const text = `${t} ${d}`;
+    const titleNorm = normalize(title);
+    const summaryNorm = normalize(summary);
+    const text = `${titleNorm} ${summaryNorm}`;
 
     const reHot = [/breaking/i, /urgent/i, /just in/i, /flash/i, /rally/i, /plunge/i, /surge/i, /crash/i, /hack/i, /exploit/i, /etf/i, /lawsuit/i, /approved/i, /denied/i, /listing/i, /delist/i, /halving/i];
 
@@ -147,7 +147,7 @@ const NewsSection = () => {
       "Ethereum": "bg-blue-500/20 text-blue-400 border-blue-500/30",
       "Meme Tokens": "bg-pink-500/20 text-pink-400 border-pink-500/30",
       "Politik": "bg-orange-500/20 text-orange-400 border-orange-500/30",
-      "Allmänt": "bg-muted/20 text-muted-foreground border-muted/30",
+      [t('news.categories.general')]: "bg-muted/20 text-muted-foreground border-muted/30",
     };
     return colors[category] || "bg-muted/20 text-muted-foreground border-muted/30";
   };

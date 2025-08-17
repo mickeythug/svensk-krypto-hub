@@ -459,6 +459,29 @@ const translations = {
     'common.chartLoadErrorDescription': 'Prova att uppdatera för att ladda om charten.',
     'common.chartDescription': 'Chart för',
     'common.technicalIndicators': 'Tekniska indikatorer',
+    
+    // Meme Zone
+    'meme.zone': 'MEME TOKEN ZON',
+    'meme.heroAlt': 'Färgglad meme crypto collage hero bild',
+    'meme.heroDescription': '🎉 Välkommen till den vildaste delen av crypto! Upptäck trendiga meme tokens, småcap-pärlor och community-drivna coins som tar internet med storm!',
+    'meme.exploreTokens': 'Utforska Tokens',
+    'meme.trendingNow': 'Trending Nu',
+    'meme.memeTokens': 'Meme Tokens',
+    'meme.liveData': 'Live Data',
+    'meme.avgDailyMove': 'Genomsnittlig Daglig Rörelse',
+    
+    // News
+    'news.categories.general': 'Allmänt',
+    
+    // Social Media
+    'social.telegram.description': 'Håll dig uppdaterad med senaste nyheterna och marknadsanalyser',
+    
+    // Trading
+    'trading.securedBy': 'Säkrad av Li.Fi & CryptoNetwork Sweden',
+    'trading.poweredBy': 'Powered by Li.Fi & CryptoNetwork Sweden',
+    
+    // Market Data
+    'market.data': 'Marknadsdata',
     'common.close': 'Stäng',
     'common.open': 'Öppna',
     'common.save': 'Spara',
@@ -1424,6 +1447,29 @@ const translations = {
     'common.chartLoadErrorDescription': 'Try refreshing to reload the chart.',
     'common.chartDescription': 'Chart for',
     'common.technicalIndicators': 'Technical Indicators',
+    
+    // Meme Zone
+    'meme.zone': 'MEME TOKEN ZONE',
+    'meme.heroAlt': 'Colorful meme crypto collage hero image',
+    'meme.heroDescription': '🎉 Welcome to the wildest part of crypto! Discover trending meme tokens, small-cap gems and community-driven coins that are taking the internet by storm!',
+    'meme.exploreTokens': 'Explore Tokens',
+    'meme.trendingNow': 'Trending Now',
+    'meme.memeTokens': 'Meme Tokens',
+    'meme.liveData': 'Live Data',
+    'meme.avgDailyMove': 'Avg Daily Move',
+    
+    // News
+    'news.categories.general': 'General',
+    
+    // Social Media
+    'social.telegram.description': 'Stay updated with the latest news and market analysis',
+    
+    // Trading
+    'trading.securedBy': 'Secured by Li.Fi & CryptoNetwork Sweden',
+    'trading.poweredBy': 'Powered by Li.Fi & CryptoNetwork Sweden',
+    
+    // Market Data
+    'market.data': 'Market Data',
     'common.close': 'Close',
     'common.open': 'Open',
     'common.save': 'Save',

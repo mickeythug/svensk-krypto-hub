@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatUsd } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowUp, ArrowDown, TrendingUp, Volume2, Coins, Calendar } from "lucide-react";
 
 interface ModernMobileTokenInfoProps {
@@ -20,6 +21,7 @@ const ModernMobileTokenInfo = ({
   crypto, 
   ticker 
 }: ModernMobileTokenInfoProps) => {
+  const { t } = useLanguage();
   const isPositive = priceChange24h >= 0;
 
   const formatLargeNumber = (num: number | string | undefined) => {
@@ -127,12 +129,12 @@ const ModernMobileTokenInfo = ({
       <Card className="p-4">
         <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
           <Volume2 className="h-5 w-5 text-primary" />
-          Marknadsdata
+          {t('market.data')}
         </h3>
         
         <div className="space-y-4">
           <div className="flex justify-between items-center py-2 border-b border-border/50">
-            <span className="text-muted-foreground">Marknadskapital</span>
+            <span className="text-muted-foreground">{t('market.cap')}</span>
             <span className="font-mono font-bold">
               {formatLargeNumber(crypto?.marketCap)}
             </span>

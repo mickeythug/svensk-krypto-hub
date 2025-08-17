@@ -17,6 +17,7 @@ import {
   Settings
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface MobileTradingPanelProps {
   symbol: string;
@@ -31,6 +32,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }:
   const [usdValue, setUsdValue] = useState("");
   const [slippage, setSlippage] = useState("0.5");
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Quick amount buttons
   const quickAmounts = ["$25", "$50", "$100", "$250"];
@@ -299,7 +301,7 @@ const MobileTradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }:
       <div className="px-4 pb-6">
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <ShieldCheck className="h-4 w-4" />
-          <span>Säkrad av Li.Fi & CryptoNetwork Sweden</span>
+          <span>{t('trading.securedBy')}</span>
         </div>
       </div>
     </div>

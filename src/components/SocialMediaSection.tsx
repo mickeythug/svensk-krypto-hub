@@ -1,10 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { MessageCircle, Video, Twitter, Instagram, Youtube, Users } from "lucide-react";
 
 const SocialMediaSection = () => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const socialPlatforms = [
     {
       name: "Telegram",
@@ -25,7 +27,7 @@ const SocialMediaSection = () => {
     {
       name: "Twitter/X",
       icon: Twitter,
-      description: "Håll dig uppdaterad med senaste nyheterna och marknadsanalyser",
+      description: t('social.telegram.description'),
       link: "#",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"

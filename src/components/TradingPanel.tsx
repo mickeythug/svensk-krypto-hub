@@ -18,6 +18,7 @@ import {
   Globe
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // Extend Window interface for Li.Fi
 declare global {
@@ -43,6 +44,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
   const [slippage, setSlippage] = useState("0.5");
   const widgetRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   // Initialize Li.Fi Widget with proper cleanup
   useEffect(() => {
@@ -374,7 +376,7 @@ const TradingPanel = ({ symbol, currentPrice, priceChange24h, tokenName }: Tradi
         <div className="text-xs text-muted-foreground text-center pt-2 border-t border-primary/10">
           <div className="flex items-center justify-center gap-1 mb-1">
             <ShieldCheck className="h-3 w-3" />
-            Powered by Li.Fi & CryptoNetwork Sweden
+            {t('trading.poweredBy')}
           </div>
           <p>Secure cross-chain DEX aggregator with best prices</p>
         </div>

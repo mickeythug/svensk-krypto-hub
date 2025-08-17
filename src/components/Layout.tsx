@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import Header from '@/components/Header';
 import MobileHeader from '@/components/mobile/MobileHeader';
@@ -16,6 +17,7 @@ interface LayoutProps {
 const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
   const isMobile = useIsMobile();
   const location = useLocation();
+  const { t } = useLanguage();
   
   
   // Check if we're on crypto trading pages
@@ -33,9 +35,9 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
     
     switch (location.pathname) {
       case '/nyheter':
-        return 'NYHETER';
+        return t('nav.news').toUpperCase();
       case '/marknad':
-        return 'MARKNAD';
+        return t('nav.market').toUpperCase();
       case '/verktyg':
         return 'VERKTYG';
       case '/portfolio':
