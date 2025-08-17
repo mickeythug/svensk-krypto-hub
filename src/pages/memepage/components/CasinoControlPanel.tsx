@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
 interface CasinoControlPanelProps {
   onSearch?: (query: string) => void;
   onFilterChange?: (filter: string) => void;
@@ -68,44 +67,61 @@ const LiveStatsTicker: React.FC = () => {
     value: '12',
     icon: '💎'
   }];
-  return <div className="relative overflow-hidden bg-black/80 backdrop-blur-xl border-2 border-primary/30 rounded-2xl p-4 mb-8">
-      <div className="flex items-center gap-8 animate-ticker">
-        {[...stats, ...stats].map((stat, index) => <div key={index} className="flex items-center gap-3 whitespace-nowrap">
-            <span className="text-2xl">{stat.icon}</span>
-            <div>
-              <div className="text-primary font-black text-lg">{stat.value}</div>
-              <div className="text-white/60 text-sm font-medium">{stat.label}</div>
-            </div>
-          </div>)}
-      </div>
-    </div>;
+  return;
 };
 
 // Draggable Meme Image Component with Backend Position Saving
 const DraggableMemeImage: React.FC<{
   src: string;
   alt: string;
-  initialPosition: { x: number; y: number };
+  initialPosition: {
+    x: number;
+    y: number;
+  };
   id: string; // unique identifier for saving position
   size?: number;
   animationDelay?: string;
-  savedPositions?: Record<string, { x: number; y: number }>;
-  onPositionChange?: (id: string, position: { x: number; y: number }) => void;
-}> = ({ src, alt, initialPosition, id, size = 12, animationDelay = '0s', savedPositions, onPositionChange }) => {
+  savedPositions?: Record<string, {
+    x: number;
+    y: number;
+  }>;
+  onPositionChange?: (id: string, position: {
+    x: number;
+    y: number;
+  }) => void;
+}> = ({
+  src,
+  alt,
+  initialPosition,
+  id,
+  size = 12,
+  animationDelay = '0s',
+  savedPositions,
+  onPositionChange
+}) => {
   // Use saved position from backend or fall back to initial position
   const getSavedPosition = () => {
     return savedPositions?.[id] || initialPosition;
   };
-
   const [position, setPosition] = useState(getSavedPosition);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({
+    x: 0,
+    y: 0
+  });
   const dragRef = useRef<HTMLDivElement>(null);
 
   // Save position to backend
-  const savePosition = async (newPosition: { x: number; y: number }) => {
+  const savePosition = async (newPosition: {
+    x: number;
+    y: number;
+  }) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return; // Don't save if not authenticated
 
       await supabase.functions.invoke('save-meme-position', {
@@ -119,7 +135,6 @@ const DraggableMemeImage: React.FC<{
       console.error('Failed to save position:', error);
     }
   };
-
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -128,22 +143,18 @@ const DraggableMemeImage: React.FC<{
       y: e.clientY - position.y
     });
   }, [position]);
-
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
-    
     const newPosition = {
       x: e.clientX - dragStart.x,
       y: e.clientY - dragStart.y
     };
-    
+
     // Keep within bounds (rough container bounds)
     newPosition.x = Math.max(-200, Math.min(window.innerWidth - 200, newPosition.x));
     newPosition.y = Math.max(-100, Math.min(300, newPosition.y));
-    
     setPosition(newPosition);
   }, [isDragging, dragStart]);
-
   const handleMouseUp = useCallback(() => {
     setIsDragging(false);
     // Save the final position when dragging ends
@@ -155,7 +166,6 @@ const DraggableMemeImage: React.FC<{
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -168,32 +178,18 @@ const DraggableMemeImage: React.FC<{
     const savedPosition = getSavedPosition();
     setPosition(savedPosition);
   }, [savedPositions]);
-
-  return (
-    <div 
-      ref={dragRef}
-      className={`absolute z-20 cursor-move ${isDragging ? 'z-50' : ''}`}
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        transform: isDragging ? 'scale(1.1)' : 'scale(1)',
-        transition: isDragging ? 'none' : 'transform 0.2s ease'
-      }}
-      onMouseDown={handleMouseDown}
-    >
-      <div 
-        className={`w-20 h-20 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-xl ${!isDragging ? 'animate-float' : ''}`}
-        style={{ animationDelay: isDragging ? '0s' : animationDelay }}
-      >
-        <img 
-          src={src}
-          alt={alt}
-          className="w-full h-full object-cover pointer-events-none"
-          draggable={false}
-        />
+  return <div ref={dragRef} className={`absolute z-20 cursor-move ${isDragging ? 'z-50' : ''}`} style={{
+    left: `${position.x}px`,
+    top: `${position.y}px`,
+    transform: isDragging ? 'scale(1.1)' : 'scale(1)',
+    transition: isDragging ? 'none' : 'transform 0.2s ease'
+  }} onMouseDown={handleMouseDown}>
+      <div className={`w-20 h-20 rounded-full overflow-hidden border-3 border-yellow-400/70 shadow-xl ${!isDragging ? 'animate-float' : ''}`} style={{
+      animationDelay: isDragging ? '0s' : animationDelay
+    }}>
+        <img src={src} alt={alt} className="w-full h-full object-cover pointer-events-none" draggable={false} />
       </div>
-    </div>
-  );
+    </div>;
 };
 const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
   onSearch,
@@ -205,16 +201,26 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
-  const [savedPositions, setSavedPositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [savedPositions, setSavedPositions] = useState<Record<string, {
+    x: number;
+    y: number;
+  }>>({});
 
   // Load saved positions from backend on component mount
   useEffect(() => {
     const loadPositions = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: {
+            session
+          }
+        } = await supabase.auth.getSession();
         if (!session) return; // Don't load if not authenticated
 
-        const { data, error } = await supabase.functions.invoke('load-meme-positions');
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke('load-meme-positions');
         if (!error && data?.positions) {
           setSavedPositions(data.positions);
         }
@@ -222,11 +228,12 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
         console.error('Failed to load positions:', error);
       }
     };
-
     loadPositions();
   }, []);
-
-  const handlePositionChange = (id: string, position: { x: number; y: number }) => {
+  const handlePositionChange = (id: string, position: {
+    x: number;
+    y: number;
+  }) => {
     setSavedPositions(prev => ({
       ...prev,
       [id]: position
@@ -254,8 +261,12 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
         <div className="relative mb-12">
           {/* Multi-layer golden box effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-yellow-400/30 to-yellow-500/20 rounded-3xl blur-2xl animate-pulse"></div>
-          <div className="absolute inset-1 bg-gradient-to-r from-yellow-600/30 via-yellow-400/40 to-yellow-600/30 rounded-3xl blur-xl animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute inset-2 bg-gradient-to-r from-yellow-700/20 via-yellow-500/30 to-yellow-700/20 rounded-3xl blur-lg animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute inset-1 bg-gradient-to-r from-yellow-600/30 via-yellow-400/40 to-yellow-600/30 rounded-3xl blur-xl animate-pulse" style={{
+          animationDelay: '0.5s'
+        }}></div>
+          <div className="absolute inset-2 bg-gradient-to-r from-yellow-700/20 via-yellow-500/30 to-yellow-700/20 rounded-3xl blur-lg animate-pulse" style={{
+          animationDelay: '1s'
+        }}></div>
           
           {/* Main golden box container */}
           <div className="relative bg-gradient-to-br from-yellow-500/90 via-yellow-400/95 to-yellow-600/90 backdrop-blur-xl border-4 border-yellow-400/50 rounded-3xl p-8 shadow-2xl">
@@ -266,126 +277,60 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+CjxwYXR0ZXJuIGlkPSJnb2xkIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiPgo8cGF0aCBkPSJNMzAgMEwzNiAxOEgxOEwyNCAwaDE2eiIgZmlsbD0icmdiYSgyNTUsIDIxNSwgMCwgMC4xKSIvPgo8L3BhdHRlcm4+CjwvZGVmcz4KPHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dvbGQpIiAvPgo8L3N2Zz4=')] opacity-30 rounded-3xl"></div>
             
             {/* Draggable Meme Token Images */}
-            <DraggableMemeImage 
-              id="doge-coin-1"
-              src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png"
-              alt="Doge Coin"
-              initialPosition={{ x: 80, y: 8 }}
-              size={12}
-              animationDelay="0s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="doge-coin-1" src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png" alt="Doge Coin" initialPosition={{
+            x: 80,
+            y: 8
+          }} size={12} animationDelay="0s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="pepe-token"
-              src="/lovable-uploads/e660102d-e987-4f64-96f3-f76ab8ec4403.png"
-              alt="Pepe Token"
-              initialPosition={{ x: 250, y: 8 }}
-              size={12}
-              animationDelay="0.5s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="pepe-token" src="/lovable-uploads/e660102d-e987-4f64-96f3-f76ab8ec4403.png" alt="Pepe Token" initialPosition={{
+            x: 250,
+            y: 8
+          }} size={12} animationDelay="0.5s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="doge-hat"
-              src="/lovable-uploads/8a8828a6-0dbb-48a6-81af-ca55fc919fa8.png"
-              alt="Doge Hat"
-              initialPosition={{ x: 420, y: 8 }}
-              size={12}
-              animationDelay="1s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="doge-hat" src="/lovable-uploads/8a8828a6-0dbb-48a6-81af-ca55fc919fa8.png" alt="Doge Hat" initialPosition={{
+            x: 420,
+            y: 8
+          }} size={12} animationDelay="1s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="shiba-token"
-              src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png"
-              alt="Shiba Token"
-              initialPosition={{ x: 8, y: 64 }}
-              size={12}
-              animationDelay="1.5s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="shiba-token" src="/lovable-uploads/3a2c10e7-4d5a-4b65-b19d-a3a5eb404c6c.png" alt="Shiba Token" initialPosition={{
+            x: 8,
+            y: 64
+          }} size={12} animationDelay="1.5s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="troll-face"
-              src="/lovable-uploads/94b0349d-079b-424d-94cb-8a413b837e00.png"
-              alt="Troll Face"
-              initialPosition={{ x: 8, y: 120 }}
-              size={12}
-              animationDelay="2s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="troll-face" src="/lovable-uploads/94b0349d-079b-424d-94cb-8a413b837e00.png" alt="Troll Face" initialPosition={{
+            x: 8,
+            y: 120
+          }} size={12} animationDelay="2s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="penguin-token"
-              src="/lovable-uploads/a3f0dc47-8e45-4b7f-9796-a96a131be6e9.png"
-              alt="Penguin Token"
-              initialPosition={{ x: 8, y: 180 }}
-              size={12}
-              animationDelay="2.5s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="penguin-token" src="/lovable-uploads/a3f0dc47-8e45-4b7f-9796-a96a131be6e9.png" alt="Penguin Token" initialPosition={{
+            x: 8,
+            y: 180
+          }} size={12} animationDelay="2.5s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="doge-classic"
-              src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png"
-              alt="Doge Classic"
-              initialPosition={{ x: 470, y: 64 }}
-              size={12}
-              animationDelay="3s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="doge-classic" src="/lovable-uploads/7d35cfe3-808b-4677-9fb2-d79b0af085ad.png" alt="Doge Classic" initialPosition={{
+            x: 470,
+            y: 64
+          }} size={12} animationDelay="3s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="pepe-classic"
-              src="/lovable-uploads/9c239256-5ae0-4130-bb8d-4db1d635a895.png"
-              alt="Pepe Classic"
-              initialPosition={{ x: 470, y: 120 }}
-              size={12}
-              animationDelay="3.5s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="pepe-classic" src="/lovable-uploads/9c239256-5ae0-4130-bb8d-4db1d635a895.png" alt="Pepe Classic" initialPosition={{
+            x: 470,
+            y: 120
+          }} size={12} animationDelay="3.5s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="blue-penguin"
-              src="/lovable-uploads/97799556-fa2f-4a22-a6a4-e443dfea0e26.png"
-              alt="Blue Penguin"
-              initialPosition={{ x: 470, y: 180 }}
-              size={12}
-              animationDelay="4s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="blue-penguin" src="/lovable-uploads/97799556-fa2f-4a22-a6a4-e443dfea0e26.png" alt="Blue Penguin" initialPosition={{
+            x: 470,
+            y: 180
+          }} size={12} animationDelay="4s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="green-wojak"
-              src="/lovable-uploads/72aba719-0de9-41fe-a71b-e1fb98f448aa.png"
-              alt="Green Wojak"
-              initialPosition={{ x: 80, y: 230 }}
-              size={12}
-              animationDelay="4.5s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="green-wojak" src="/lovable-uploads/72aba719-0de9-41fe-a71b-e1fb98f448aa.png" alt="Green Wojak" initialPosition={{
+            x: 80,
+            y: 230
+          }} size={12} animationDelay="4.5s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
             
-            <DraggableMemeImage 
-              id="doge-coin-2"
-              src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png"
-              alt="Doge Coin 2"
-              initialPosition={{ x: 420, y: 230 }}
-              size={12}
-              animationDelay="5s"
-              savedPositions={savedPositions}
-              onPositionChange={handlePositionChange}
-            />
+            <DraggableMemeImage id="doge-coin-2" src="/lovable-uploads/9767b44b-a881-4755-8bc3-bf3f207a3285.png" alt="Doge Coin 2" initialPosition={{
+            x: 420,
+            y: 230
+          }} size={12} animationDelay="5s" savedPositions={savedPositions} onPositionChange={handlePositionChange} />
 
             {/* Content */}
             <div className="relative z-10 text-center">
@@ -398,7 +343,9 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
                   MEME ZONE
                 </h1>
                 
-                <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center shadow-lg animate-float" style={{ animationDelay: '0.5s' }}>
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center shadow-lg animate-float" style={{
+                animationDelay: '0.5s'
+              }}>
                   <Diamond className="w-8 h-8 text-yellow-900" />
                 </div>
               </div>
@@ -406,7 +353,9 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
               <div className="flex items-center justify-center gap-2 text-yellow-900 font-bold text-2xl mb-4">
                 <Flame className="w-6 h-6 animate-bounce" />
                 <span>Ultimate Meme Token Casino Experience</span>
-                <Flame className="w-6 h-6 animate-bounce" style={{ animationDelay: '0.3s' }} />
+                <Flame className="w-6 h-6 animate-bounce" style={{
+                animationDelay: '0.3s'
+              }} />
               </div>
               
               <p className="text-yellow-800/90 text-lg font-medium max-w-2xl mx-auto">
@@ -496,38 +445,17 @@ const CasinoControlPanel: React.FC<CasinoControlPanelProps> = ({
             <span className="text-white font-black text-lg">View:</span>
             
             <div className="flex bg-black/60 border-2 border-primary/50 rounded-xl p-1">
-              <Button
-                onClick={() => onViewChange?.('grid')}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                  currentView === 'grid'
-                    ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black'
-                    : 'bg-transparent text-white hover:bg-primary/20'
-                }`}
-              >
+              <Button onClick={() => onViewChange?.('grid')} className={`px-4 py-2 rounded-lg transition-all duration-300 ${currentView === 'grid' ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black' : 'bg-transparent text-white hover:bg-primary/20'}`}>
                 <Grid3X3 className="w-5 h-5 mr-2" />
                 🎰 Cards
               </Button>
               
-              <Button
-                onClick={() => onViewChange?.('list')}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                  currentView === 'list'
-                    ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black'
-                    : 'bg-transparent text-white hover:bg-primary/20'
-                }`}
-              >
+              <Button onClick={() => onViewChange?.('list')} className={`px-4 py-2 rounded-lg transition-all duration-300 ${currentView === 'list' ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black' : 'bg-transparent text-white hover:bg-primary/20'}`}>
                 <List className="w-5 h-5 mr-2" />
                 📋 List
               </Button>
               
-              <Button
-                onClick={() => onViewChange?.('compact')}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                  currentView === 'compact'
-                    ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black'
-                    : 'bg-transparent text-white hover:bg-primary/20'
-                }`}
-              >
+              <Button onClick={() => onViewChange?.('compact')} className={`px-4 py-2 rounded-lg transition-all duration-300 ${currentView === 'compact' ? 'bg-gradient-to-r from-primary to-cyan-500 text-black font-black' : 'bg-transparent text-white hover:bg-primary/20'}`}>
                 <Diamond className="w-5 h-5 mr-2" />
                 💎 Compact
               </Button>
