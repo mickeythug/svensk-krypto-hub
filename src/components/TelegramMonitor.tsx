@@ -258,23 +258,30 @@ const TelegramMonitor = () => {
               <ScrollArea className="h-full">
                 <div className="space-y-4">
                   {filteredMentions.map((mention) => (
-                    <Card key={mention.id} className="p-4 hover:bg-accent/50 transition-colors cursor-pointer border-border/50">
-                      <div className="space-y-3">
+                    <Card key={mention.id} className="p-4 hover:bg-accent/50 transition-colors border-border/50">
+                      <div className="space-y-4">
                         {/* Header */}
                         <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                              <MessageCircle className="h-4 w-4 text-primary" />
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full overflow-hidden bg-accent/50 flex items-center justify-center">
+                              <img 
+                                src={`/src/assets/crypto-logos/${mention.tokenSymbol.toLowerCase()}.png`}
+                                alt={mention.tokenSymbol}
+                                className="w-8 h-8"
+                                onError={(e) => {
+                                  e.currentTarget.src = `/src/assets/crypto-logos/svg/${mention.tokenSymbol.toLowerCase()}.svg`;
+                                }}
+                              />
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-medium text-sm text-foreground">{mention.channel}</span>
+                                <span className="font-semibold text-base text-foreground">${mention.tokenSymbol}</span>
                                 {mention.verified && (
                                   <Star className="h-3 w-3 text-primary fill-primary" />
                                 )}
                               </div>
-                              <span className="text-xs text-muted-foreground">
-                                {formatNumber(mention.followers)} followers
+                              <span className="text-sm text-muted-foreground">
+                                via {mention.channel}
                               </span>
                             </div>
                           </div>
@@ -287,19 +294,17 @@ const TelegramMonitor = () => {
                         </div>
 
                         {/* Token Info */}
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs font-bold">
-                            ${mention.tokenSymbol}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground font-mono">
+                        <div className="space-y-2">
+                          <div className="text-lg font-bold text-foreground">
+                            {mention.tokenSymbol}
+                          </div>
+                          <button
+                            onClick={() => window.location.href = `/meme/${mention.tokenAddress}`}
+                            className="text-sm text-primary hover:text-primary/80 font-mono bg-accent/50 px-3 py-1 rounded-md hover:bg-accent transition-colors cursor-pointer"
+                          >
                             {mention.tokenAddress}
-                          </span>
+                          </button>
                         </div>
-
-                        {/* Message */}
-                        <p className="text-sm text-foreground leading-relaxed">
-                          {mention.message}
-                        </p>
 
                         {/* Footer */}
                         <div className="flex items-center justify-between">
