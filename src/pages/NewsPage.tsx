@@ -39,6 +39,7 @@ import { useNavigate } from "react-router-dom";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLanguage } from "@/contexts/LanguageContext";
+import LiveNewsMonitor from "@/components/LiveNewsMonitor";
 
 interface NewsArticle {
   id: string;
@@ -364,8 +365,10 @@ const NewsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Live News Monitor - Desktop Only */}
+      {!isMobile && <LiveNewsMonitor />}
       
-      <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16'}`}>
+      <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16 pl-80'}`}>
         <div className={`container mx-auto ${isMobile ? 'px-3' : 'px-4'} max-w-7xl`}>
           {/* Enhanced Mobile-First Header Section */}
           <div className={`${isMobile ? 'mb-8' : 'mb-12'}`}>
