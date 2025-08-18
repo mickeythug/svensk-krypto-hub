@@ -1458,6 +1458,20 @@ const translations = {
     'footer.careers': 'Careers',
     'footer.copyright': '© 2024 Crypto Network Sweden. All rights reserved.',
     
+    // Community Features
+    'community.features.telegram.title': 'Telegram Community',
+    'community.features.telegram.description': 'Chat with other crypto enthusiasts',
+    'community.features.telegram.count': '2,500+ members',
+    'community.features.voiceChat.title': 'Voice Chat',
+    'community.features.voiceChat.description': 'Learn through voice calls',
+    'community.features.voiceChat.count': 'Daily sessions',
+    'community.features.memeScan.title': 'Meme Scanning',
+    'community.features.memeScan.description': 'Find the best meme tokens',
+    'community.features.memeScan.count': '24/7 scanning',
+    'community.features.friends.title': 'New Friends',
+    'community.features.friends.description': 'Meet like-minded people',
+    'community.features.friends.count': '100+ active',
+
     // Tools Page
     'tools.title': 'Crypto Tools',
     'tools.calculator': 'Calculator',
