@@ -6,11 +6,11 @@ import { Newspaper, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import "@/styles/utilities.css";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const NewsSection = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
-
+  const {
+    t
+  } = useLanguage();
   type NewsItem = {
     id: string;
     title: string;
@@ -24,48 +24,38 @@ const NewsSection = () => {
     url: string;
     source?: string;
   };
-
   const [news, setNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const normalize = (s: string = "") => s.toLowerCase();
-  const hasAny = (s: string, patterns: RegExp[]) => patterns.some((re) => re.test(s));
+  const hasAny = (s: string, patterns: RegExp[]) => patterns.some(re => re.test(s));
   const classifyCategory = (title: string, summary: string, tags: string[] = []) => {
     const titleNorm = normalize(title);
     const summaryNorm = normalize(summary);
     const tagStr = normalize(tags.join(" "));
     const text = `${titleNorm} ${summaryNorm} ${tagStr}`;
-
     const reBTC = [/\bbitcoin\b/i, /\bbtc\b/i, /\bxbt\b/i, /\blightning\b/i, /\bhalving\b/i];
     const reETH = [/\bethereum\b/i, /\beth\b/i, /\beth2\b/i, /\berc-?20\b/i, /\bevm\b/i, /\bvitalik\b/i];
     const reMEME = [/\bmeme\b/i, /\bdoge\b/i, /\bdogecoin\b/i, /\bshib\b/i, /\bshiba\b/i, /\bpepe\b/i, /\bbonk\b/i, /\bwen\b/i, /\bfloki\b/i, /\bcat\b/i, /\bfrog\b/i];
     const rePOL = [/\bsec\b/i, /\bregul\w*/i, /\bpolicy\b/i, /\bladstift\w*/i, /\blag\b/i, /\bmi\s?ca\b/i, /\beu\b/i, /\bsanction\w*/i, /\bskatt\w*/i, /\btax\b/i, /\bparliament\b/i, /\bregering\b/i];
-
     if (hasAny(text, reBTC)) return "Bitcoin";
     if (hasAny(text, reETH)) return "Ethereum";
     if (hasAny(text, reMEME)) return "Meme Tokens";
     if (hasAny(text, rePOL)) return "Politik";
     return t('news.categories.general');
   };
-
   const isTrending = (title: string, summary: string, publishedAt: string, source?: string) => {
     const now = Date.now();
     const ts = new Date(publishedAt).getTime();
     const minutes = Math.max(0, Math.floor((now - ts) / 60000));
-
     const titleNorm = normalize(title);
     const summaryNorm = normalize(summary);
     const text = `${titleNorm} ${summaryNorm}`;
-
     const reHot = [/breaking/i, /urgent/i, /just in/i, /flash/i, /rally/i, /plunge/i, /surge/i, /crash/i, /hack/i, /exploit/i, /etf/i, /lawsuit/i, /approved/i, /denied/i, /listing/i, /delist/i, /halving/i];
-
     const recencyBoost = minutes <= 90; // last 90 minutes
     const hotWords = hasAny(text, reHot);
     const trusted = /cryptopanic|coindesk|cointelegraph|reuters|bloomberg/i.test(source || "");
-
-    return recencyBoost || (hotWords && trusted);
+    return recencyBoost || hotWords && trusted;
   };
-
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
     const date = new Date(dateString);
@@ -78,7 +68,6 @@ const NewsSection = () => {
     if (diffInDays < 7) return `${diffInDays}${t('news.daysAgo')}`;
     return date.toLocaleDateString('sv-SE');
   };
-
   const getSnippet = (text: string, maxChars = 160) => {
     if (!text) return '';
     const clean = text.replace(/\s+/g, ' ').trim();
@@ -89,7 +78,6 @@ const NewsSection = () => {
     const end = lastDot > 60 ? lastDot + 1 : maxChars; // avoid too-short snippets
     return slice.slice(0, end).trim() + '…';
   };
-
   useEffect(() => {
     let active = true;
     const load = async () => {
@@ -97,10 +85,14 @@ const NewsSection = () => {
         setIsLoading(true);
         const projectRef = "jcllcrvomxdrhtkqpcbr";
         const url = `https://${projectRef}.supabase.co/functions/v1/news-aggregator?lang=sv&limit=50`;
-        const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+        const res = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         const json = await res.json();
         const items = (json.articles ?? []) as any[];
-        const mapped: NewsItem[] = items.map((a) => {
+        const mapped: NewsItem[] = items.map(a => {
           const title = a.title || '';
           const desc = a.description || '';
           const publishedAt = a.publishedAt || new Date().toISOString();
@@ -129,17 +121,17 @@ const NewsSection = () => {
     };
     load();
     const interval = setInterval(load, 3 * 60 * 1000);
-    return () => { active = false; clearInterval(interval); };
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
   }, []);
-
   const featured = useMemo(() => news.slice(0, 2), [news]);
   const trendingList = useMemo(() => news.slice(2, 8), [news]);
-
-
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
       "Institutionellt": "bg-blue-500/20 text-blue-400 border-blue-500/30",
-      "DeFi": "bg-purple-500/20 text-purple-400 border-purple-500/30", 
+      "DeFi": "bg-purple-500/20 text-purple-400 border-purple-500/30",
       "Reglering": "bg-orange-500/20 text-orange-400 border-orange-500/30",
       "Adoption": "bg-green-500/20 text-green-400 border-green-500/30",
       "NFT": "bg-pink-500/20 text-pink-400 border-pink-500/30",
@@ -147,13 +139,11 @@ const NewsSection = () => {
       "Ethereum": "bg-blue-500/20 text-blue-400 border-blue-500/30",
       "Meme Tokens": "bg-pink-500/20 text-pink-400 border-pink-500/30",
       "Politik": "bg-orange-500/20 text-orange-400 border-orange-500/30",
-      [t('news.categories.general')]: "bg-muted/20 text-muted-foreground border-muted/30",
+      [t('news.categories.general')]: "bg-muted/20 text-muted-foreground border-muted/30"
     };
     return colors[category] || "bg-muted/20 text-muted-foreground border-muted/30";
   };
-
-  return (
-    <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
+  return <section className={`${isMobile ? 'py-8' : 'py-20'} bg-background`}>
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
           <h2 className={`font-orbitron ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} tracking-wider`}>
@@ -168,19 +158,15 @@ const NewsSection = () => {
           {/* Featured News */}
           <div className={`${isMobile ? '' : 'lg:col-span-2'}`}>
             <div className={`grid ${isMobile ? 'gap-4' : 'gap-6'}`}>
-              {featured.map((article) => (
-                <Card key={article.id} className="overflow-hidden border-border bg-card/80 backdrop-blur-sm hover:shadow-glow-secondary transition-all duration-300 group">
+              {featured.map(article => <Card key={article.id} className="overflow-hidden border-border bg-card/80 backdrop-blur-sm hover:shadow-glow-secondary transition-all duration-300 group">
                   <div className={`grid grid-cols-1 ${isMobile ? '' : 'md:grid-cols-2'}`}>
-                    <div 
-                      className={`${isMobile ? 'h-32' : 'h-48 md:h-auto'} bg-cover bg-center relative`}
-                      style={{ backgroundImage: `url(${article.imageUrl || '/placeholder.svg'})` }}
-                    >
+                    <div className={`${isMobile ? 'h-32' : 'h-48 md:h-auto'} bg-cover bg-center relative`} style={{
+                  backgroundImage: `url(${article.imageUrl || '/placeholder.svg'})`
+                }}>
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/80" />
-                      {article.trending && (
-                         <Badge className="absolute top-3 left-3 bg-destructive text-destructive-foreground">
+                      {article.trending && <Badge className="absolute top-3 left-3 bg-destructive text-destructive-foreground">
                            {t('news.categories.trending')}
-                         </Badge>
-                      )}
+                         </Badge>}
                     </div>
                     
                     <div className={`${isMobile ? 'p-4' : 'p-6'} flex flex-col justify-between`}>
@@ -222,8 +208,7 @@ const NewsSection = () => {
                       </div>
                     </div>
                   </div>
-                </Card>
-              ))}
+                </Card>)}
             </div>
           </div>
 
@@ -237,8 +222,7 @@ const NewsSection = () => {
               </div>
               
               <div className="space-y-4">
-                {trendingList.map((article, index) => (
-                  <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer" aria-label={`${t('news.readMoreLink')}: ${article.title}`}>
+                {trendingList.map((article, index) => <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" className="block group cursor-pointer" aria-label={`${t('news.readMoreLink')}: ${article.title}`}>
                     <div className="flex items-start space-x-3 p-3 rounded-lg hover:bg-secondary/30 transition-colors">
                       <div className="text-primary font-crypto text-xs mt-1">
                         {index + 3}
@@ -258,30 +242,12 @@ const NewsSection = () => {
                         </div>
                       </div>
                     </div>
-                  </a>
-                ))}
+                  </a>)}
               </div>
             </Card>
 
             {/* Newsletter Signup */}
-            <Card className="p-6 border-border bg-gradient-primary text-primary-foreground">
-              <h3 className="font-crypto font-bold text-lg mb-3">
-                {t('news.dailyReport')}
-              </h3>
-              <p className="text-sm mb-4 opacity-90">
-                {t('news.dailyReportDescription')}
-              </p>
-              <a 
-                href="https://t.me/cryptonetworksweden" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="block"
-              >
-                <Button className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90">
-                  {t('community.joinTelegram')}
-                </Button>
-              </a>
-            </Card>
+            
 
             {/* Market Alert */}
             <Card className="p-6 border-border bg-card/80 backdrop-blur-sm">
@@ -302,8 +268,6 @@ const NewsSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default NewsSection;
