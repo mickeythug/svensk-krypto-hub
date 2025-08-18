@@ -331,19 +331,19 @@ const MarketOverviewPage = () => {
                 </div>
 
                 {/* Alt Season Index */}
-                <div className="bg-gradient-to-br from-accent/10 to-secondary/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-accent/30 transition-all">
+                <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.altSeasonIndex')}</h3>
-                    <BarChart3 className="h-5 w-5 text-accent" />
+                    <h3 className="text-sm font-medium text-foreground">{t('market.altSeasonIndex')}</h3>
+                    <BarChart3 className="h-5 w-5 text-blue-400" />
                   </div>
-                  <div className="text-3xl font-bold font-numbers text-accent mb-2">{altSeason}</div>
-                  <div className="w-full bg-secondary/30 rounded-full h-2 mb-2">
+                  <div className="text-3xl font-bold font-numbers text-blue-400 mb-2">{altSeason}</div>
+                  <div className="w-full bg-gray-700/50 rounded-full h-2 mb-2">
                     <div 
-                      className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500"
+                      className="bg-gradient-to-r from-blue-400 to-purple-400 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${altSeason}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-accent font-medium">{altSeasonLabel}</div>
+                  <div className="text-sm text-blue-400 font-medium">{altSeasonLabel}</div>
                 </div>
 
                 {/* BTC Dominance */}
