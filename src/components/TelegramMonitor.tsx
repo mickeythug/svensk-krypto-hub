@@ -204,7 +204,7 @@ const TelegramMonitor = () => {
   });
 
   return (
-    <div className="fixed left-0 top-0 h-full w-96 bg-background/95 backdrop-blur-xl border-r border-border shadow-2xl z-50">
+    <div className="fixed left-0 top-0 h-full w-96 bg-background/95 backdrop-blur-xl border-r border-border shadow-2xl z-[60]">
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="p-6 border-b border-border">
@@ -274,15 +274,15 @@ const TelegramMonitor = () => {
                               />
                             </div>
                             <div>
+                              <div className="text-xl font-bold text-foreground mb-1">
+                                MENTIONED IN {mention.channel.toUpperCase()}
+                              </div>
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-base text-foreground">${mention.tokenSymbol}</span>
+                                <span className="font-semibold text-lg text-foreground">${mention.tokenSymbol}</span>
                                 {mention.verified && (
-                                  <Star className="h-3 w-3 text-primary fill-primary" />
+                                  <Star className="h-4 w-4 text-primary fill-primary" />
                                 )}
                               </div>
-                              <span className="text-sm text-muted-foreground">
-                                via {mention.channel}
-                              </span>
                             </div>
                           </div>
                           <div className="flex items-center gap-1">
