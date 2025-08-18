@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
@@ -41,6 +41,33 @@ export type Database = {
           source?: string
           updated_at?: string
           version?: string
+        }
+        Relationships: []
+      }
+      helius_account_data: {
+        Row: {
+          account_address: string
+          balance_data: Json
+          created_at: string | null
+          id: string
+          last_updated: string | null
+          user_id: string | null
+        }
+        Insert: {
+          account_address: string
+          balance_data: Json
+          created_at?: string | null
+          id?: string
+          last_updated?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          account_address?: string
+          balance_data?: Json
+          created_at?: string | null
+          id?: string
+          last_updated?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -167,6 +194,36 @@ export type Database = {
           page_count?: number
           snapshot_time?: string
           source?: string
+        }
+        Relationships: []
+      }
+      meme_image_positions: {
+        Row: {
+          created_at: string
+          id: string
+          image_id: string
+          position_x: number
+          position_y: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_id: string
+          position_x: number
+          position_y: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_id?: string
+          position_x?: number
+          position_y?: number
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -475,16 +532,16 @@ export type Database = {
       }
       get_encrypted_key: {
         Args: {
+          p_key_type: string
           p_user_id: string
           p_wallet_address: string
-          p_key_type: string
         }
         Returns: string
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
@@ -495,19 +552,19 @@ export type Database = {
       log_security_event: {
         Args: {
           p_action: string
-          p_resource?: string
-          p_success?: boolean
           p_error_message?: string
           p_metadata?: Json
+          p_resource?: string
+          p_success?: boolean
         }
         Returns: undefined
       }
       store_encrypted_key: {
         Args: {
-          p_user_id: string
-          p_wallet_address: string
           p_private_key_encrypted?: string
           p_pump_api_key_encrypted?: string
+          p_user_id: string
+          p_wallet_address: string
         }
         Returns: undefined
       }
@@ -516,7 +573,7 @@ export type Database = {
         Returns: boolean
       }
       verified_by_recent_proof: {
-        Args: { p_user_id: string; p_address: string; p_chain: string }
+        Args: { p_address: string; p_chain: string; p_user_id: string }
         Returns: boolean
       }
     }
