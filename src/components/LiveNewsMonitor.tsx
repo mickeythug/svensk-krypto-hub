@@ -130,7 +130,7 @@ const LiveNewsMonitor = () => {
   };
 
   return (
-    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 bg-background/98 border-r border-border/80 backdrop-blur-md z-20 shadow-2xl">
+    <div className="fixed left-0 top-32 h-[calc(100vh-8rem)] w-80 bg-background/98 border-r border-border/80 backdrop-blur-md z-30 shadow-2xl">
       <div className="h-full flex flex-col font-jetbrains">
         {/* Header */}
         <div className="p-6 border-b border-border/80 bg-secondary/20">
