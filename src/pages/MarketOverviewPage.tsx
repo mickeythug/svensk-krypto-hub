@@ -289,7 +289,7 @@ const MarketOverviewPage = () => {
           
           {/* Header Section */}
           <div className="bg-gradient-to-r from-background via-background to-secondary/5 border-b border-border/30">
-            <div className="max-w-7xl mx-auto px-6 py-8 pl-96">
+            <div className="max-w-7xl mx-auto px-6 py-8">
               <h1 className="font-orbitron text-4xl lg:text-6xl font-bold mb-3 tracking-wider">
                 <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">MAR</span><span className="text-white">KNA</span><span className="text-[#12E19F]">D</span>
               </h1>
@@ -301,7 +301,7 @@ const MarketOverviewPage = () => {
 
           {/* Modern Sentiment Dashboard */}
           <div className="bg-secondary/5 border-b border-border/20">
-            <div className="max-w-7xl mx-auto px-6 py-6 pl-96">
+            <div className="max-w-7xl mx-auto px-6 py-6">
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 
                 {/* Total Market Cap Card */}
@@ -367,7 +367,7 @@ const MarketOverviewPage = () => {
 
           {/* Controls Section */}
           <div className="bg-background border-b border-border/20">
-            <div className="max-w-7xl mx-auto px-6 py-6 pl-96">
+            <div className="max-w-7xl mx-auto px-6 py-6">
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                 
                 {/* Title */}
@@ -470,7 +470,7 @@ const MarketOverviewPage = () => {
 
           {/* Data Display - Table or Grid */}
           <div className="bg-background">
-            <div className="max-w-7xl mx-auto px-6 pl-96">
+            <div className="max-w-7xl mx-auto px-6">
               
               {viewMode === "table" ? (
                 // Table View
