@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatUsd } from '@/lib/utils';
 import { ExternalLink, Globe, ChevronDown, ChevronUp, Info, TrendingUp, Users, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
@@ -81,8 +82,9 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
   ];
 
   return (
-    <Card className="w-full min-w-[400px] max-w-md bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl">
-      <div className="p-6 space-y-4">
+    <Card className="w-full min-w-[400px] max-w-md bg-card/95 backdrop-blur-xl border border-border/30 shadow-2xl overflow-hidden rounded-2xl h-[calc(100vh-200px)]">
+      <ScrollArea className="h-full">
+        <div className="p-6 space-y-4">
         {/* Social Links - Compact */}
         <div className="flex gap-1.5 mb-4">
           <Button size="sm" variant="outline" className="flex items-center gap-1.5 text-xs px-3 py-1.5 h-8 rounded-lg flex-1">
@@ -271,7 +273,8 @@ export const MemeTokenSidebar = ({ token, volumes, beMarket }: MemeTokenSidebarP
             )}
           </div>
         </Card>
-      </div>
+        </div>
+      </ScrollArea>
     </Card>
   );
 };
