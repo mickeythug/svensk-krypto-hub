@@ -354,8 +354,8 @@ const NewsPage = () => {
       {/* Live News Monitor - Desktop Only */}
       {!isMobile && <LiveNewsMonitor />}
       
-      <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16 pl-80'}`}>
-        <div className={`${isMobile ? 'px-3' : 'w-full pr-4'}`}>
+      <main className={`${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-16 pl-96'}`}>
+        <div className={`${isMobile ? 'px-3' : 'w-full pr-4 pl-8'}`}>
           {/* Enhanced Mobile-First Header Section */}
           <div className={`${isMobile ? 'mb-8' : 'mb-12'}`}>
             {!isMobile && <Button variant="ghost" onClick={() => navigate('/')} className="mb-8 text-muted-foreground hover:text-primary text-lg group">
