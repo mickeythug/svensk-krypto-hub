@@ -374,7 +374,7 @@ const NewsPage = () => {
                 </p>
                 <div className={`flex ${isMobile ? 'flex-col items-center gap-2 mt-4' : 'flex-col sm:flex-row items-start sm:items-center gap-4 mt-6'} ${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
                   <div className="flex items-center">
-                    <Activity className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-2 text-success animate-pulse`} />
+                    
                     
                   </div>
                   <div className="flex items-center">
@@ -515,19 +515,13 @@ const NewsPage = () => {
                                
                                {/* Overlay badges */}
                                <div className="absolute top-3 left-3 flex gap-2">
-                                   <Badge className={`${getSentimentBadge(article.sentiment)} text-xs px-2 py-1 backdrop-blur-sm`}>
-                                     {article.sentiment === 'positive' ? t('news.positive') : article.sentiment === 'negative' ? t('news.negative') : t('news.neutral')}
-                                   </Badge>
-                                   {article.trending && <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-2 py-1 animate-pulse backdrop-blur-sm">
-                                       {t('news.hot')}
-                                     </Badge>}
+                                   
+                                   {article.trending}
                                </div>
                                
                                {/* Impact badge */}
                                <div className="absolute top-3 right-3">
-                                   <Badge className={`${getImpactBadge(article.impact)} text-xs px-2 py-1 backdrop-blur-sm`}>
-                                     {article.impact === 'high' ? t('news.high') : article.impact === 'medium' ? t('news.medium') : t('news.low')}
-                                   </Badge>
+                                   
                                </div>
                              </div>
                              
