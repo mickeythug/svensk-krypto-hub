@@ -11,6 +11,27 @@ interface RetrieveKeyRequest {
   key_type: 'private_key' | 'pump_api_key';
 }
 
+// Rate limiting store
+const rateLimitStore = new Map<string, { count: number; lastReset: number }>();
+
+const checkRateLimit = (userId: string): boolean => {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 minute window
+  const maxRequests = 20; // Max 20 requests per minute for retrieval
+
+  const userLimit = rateLimitStore.get(userId) || { count: 0, lastReset: now };
+
+  if (now - userLimit.lastReset > windowMs) {
+    userLimit.count = 0;
+    userLimit.lastReset = now;
+  }
+
+  userLimit.count++;
+  rateLimitStore.set(userId, userLimit);
+
+  return userLimit.count <= maxRequests;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -18,6 +39,17 @@ serve(async (req) => {
   }
 
   try {
+    // Only allow POST requests
+    if (req.method !== 'POST') {
+      return new Response(
+        JSON.stringify({ error: 'Method not allowed' }),
+        { 
+          status: 405, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     // Verify authentication
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
@@ -51,11 +83,13 @@ serve(async (req) => {
       );
     }
 
-    if (req.method !== 'POST') {
+    // Rate limiting
+    if (!checkRateLimit(user.id)) {
+      console.warn(`Rate limit exceeded for user ${user.id}`);
       return new Response(
-        JSON.stringify({ error: 'Method not allowed' }),
+        JSON.stringify({ error: 'Rate limit exceeded' }),
         { 
-          status: 405, 
+          status: 429, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       );

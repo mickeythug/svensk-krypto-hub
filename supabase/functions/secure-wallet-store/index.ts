@@ -12,6 +12,46 @@ interface StoreKeyRequest {
   pump_api_key_encrypted?: string;
 }
 
+// Rate limiting store
+const rateLimitStore = new Map<string, { count: number; lastReset: number }>();
+
+const checkRateLimit = (userId: string): boolean => {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 minute window
+  const maxRequests = 10; // Max 10 requests per minute
+
+  const userLimit = rateLimitStore.get(userId) || { count: 0, lastReset: now };
+
+  if (now - userLimit.lastReset > windowMs) {
+    userLimit.count = 0;
+    userLimit.lastReset = now;
+  }
+
+  userLimit.count++;
+  rateLimitStore.set(userId, userLimit);
+
+  return userLimit.count <= maxRequests;
+};
+
+// Input validation
+const validateInput = (data: StoreKeyRequest): string | null => {
+  if (!data.wallet_address || typeof data.wallet_address !== 'string') {
+    return 'wallet_address is required and must be a string';
+  }
+
+  if (data.wallet_address.length < 10 || data.wallet_address.length > 100) {
+    return 'wallet_address length invalid';
+  }
+
+  // Basic wallet address format validation
+  const walletRegex = /^[A-Za-z0-9]+$/;
+  if (!walletRegex.test(data.wallet_address)) {
+    return 'wallet_address contains invalid characters';
+  }
+
+  return null;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -52,6 +92,18 @@ serve(async (req) => {
       );
     }
 
+    // Rate limiting
+    if (!checkRateLimit(user.id)) {
+      console.warn(`Rate limit exceeded for user ${user.id}`);
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded' }),
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     if (req.method !== 'POST') {
       return new Response(
         JSON.stringify({ error: 'Method not allowed' }),
@@ -62,11 +114,24 @@ serve(async (req) => {
       );
     }
 
-    const requestData: StoreKeyRequest = await req.json();
-    
-    if (!requestData.wallet_address) {
+    // Parse and validate request body
+    let requestData: StoreKeyRequest;
+    try {
+      requestData = await req.json();
+    } catch (error) {
       return new Response(
-        JSON.stringify({ error: 'wallet_address is required' }),
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const validationError = validateInput(requestData);
+    if (validationError) {
+      return new Response(
+        JSON.stringify({ error: validationError }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
