@@ -143,9 +143,9 @@ const LiveNewsMonitor = () => {
                 `} onClick={() => item.url && window.open(item.url, '_blank')}>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className={`text-sm px-3 py-1 font-bold border-2 ${getPriorityColor(item.priority)}`}>
+                    <span className={`text-sm font-bold ${getPriorityColor(item.priority).split(' ')[0]}`}>
                       {item.category.toUpperCase()}
-                    </Badge>
+                    </span>
                     <div className="text-sm text-muted-foreground font-bold">
                       {formatTimeAgo(item.timestamp)}
                     </div>
