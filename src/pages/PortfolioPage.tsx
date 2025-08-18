@@ -30,6 +30,8 @@ import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useRealWatchlist } from "@/hooks/useRealWatchlist";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import MyWalletsSection from "@/components/portfolio/MyWalletsSection";
+import WalletSettingsPanel from "@/components/portfolio/WalletSettingsPanel";
 
 const PortfolioPage = () => {
   const isMobile = useIsMobile();
@@ -229,7 +231,7 @@ const PortfolioPage = () => {
 
         {/* Portfolio Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid grid-cols-3 h-12 p-1 bg-secondary/10 rounded-xl border border-border/20 w-full max-w-lg">
+          <TabsList className="grid grid-cols-5 h-12 p-1 bg-secondary/10 rounded-xl border border-border/20 w-full max-w-3xl">
             <TabsTrigger 
               value="overview" 
               className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
@@ -238,11 +240,25 @@ const PortfolioPage = () => {
               <span>{t('portfolio.overview')}</span>
             </TabsTrigger>
             <TabsTrigger 
+              value="wallets" 
+              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
+            >
+              <Wallet className="h-4 w-4" />
+              <span>Mina Wallets</span>
+            </TabsTrigger>
+            <TabsTrigger 
               value="watchlist" 
               className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
             >
               <Star className="h-4 w-4" />
               <span>{t('portfolio.watchlist')}</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="settings" 
+              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
+            >
+              <Settings className="h-4 w-4" />
+              <span>Inställningar</span>
             </TabsTrigger>
             <TabsTrigger 
               value="analytics" 
@@ -552,6 +568,14 @@ const PortfolioPage = () => {
                 </Button>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="wallets" className="mt-6">
+            <MyWalletsSection showValues={showValues} />
+          </TabsContent>
+
+          <TabsContent value="settings" className="mt-6">
+            <WalletSettingsPanel />
           </TabsContent>
 
           <TabsContent value="analytics" className="mt-6">
