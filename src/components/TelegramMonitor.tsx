@@ -180,12 +180,12 @@ const TelegramMonitor = () => {
   });
   return <>
       {/* Toggle Button */}
-      <Button onClick={toggleCollapsed} className={`fixed left-4 z-[9999] transition-all duration-300 ease-in-out hover:scale-105 bg-background/90 backdrop-blur-sm border-2 border-primary/30 hover:border-primary shadow-lg hover:shadow-primary/25 ${isCollapsed ? 'top-36' : 'top-36'}`} size="sm">
+      <Button onClick={toggleCollapsed} className={`fixed left-4 z-[9999] transition-all duration-300 ease-in-out hover:scale-105 bg-background/90 backdrop-blur-sm border-2 border-primary/30 hover:border-primary shadow-lg hover:shadow-primary/25 ${isCollapsed ? 'top-40' : 'top-40'}`} size="sm">
         {isCollapsed ? <ChevronRight className="h-4 w-4 transition-transform duration-300" /> : <ChevronLeft className="h-4 w-4 transition-transform duration-300" />}
       </Button>
 
       {/* Main Panel */}
-      <div className={`fixed left-0 top-32 h-[calc(100vh-8rem)] bg-background/95 backdrop-blur-xl border-r border-primary/20 shadow-2xl z-[9998] transition-all duration-500 ease-out ${isCollapsed ? 'w-0 opacity-0 translate-x-[-100%]' : 'w-96 opacity-100 translate-x-0'}`} style={{
+      <div className={`fixed left-0 top-[140px] h-[calc(100vh-140px)] bg-background/95 backdrop-blur-xl border-r border-primary/20 shadow-2xl z-[9998] transition-all duration-500 ease-out ${isCollapsed ? 'w-0 opacity-0 translate-x-[-100%]' : 'w-96 opacity-100 translate-x-0'}`} style={{
       boxShadow: `
             0 4px 6px rgba(0,0,0,0.3),
             0 0 20px rgba(var(--primary-rgb, 59, 130, 246), 0.15),
