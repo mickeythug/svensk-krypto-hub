@@ -125,14 +125,14 @@ export const ProfessionalTradingSidebar: React.FC<ProfessionalTradingSidebarProp
           />
           
           {/* Quick Amount Buttons */}
-          <div className="flex gap-2 mt-4 flex-wrap">
+          <div className="flex gap-3 mt-6 flex-wrap">
             {quickAmounts.map((value) => (
               <Button
                 key={value}
                 variant="outline"
-                size="sm"
+                size="lg"
                 onClick={() => handleQuickAmount(value)}
-                className="bg-gray-800/50 border-gray-600 hover:bg-gray-700/70 text-sm font-medium px-4 py-2 rounded-lg"
+                className="bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-primary transition-all duration-300 hover:scale-105 hover:border-primary/50 text-lg font-bold px-6 py-4 rounded-xl h-14 min-w-[120px] text-foreground hover:text-primary"
               >
                 {tradeType === 'buy' ? `${value} SOL` : `${value}%`}
               </Button>
