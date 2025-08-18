@@ -107,9 +107,10 @@ export default {
 			},
 			fontFamily: {
 				sans: ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
-				mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
+				mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
 				'binance': ['"Binance PLEX"', '"IBM Plex Sans"', 'Barlow', 'sans-serif'],
 				'orbitron': ['Orbitron', 'sans-serif'],
+				'jetbrains': ['JetBrains Mono', 'monospace'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

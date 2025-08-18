@@ -2,14 +2,6 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Zap, 
-  ExternalLink, 
-  Activity,
-  TrendingUp,
-  Clock,
-  Globe
-} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface LiveNewsItem {
@@ -131,86 +123,66 @@ const LiveNewsMonitor = () => {
 
   const getPriorityColor = (priority: LiveNewsItem['priority']) => {
     switch (priority) {
-      case 'high': return 'text-destructive border-destructive/30';
-      case 'medium': return 'text-warning border-warning/30';
-      default: return 'text-muted-foreground border-muted/30';
-    }
-  };
-
-  const getCategoryIcon = (category: LiveNewsItem['category']) => {
-    switch (category) {
-      case 'btc': return '₿';
-      case 'eth': return 'Ξ';
-      case 'market': return '📊';
-      case 'defi': return '🏦';
-      case 'nft': return '🎨';
-      default: return '📰';
+      case 'high': return 'text-red-600 border-red-600';
+      case 'medium': return 'text-yellow-600 border-yellow-600';
+      default: return 'text-gray-600 border-gray-600';
     }
   };
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-80 bg-background/95 border-r border-border/50 backdrop-blur-sm z-10">
-      <div className="h-full flex flex-col">
+    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 bg-background/98 border-r border-border/80 backdrop-blur-md z-20 shadow-2xl">
+      <div className="h-full flex flex-col font-jetbrains">
         {/* Header */}
-        <div className="p-4 border-b border-border/50">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="relative">
-              <Activity className="h-5 w-5 text-primary animate-pulse" />
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-success rounded-full animate-ping" />
-            </div>
-            <h3 className="font-semibold text-primary">Live News Monitor</h3>
+        <div className="p-6 border-b border-border/80 bg-secondary/20">
+          <div className="mb-4">
+            <h3 className="font-bold text-xl text-foreground tracking-wide">LIVE NEWS MONITOR</h3>
           </div>
           
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${isOnline ? 'bg-success animate-pulse' : 'bg-destructive'}`} />
-              <span>{isOnline ? 'Online' : 'Offline'}</span>
+          <div className="flex items-center justify-between text-sm text-muted-foreground font-medium">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'} animate-pulse`} />
+              <span className="font-semibold">{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <Globe className="h-3 w-3" />
-              <span>100+ Sources</span>
+            <div className="text-sm font-bold">
+              100+ SOURCES
             </div>
           </div>
         </div>
 
         {/* News Feed */}
         <ScrollArea className="flex-1">
-          <div className="p-2 space-y-2">
+          <div className="p-4 space-y-3">
             {liveNews.map((item, index) => (
               <Card 
                 key={item.id} 
-                className={`p-3 border-l-4 transition-all duration-300 hover:bg-secondary/50 cursor-pointer
-                  ${item.priority === 'high' ? 'border-l-destructive bg-destructive/5' : 
-                    item.priority === 'medium' ? 'border-l-warning bg-warning/5' : 
-                    'border-l-muted bg-secondary/20'}
+                className={`p-4 border-l-4 transition-all duration-300 hover:bg-secondary/30 cursor-pointer font-mono
+                  ${item.priority === 'high' ? 'border-l-red-500 bg-red-50/10' : 
+                    item.priority === 'medium' ? 'border-l-yellow-500 bg-yellow-50/10' : 
+                    'border-l-gray-400 bg-gray-50/10'}
                   ${index < 3 ? 'animate-fade-in' : ''}
                 `}
                 onClick={() => item.url && window.open(item.url, '_blank')}
               >
-                <div className="flex items-start gap-2 mb-2">
-                  <Badge 
-                    variant="outline" 
-                    className={`text-xs px-1.5 py-0.5 ${getPriorityColor(item.priority)}`}
-                  >
-                    {getCategoryIcon(item.category)}
-                  </Badge>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{formatTimeAgo(item.timestamp)}</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Badge 
+                      variant="outline" 
+                      className={`text-sm px-3 py-1 font-bold border-2 ${getPriorityColor(item.priority)}`}
+                    >
+                      {item.category.toUpperCase()}
+                    </Badge>
+                    <div className="text-sm text-muted-foreground font-bold">
+                      {formatTimeAgo(item.timestamp)}
+                    </div>
                   </div>
-                </div>
-                
-                <p className="text-sm leading-relaxed mb-2 text-foreground">
-                  {item.text}
-                </p>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-primary font-medium">
+                  
+                  <p className="text-base leading-relaxed font-medium text-foreground">
+                    {item.text}
+                  </p>
+                  
+                  <div className="text-sm text-primary font-bold pt-2 border-t border-border/50">
                     {item.source}
-                  </span>
-                  {item.url && (
-                    <ExternalLink className="h-3 w-3 text-muted-foreground hover:text-primary transition-colors" />
-                  )}
+                  </div>
                 </div>
               </Card>
             ))}
@@ -218,15 +190,11 @@ const LiveNewsMonitor = () => {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="p-3 border-t border-border/50 bg-secondary/20">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <TrendingUp className="h-3 w-3" />
-              <span>Auto-refresh: 30s</span>
-            </div>
-            <Badge variant="outline" className="text-xs">
-              <Zap className="h-3 w-3 mr-1" />
-              Live
+        <div className="p-4 border-t border-border/80 bg-secondary/20">
+          <div className="flex items-center justify-between text-sm text-muted-foreground font-bold">
+            <span>AUTO-REFRESH: 30 SECONDS</span>
+            <Badge variant="outline" className="text-sm font-bold border-2 border-green-500 text-green-600">
+              LIVE
             </Badge>
           </div>
         </div>
