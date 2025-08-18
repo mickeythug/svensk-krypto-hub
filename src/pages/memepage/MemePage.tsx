@@ -5,12 +5,13 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
 import { useLanguage } from '@/contexts/LanguageContext';
+import TelegramMonitor from '@/components/TelegramMonitor';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
   const {
     t
   } = useLanguage();
-  const [currentView, setCurrentView] = useState<'grid' | 'list' | 'compact'>('grid');
+  const [currentView, setCurrentView] = useState<'grid' | 'list' | 'compact'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
@@ -59,9 +60,12 @@ const MemePage: React.FC = () => {
     return <MobileMemeZoneApp />;
   }
 
-  // Desktop version - Modern Professional Design
+  // Desktop version - Modern Professional Design with Telegram Monitor
   return <div className="meme-zone min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
-      <main className="relative">
+      {/* Telegram Monitor Sidebar */}
+      <TelegramMonitor />
+      
+      <main className="relative pl-96">
         {/* Professional Control Panel */}
         <section className="py-8 px-4 lg:px-8">
           <div className="w-full">
