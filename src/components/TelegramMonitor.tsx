@@ -221,7 +221,7 @@ const TelegramMonitor = () => {
       <Button
         onClick={toggleCollapsed}
         className={`fixed left-4 z-[9999] transition-all duration-300 ease-in-out hover:scale-105 bg-background/90 backdrop-blur-sm border-2 border-primary/30 hover:border-primary shadow-lg hover:shadow-primary/25 ${
-          isCollapsed ? 'top-32' : 'top-32'
+          isCollapsed ? 'top-36' : 'top-36'
         }`}
         size="sm"
       >
@@ -234,7 +234,7 @@ const TelegramMonitor = () => {
 
       {/* Main Panel */}
       <div 
-        className={`fixed left-0 top-24 h-[calc(100vh-6rem)] bg-background/95 backdrop-blur-xl border-r border-primary/20 shadow-2xl z-[9998] transition-all duration-500 ease-out ${
+        className={`fixed left-0 top-32 h-[calc(100vh-8rem)] bg-background/95 backdrop-blur-xl border-r border-primary/20 shadow-2xl z-[9998] transition-all duration-500 ease-out ${
           isCollapsed 
             ? 'w-0 opacity-0 translate-x-[-100%]' 
             : 'w-96 opacity-100 translate-x-0'
