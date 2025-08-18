@@ -129,6 +129,14 @@ const LiveNewsMonitor = () => {
     }
   };
 
+  const getTextSize = (text: string) => {
+    const length = text.length;
+    if (length <= 80) return 'text-base'; // 16px
+    if (length <= 120) return 'text-sm';  // 14px
+    if (length <= 160) return 'text-xs';  // 12px
+    return 'text-xs leading-tight';       // 12px with tight line height
+  };
+
   return (
     <div className="fixed left-0 top-32 h-[calc(100vh-8rem)] w-80 bg-background/98 border-r border-border/80 backdrop-blur-md z-30 shadow-2xl">
       <div className="h-full flex flex-col font-jetbrains">
@@ -176,7 +184,7 @@ const LiveNewsMonitor = () => {
                     </div>
                   </div>
                   
-                  <p className="text-base leading-relaxed font-medium text-foreground">
+                  <p className={`${getTextSize(item.text)} leading-relaxed font-medium text-foreground`}>
                     {item.text}
                   </p>
                   
