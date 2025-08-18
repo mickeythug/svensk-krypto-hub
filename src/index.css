@@ -176,25 +176,7 @@ All colors MUST be HSL.
     /* Brand Colors */
     --brand-turquoise: 165 85% 45%;
     --brand-white: 0 0% 98%;
-}
-
-/* Custom scrollbar for Telegram Monitor */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary) / 0.3);
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.5);
-}
+  }
 
   .dark {
     /* Same as root for consistent dark theme */
