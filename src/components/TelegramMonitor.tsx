@@ -15,7 +15,9 @@ import {
   ChevronDown,
   Zap,
   Star,
-  Hash
+  Hash,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 interface TelegramMention {
@@ -49,6 +51,16 @@ const TelegramMonitor = () => {
   const [channels, setChannels] = useState<TelegramChannel[]>([]);
   const [activeTab, setActiveTab] = useState("mentions");
   const [filter, setFilter] = useState("all");
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem('telegram-monitor-collapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  const toggleCollapsed = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem('telegram-monitor-collapsed', JSON.stringify(newState));
+  };
 
   // Mock data for demonstration
   useEffect(() => {
@@ -204,177 +216,225 @@ const TelegramMonitor = () => {
   });
 
   return (
-    <div className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-80 bg-background/95 backdrop-blur-xl border-r border-border shadow-2xl z-[60]">
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="p-6 border-b border-border">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-primary/20 rounded-lg">
-              <MessageCircle className="h-6 w-6 text-primary" />
+    <>
+      {/* Toggle Button */}
+      <Button
+        onClick={toggleCollapsed}
+        className={`fixed left-4 z-[9999] transition-all duration-300 ease-in-out hover:scale-105 bg-background/90 backdrop-blur-sm border-2 border-primary/30 hover:border-primary shadow-lg hover:shadow-primary/25 ${
+          isCollapsed ? 'top-32' : 'top-32'
+        }`}
+        size="sm"
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-4 w-4 transition-transform duration-300" />
+        ) : (
+          <ChevronLeft className="h-4 w-4 transition-transform duration-300" />
+        )}
+      </Button>
+
+      {/* Main Panel */}
+      <div 
+        className={`fixed left-0 top-24 h-[calc(100vh-6rem)] bg-background/95 backdrop-blur-xl border-r border-primary/20 shadow-2xl z-[9998] transition-all duration-500 ease-out ${
+          isCollapsed 
+            ? 'w-0 opacity-0 translate-x-[-100%]' 
+            : 'w-96 opacity-100 translate-x-0'
+        }`}
+        style={{
+          boxShadow: `
+            0 4px 6px rgba(0,0,0,0.3),
+            0 0 20px rgba(var(--primary-rgb, 59, 130, 246), 0.15),
+            inset 0 1px 0 rgba(255,255,255,0.1)
+          `,
+          borderImage: 'linear-gradient(180deg, rgba(var(--primary-rgb, 59, 130, 246), 0.3), transparent) 1',
+        }}
+      >
+        <div className="flex flex-col h-full overflow-hidden">
+          {/* Header */}
+          <div className="p-6 border-b border-primary/20 bg-gradient-to-r from-background to-background/50">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-primary/20 rounded-lg border border-primary/30 shadow-inner">
+                <MessageCircle className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-foreground">Telegram Monitor</h2>
+                <p className="text-sm text-muted-foreground">Live token mentions</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-foreground">Telegram Monitor</h2>
-              <p className="text-sm text-muted-foreground">Live token mentions</p>
+
+            {/* Filter Buttons */}
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { id: "all", label: "All", icon: Hash },
+                { id: "positive", label: "Bullish", icon: TrendingUp },
+                { id: "signals", label: "Signals", icon: Zap },
+                { id: "verified", label: "Verified", icon: Star }
+              ].map((filterOption) => (
+                <Button
+                  key={filterOption.id}
+                  variant={filter === filterOption.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setFilter(filterOption.id)}
+                  className="text-xs transition-all duration-200 hover:scale-105 hover:shadow-md"
+                >
+                  <filterOption.icon className="h-3 w-3 mr-1" />
+                  {filterOption.label}
+                </Button>
+              ))}
             </div>
           </div>
 
-          {/* Filter Buttons */}
-          <div className="flex gap-2 flex-wrap">
-            {[
-              { id: "all", label: "All", icon: Hash },
-              { id: "positive", label: "Bullish", icon: TrendingUp },
-              { id: "signals", label: "Signals", icon: Zap },
-              { id: "verified", label: "Verified", icon: Star }
-            ].map((filterOption) => (
-              <Button
-                key={filterOption.id}
-                variant={filter === filterOption.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilter(filterOption.id)}
-                className="text-xs"
-              >
-                <filterOption.icon className="h-3 w-3 mr-1" />
-                {filterOption.label}
-              </Button>
-            ))}
-          </div>
-        </div>
+          {/* Content */}
+          <div className="flex-1 min-h-0">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+              <TabsList className="mx-6 mt-4 grid w-auto grid-cols-2 bg-accent/50 border border-primary/20">
+                <TabsTrigger value="mentions" className="text-sm transition-all duration-200 hover:bg-primary/10">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Mentions
+                </TabsTrigger>
+                <TabsTrigger value="channels" className="text-sm transition-all duration-200 hover:bg-primary/10">
+                  <Users className="h-4 w-4 mr-2" />
+                  Channels
+                </TabsTrigger>
+              </TabsList>
 
-        {/* Content */}
-        <div className="flex-1">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-            <TabsList className="mx-6 mt-4 grid w-auto grid-cols-2">
-              <TabsTrigger value="mentions" className="text-sm">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Mentions
-              </TabsTrigger>
-              <TabsTrigger value="channels" className="text-sm">
-                <Users className="h-4 w-4 mr-2" />
-                Channels
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="mentions" className="flex-1 px-6 pb-6 mt-4">
-              <ScrollArea className="h-full">
-                <div className="space-y-4">
-                  {filteredMentions.map((mention) => (
-                    <Card key={mention.id} className="p-4 hover:bg-accent/50 transition-colors border-border/50">
-                      <div className="space-y-4">
-                        {/* Header */}
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 rounded-full overflow-hidden bg-accent/50 flex items-center justify-center">
-                              <img 
-                                src={`/src/assets/crypto-logos/${mention.tokenSymbol.toLowerCase()}.png`}
-                                alt={mention.tokenSymbol}
-                                className="w-8 h-8"
-                                onError={(e) => {
-                                  e.currentTarget.src = `/src/assets/crypto-logos/svg/${mention.tokenSymbol.toLowerCase()}.svg`;
-                                }}
-                              />
-                            </div>
-                            <div>
-                              <div className="text-sm font-medium text-muted-foreground mb-1">
-                                mentioned in {mention.channel}
+              <TabsContent value="mentions" className="flex-1 px-6 pb-6 mt-4 min-h-0">
+                <ScrollArea className="h-full custom-scrollbar">
+                  <div className="space-y-4 pr-2">
+                    {filteredMentions.map((mention, index) => (
+                      <Card 
+                        key={mention.id} 
+                        className="p-4 transition-all duration-300 border-border/50 hover:border-primary/30 hover:bg-accent/50 hover:shadow-lg hover:shadow-primary/10 animate-fade-in"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <div className="space-y-4">
+                          {/* Header */}
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-full overflow-hidden bg-accent/50 border-2 border-primary/20 flex items-center justify-center">
+                                <img 
+                                  src={`/src/assets/crypto-logos/${mention.tokenSymbol.toLowerCase()}.png`}
+                                  alt={mention.tokenSymbol}
+                                  className="w-8 h-8 transition-transform duration-200 hover:scale-110"
+                                  onError={(e) => {
+                                    e.currentTarget.src = `/src/assets/crypto-logos/svg/${mention.tokenSymbol.toLowerCase()}.svg`;
+                                  }}
+                                />
                               </div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold text-lg text-foreground">${mention.tokenSymbol}</span>
-                                {mention.verified && (
-                                  <Star className="h-4 w-4 text-primary fill-primary" />
-                                )}
+                              <div>
+                                <div className="text-sm font-medium text-muted-foreground mb-1">
+                                  mentioned in {mention.channel}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-lg text-foreground">${mention.tokenSymbol}</span>
+                                  {mention.verified && (
+                                    <Star className="h-4 w-4 text-primary fill-primary animate-pulse" />
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {getTypeIcon(mention.type)}
-                            <span className="text-xs text-muted-foreground">
-                              {formatTimeAgo(mention.timestamp)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Token Info */}
-                        <div className="space-y-2">
-                          <div className="text-lg font-bold text-foreground">
-                            {mention.tokenSymbol}
-                          </div>
-                          <button
-                            onClick={() => window.location.href = `/meme/${mention.tokenAddress}`}
-                            className="text-sm text-primary hover:text-primary/80 font-mono bg-accent/50 px-3 py-1 rounded-md hover:bg-accent transition-colors cursor-pointer"
-                          >
-                            {mention.tokenAddress}
-                          </button>
-                        </div>
-
-                        {/* Footer */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <ChevronUp className="h-3 w-3" />
-                              {mention.likes}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MessageCircle className="h-3 w-3" />
-                              {mention.replies}
-                            </span>
-                          </div>
-                          <Badge variant="outline" className={`text-xs ${getSentimentBadge(mention.sentiment)}`}>
-                            {mention.sentiment}
-                          </Badge>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </ScrollArea>
-            </TabsContent>
-
-            <TabsContent value="channels" className="flex-1 px-6 pb-6 mt-4">
-              <ScrollArea className="h-full">
-                <div className="space-y-4">
-                  {channels.map((channel) => (
-                    <Card key={channel.id} className="p-4 hover:bg-accent/50 transition-colors cursor-pointer border-border/50">
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                              <Users className="h-5 w-5 text-primary" />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-foreground">{channel.name}</span>
-                                {channel.verified && (
-                                  <Star className="h-3 w-3 text-primary fill-primary" />
-                                )}
-                              </div>
+                            <div className="flex items-center gap-1">
+                              {getTypeIcon(mention.type)}
                               <span className="text-xs text-muted-foreground">
-                                {formatNumber(channel.members)} members
+                                {formatTimeAgo(mention.timestamp)}
                               </span>
                             </div>
                           </div>
-                          <Badge variant="outline" className="text-xs">
-                            {channel.category}
-                          </Badge>
+
+                          {/* Token Info */}
+                          <div className="space-y-2">
+                            <div className="text-lg font-bold text-foreground">
+                              {mention.tokenSymbol}
+                            </div>
+                            <button
+                              onClick={() => window.location.href = `/meme/${mention.tokenAddress}`}
+                              className="text-sm text-primary hover:text-primary/80 font-mono bg-accent/50 px-3 py-1 rounded-md hover:bg-primary/10 transition-all duration-200 cursor-pointer hover:scale-105 border border-primary/20 hover:border-primary/40"
+                            >
+                              {mention.tokenAddress}
+                            </button>
+                          </div>
+
+                          {/* Footer */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1 hover:text-success transition-colors duration-200">
+                                <ChevronUp className="h-3 w-3" />
+                                {mention.likes}
+                              </span>
+                              <span className="flex items-center gap-1 hover:text-primary transition-colors duration-200">
+                                <MessageCircle className="h-3 w-3" />
+                                {mention.replies}
+                              </span>
+                            </div>
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs transition-all duration-200 hover:scale-105 ${getSentimentBadge(mention.sentiment)}`}
+                            >
+                              {mention.sentiment}
+                            </Badge>
+                          </div>
                         </div>
-                        
-                        <p className="text-sm text-muted-foreground">
-                          {channel.description}
-                        </p>
-                        
-                        <Button variant="outline" size="sm" className="w-full">
-                          <ExternalLink className="h-3 w-3 mr-2" />
-                          View Channel
-                        </Button>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+
+              <TabsContent value="channels" className="flex-1 px-6 pb-6 mt-4 min-h-0">
+                <ScrollArea className="h-full custom-scrollbar">
+                  <div className="space-y-4 pr-2">
+                    {channels.map((channel, index) => (
+                      <Card 
+                        key={channel.id} 
+                        className="p-4 transition-all duration-300 border-border/50 hover:border-primary/30 hover:bg-accent/50 cursor-pointer hover:shadow-lg hover:shadow-primary/10 animate-fade-in"
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center border border-primary/30">
+                                <Users className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-foreground">{channel.name}</span>
+                                  {channel.verified && (
+                                    <Star className="h-3 w-3 text-primary fill-primary animate-pulse" />
+                                  )}
+                                </div>
+                                <span className="text-xs text-muted-foreground">
+                                  {formatNumber(channel.members)} members
+                                </span>
+                              </div>
+                            </div>
+                            <Badge variant="outline" className="text-xs border-primary/20">
+                              {channel.category}
+                            </Badge>
+                          </div>
+                          
+                          <p className="text-sm text-muted-foreground">
+                            {channel.description}
+                          </p>
+                          
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full transition-all duration-200 hover:scale-105 hover:bg-primary/10 border-primary/20 hover:border-primary/40"
+                          >
+                            <ExternalLink className="h-3 w-3 mr-2" />
+                            View Channel
+                          </Button>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </div>
-    </div>
+
+    </>
   );
 };
 
