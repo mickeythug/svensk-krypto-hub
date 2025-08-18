@@ -204,7 +204,7 @@ const TelegramMonitor = () => {
   });
 
   return (
-    <div className="fixed left-0 top-0 h-full w-96 bg-background/95 backdrop-blur-xl border-r border-border shadow-2xl z-[60]">
+    <div className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-80 bg-background/95 backdrop-blur-xl border-r border-border shadow-2xl z-[60]">
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="p-6 border-b border-border">
@@ -274,8 +274,8 @@ const TelegramMonitor = () => {
                               />
                             </div>
                             <div>
-                              <div className="text-xl font-bold text-foreground mb-1">
-                                MENTIONED IN {mention.channel.toUpperCase()}
+                              <div className="text-sm font-medium text-muted-foreground mb-1">
+                                mentioned in {mention.channel}
                               </div>
                               <div className="flex items-center gap-2">
                                 <span className="font-semibold text-lg text-foreground">${mention.tokenSymbol}</span>
