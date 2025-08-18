@@ -27,8 +27,9 @@ export const ProfessionalTradingSidebar: React.FC<ProfessionalTradingSidebarProp
   isTrading
 }) => {
   const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
-  const [orderType, setOrderType] = useState<'market' | 'limit'>('market');
   const [amount, setAmount] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [orderType, setOrderType] = useState<'market' | 'limit'>('market');
   const [limitPrice, setLimitPrice] = useState('');
   const [slippage, setSlippage] = useState('1');
   const [mevProtection, setMevProtection] = useState(true);
@@ -79,54 +80,39 @@ export const ProfessionalTradingSidebar: React.FC<ProfessionalTradingSidebarProp
           </div>
         </div>
 
-        {/* Buy/Sell Toggle */}
-        <div className="mb-6">
-          <div className="grid grid-cols-2 gap-2 p-1 bg-gray-900 rounded-lg border border-gray-800">
+        {/* Simplified Buy/Sell Toggle */}
+        <div className="mb-8">
+          <div className="grid grid-cols-2 gap-3">
             <Button
-              variant={tradeType === 'buy' ? 'default' : 'ghost'}
               onClick={() => setTradeType('buy')}
-              className={`${
+              className={`h-16 text-xl font-bold rounded-2xl transition-all ${
                 tradeType === 'buy'
-                  ? 'bg-success hover:bg-success/90 text-white'
-                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800'
+                  ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg shadow-green-500/25'
+                  : 'bg-gray-800/50 hover:bg-gray-700/70 text-gray-300 border border-gray-700'
               }`}
             >
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Buy
+              BUY
             </Button>
             <Button
-              variant={tradeType === 'sell' ? 'default' : 'ghost'}
               onClick={() => setTradeType('sell')}
-              className={`${
+              className={`h-16 text-xl font-bold rounded-2xl transition-all ${
                 tradeType === 'sell'
-                  ? 'bg-destructive hover:bg-destructive/90 text-white'
-                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800'
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg shadow-red-500/25'
+                  : 'bg-gray-800/50 hover:bg-gray-700/70 text-gray-300 border border-gray-700'
               }`}
             >
-              <TrendingDown className="w-4 h-4 mr-2" />
-              Sell
+              SELL
             </Button>
           </div>
         </div>
 
-        {/* Order Type */}
-        <div className="mb-6">
-          <Label className="text-sm font-medium text-foreground mb-3 block">Order Type</Label>
-          <Tabs value={orderType} onValueChange={(value) => setOrderType(value as 'market' | 'limit')}>
-            <TabsList className="grid w-full grid-cols-2 bg-gray-900 border border-gray-800">
-              <TabsTrigger value="market" className="data-[state=active]:bg-primary">Market</TabsTrigger>
-              <TabsTrigger value="limit" className="data-[state=active]:bg-primary">Limit</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Amount Input */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <Label className="text-sm font-medium text-foreground">
+        {/* Simple Amount Input */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <Label className="text-lg font-semibold text-white">
               Amount ({tradeType === 'buy' ? 'SOL' : tokenSymbol})
             </Label>
-            <Badge variant="outline" className="bg-gray-800 text-gray-300 border-gray-700">
+            <Badge variant="outline" className="bg-gray-800/50 text-gray-300 border-gray-600 px-3 py-1">
               Balance: {tradeType === 'buy' ? '2.45 SOL' : '1.2M ' + tokenSymbol}
             </Badge>
           </div>
@@ -134,19 +120,19 @@ export const ProfessionalTradingSidebar: React.FC<ProfessionalTradingSidebarProp
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.00"
-            className="bg-gray-900 border-gray-800 text-lg font-mono h-12"
+            placeholder="Enter amount"
+            className="bg-gray-900/70 border-gray-700 text-2xl font-mono h-16 rounded-xl text-white placeholder:text-gray-500"
           />
           
           {/* Quick Amount Buttons */}
-          <div className="flex gap-2 mt-3 flex-wrap">
+          <div className="flex gap-2 mt-4 flex-wrap">
             {quickAmounts.map((value) => (
               <Button
                 key={value}
                 variant="outline"
                 size="sm"
                 onClick={() => handleQuickAmount(value)}
-                className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-xs"
+                className="bg-gray-800/50 border-gray-600 hover:bg-gray-700/70 text-sm font-medium px-4 py-2 rounded-lg"
               >
                 {tradeType === 'buy' ? `${value} SOL` : `${value}%`}
               </Button>
@@ -154,77 +140,102 @@ export const ProfessionalTradingSidebar: React.FC<ProfessionalTradingSidebarProp
           </div>
         </div>
 
-        {/* Limit Price (if limit order) */}
-        {orderType === 'limit' && (
-          <div className="mb-6">
-            <Label className="text-sm font-medium text-foreground mb-3 block">
-              Limit Price (USD)
-            </Label>
-            <Input
-              type="number"
-              value={limitPrice}
-              onChange={(e) => setLimitPrice(e.target.value)}
-              placeholder={currentPrice.toFixed(6)}
-              className="bg-gray-900 border-gray-800 text-lg font-mono h-12"
-            />
-          </div>
-        )}
-
-        <Separator className="my-6 bg-gray-800" />
-
-        {/* Advanced Settings */}
+        {/* Advanced Settings - Collapsible */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Settings className="w-5 h-5 text-muted-foreground" />
-            <Label className="text-sm font-medium text-foreground">Advanced Settings</Label>
-          </div>
+          <Button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            variant="ghost"
+            className="w-full justify-between text-gray-400 hover:text-white hover:bg-gray-800/50 mb-4"
+          >
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              <span className="text-sm font-medium">Advanced Settings</span>
+            </div>
+            <span className={`transform transition-transform ${showAdvanced ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          </Button>
           
-          <div className="space-y-4">
-            {/* Slippage */}
-            <div>
-              <Label className="text-xs text-muted-foreground mb-2 block">Slippage Tolerance</Label>
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  value={slippage}
-                  onChange={(e) => setSlippage(e.target.value)}
-                  className="bg-gray-900 border-gray-800 text-sm h-10"
-                />
-                <Badge variant="outline" className="bg-gray-800 text-gray-300 border-gray-700 px-3">
-                  %
-                </Badge>
+          {showAdvanced && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="space-y-4 bg-gray-900/30 p-4 rounded-xl border border-gray-800"
+            >
+              {/* Order Type */}
+              <div>
+                <Label className="text-sm font-medium text-gray-300 mb-2 block">Order Type</Label>
+                <Tabs value={orderType} onValueChange={(value) => setOrderType(value as 'market' | 'limit')}>
+                  <TabsList className="grid w-full grid-cols-2 bg-gray-800 border border-gray-700">
+                    <TabsTrigger value="market" className="data-[state=active]:bg-primary">Market</TabsTrigger>
+                    <TabsTrigger value="limit" className="data-[state=active]:bg-primary">Limit</TabsTrigger>
+                  </TabsList>
+                </Tabs>
               </div>
-            </div>
 
-            {/* MEV Protection */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-primary" />
-                <Label className="text-xs text-muted-foreground">MEV Protection</Label>
-              </div>
-              <Switch checked={mevProtection} onCheckedChange={setMevProtection} />
-            </div>
+              {/* Limit Price (if limit order) */}
+              {orderType === 'limit' && (
+                <div>
+                  <Label className="text-sm font-medium text-gray-300 mb-2 block">
+                    Limit Price (USD)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={limitPrice}
+                    onChange={(e) => setLimitPrice(e.target.value)}
+                    placeholder={currentPrice.toFixed(6)}
+                    className="bg-gray-800 border-gray-700 text-lg font-mono h-10"
+                  />
+                </div>
+              )}
 
-            {/* Priority Fee */}
-            <div>
-              <Label className="text-xs text-muted-foreground mb-2 block">Priority Fee</Label>
-              <div className="grid grid-cols-3 gap-1 p-1 bg-gray-900 rounded-lg border border-gray-800">
-                {['low', 'medium', 'high'].map((fee) => (
-                  <button
-                    key={fee}
-                    onClick={() => setPriorityFee(fee)}
-                    className={`px-2 py-1 text-xs rounded transition-all ${
-                      priorityFee === fee
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-gray-400 hover:text-gray-300'
-                    }`}
-                  >
-                    {fee.charAt(0).toUpperCase() + fee.slice(1)}
-                  </button>
-                ))}
+              {/* Slippage */}
+              <div>
+                <Label className="text-sm text-gray-300 mb-2 block">Slippage Tolerance</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    value={slippage}
+                    onChange={(e) => setSlippage(e.target.value)}
+                    className="bg-gray-800 border-gray-700 text-sm h-10"
+                  />
+                  <Badge variant="outline" className="bg-gray-800 text-gray-300 border-gray-700 px-3">
+                    %
+                  </Badge>
+                </div>
               </div>
-            </div>
-          </div>
+
+              {/* MEV Protection */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-primary" />
+                  <Label className="text-sm text-gray-300">MEV Protection</Label>
+                </div>
+                <Switch checked={mevProtection} onCheckedChange={setMevProtection} />
+              </div>
+
+              {/* Priority Fee */}
+              <div>
+                <Label className="text-sm text-gray-300 mb-2 block">Priority Fee</Label>
+                <div className="grid grid-cols-3 gap-1 p-1 bg-gray-800 rounded-lg border border-gray-700">
+                  {['low', 'medium', 'high'].map((fee) => (
+                    <button
+                      key={fee}
+                      onClick={() => setPriorityFee(fee)}
+                      className={`px-2 py-1 text-xs rounded transition-all ${
+                        priorityFee === fee
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      {fee.charAt(0).toUpperCase() + fee.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* Order Summary */}
@@ -259,26 +270,21 @@ export const ProfessionalTradingSidebar: React.FC<ProfessionalTradingSidebarProp
         <Button
           onClick={() => onTrade(tradeType, amount)}
           disabled={!amount || parseFloat(amount) <= 0 || isTrading}
-          className={`w-full h-14 text-lg font-semibold ${
+          className={`w-full h-20 text-2xl font-bold rounded-2xl transition-all ${
             tradeType === 'buy'
-              ? 'bg-success hover:bg-success/90 text-white'
-              : 'bg-destructive hover:bg-destructive/90 text-white'
-          }`}
+              ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-xl shadow-green-500/30'
+              : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-xl shadow-red-500/30'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
         >
           {isTrading ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Processing...
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>PROCESSING...</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              {tradeType === 'buy' ? (
-                <TrendingUp className="w-5 h-5" />
-              ) : (
-                <TrendingDown className="w-5 h-5" />
-              )}
-              {tradeType === 'buy' ? 'Buy' : 'Sell'} {tokenSymbol}
-            </div>
+            <span className="uppercase tracking-wide">
+              {tradeType === 'buy' ? 'BUY' : 'SELL'} {tokenSymbol} NOW
+            </span>
           )}
         </Button>
 
