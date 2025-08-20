@@ -22,10 +22,13 @@ const TelegramMonitor = () => {
   const [mentions, setMentions] = useState<TelegramMention[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Force component refresh - timestamp: 2025-08-20T13:19
+  // DEBUG: Log when component mounts and renders
+  console.log('🔥 TelegramMonitor mounted!', { isCollapsed });
+  console.log('🎯 Rendering TelegramMonitor container', { isCollapsed });
 
   // Mock data for demonstration
   useEffect(() => {
+    console.log('📊 Setting up mock data...');
     const mockMentions: TelegramMention[] = [
       {
         id: "1",
@@ -58,6 +61,7 @@ const TelegramMonitor = () => {
     ];
 
     setMentions(mockMentions);
+    console.log('✅ Mock data set:', mockMentions.length, 'mentions');
   }, []);
 
   return (
@@ -65,12 +69,21 @@ const TelegramMonitor = () => {
       className={`fixed left-0 top-[120px] h-[calc(100vh-120px)] z-40 transition-all duration-500 ease-in-out ${
         isCollapsed ? 'w-12' : 'w-96'
       }`}
+      style={{ 
+        backgroundColor: 'red', // DEBUG: Make visible
+        border: '3px solid yellow' // DEBUG: Make visible
+      }}
     >
+      
       {/* Modern Toggle Button - Updated */}
       <Button
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={() => {
+          console.log('🔄 Toggle clicked!', !isCollapsed);
+          setIsCollapsed(!isCollapsed);
+        }}
         className={`absolute ${isCollapsed ? 'left-3' : 'right-3'} top-3 z-50 w-10 h-10 p-0 rounded-full bg-primary/30 hover:bg-primary/50 border-2 border-primary/40 shadow-lg transition-all duration-300 hover:scale-110`}
         variant="ghost"
+        style={{ backgroundColor: 'lime' }} // DEBUG: Make button visible
       >
         {isCollapsed ? (
           <ChevronRight className="h-5 w-5 text-primary-foreground" />
