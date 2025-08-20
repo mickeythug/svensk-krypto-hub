@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   Radio,
-  Sparkles
+  Sparkles,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 interface TelegramMention {
@@ -17,6 +20,7 @@ interface TelegramMention {
 
 const TelegramMonitor = () => {
   const [mentions, setMentions] = useState<TelegramMention[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Mock data for demonstration
   useEffect(() => {
@@ -55,9 +59,28 @@ const TelegramMonitor = () => {
   }, []);
 
   return (
-    <div className="fixed left-0 top-[120px] h-[calc(100vh-120px)] w-96 z-40">
+    <div 
+      className={`fixed left-0 top-[120px] h-[calc(100vh-120px)] z-40 transition-all duration-500 ease-in-out ${
+        isCollapsed ? 'w-12' : 'w-96'
+      }`}
+    >
+      {/* Toggle Button */}
+      <Button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className={`absolute ${isCollapsed ? 'left-2' : 'right-4'} top-4 z-50 w-8 h-8 p-0 bg-primary/20 hover:bg-primary/30 border border-primary/30 transition-all duration-300`}
+        variant="ghost"
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-4 w-4 text-primary" />
+        ) : (
+          <ChevronLeft className="h-4 w-4 text-primary" />
+        )}
+      </Button>
+
       <GlassCard 
-        className="h-full w-full border-0 bg-gradient-to-b from-background/40 via-background/20 to-background/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] overflow-hidden"
+        className={`h-full w-full border-0 bg-gradient-to-b from-background/40 via-background/20 to-background/10 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-500 ${
+          isCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
         glow={true}
       >
         {/* Header */}
@@ -78,7 +101,7 @@ const TelegramMonitor = () => {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <h2 className="text-xl font-bold bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent tracking-wide">
-                    Live Telegram Feed
+                    Telegram Monitor
                   </h2>
                   <Badge variant="outline" className="text-xs bg-primary/10 border-primary/30 text-primary">
                     <Sparkles className="h-3 w-3 mr-1" />
@@ -90,10 +113,10 @@ const TelegramMonitor = () => {
           </div>
         </div>
 
-        {/* Content Area */}
+        {/* Content Area with Enhanced Scrollbar */}
         <div className="flex-1 relative overflow-hidden px-6 pb-6 pt-4">
-          <ScrollArea className="h-full custom-scrollbar">
-            <div className="space-y-3">
+          <ScrollArea className="h-full">
+            <div className="space-y-3 pr-4">
               {mentions.map((mention, index) => (
                 <div
                   key={mention.id}
@@ -138,6 +161,16 @@ const TelegramMonitor = () => {
           </ScrollArea>
         </div>
       </GlassCard>
+
+      {/* Collapsed State Indicator */}
+      {isCollapsed && (
+        <div className="mt-2 flex flex-col items-center space-y-2">
+          <div className="p-2 bg-primary/20 rounded-lg border border-primary/30">
+            <Radio className="h-4 w-4 text-primary animate-pulse" />
+          </div>
+          <div className="w-1 h-8 bg-primary/30 rounded-full"></div>
+        </div>
+      )}
     </div>
   );
 };
