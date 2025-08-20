@@ -21,6 +21,8 @@ interface TelegramMention {
 const TelegramMonitor = () => {
   const [mentions, setMentions] = useState<TelegramMention[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // Force component refresh - timestamp: 2025-08-20T13:19
 
   // Mock data for demonstration
   useEffect(() => {
@@ -64,16 +66,16 @@ const TelegramMonitor = () => {
         isCollapsed ? 'w-12' : 'w-96'
       }`}
     >
-      {/* Toggle Button */}
+      {/* Modern Toggle Button - Updated */}
       <Button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className={`absolute ${isCollapsed ? 'left-2' : 'right-4'} top-4 z-50 w-8 h-8 p-0 bg-primary/20 hover:bg-primary/30 border border-primary/30 transition-all duration-300`}
+        className={`absolute ${isCollapsed ? 'left-3' : 'right-3'} top-3 z-50 w-10 h-10 p-0 rounded-full bg-primary/30 hover:bg-primary/50 border-2 border-primary/40 shadow-lg transition-all duration-300 hover:scale-110`}
         variant="ghost"
       >
         {isCollapsed ? (
-          <ChevronRight className="h-4 w-4 text-primary" />
+          <ChevronRight className="h-5 w-5 text-primary-foreground" />
         ) : (
-          <ChevronLeft className="h-4 w-4 text-primary" />
+          <ChevronLeft className="h-5 w-5 text-primary-foreground" />
         )}
       </Button>
 
@@ -100,7 +102,7 @@ const TelegramMonitor = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-xl font-bold bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent tracking-wide">
+                  <h2 className="text-xl font-bold text-foreground tracking-wide">
                     Telegram Monitor
                   </h2>
                   <Badge variant="outline" className="text-xs bg-primary/10 border-primary/30 text-primary">
