@@ -26,23 +26,43 @@ const TradingViewChart = ({
   const widgetRef = useRef<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [timeframe, setTimeframe] = useState("1D");
-  const [fallback, setFallback] = useState(true);
+  const [fallback, setFallback] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const {
     tvSymbol
   } = useTradingViewSymbol(symbol, undefined);
   useEffect(() => {
-    console.log('TradingViewChart loading for symbol:', symbol);
-    loadTradingView().then(() => {
-      console.log('TradingView script ready');
-      initChart();
-    }).catch(error => {
-      console.error('Failed to load TradingView script:', error);
-      setFallback(true);
-    });
+    console.log('🎯 TradingViewChart initializing for symbol:', symbol);
+    setIsLoading(true);
+    setFallback(false);
+    
+    const initializeChart = async () => {
+      try {
+        await loadTradingView();
+        console.log('✅ TradingView script ready, initializing chart');
+        await new Promise(resolve => setTimeout(resolve, 100)); // Brief delay for stability
+        initChart();
+        setIsLoading(false);
+      } catch (error) {
+        console.error('❌ TradingView initialization failed:', error);
+        setFallback(true);
+        setIsLoading(false);
+      }
+    };
+
+    initializeChart();
+
     return () => {
       if (widgetRef.current) {
-        console.log('Cleaning up TradingView widget');
-        widgetRef.current.remove();
+        console.log('🧹 Cleaning up TradingView widget');
+        try {
+          if (typeof widgetRef.current.remove === 'function') {
+            widgetRef.current.remove();
+          }
+        } catch (e) {
+          console.warn('Widget cleanup warning:', e);
+        }
+        widgetRef.current = null;
       }
     };
   }, [symbol, JSON.stringify(limitLines)]);
@@ -294,23 +314,43 @@ const TradingViewChart = ({
 
       {/* Chart Container - takes remaining space */}
       <div className="flex-1 relative min-h-0">
-      {fallback ? <div className="w-full h-full absolute inset-0">
-          <AdvancedRealTimeChart key={`${tvSymbol}-${timeframe}`} theme="dark" autosize symbol={tvSymbol} interval={getInterval(timeframe)} timezone="Etc/UTC" style="1" locale="en" enable_publishing={false} />
-        </div> : <div ref={containerRef} id={containerIdRef.current} className="w-full h-full absolute inset-0 bg-transparent" style={{
-      background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
-      position: 'relative'
-    }}>
-          {/* Fallback content while chart loads */}
-          <div className="fallback-content absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <BarChart3 className="mx-auto h-12 w-12 text-primary/30 mb-4" />
-              <p className="text-muted-foreground">Loading TradingView chart...</p>
-              <div className="mt-2 text-xs text-muted-foreground">
-                {typeof window !== 'undefined' && (window as any).TradingView ? 'TradingView loaded, initializing...' : 'Loading TradingView script...'}
-              </div>
-            </div>
+        {fallback ? (
+          <div className="w-full h-full absolute inset-0">
+            <AdvancedRealTimeChart 
+              key={`fallback-${tvSymbol}-${timeframe}`}
+              theme="dark" 
+              autosize 
+              symbol={tvSymbol} 
+              interval={getInterval(timeframe)} 
+              timezone="Etc/UTC" 
+              style="1" 
+              locale="en" 
+              enable_publishing={false}
+              hide_top_toolbar={false}
+              hide_legend={false}
+            />
           </div>
-        </div>}
+        ) : (
+          <div ref={containerRef} id={containerIdRef.current} className="w-full h-full absolute inset-0 bg-transparent" style={{
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
+            position: 'relative'
+          }}>
+            {/* Loading content while chart initializes */}
+            {isLoading && (
+              <div className="fallback-content absolute inset-0 flex items-center justify-center z-10 bg-background/80 backdrop-blur-sm">
+                <div className="text-center">
+                  <div className="mx-auto h-12 w-12 mb-4 animate-spin">
+                    <BarChart3 className="h-full w-full text-primary" />
+                  </div>
+                  <p className="text-foreground font-medium">Loading Advanced Chart...</p>
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    Initializing TradingView widget
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
     </Card>;

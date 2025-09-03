@@ -14,7 +14,7 @@ import {
   ArrowUp,
   ArrowDown
 } from "lucide-react";
-import TradingViewMobileChart from "./TradingViewMobileChart";
+import UnifiedTradingChart from "../UnifiedTradingChart";
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletAuthStatus } from '@/hooks/useWalletAuthStatus';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
@@ -144,7 +144,14 @@ const ModernMobileTradingView = ({
             
             {/* FULLSCREEN CHART */}
             <div className="flex-1 bg-[#0f0f23]">
-              <TradingViewMobileChart symbol={symbol} coinGeckoId={coinGeckoId} />
+              <UnifiedTradingChart 
+                symbol={symbol} 
+                currentPrice={currentPrice}
+                coinGeckoId={coinGeckoId}
+                mobile={true}
+                height="h-full"
+                showControls={true}
+              />
             </div>
           </div>
         )}

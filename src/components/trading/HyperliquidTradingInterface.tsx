@@ -35,7 +35,7 @@ import {
   ExternalLink,
   Menu
 } from "lucide-react";
-import TradingViewChart from "../TradingViewChart";
+import UnifiedTradingChart from "../UnifiedTradingChart";
 import { useCryptoData } from '@/hooks/useCryptoData';
 import { useSolanaTokenInfo } from '@/hooks/useSolanaTokenInfo';
 import { SOL_MINT } from '@/lib/tokenMaps';
@@ -352,11 +352,14 @@ const HyperliquidTradingInterface: React.FC<HyperliquidTradingInterfaceProps> = 
         <div className="h-[950px] p-6">
           <div className="h-full w-full rounded-2xl overflow-hidden border border-border shadow-elevation-4 bg-card backdrop-blur-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none rounded-2xl"></div>
-            <TradingViewChart 
+            <UnifiedTradingChart 
               symbol={symbol} 
               currentPrice={realTimePrice}
               limitLines={limitLines} 
-              coinGeckoId={crypto?.coinGeckoId} 
+              coinGeckoId={crypto?.coinGeckoId}
+              height="h-full"
+              showControls={true}
+              mobile={false}
             />
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Maximize2, Settings, MoreHorizontal } from "lucide-react";
+import { Maximize2, Settings, MoreHorizontal, BarChart3 } from "lucide-react";
 import { loadTradingView } from "@/lib/tradingviewLoader";
 import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 
@@ -17,25 +17,42 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
   const widgetRef = useRef<any>(null);
   const [timeframe, setTimeframe] = useState("1D");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [useFallback, setUseFallback] = useState(false);
   const { tvSymbol } = useTradingViewSymbol(symbol, coinGeckoId);
 
   useEffect(() => {
-    console.log('TradingViewMobileChart mounting for symbol:', symbol);
-    loadTradingView()
-      .then(() => {
-        console.log('TradingView script loaded, initializing mobile chart');
+    console.log('📱 TradingViewMobileChart initializing for symbol:', symbol);
+    setIsLoading(true);
+    setUseFallback(false);
+    
+    const initializeMobileChart = async () => {
+      try {
+        await loadTradingView();
+        console.log('✅ Mobile TradingView script loaded, initializing chart');
+        await new Promise(resolve => setTimeout(resolve, 100));
         initChart();
-      })
-      .catch((err) => console.error("Failed to load TradingView script (mobile):", err));
+        setIsLoading(false);
+      } catch (error) {
+        console.error("❌ Mobile TradingView initialization failed:", error);
+        setUseFallback(true);
+        setIsLoading(false);
+      }
+    };
+
+    initializeMobileChart();
 
     return () => {
       if (widgetRef.current) {
         try {
-          console.log('Cleaning up mobile TradingView widget');
-          widgetRef.current.remove();
+          console.log('🧹 Cleaning up mobile TradingView widget');
+          if (typeof widgetRef.current.remove === 'function') {
+            widgetRef.current.remove();
+          }
         } catch (e) {
-          console.log('Error cleaning up mobile widget:', e);
+          console.warn('Mobile widget cleanup warning:', e);
         }
+        widgetRef.current = null;
       }
     };
   }, [symbol, timeframe, tvSymbol]);
@@ -206,16 +223,45 @@ const TradingViewMobileChart = ({ symbol, coinGeckoId }: TradingViewMobileChartP
 
       {/* CHART CONTAINER */}
       <div className="flex-1 relative min-h-0 bg-[#0f0f23] overflow-hidden">
-        <div 
-          ref={containerRef} 
-          id={containerIdRef.current} 
-          className="w-full h-full absolute inset-0"
-          style={{
-            background: '#0f0f23',
-            minHeight: '100%',
-            zIndex: 1
-          }}
-        />
+        {useFallback ? (
+          <div className="w-full h-full absolute inset-0">
+            <div className="w-full h-full bg-gradient-to-br from-primary/5 to-background/95 flex items-center justify-center">
+              <div className="text-center p-6">
+                <BarChart3 className="mx-auto h-16 w-16 text-primary/50 mb-4" />
+                <p className="text-foreground font-medium mb-2">Chart Unavailable</p>
+                <p className="text-sm text-muted-foreground">Using alternative chart view</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div 
+              ref={containerRef} 
+              id={containerIdRef.current} 
+              className="w-full h-full absolute inset-0"
+              style={{
+                background: '#0f0f23',
+                minHeight: '100%',
+                zIndex: 1
+              }}
+            />
+            
+            {/* Loading overlay */}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center z-10 bg-background/80 backdrop-blur-sm">
+                <div className="text-center">
+                  <div className="mx-auto h-12 w-12 mb-4 animate-spin">
+                    <BarChart3 className="h-full w-full text-primary" />
+                  </div>
+                  <p className="text-foreground font-medium">Loading Mobile Chart...</p>
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    Initializing TradingView widget
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
         
         {/* Fullscreen indicator */}
         {isFullscreen && (
