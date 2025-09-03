@@ -2,10 +2,8 @@ import { useEffect, useRef, useState, memo } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, MoreHorizontal, Maximize2, BarChart3, RefreshCw } from "lucide-react";
+import { Settings, Maximize2, BarChart3, RefreshCw } from "lucide-react";
 import { loadTradingView } from "@/lib/tradingviewLoader";
-import { AdvancedRealTimeChart } from "react-ts-tradingview-widgets";
-import { useTradingViewSymbol } from "@/hooks/useTradingViewSymbol";
 
 interface UnifiedTradingChartProps {
   symbol: string;
@@ -32,62 +30,36 @@ const UnifiedTradingChart = memo(({
   const containerRef = useRef<HTMLDivElement>(null);
   const containerIdRef = useRef<string>(`tv_unified_${Math.random().toString(36).slice(2)}`);
   const widgetRef = useRef<any>(null);
-  const retryTimeoutRef = useRef<NodeJS.Timeout>();
   
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [timeframe, setTimeframe] = useState("1D");
-  const [useFallback, setUseFallback] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [retryCount, setRetryCount] = useState(0);
-  
-  const { tvSymbol } = useTradingViewSymbol(symbol, coinGeckoId);
+  const [isReady, setIsReady] = useState(false);
 
-  // Initialize chart with fallback priority
-  const initializeChart = async (forceRetry = false) => {
-    if (retryCount >= 2 && !forceRetry) {
-      console.log('🔄 Max retries reached, using fallback widget');
-      setUseFallback(true);
-      setIsLoading(false);
-      return;
-    }
-
+  // Initialize chart
+  const initializeChart = async () => {
     try {
-      console.log(`🎯 Initializing ${mobile ? 'mobile' : 'desktop'} chart for ${symbol} (attempt ${retryCount + 1})`);
       setIsLoading(true);
+      console.log(`🎯 Initializing chart for ${symbol}`);
       
-      // Try to load TradingView script
+      // Load TradingView script
       await loadTradingView();
-      console.log('✅ TradingView script loaded successfully');
+      console.log('✅ TradingView loaded');
       
-      // Create widget with slight delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      if (createTradingViewWidget()) {
-        setUseFallback(false);
-        setIsLoading(false);
-        setRetryCount(0);
-        console.log('✅ Chart initialized successfully');
-      } else {
-        throw new Error('Widget creation failed');
-      }
+      // Create widget
+      createTradingViewWidget();
+      setIsLoading(false);
+      setIsReady(true);
+      console.log('✅ Chart ready');
     } catch (error) {
-      console.error(`❌ Chart initialization failed (attempt ${retryCount + 1}):`, error);
-      
-      if (retryCount < 1) {
-        setRetryCount(prev => prev + 1);
-        const delay = 1500;
-        retryTimeoutRef.current = setTimeout(() => initializeChart(), delay);
-      } else {
-        console.log('🔄 Using fallback react-ts-tradingview-widgets');
-        setUseFallback(true);
-        setIsLoading(false);
-      }
+      console.error('❌ Chart initialization failed:', error);
+      setIsLoading(false);
     }
   };
 
-  const createTradingViewWidget = (): boolean => {
+  const createTradingViewWidget = () => {
     if (!containerRef.current || !window.TradingView) {
-      return false;
+      return;
     }
 
     // Cleanup previous widget
@@ -97,9 +69,8 @@ const UnifiedTradingChart = memo(({
           widgetRef.current.remove();
         }
       } catch (e) {
-        console.warn('Widget cleanup warning:', e);
+        console.warn('Widget cleanup:', e);
       }
-      widgetRef.current = null;
     }
 
     // Clear container
@@ -107,66 +78,55 @@ const UnifiedTradingChart = memo(({
 
     const tradingPair = `BINANCE:${symbol.toUpperCase()}USDT`;
     
-    try {
-      widgetRef.current = new window.TradingView.widget({
-        autosize: true,
-        symbol: tradingPair,
-        interval: getInterval(timeframe),
-        container_id: containerIdRef.current,
-        theme: "dark",
-        style: "1",
-        locale: "en",
-        toolbar_bg: "rgba(0, 0, 0, 0)",
-        enable_publishing: false,
-        hide_top_toolbar: mobile,
-        hide_legend: mobile,
-        save_image: false,
-        hide_volume: false,
-        width: "100%",
-        height: "100%",
-        studies: mobile ? [] : ["Volume@tv-basicstudies"],
-        overrides: {
-          "paneProperties.background": mobile ? "#0f0f23" : "rgba(0, 0, 0, 0)",
-          "paneProperties.backgroundType": "solid",
-          "mainSeriesProperties.candleStyle.upColor": "#10b981",
-          "mainSeriesProperties.candleStyle.downColor": "#ef4444",
-          "mainSeriesProperties.candleStyle.borderUpColor": "#10b981",
-          "mainSeriesProperties.candleStyle.borderDownColor": "#ef4444",
-          "mainSeriesProperties.candleStyle.wickUpColor": "#10b981",
-          "mainSeriesProperties.candleStyle.wickDownColor": "#ef4444",
-          "paneProperties.vertGridProperties.color": "rgba(255, 255, 255, 0.05)",
-          "paneProperties.horzGridProperties.color": "rgba(255, 255, 255, 0.05)",
-          "scalesProperties.textColor": "#8a92b2",
-          "scalesProperties.backgroundColor": mobile ? "#0f0f23" : "rgba(0, 0, 0, 0.1)"
-        },
-        disabled_features: mobile ? [
-          "use_localstorage_for_settings",
-          "header_symbol_search",
-          "header_compare",
-          "header_undo_redo", 
-          "header_screenshot",
-          "header_chart_type",
-          "header_saveload",
-          "header_settings"
-        ] : ["use_localstorage_for_settings", "volume_force_overlay"],
-        enabled_features: mobile ? [] : ["study_templates"]
-      });
-
-      // Verify widget was created successfully
-      return widgetRef.current !== null;
-    } catch (error) {
-      console.error('Error creating TradingView widget:', error);
-      return false;
-    }
+    widgetRef.current = new window.TradingView.widget({
+      autosize: true,
+      symbol: tradingPair,
+      interval: getInterval(timeframe),
+      container_id: containerIdRef.current,
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      toolbar_bg: "rgba(0, 0, 0, 0)",
+      enable_publishing: false,
+      hide_top_toolbar: mobile,
+      hide_legend: mobile,
+      save_image: false,
+      hide_volume: false,
+      width: "100%",
+      height: "100%",
+      studies: mobile ? [] : ["Volume@tv-basicstudies"],
+      overrides: {
+        "paneProperties.background": mobile ? "#0f0f23" : "rgba(0, 0, 0, 0)",
+        "paneProperties.backgroundType": "solid",
+        "mainSeriesProperties.candleStyle.upColor": "#10b981",
+        "mainSeriesProperties.candleStyle.downColor": "#ef4444",
+        "mainSeriesProperties.candleStyle.borderUpColor": "#10b981",
+        "mainSeriesProperties.candleStyle.borderDownColor": "#ef4444",
+        "mainSeriesProperties.candleStyle.wickUpColor": "#10b981",
+        "mainSeriesProperties.candleStyle.wickDownColor": "#ef4444",
+        "paneProperties.vertGridProperties.color": "rgba(255, 255, 255, 0.05)",
+        "paneProperties.horzGridProperties.color": "rgba(255, 255, 255, 0.05)",
+        "scalesProperties.textColor": "#8a92b2",
+        "scalesProperties.backgroundColor": mobile ? "#0f0f23" : "rgba(0, 0, 0, 0.1)"
+      },
+      disabled_features: mobile ? [
+        "use_localstorage_for_settings",
+        "header_symbol_search",
+        "header_compare",
+        "header_undo_redo", 
+        "header_screenshot",
+        "header_chart_type",
+        "header_saveload",
+        "header_settings"
+      ] : ["use_localstorage_for_settings", "volume_force_overlay"],
+      enabled_features: mobile ? [] : ["study_templates"]
+    });
   };
 
   useEffect(() => {
     initializeChart();
 
     return () => {
-      if (retryTimeoutRef.current) {
-        clearTimeout(retryTimeoutRef.current);
-      }
       if (widgetRef.current) {
         try {
           if (typeof widgetRef.current.remove === 'function') {
@@ -206,8 +166,7 @@ const UnifiedTradingChart = memo(({
   };
 
   const handleRefresh = () => {
-    setRetryCount(0);
-    initializeChart(true);
+    initializeChart();
   };
 
   const toggleFullscreen = async () => {
@@ -353,50 +312,27 @@ const UnifiedTradingChart = memo(({
 
       {/* Chart Container */}
       <div className="flex-1 relative min-h-0">
-        {useFallback ? (
-          <div className="w-full h-full absolute inset-0">
-            <AdvancedRealTimeChart 
-              key={`fallback-${tvSymbol}-${timeframe}`}
-              theme="dark" 
-              autosize 
-              symbol={tvSymbol} 
-              interval={getInterval(timeframe)} 
-              timezone="Etc/UTC" 
-              style="1" 
-              locale="en" 
-              enable_publishing={false}
-              hide_top_toolbar={mobile}
-              hide_legend={mobile}
-            />
-          </div>
-        ) : (
-          <>
-            <div 
-              ref={containerRef} 
-              id={containerIdRef.current} 
-              className="w-full h-full absolute inset-0"
-              style={{
-                background: mobile ? '#0f0f23' : 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
-                minHeight: '100%',
-                zIndex: 1
-              }}
-            />
-            
-            {/* Loading overlay */}
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center z-10 bg-background/80 backdrop-blur-sm">
-                <div className="text-center">
-                  <div className="mx-auto h-12 w-12 mb-4 animate-spin">
-                    <BarChart3 className="h-full w-full text-primary" />
-                  </div>
-                  <p className="text-foreground font-medium">Loading Chart...</p>
-                  <div className="mt-2 text-xs text-muted-foreground">
-                    {retryCount > 0 ? `Retry ${retryCount}/3` : 'Initializing TradingView widget'}
-                  </div>
-                </div>
+        <div 
+          ref={containerRef} 
+          id={containerIdRef.current} 
+          className="w-full h-full absolute inset-0"
+          style={{
+            background: mobile ? '#0f0f23' : 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)',
+            minHeight: '100%',
+            zIndex: 1
+          }}
+        />
+        
+        {/* Loading overlay */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center z-10 bg-background/80 backdrop-blur-sm">
+            <div className="text-center">
+              <div className="mx-auto h-12 w-12 mb-4 animate-spin">
+                <BarChart3 className="h-full w-full text-primary" />
               </div>
-            )}
-          </>
+              <p className="text-foreground font-medium">Laddar TradingView...</p>
+            </div>
+          </div>
         )}
         
         {/* Fullscreen indicator */}
