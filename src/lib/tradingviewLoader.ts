@@ -5,11 +5,8 @@ declare global {
   }
 }
 
-let retryCount = 0;
-const MAX_RETRIES = 2;
-
 export function loadTradingView(): Promise<void> {
-  if (window.TradingView) {
+  if (window.TradingView && typeof window.TradingView.widget === 'function') {
     console.log('✅ TradingView already loaded');
     return Promise.resolve();
   }
@@ -22,77 +19,46 @@ export function loadTradingView(): Promise<void> {
   console.log('🚀 Loading TradingView script...');
   
   window.__tvScriptPromise = new Promise<void>((resolve, reject) => {
-    // Clean up existing scripts
-    document.querySelectorAll('script[src*="tradingview"]').forEach(script => script.remove());
+    // Clean up existing scripts first
+    document.querySelectorAll('script[src*="tradingview"]').forEach(script => {
+      script.remove();
+    });
 
-    const loadScript = (url: string, timeout: number = 8000): Promise<void> => {
-      return new Promise((scriptResolve, scriptReject) => {
-        const script = document.createElement('script');
-        script.src = url;
-        script.async = true;
-        script.crossOrigin = 'anonymous';
-        
-        const timer = setTimeout(() => {
-          script.remove();
-          scriptReject(new Error(`Timeout loading ${url}`));
-        }, timeout);
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/tv.js';
+    script.async = true;
+    script.defer = true;
+    
+    const timeout = setTimeout(() => {
+      script.remove();
+      console.error('❌ TradingView script timeout');
+      reject(new Error('TradingView script loading timeout'));
+    }, 10000);
 
-        script.onload = () => {
-          clearTimeout(timer);
-          console.log(`✅ Script loaded: ${url}`);
-          
-          // Verify TradingView is available
-          setTimeout(() => {
-            if (window.TradingView && typeof window.TradingView.widget === 'function') {
-              scriptResolve();
-            } else {
-              scriptReject(new Error('TradingView not properly initialized'));
-            }
-          }, 200);
-        };
-
-        script.onerror = () => {
-          clearTimeout(timer);
-          script.remove();
-          scriptReject(new Error(`Failed to load ${url}`));
-        };
-
-        document.head.appendChild(script);
-      });
-    };
-
-    const urls = [
-      'https://s3.tradingview.com/tv.js',
-      'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js'
-    ];
-
-    // Try loading scripts sequentially
-    const tryLoad = async (urlIndex: number = 0): Promise<void> => {
-      if (urlIndex >= urls.length) {
-        throw new Error('All TradingView URLs failed');
-      }
-
-      try {
-        await loadScript(urls[urlIndex]);
-        resolve();
-      } catch (error) {
-        console.warn(`⚠️ Failed to load ${urls[urlIndex]}: ${error}`);
-        
-        if (urlIndex < urls.length - 1) {
-          console.log(`🔄 Trying next URL...`);
-          await tryLoad(urlIndex + 1);
-        } else if (retryCount < MAX_RETRIES) {
-          retryCount++;
-          console.log(`🔄 Retrying all URLs (attempt ${retryCount + 1})`);
-          setTimeout(() => tryLoad(0), 1000);
+    script.onload = () => {
+      clearTimeout(timeout);
+      console.log('✅ TradingView script loaded');
+      
+      // Give TradingView time to initialize
+      setTimeout(() => {
+        if (window.TradingView && typeof window.TradingView.widget === 'function') {
+          console.log('✅ TradingView widget available');
+          resolve();
         } else {
-          console.error('❌ All TradingView loading attempts failed');
-          reject(error);
+          console.error('❌ TradingView widget not available');
+          reject(new Error('TradingView widget not initialized'));
         }
-      }
+      }, 500);
     };
 
-    tryLoad().catch(reject);
+    script.onerror = () => {
+      clearTimeout(timeout);
+      script.remove();
+      console.error('❌ Failed to load TradingView script');
+      reject(new Error('Failed to load TradingView script'));
+    };
+
+    document.head.appendChild(script);
   });
 
   return window.__tvScriptPromise;

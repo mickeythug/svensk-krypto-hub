@@ -42,10 +42,10 @@ const UnifiedTradingChart = memo(({
   
   const { tvSymbol } = useTradingViewSymbol(symbol, coinGeckoId);
 
-  // Initialize chart with retry logic
+  // Initialize chart with fallback priority
   const initializeChart = async (forceRetry = false) => {
-    if (retryCount >= 3 && !forceRetry) {
-      console.log('🚫 Max retries reached, using fallback');
+    if (retryCount >= 2 && !forceRetry) {
+      console.log('🔄 Max retries reached, using fallback widget');
       setUseFallback(true);
       setIsLoading(false);
       return;
@@ -55,11 +55,12 @@ const UnifiedTradingChart = memo(({
       console.log(`🎯 Initializing ${mobile ? 'mobile' : 'desktop'} chart for ${symbol} (attempt ${retryCount + 1})`);
       setIsLoading(true);
       
+      // Try to load TradingView script
       await loadTradingView();
       console.log('✅ TradingView script loaded successfully');
       
-      // Brief delay for stability
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Create widget with slight delay
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       if (createTradingViewWidget()) {
         setUseFallback(false);
@@ -72,13 +73,12 @@ const UnifiedTradingChart = memo(({
     } catch (error) {
       console.error(`❌ Chart initialization failed (attempt ${retryCount + 1}):`, error);
       
-      if (retryCount < 2) {
+      if (retryCount < 1) {
         setRetryCount(prev => prev + 1);
-        // Exponential backoff: 1s, 2s, 4s
-        const delay = Math.pow(2, retryCount) * 1000;
+        const delay = 1500;
         retryTimeoutRef.current = setTimeout(() => initializeChart(), delay);
       } else {
-        console.log('🔄 Switching to fallback widget');
+        console.log('🔄 Using fallback react-ts-tradingview-widgets');
         setUseFallback(true);
         setIsLoading(false);
       }
