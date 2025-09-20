@@ -44,7 +44,10 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
   });
 
   // Infinite scroll hook
-  const { scrollElementRef, sentinelRef } = useInfiniteScroll({
+  const {
+    scrollElementRef,
+    sentinelRef
+  } = useInfiniteScroll({
     hasMore,
     isLoading: isPaginationLoading,
     onLoadMore: loadMore,
@@ -211,17 +214,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
                             {/* Right side: Price + Change + Watchlist */}
                             <div className="flex items-center gap-3">
                               {/* Price & Change */}
-                              <div className="flex flex-col items-end gap-1 min-w-[100px]">
-                                <div className="font-mono text-lg text-foreground font-semibold tracking-tight important-number whitespace-nowrap">
-                                  ${formatPrice(token.price)}
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <span className={`text-sm font-medium font-inter flex items-center gap-1 whitespace-nowrap ${token.change24h >= 0 ? 'text-success drop-shadow-sm shadow-success/30' : 'text-destructive drop-shadow-sm shadow-destructive/30'}`}>
-                                    {token.change24h >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                                    {formatChange(token.change24h)}
-                                  </span>
-                                </div>
-                              </div>
+                              
 
                               {/* Watchlist Button */}
                               <Button variant="ghost" size="sm" onClick={e => toggleWatchlist(token.symbol, e)} className={`h-10 w-10 p-0 rounded-lg transition-all duration-300 flex-shrink-0 ${isWatchlisted ? 'opacity-100 bg-warning/10 hover:bg-warning/20' : 'opacity-0 group-hover:opacity-100 hover:bg-muted/30'}`}>
@@ -234,25 +227,14 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
               })}
                   
                   {/* Infinite scroll sentinel */}
-                  {hasMore && (
-                    <div ref={sentinelRef} className="flex justify-center py-4">
-                      {isPaginationLoading ? (
-                        <div className="flex items-center gap-2 text-muted-foreground">
+                  {hasMore && <div ref={sentinelRef} className="flex justify-center py-4">
+                      {isPaginationLoading ? <div className="flex items-center gap-2 text-muted-foreground">
                           <Loader2 className="h-4 w-4 animate-spin" />
                           <span className="text-xs">Loading more tokens...</span>
-                        </div>
-                      ) : (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={loadMore}
-                          className="text-xs text-muted-foreground hover:text-primary"
-                        >
+                        </div> : <Button variant="ghost" size="sm" onClick={loadMore} className="text-xs text-muted-foreground hover:text-primary">
                           Load more tokens
-                        </Button>
-                      )}
-                    </div>
-                  )}
+                        </Button>}
+                    </div>}
                 </motion.div>}
             </AnimatePresence>
           </div>
@@ -263,11 +245,9 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
       <div className="p-4 border-t border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <div className="text-sm text-muted-foreground font-mono text-center">
           {displayedCount} of {totalCount} tokens {searchQuery && `(filtered from ${cryptoPrices?.length || 0})`}
-          {hasMore && !searchQuery && (
-            <div className="text-sm text-primary/70 mt-1">
+          {hasMore && !searchQuery && <div className="text-sm text-primary/70 mt-1">
               Scroll for more tokens
-            </div>
-          )}
+            </div>}
         </div>
       </div>
     </motion.div>;
