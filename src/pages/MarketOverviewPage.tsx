@@ -470,7 +470,7 @@ const MarketOverviewPage = () => {
 
           {/* Data Display - Table or Grid */}
           <div className="bg-background">
-            <div className="max-w-7xl mx-auto px-6">
+            <div className="w-full px-0">
               
               {viewMode === "table" ? (
                 // Table View
@@ -693,7 +693,7 @@ const MarketOverviewPage = () => {
               )}
 
               {/* Pagination - Modern Style */}
-              <div className="bg-card border border-border border-t-0 rounded-b-xl px-6 py-4 shadow-sm">
+              <div className="bg-card border border-border border-t-0 rounded-b-xl px-6 py-4 shadow-sm mx-6">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
                     {t('market.showing')} <span className="font-medium text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredData.length)}</span> {t('market.of')} <span className="font-medium text-foreground">{filteredData.length}</span> {t('market.cryptocurrencies')}
