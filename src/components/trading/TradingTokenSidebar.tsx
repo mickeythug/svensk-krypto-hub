@@ -29,7 +29,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [watchlist, setWatchlist] = useState<Set<string>>(new Set());
 
-  // Smart pagination - only show 30 tokens at a time
+  // Smart pagination - show more tokens to fill sidebar space
   const {
     displayedTokens,
     hasMore,
@@ -39,7 +39,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
     isLoading: isPaginationLoading
   } = usePaginatedTokens({
     allTokens: cryptoPrices || [],
-    pageSize: 30,
+    pageSize: 100,
     searchQuery
   });
 
