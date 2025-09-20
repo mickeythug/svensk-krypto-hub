@@ -143,7 +143,7 @@ const TradingTokenSidebar: React.FC<TradingTokenSidebarProps> = ({
 
       {/* Token List */}
       <div className="flex-1 min-h-0">
-        <ScrollArea className="h-full" ref={scrollElementRef}>
+        <ScrollArea className="h-full max-h-[calc(100vh-200px)]" ref={scrollElementRef}>
           <div className="p-3 space-y-2">
             <AnimatePresence mode="wait">
               {isCryptoLoading ? <motion.div initial={{
