@@ -560,7 +560,7 @@ const PortfolioPage = () => {
                   {t('portfolio.startByAdding')}
                 </p>
                 <Button 
-                  onClick={() => window.location.href = '/marknad'}
+                  onClick={() => window.location.href = '/market'}
                   className="bg-gradient-primary"
                 >
                   <Star className="h-4 w-4 mr-2" />

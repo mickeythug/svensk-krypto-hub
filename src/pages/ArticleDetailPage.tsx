@@ -179,7 +179,7 @@ const ArticleDetailPage = () => {
             <Button 
               variant="ghost" 
               size={isMobile ? "sm" : "default"}
-              onClick={() => navigate('/nyheter')}
+              onClick={() => navigate('/news')}
               className="text-muted-foreground hover:text-primary"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

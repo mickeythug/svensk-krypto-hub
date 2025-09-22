@@ -49,16 +49,16 @@ const HeroSection = () => {
             </div>
             
             <h1 className={`font-orbitron ${isMobile ? 'text-3xl' : 'text-5xl md:text-7xl'} font-bold ${isMobile ? 'mb-2' : 'mb-4'} tracking-wider`}>
-              <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK</span>
+              <span className="text-white">VE</span><span className="text-[#12E19F]">LO</span>
             </h1>
             <h2 className={`font-orbitron ${isMobile ? 'text-lg' : 'text-2xl md:text-4xl'} ${isMobile ? 'mb-4' : 'mb-6'} tracking-widest`}>
-              <span className="text-white">SWE</span><span className="text-[#12E19F]">DEN</span>
+              <span className="text-white">CRYPTO</span><span className="text-[#12E19F]"> HUB</span>
             </h2>
           </div>
 
           {/* Description */}
           <p className={`font-display ${isMobile ? 'text-base px-2' : 'text-xl md:text-2xl'} text-muted-foreground ${isMobile ? 'mb-6' : 'mb-8'} leading-relaxed animate-fade-in`} style={{ animationDelay: '0.3s' }}>
-            {t('hero.subtitle')}
+            Your premier crypto community. Learn, trade and grow with cutting-edge DeFi and Web3 tools.
           </p>
 
           {/* CTA Buttons */}
@@ -70,18 +70,18 @@ const HeroSection = () => {
               className="block"
             >
               <Button size={isMobile ? "default" : "lg"} className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} bg-primary hover:bg-primary/90 transition-all duration-300 transform hover:scale-105`}>
-                {t('hero.cta')}
+                Join Telegram Community
               </Button>
             </a>
             <Button
               onClick={() => {
-                window.location.href = '/marknad';
+                window.location.href = '/market';
               }}
               variant="outline"
               size={isMobile ? "default" : "lg"}
               className={`w-full font-display font-semibold ${isMobile ? 'text-base py-3' : 'text-lg px-8 py-4'} border-[#12E19F] text-muted-foreground hover:bg-[#12E19F] hover:text-white transition-all duration-300`}
             >
-              {t('hero.exploreMarket')}
+              Explore Market
             </Button>
           </div>
 
@@ -90,19 +90,19 @@ const HeroSection = () => {
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <Users className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-primary mx-auto mb-3`} />
               <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>5000+</h3>
-              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('common.members')}</p>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Members</p>
             </Card>
             
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <TrendingUp className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-success mx-auto mb-3`} />
               <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>24/7</h3>
-              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('hero.realTimeData')}</p>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Real-Time Data</p>
             </Card>
             
             <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-card/80 backdrop-blur-sm border-border hover:shadow-glow-secondary transition-all duration-300 hover:scale-105`}>
               <BookOpen className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-accent mx-auto mb-3`} />
               <h3 className={`font-numbers ${isMobile ? 'text-lg' : 'text-xl'} font-semibold mb-2`}>100+</h3>
-              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>{t('common.resources')}</p>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>Resources</p>
             </Card>
           </div>
         </div>

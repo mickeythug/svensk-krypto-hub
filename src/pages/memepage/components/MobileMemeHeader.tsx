@@ -10,11 +10,11 @@ const MobileMemeHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { path: "/", icon: TrendingUp, label: "Hem" },
-    { path: "/marknad", icon: TrendingUp, label: "Marknad" },
+    { path: "/", icon: TrendingUp, label: "Home" },
+    { path: "/market", icon: TrendingUp, label: "Market" },
     { path: "/meme", icon: Zap, label: "Meme Zone" },
     { path: "/crypto/btc", icon: Wallet, label: "Trade" },
-    { path: "/nyheter", icon: Newspaper, label: "Nyheter" }
+    { path: "/news", icon: Newspaper, label: "News" }
   ];
 
   return (

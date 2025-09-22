@@ -34,16 +34,16 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
     if (title) return title;
     
     switch (location.pathname) {
-      case '/nyheter':
-        return t('nav.news').toUpperCase();
-      case '/marknad':
-        return t('nav.market').toUpperCase();
-      case '/verktyg':
-        return 'VERKTYG';
+      case '/news':
+        return 'NEWS';
+      case '/market':
+        return 'MARKET';
+      case '/tools':
+        return 'TOOLS';
       case '/portfolio':
-        return 'PORTFÖLJ';
+        return 'PORTFOLIO';
       default:
-        if (location.pathname.startsWith('/artikel/')) return 'ARTIKEL';
+        if (location.pathname.startsWith('/artikel/')) return 'ARTICLE';
         if (location.pathname.startsWith('/crypto/')) return 'TRADING';
         if (location.pathname.startsWith('/meme/token/')) {
           // Extract token symbol from URL for individual token pages
@@ -51,7 +51,7 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
           return symbol;
         }
         if (location.pathname.startsWith('/meme')) return 'MEME ZONE';
-        return 'CRYPTO NETWORK';
+        return 'VELO';
     }
   };
 

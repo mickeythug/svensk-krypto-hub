@@ -59,10 +59,10 @@ const AppContent = memo(() => {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<Layout><Index /></Layout>} />
-          <Route path="/nyheter" element={<Layout><NewsPage /></Layout>} />
-          <Route path="/artikel/:id" element={<Layout><ArticleDetailPage /></Layout>} />
-          <Route path="/marknad" element={<Layout><MarketOverviewPage /></Layout>} />
-          <Route path="/verktyg" element={<Layout><ToolsPage /></Layout>} />
+          <Route path="/news" element={<Layout><NewsPage /></Layout>} />
+          <Route path="/article/:id" element={<Layout><ArticleDetailPage /></Layout>} />
+          <Route path="/market" element={<Layout><MarketOverviewPage /></Layout>} />
+          <Route path="/tools" element={<Layout><ToolsPage /></Layout>} />
           <Route path="/community" element={<Layout><CommunityPage /></Layout>} />
           <Route path="/portfolio" element={<Layout><PortfolioPage /></Layout>} />
           <Route path="/crypto/:symbol" element={<Layout><CryptoDetailPage /></Layout>} />

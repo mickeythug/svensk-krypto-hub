@@ -8,7 +8,6 @@ import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 import { useLanguage } from '@/contexts/LanguageContext';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 interface HeaderProps {
   showTicker?: boolean;
 }
@@ -40,11 +39,11 @@ const Header = ({
     route: true,
     description: t('desc.home')
   }, {
-    name: t('nav.market'),
-    href: "/marknad",
+    name: "Market",
+    href: "/market",
     icon: TrendingUp,
     route: true,
-    description: t('desc.market')
+    description: "Market overview"
   }, {
     name: t('nav.portfolio'),
     href: "/portfolio",
@@ -70,34 +69,34 @@ const Header = ({
     route: true,
     description: t('desc.createToken')
   }, {
-    name: t('nav.tools'),
-    href: "/verktyg",
+    name: "Tools",
+    href: "/tools",
     icon: Settings,
     route: true,
-    description: t('desc.tools')
+    description: "Crypto tools"
   }, {
-    name: t('nav.news'),
-    href: "/nyheter",
+    name: "News",
+    href: "/news",
     icon: Newspaper,
     route: true,
-    description: t('desc.news')
+    description: "Latest news"
   }, {
-    name: t('nav.community'),
+    name: "Community",
     href: "/community",
     icon: Users,
     route: true,
-    description: t('desc.community')
+    description: "Community & forum"
   }];
 
   // Main navigation items (visible in desktop nav)
   const mainNavItems = [{
-    name: t('nav.market'),
-    href: "/marknad",
+    name: "Market",
+    href: "/market",
     icon: TrendingUp,
     route: true
   }, {
-    name: t('nav.news'),
-    href: "/nyheter",
+    name: "News",
+    href: "/news",
     icon: Newspaper,
     route: true
   }, {
@@ -215,11 +214,6 @@ const Header = ({
 
                   {/* Scrollable Content */}
                   <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-6 scrollbar-thin scrollbar-track-background scrollbar-thumb-primary/30 hover:scrollbar-thumb-primary/50 scrollbar-thumb-rounded-full">
-                    {/* Language Switcher */}
-                    <div className="p-4 rounded-xl border border-border bg-muted/30">
-                      <LanguageSwitcher />
-                    </div>
-                    
                     {/* Wallet Connect Section */}
                     <div className="p-4 rounded-xl border border-border bg-muted/30">
                       <div className="font-orbitron text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>

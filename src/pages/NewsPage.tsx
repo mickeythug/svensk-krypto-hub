@@ -110,7 +110,7 @@ const NewsPage = () => {
     }
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      canonical.setAttribute('href', 'https://velo.se/nyheter');
+      canonical.setAttribute('href', 'https://velo.se/news');
     }
   }, [t]);
   useEffect(() => {

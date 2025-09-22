@@ -123,9 +123,9 @@ const CryptoDetailPage = () => {
             {t('page.crypto.tokenNotFoundDescription')} "{symbol?.toUpperCase()}".
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={() => navigate('/marknad')} className="flex items-center gap-2">
+            <Button onClick={() => navigate('/market')} className="flex items-center gap-2">
               <Search className="h-4 w-4" />
-              {t('page.crypto.searchOtherTokens')}
+              Search Other Tokens
             </Button>
             <Button variant="outline" onClick={() => navigate('/')}>
               {t('page.crypto.backToHomepage')}

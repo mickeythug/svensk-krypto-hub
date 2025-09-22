@@ -13,11 +13,11 @@ const MobileBottomNavigation = () => {
   const { t } = useLanguage();
 
   const navItems = [
-    { path: "/", icon: Home, label: t('mobileNav.home') },
-    { path: "/marknad", icon: TrendingUp, label: t('mobileNav.market') },
-    { path: "/meme", icon: Zap, label: t('mobileNav.memeZone') },
-    { path: "/crypto/btc", icon: Wallet, label: t('mobileNav.trading') },
-    { path: "/nyheter", icon: Newspaper, label: t('mobileNav.news') }
+    { path: "/", icon: Home, label: "Home" },
+    { path: "/market", icon: TrendingUp, label: "Market" },
+    { path: "/meme", icon: Zap, label: "Meme Zone" },
+    { path: "/crypto/btc", icon: Wallet, label: "Trading" },
+    { path: "/news", icon: Newspaper, label: "News" }
   ];
 
   return (

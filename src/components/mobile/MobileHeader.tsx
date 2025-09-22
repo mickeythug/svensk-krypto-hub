@@ -8,7 +8,6 @@ import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import { useLanguage } from '@/contexts/LanguageContext';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
 interface MobileHeaderProps {
   title: string;
   showMenu?: boolean;
@@ -29,59 +28,59 @@ const MobileHeader = ({
   const shouldShowMenu = showMenu && !isTradingPage;
   const shouldShowTicker = !isTradingPage;
   const navItems = [{
-    name: t('nav.home'),
+    name: "Home",
     href: "/",
     icon: Home,
     route: true,
-    description: t('desc.home')
+    description: "Homepage"
   }, {
-    name: t('nav.market'),
-    href: "/marknad",
+    name: "Market",
+    href: "/market",
     icon: TrendingUp,
     route: true,
-    description: t('desc.market')
+    description: "Market overview"
   }, {
-    name: t('nav.portfolio'),
+    name: "Portfolio",
     href: "/portfolio",
     icon: PieChart,
     route: true,
-    description: t('desc.portfolio')
+    description: "My portfolio & watchlist"
   }, {
-    name: t('nav.trading'),
+    name: "Trading",
     href: "/crypto/btc",
     icon: BarChart3,
     route: true,
-    description: t('desc.trading')
+    description: "Trading & analysis"
   }, {
-    name: t('nav.memeZone'),
+    name: "Meme Zone",
     href: "/meme",
     icon: Zap,
     route: true,
-    description: t('desc.memeZone')
+    description: "Meme coins & tokens"
   }, {
-    name: t('nav.createToken'),
+    name: "Create Token",
     href: "/meme/create",
     icon: Star,
     route: true,
-    description: t('desc.createToken')
+    description: "Create your own token"
   }, {
-    name: t('nav.tools'),
-    href: "/verktyg",
+    name: "Tools",
+    href: "/tools",
     icon: Settings,
     route: true,
-    description: t('desc.tools')
+    description: "Crypto tools"
   }, {
-    name: t('nav.news'),
-    href: "/nyheter",
+    name: "News",
+    href: "/news",
     icon: Newspaper,
     route: true,
-    description: t('desc.news')
+    description: "Latest news"
   }, {
-    name: t('nav.community'),
+    name: "Community",
     href: "/community",
     icon: Users,
     route: true,
-    description: t('desc.community')
+    description: "Community & forum"
   }];
   return <div className="sticky top-0 bg-background/95 backdrop-blur-md border-b border-border/50 z-[110] md:hidden">
       <div className="flex items-center justify-between p-4">
@@ -127,14 +126,9 @@ const MobileHeader = ({
                   </button>
                 </div>
 
-                {/* Language Switcher */}
-                <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                  <LanguageSwitcher />
-                </div>
-
                 {/* Wallet Connect Section */}
                 <div className="mb-6 p-4 rounded-xl border border-border bg-muted/30">
-                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
+                  <div className="font-crypto text-xs text-muted-foreground mb-3 uppercase tracking-wider">Wallet</div>
                   <ConnectWalletButton />
                 </div>
                 <nav className="space-y-2 pb-6">

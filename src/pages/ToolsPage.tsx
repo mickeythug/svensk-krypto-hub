@@ -458,7 +458,7 @@ const ToolsPage = () => {
                 asChild
               >
                 <a 
-                  href="/marknad" 
+                  href="/market" 
                   className="flex items-center gap-2"
                 >
                   {t('tools.exploreMarket')}
