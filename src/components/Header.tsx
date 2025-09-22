@@ -165,14 +165,11 @@ const Header = ({
             <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Velo" className={`${isMobile ? 'h-10 w-10 object-contain' : 'h-14 w-auto'} drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]`} />
             {!isMobile && <div>
                 <h1 className="font-orbitron text-xl font-bold tracking-wider">
-                  <span className="text-brand-turquoise">CRY</span>
-                  <span className="text-brand-white">PTO</span>
-                  <span> </span>
-                  <span className="text-brand-white">NET</span>
-                  <span className="text-brand-turquoise">WORK</span>
+                  <span className="text-brand-turquoise">VE</span>
+                  <span className="text-brand-white">LO</span>
                 </h1>
                 <p className="font-orbitron text-sm font-medium text-muted-foreground tracking-widest">
-                  SWEDEN
+                  CRYPTO HUB
                 </p>
               </div>}
           </button>
@@ -206,14 +203,11 @@ const Header = ({
                       <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Velo" className="h-8 w-auto" />
                       <div>
                         <h1 className="font-orbitron text-sm font-bold">
-                          <span className="text-brand-turquoise">CRY</span>
-                          <span className="text-brand-white">PTO</span>
-                          <span> </span>
-                          <span className="text-brand-white">NET</span>
-                          <span className="text-brand-turquoise">WORK</span>
+                          <span className="text-brand-turquoise">VE</span>
+                          <span className="text-brand-white">LO</span>
                         </h1>
                         <p className="font-orbitron text-xs text-muted-foreground">
-                          SWEDEN
+                          CRYPTO HUB
                         </p>
                       </div>
                     </button>

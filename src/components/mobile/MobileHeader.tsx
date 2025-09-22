@@ -90,13 +90,11 @@ const MobileHeader = ({
             <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Velo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]" />
             <div className="text-left">
               <h1 className="font-crypto text-sm font-bold leading-none">
-                <span className="text-brand-turquoise">CRY</span>
-                <span className="text-brand-white">PTO</span>
-                <span className="text-brand-white">NET</span>
-                <span className="text-brand-turquoise">WORK</span>
+                <span className="text-brand-turquoise">VE</span>
+                <span className="text-brand-white">LO</span>
               </h1>
               <p className="font-crypto text-xs text-muted-foreground leading-none mt-0.5">
-                SWEDEN
+                CRYPTO HUB
               </p>
             </div>
           </button>
@@ -119,13 +117,11 @@ const MobileHeader = ({
                     <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Velo" className="h-8 w-auto" />
                     <div>
                       <h1 className="font-crypto text-sm font-bold text-foreground">
-                        <span className="text-brand-turquoise">CRY</span>
-                        <span className="text-brand-white">PTO</span>
-                        <span className="text-brand-white">NET</span>
-                        <span className="text-brand-turquoise">WORK</span>
+                        <span className="text-brand-turquoise">VE</span>
+                        <span className="text-brand-white">LO</span>
                       </h1>
                       <p className="font-crypto text-xs text-muted-foreground">
-                        SWEDEN
+                        CRYPTO HUB
                       </p>
                     </div>
                   </button>

@@ -88,7 +88,7 @@ const CommunitySection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-6' : 'mb-16'}`}>
           <h2 className={`font-orbitron ${isMobile ? 'text-xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-3' : 'mb-6'} tracking-wider`}>
-            <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">COM</span><span className="text-white">MUN</span><span className="text-[#12E19F]">ITY</span>
+            <span className="text-white">VE</span><span className="text-[#12E19F]">LO</span><span className="text-white"> COM</span><span className="text-[#12E19F]">MUN</span><span className="text-white">ITY</span>
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
             {t('community.page.description')}
