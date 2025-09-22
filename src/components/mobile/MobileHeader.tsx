@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { TrendingUp, Newspaper, Wallet, Zap, Users, Settings, Home, BarChart3, PieChart, Star, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
-import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 interface MobileHeaderProps {
   title: string;
@@ -22,7 +21,6 @@ const MobileHeader = ({
 
   // Hide menu on trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');
-  const isMemeZone = location.pathname.startsWith('/meme');
   const shouldShowMenu = showMenu && !isTradingPage;
   const shouldShowTicker = !isTradingPage;
   const navItems = [{
@@ -49,18 +47,6 @@ const MobileHeader = ({
     icon: BarChart3,
     route: true,
     description: "Trading & analysis"
-  }, {
-    name: "Meme Zone",
-    href: "/meme",
-    icon: Zap,
-    route: true,
-    description: "Meme coins & tokens"
-  }, {
-    name: "Create Token",
-    href: "/meme/create",
-    icon: Star,
-    route: true,
-    description: "Create your own token"
   }, {
     name: "Tools",
     href: "/tools",
@@ -160,10 +146,10 @@ const MobileHeader = ({
         </div>
       </div>
       
-      {/* Ticker - show CryptoPriceTicker on non-meme pages, MemeLiveTicker on meme pages */}
+      {/* Ticker */}
       {shouldShowTicker && (
         <div className="border-t border-border/30">
-          {isMemeZone ? <MemeLiveTicker /> : <CryptoPriceTicker />}
+          <CryptoPriceTicker />
         </div>
       )}
     </div>;

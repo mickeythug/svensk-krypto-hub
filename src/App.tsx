@@ -18,11 +18,6 @@ const PortfolioPage = lazy(() => import("./pages/PortfolioPage"));
 const ToolsPage = lazy(() => import("./pages/ToolsPage"));
 const CommunityPage = lazy(() => import("./pages/CommunityPage"));
 const CryptoDetailPage = lazy(() => import("./pages/CryptoDetailPage"));
-const MemePage = lazy(() => import("./pages/memepage"));
-const CreateTokenPage = lazy(() => import("./pages/memepage/CreateTokenPage"));
-const BuyTokenPage = lazy(() => import("./pages/memepage/BuyTokenPage"));
-const MemeStatsPage = lazy(() => import("./pages/memepage/MemeStatsPage"));
-const MemeTokenDetailPage = lazy(() => import("./pages/memepage/MemeTokenDetailPage"));
 const MobileConnectPage = lazy(() => import("./pages/MobileConnectPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -47,10 +42,9 @@ const AppContent = memo(() => {
   const isMobile = useIsMobile();
   const location = useLocation();
   
-  // Hide main navigation on trading pages and meme zone pages (they have custom nav)
+  // Hide main navigation on trading pages (they have custom nav)
   const isTradingPage = location.pathname.startsWith('/crypto/');
-  const isMemeZonePage = location.pathname.startsWith('/meme');
-  const shouldShowMobileNav = isMobile && !isTradingPage && !isMemeZonePage;
+  const shouldShowMobileNav = isMobile && !isTradingPage;
 
   return (
     <div className={`min-h-screen bg-background ${shouldShowMobileNav ? 'pb-20' : ''}`}>
@@ -64,11 +58,6 @@ const AppContent = memo(() => {
           <Route path="/community" element={<Layout><CommunityPage /></Layout>} />
           <Route path="/portfolio" element={<Layout><PortfolioPage /></Layout>} />
           <Route path="/crypto/:symbol" element={<Layout><CryptoDetailPage /></Layout>} />
-          <Route path="/meme" element={<Layout><MemePage /></Layout>} />
-          <Route path="/meme/create" element={<Layout><CreateTokenPage /></Layout>} />
-          <Route path="/meme/buy" element={<Layout><BuyTokenPage /></Layout>} />
-          <Route path="/meme/stats" element={<Layout><MemeStatsPage /></Layout>} />
-          <Route path="/meme/token/:symbol" element={<Layout showTicker={false}><MemeTokenDetailPage /></Layout>} />
           <Route path="/connect" element={<Layout showTicker={false}><MobileConnectPage /></Layout>} />
           <Route path="*" element={<Layout showTicker={false}><NotFound /></Layout>} />
         </Routes>

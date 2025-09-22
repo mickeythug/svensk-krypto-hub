@@ -6,7 +6,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X, TrendingUp, Users, Newspaper, Settings, BarChart3, Home, Wallet, Zap, PieChart, Star, ExternalLink } from "lucide-react";
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
-import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 interface HeaderProps {
   showTicker?: boolean;
 }
@@ -148,9 +147,11 @@ const Header = ({
     setIsOpen(false);
   };
 
-  // Check if we're on meme pages for ticker selection
-  const isMemeZone = location.pathname.startsWith('/meme');
-  const shouldShowTicker = showTicker;
+  // Check if we're on crypto trading pages
+  const isTradingPage = location.pathname.startsWith('/crypto/');
+  
+  // Don't show ticker on trading pages
+  const shouldShowTicker = showTicker && !isTradingPage;
   return <header className={`fixed top-0 left-0 right-0 z-[110] transition-all duration-300 ${isScrolled ? "bg-background/98 backdrop-blur-xl border-b border-border shadow-2xl" : "bg-background/90 backdrop-blur-md"}`}>
       {/* Main Header */}
       <div className="px-0">
@@ -244,7 +245,7 @@ const Header = ({
       
       {/* Crypto Ticker - Integrated into header */}
       {shouldShowTicker && <div className="border-t border-border/30">
-          {isMemeZone ? <MemeLiveTicker /> : <CryptoPriceTicker />}
+          <CryptoPriceTicker />
         </div>}
     </header>;
 };

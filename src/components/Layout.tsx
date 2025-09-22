@@ -5,7 +5,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import Header from '@/components/Header';
 import MobileHeader from '@/components/mobile/MobileHeader';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
-import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,9 +19,6 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
   
   // Check if we're on crypto trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');
-  
-  // Check if we're on meme pages
-  const isMemeZone = location.pathname.startsWith('/meme');
   
   // Don't show ticker on trading pages
   const shouldShowTicker = showTicker && !isTradingPage;
@@ -43,12 +39,6 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
       default:
         if (location.pathname.startsWith('/artikel/')) return 'ARTICLE';
         if (location.pathname.startsWith('/crypto/')) return 'TRADING';
-        if (location.pathname.startsWith('/meme/token/')) {
-          // Extract token symbol from URL for individual token pages
-          const symbol = location.pathname.split('/').pop()?.toUpperCase() || 'TOKEN';
-          return symbol;
-        }
-        if (location.pathname.startsWith('/meme')) return 'MEME ZONE';
         return 'VELO';
     }
   };
@@ -69,7 +59,6 @@ const Layout = memo(({ children, title, showTicker = true }: LayoutProps) => {
         ${isMobile ? 'pt-16' : 'pt-20'}
         ${shouldShowTicker ? (isMobile ? 'mt-14' : 'mt-12') : ''}
         ${isTradingPage && isMobile ? 'pb-0' : 'pb-4'}
-        ${isMemeZone && isMobile ? 'pb-0' : ''}
         min-h-screen
       `}>
         {children}

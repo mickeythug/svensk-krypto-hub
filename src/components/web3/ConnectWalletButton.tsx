@@ -13,7 +13,6 @@ import { useSolBalance } from '@/hooks/useSolBalance';
 import { useSiwsSolana } from '@/hooks/useSiwsSolana';
 import type { Address } from 'viem';
 import { authLog } from '@/lib/authDebug';
-import TradingWalletOnboardingModal from '@/pages/memepage/components/TradingWalletOnboardingModal';
 import { useTradingWallet } from '@/hooks/useTradingWallet';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
@@ -45,7 +44,6 @@ export default function ConnectWalletButton() {
   const { balance: solBalance } = useSolBalance();
   const { signAndVerify, loading: siwsLoading } = useSiwsSolana();
   const { walletAddress: twAddress, privateKey: twPk, acknowledged, createIfMissing, confirmBackup } = useTradingWallet();
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const { user: supabaseUser, createWalletSession, signOut: supabaseSignOut } = useSupabaseAuth();
 
   const [chainMode, setChainMode] = useState<'EVM' | 'SOL' | null>(null);
@@ -204,12 +202,9 @@ export default function ConnectWalletButton() {
             authLog('Failed to create Supabase session', sessionResult.error, 'warn');
           }
 
-          // Skapa trading wallet om saknas; visa onboarding endast om vi har en private key att visa
+          // Create trading wallet if missing
           try {
-            const res = await createIfMissing();
-            if (res?.privateKey) {
-              setShowOnboarding(true);
-            }
+            await createIfMissing();
           } catch {}
           try { window.dispatchEvent(new CustomEvent('wallet:refresh')); } catch {}
           return;
@@ -426,12 +421,6 @@ export default function ConnectWalletButton() {
           <LogOut className="w-4 h-4" />
         </Button>
       </div>
-      <TradingWalletOnboardingModal
-        open={showOnboarding || (!!twPk && !acknowledged)}
-        walletAddress={twAddress || solAddress}
-        privateKey={twPk}
-        onConfirm={async () => { await confirmBackup(); setShowOnboarding(false); }}
-      />
     </>
   );
 }

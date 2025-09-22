@@ -2,7 +2,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import { 
   TrendingUp, 
   Newspaper, 
-  Zap,
   Wallet,
   Home
 } from "lucide-react";
@@ -13,7 +12,7 @@ const MobileBottomNavigation = () => {
   const navItems = [
     { path: "/", icon: Home, label: "Home" },
     { path: "/market", icon: TrendingUp, label: "Market" },
-    { path: "/meme", icon: Zap, label: "Meme Zone" },
+    
     { path: "/crypto/btc", icon: Wallet, label: "Trading" },
     { path: "/news", icon: Newspaper, label: "News" }
   ];

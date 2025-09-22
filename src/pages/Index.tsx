@@ -1,7 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import SocialMediaSection from "@/components/SocialMediaSection";
 import MarketOverview from "@/components/MarketOverview";
-import MemeTokenSection from "@/pages/memepage/components/MemeTokenSection";
 import NewsSection from "@/components/NewsSection";
 import CommunitySection from "@/components/CommunitySection";
 import FooterSection from "@/components/FooterSection";
@@ -37,10 +36,6 @@ const Index = () => {
           <MarketOverview />
         </LazySection>
       </div>
-      
-      <LazySection>
-        <MemeTokenSection />
-      </LazySection>
       
       <div id="news" className="scroll-mt-20">
         <LazySection>
