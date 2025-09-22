@@ -4,20 +4,16 @@ import ModernControlPanel from './components/ModernControlPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MemeZoneBottomNavigation from '@/components/mobile/MemeZoneBottomNavigation';
 import MobileMemeZoneApp from './components/mobile/MobileMemeZoneApp';
-import { useLanguage } from '@/contexts/LanguageContext';
 import TelegramMonitor from '@/components/TelegramMonitor';
 const MemePage: React.FC = () => {
   const isMobile = useIsMobile();
-  const {
-    t
-  } = useLanguage();
   const [currentView, setCurrentView] = useState<'grid' | 'list' | 'compact'>('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
   useEffect(() => {
-    const title = t('meme.main.title') + ' | Velo';
-    const description = t('meme.main.description');
+    const title = 'Meme Zone - Discover Meme Coins | Velo';
+    const description = 'Discover and trade the hottest meme coins and tokens. Join the ultimate meme coin universe at Velo.';
     document.title = title;
     const ensureTag = (selector: string, create: () => HTMLElement) => {
       const existing = document.head.querySelector(selector);
