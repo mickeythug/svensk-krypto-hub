@@ -87,7 +87,7 @@ const MobileHeader = ({
       <div className="flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/')} className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer">
-            <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]" />
+            <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Velo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(0,255,204,0.3)]" />
             <div className="text-left">
               <h1 className="font-crypto text-sm font-bold leading-none">
                 <span className="text-brand-turquoise">CRY</span>
@@ -116,7 +116,7 @@ const MobileHeader = ({
                   navigate('/');
                   setIsOpen(false);
                 }} className="flex items-center space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
-                    <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Crypto Network Sweden" className="h-8 w-auto" />
+                    <img src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png" alt="Velo" className="h-8 w-auto" />
                     <div>
                       <h1 className="font-crypto text-sm font-bold text-foreground">
                         <span className="text-brand-turquoise">CRY</span>

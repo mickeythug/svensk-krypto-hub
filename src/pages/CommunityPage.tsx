@@ -128,7 +128,7 @@ const CommunityPage = () => {
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a 
-                  href="https://t.me/cryptonetworksweden" 
+                  href="https://t.me/velo_sweden"
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
@@ -303,7 +303,7 @@ const CommunityPage = () => {
               </p>
               
               <a 
-                href="https://t.me/cryptonetworksweden" 
+                href="https://t.me/velo_sweden" 
                 target="_blank" 
                 rel="noopener noreferrer"
               >

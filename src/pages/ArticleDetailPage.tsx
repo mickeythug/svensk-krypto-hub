@@ -82,7 +82,7 @@ const ArticleDetailPage = () => {
 
   // SEO and meta setup
   useEffect(() => {
-    document.title = `${article.title} | Crypto Network Sweden`;
+    document.title = `${article.title} | Velo`;
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
@@ -91,7 +91,7 @@ const ArticleDetailPage = () => {
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      canonical.setAttribute('href', `https://cryptonetworksweden.se/artikel/${id}`);
+      canonical.setAttribute('href', `https://velo.se/artikel/${id}`);
     }
 
     // Add article structured data
@@ -108,8 +108,8 @@ const ArticleDetailPage = () => {
       },
       "publisher": {
         "@type": "Organization",
-        "name": "Crypto Network Sweden",
-        "logo": "https://cryptonetworksweden.se/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
+        "name": "Velo",
+        "logo": "https://velo.se/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
       },
       "datePublished": article.publishedAt,
       "articleSection": article.category,

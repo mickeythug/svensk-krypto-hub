@@ -141,7 +141,7 @@ const CommunitySection = () => {
               </div>
               
               <a 
-                href="https://t.me/cryptonetworksweden" 
+                href="https://t.me/velo_sweden" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-block"

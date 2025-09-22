@@ -9,7 +9,7 @@ const FooterSection = () => {
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   const socialLinks = [
-    { icon: MessageCircle, name: "Telegram", link: "https://t.me/cryptonetworksweden", color: "text-blue-400" },
+    { icon: MessageCircle, name: "Telegram", link: "https://t.me/velo_sweden", color: "text-blue-400" },
     { icon: Video, name: "TikTok", link: "#", color: "text-pink-400" },
     { icon: Twitter, name: "Twitter/X", link: "#", color: "text-blue-500" }
   ];

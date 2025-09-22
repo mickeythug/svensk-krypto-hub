@@ -12,7 +12,7 @@ const SocialMediaSection = () => {
       name: "Telegram",
       icon: MessageCircle,
       description: t('social.telegram.description'),
-      link: "https://t.me/cryptonetworksweden",
+      link: "https://t.me/velo_sweden",
       color: "text-blue-400",
       bgColor: "bg-blue-400/10"
     },

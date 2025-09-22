@@ -30,7 +30,7 @@ const BuyTokenPage = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    const title = t('meme.buyToken.title') + ' - Crypto Network Sweden';
+    const title = t('meme.buyToken.title') + ' - Velo';
     const description = t('meme.buyToken.description');
     document.title = title;
     

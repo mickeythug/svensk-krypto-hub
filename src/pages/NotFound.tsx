@@ -17,7 +17,7 @@ const NotFound = () => {
       "404 Error: User attempted to access non-existent route:",
       location.pathname
     );
-    document.title = "404 - Sidan hittades inte | Crypto Network Sweden";
+    document.title = "404 - Sidan hittades inte | Velo";
   }, [location.pathname]);
 
   return (

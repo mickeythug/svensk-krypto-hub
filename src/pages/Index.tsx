@@ -23,7 +23,7 @@ const Index = () => {
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
-      canonical.setAttribute('href', 'https://cryptonetworksweden.se/');
+      canonical.setAttribute('href', 'https://velo.se/');
     }
   }, [t]);
 

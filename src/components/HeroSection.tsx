@@ -43,7 +43,7 @@ const HeroSection = () => {
             <div className={`${isMobile ? 'mb-4' : 'mb-6'}`}>
               <img 
                 src="/lovable-uploads/5412c453-68a5-4997-a15b-d265d679d956.png"
-                alt="Crypto Network Sweden"
+                alt="Velo"
                 className={`${isMobile ? 'h-32 w-32' : 'h-[400px] w-auto'} mx-auto object-contain drop-shadow-[0_0_30px_rgba(18,225,159,0.5)]`}
               />
             </div>
@@ -64,7 +64,7 @@ const HeroSection = () => {
           {/* CTA Buttons */}
           <div className={`flex flex-col ${isMobile ? 'gap-3' : 'sm:flex-row gap-4'} justify-center ${isMobile ? 'mb-8 px-4' : 'mb-12'} animate-fade-in`} style={{ animationDelay: '0.6s' }}>
             <a 
-              href="https://t.me/cryptonetworksweden" 
+              href="https://t.me/velo_sweden" 
               target="_blank" 
               rel="noopener noreferrer"
               className="block"

@@ -16,7 +16,7 @@ const MemePage: React.FC = () => {
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('hotness');
   useEffect(() => {
-    const title = t('meme.main.title') + ' | Crypto Network Sweden';
+    const title = t('meme.main.title') + ' | Velo';
     const description = t('meme.main.description');
     document.title = title;
     const ensureTag = (selector: string, create: () => HTMLElement) => {
@@ -37,7 +37,7 @@ const MemePage: React.FC = () => {
       l.setAttribute('rel', 'canonical');
       return l;
     });
-    const origin = window.location.origin || 'https://cryptonetworksweden.se';
+    const origin = window.location.origin || 'https://velo.se';
     canonical.setAttribute('href', `${origin}/meme`);
     const ldId = 'ld-json-meme-page';
     const oldLd = document.getElementById(ldId);

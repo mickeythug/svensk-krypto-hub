@@ -5,7 +5,7 @@ Disallow: /_next/
 Disallow: /lovable-uploads/
 
 # Sitemap
-Sitemap: https://cryptonetworksweden.se/sitemap.xml
+Sitemap: https://velo.se/sitemap.xml
 
 # Important pages for search engines
 Allow: /

@@ -54,7 +54,7 @@ const MobileTradingView = ({
     if (navigator.share) {
       navigator.share({
         title: `${tokenName} (${symbol})`,
-        text: `Kolla in ${tokenName} på Crypto Network Sweden`,
+        text: `Kolla in ${tokenName} på Velo`,
         url: window.location.href
       });
     }

@@ -26,7 +26,7 @@ const MemeHubPage = () => {
   const { t } = useLanguage();
 
   useEffect(() => {
-    const title = t('meme.hub.title') + ' | Crypto Network Sweden';
+    const title = t('meme.hub.title') + ' | Velo';
     const description = t('meme.hub.description');
     document.title = title;
     

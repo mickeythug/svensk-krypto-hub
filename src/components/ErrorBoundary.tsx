@@ -91,7 +91,7 @@ class ErrorBoundaryInner extends Component<Props, State> {
             <p className="text-xs text-muted-foreground mt-6">
               {t('error.contactUs')}{' '}
               <a 
-                href="https://t.me/cryptonetworksweden" 
+                href="https://t.me/velo_sweden" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"

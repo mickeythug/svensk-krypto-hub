@@ -13,7 +13,7 @@ const CreateTokenPage: React.FC = () => {
   const { t } = useLanguage();
 
   useEffect(() => {
-    const title = t('meme.createToken.titleFull') + ' | Crypto Network Sweden';
+    const title = t('meme.createToken.titleFull') + ' | Velo';
     const description = t('meme.createToken.description');
     document.title = title;
 
@@ -37,7 +37,7 @@ const CreateTokenPage: React.FC = () => {
       l.setAttribute('rel', 'canonical');
       return l;
     });
-    const origin = window.location.origin || 'https://cryptonetworksweden.se';
+    const origin = window.location.origin || 'https://velo.se';
     canonical.setAttribute('href', `${origin}/meme/create`);
 
     const ldId = 'ld-json-create-token-page';

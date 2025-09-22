@@ -14,7 +14,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations = {
   sv: {
     // Site metadata
-    'site.title': 'Crypto Network Sweden - Din Krypto Community | Bitcoin, Ethereum & DeFi',
+    'site.title': 'Velo - Din Krypto Community | Bitcoin, Ethereum & DeFi',
     'site.description': 'Sveriges ledande krypto community. Lär dig om kryptovalutor, följ marknaden i realtid och träff nya vänner med samma passion för Web3. Gå med idag!',
     
     // Header & Navigation
@@ -299,7 +299,7 @@ const translations = {
     'meme.activeTokens': 'Aktiva Meme Tokens',
     'meme.totalMarketCap': 'Total Marknadskapital',
     'meme.avgVolatility': 'Genomsnittlig Volatilitet',
-    'footer.riskDescription': 'Handel med kryptovalutor är förknippat med höga risker. Investeringar kan både öka och minska i värde. Investera aldrig mer än vad du har råd att förlora. Crypto Network Sweden tillhandahåller endast utbildningsinnehåll och är inte finansiell rådgivning.',
+    'footer.riskDescription': 'Handel med kryptovalutor är förknippat med höga risker. Investeringar kan både öka och minska i värde. Investera aldrig mer än vad du har råd att förlora. Velo tillhandahåller endast utbildningsinnehåll och är inte finansiell rådgivning.',
     'footer.privacyPolicy': 'Integritetspolicy',
     'footer.termsOfService': 'Användarvillkor',
     'footer.cookies': 'Cookies',
@@ -428,7 +428,7 @@ const translations = {
     'footer.api': 'API',
     'footer.blog': 'Blogg',
     'footer.careers': 'Karriär',
-    'footer.copyright': '© 2024 Crypto Network Sweden. Alla rättigheter förbehållna.',
+    'footer.copyright': '© 2024 Velo. Alla rättigheter förbehållna.',
     
     // Tools Page
     'tools.title': 'Krypto Verktyg',
@@ -1024,7 +1024,7 @@ const translations = {
   },
   en: {
     // Site metadata
-    'site.title': 'Crypto Network Sweden - Your Crypto Community | Bitcoin, Ethereum & DeFi',
+    'site.title': 'Velo - Your Crypto Community | Bitcoin, Ethereum & DeFi',
     'site.description': 'Sweden\'s leading crypto community. Learn about cryptocurrencies, follow the market in real-time and meet new friends with the same passion for Web3. Join today!',
     
     // Header & Navigation
@@ -1328,7 +1328,7 @@ const translations = {
     'meme.activeTokens': 'Active Meme Tokens',
     'meme.totalMarketCap': 'Total Market Cap',
     'meme.avgVolatility': 'Average Volatility',
-    'footer.riskDescription': 'Trading cryptocurrencies involves high risks. Investments can both increase and decrease in value. Never invest more than you can afford to lose. Crypto Network Sweden provides only educational content and is not financial advice.',
+    'footer.riskDescription': 'Trading cryptocurrencies involves high risks. Investments can both increase and decrease in value. Never invest more than you can afford to lose. Velo provides only educational content and is not financial advice.',
     'footer.privacyPolicy': 'Privacy Policy',
     'footer.termsOfService': 'Terms of Service',
     'footer.cookies': 'Cookies',
@@ -1456,7 +1456,7 @@ const translations = {
     'footer.api': 'API',
     'footer.blog': 'Blog',
     'footer.careers': 'Careers',
-    'footer.copyright': '© 2024 Crypto Network Sweden. All rights reserved.',
+    'footer.copyright': '© 2024 Velo. All rights reserved.',
     
     // Community Features
     'community.features.telegram.title': 'Telegram Community',

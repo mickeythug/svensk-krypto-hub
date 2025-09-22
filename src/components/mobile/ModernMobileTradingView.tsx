@@ -61,7 +61,7 @@ const ModernMobileTradingView = ({
     if (navigator.share) {
       navigator.share({
         title: `${tokenName} (${symbol})`,
-        text: `Check out ${tokenName} on Crypto Network Sweden`,
+        text: `Check out ${tokenName} on Velo`,
         url: window.location.href
       });
     }

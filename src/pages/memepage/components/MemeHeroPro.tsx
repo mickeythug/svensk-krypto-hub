@@ -21,7 +21,7 @@ const MemeHeroPro = memo(() => {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="h-8 w-8 text-primary" />
-            <span className="text-sm text-muted-foreground">Crypto Network Sweden</span>
+            <span className="text-sm text-muted-foreground">Velo</span>
           </div>
           <h1 className="font-orbitron text-4xl md:text-6xl font-extrabold tracking-wider bg-gradient-to-r from-primary to-primary-glow bg-clip-text text-transparent">
             MEME TOKEN MEGA-ZON
