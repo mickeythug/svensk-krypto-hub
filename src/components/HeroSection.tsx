@@ -2,13 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Hexagon, Users, TrendingUp, BookOpen } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 import hexPattern from "@/assets/hex-pattern.jpg";
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
   
   return (
     <section className={`relative ${isMobile ? 'min-h-[80vh] pt-8' : 'min-h-screen'} flex items-center justify-center overflow-hidden`}>

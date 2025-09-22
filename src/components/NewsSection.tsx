@@ -6,11 +6,10 @@ import { Newspaper, Clock, ArrowRight, Bookmark, Share2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import "@/styles/utilities.css";
 import { useLanguage } from "@/contexts/LanguageContext";
+
 const NewsSection = () => {
   const isMobile = useIsMobile();
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   type NewsItem = {
     id: string;
     title: string;

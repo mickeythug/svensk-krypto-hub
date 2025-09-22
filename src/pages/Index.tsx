@@ -7,25 +7,22 @@ import CommunitySection from "@/components/CommunitySection";
 import FooterSection from "@/components/FooterSection";
 import LazySection from "@/components/LazySection";
 import { useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
-  const { t } = useLanguage();
-  
   // SEO optimization
   useEffect(() => {
-    document.title = t('site.title');
+    document.title = 'Velo - Your Crypto Community | Bitcoin, Ethereum & DeFi';
     
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', t('site.description'));
+      metaDescription.setAttribute('content', 'Leading crypto community. Learn about cryptocurrencies, follow the market in real-time and meet new friends with the same passion for Web3. Join today!');
     }
 
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
       canonical.setAttribute('href', 'https://velo.se/');
     }
-  }, [t]);
+  }, []);
 
   return (
     <>

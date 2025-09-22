@@ -7,7 +7,6 @@ import { Menu, X, TrendingUp, Users, Newspaper, Settings, BarChart3, Home, Walle
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
-import { useLanguage } from '@/contexts/LanguageContext';
 interface HeaderProps {
   showTicker?: boolean;
 }
@@ -20,9 +19,6 @@ const Header = ({
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
-  const {
-    t
-  } = useLanguage();
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -33,11 +29,11 @@ const Header = ({
 
   // Complete list of all app pages
   const allPages = [{
-    name: t('nav.home'),
+    name: "Home",
     href: "/",
     icon: Home,
     route: true,
-    description: t('desc.home')
+    description: "Homepage"
   }, {
     name: "Market",
     href: "/market",
@@ -45,29 +41,29 @@ const Header = ({
     route: true,
     description: "Market overview"
   }, {
-    name: t('nav.portfolio'),
+    name: "Portfolio",
     href: "/portfolio",
     icon: PieChart,
     route: true,
-    description: t('desc.portfolio')
+    description: "My portfolio & watchlist"
   }, {
-    name: t('nav.trading'),
+    name: "Trading",
     href: "/crypto/btc",
     icon: BarChart3,
     route: true,
-    description: t('desc.trading')
+    description: "Trading & analysis"
   }, {
-    name: t('nav.memeZone'),
+    name: "Meme Zone",
     href: "/meme",
     icon: Zap,
     route: true,
-    description: t('desc.memeZone')
+    description: "Meme coins & tokens"
   }, {
-    name: t('nav.createToken'),
+    name: "Create Token",
     href: "/meme/create",
     icon: Star,
     route: true,
-    description: t('desc.createToken')
+    description: "Create your own token"
   }, {
     name: "Tools",
     href: "/tools",
@@ -100,22 +96,22 @@ const Header = ({
     icon: Newspaper,
     route: true
   }, {
-    name: t('nav.portfolio'),
+    name: "Portfolio",
     href: "/portfolio",
     icon: PieChart,
     route: true
   }, {
-    name: t('nav.trading'),
+    name: "Trading",
     href: "/crypto/btc",
     icon: BarChart3,
     route: true
   }, {
-    name: t('nav.memeZone'),
+    name: "Meme Zone",
     href: "/meme",
     icon: Zap,
     route: true
   }, {
-    name: t('nav.community'),
+    name: "Community",
     href: "#community",
     icon: Users,
     route: false
@@ -216,12 +212,12 @@ const Header = ({
                   <div className="flex-1 overflow-y-auto overflow-x-hidden pr-2 space-y-6 scrollbar-thin scrollbar-track-background scrollbar-thumb-primary/30 hover:scrollbar-thumb-primary/50 scrollbar-thumb-rounded-full">
                     {/* Wallet Connect Section */}
                     <div className="p-4 rounded-xl border border-border bg-muted/30">
-                      <div className="font-orbitron text-sm font-bold text-foreground mb-3 uppercase tracking-wider">{t('nav.wallet')}</div>
+                      <div className="font-orbitron text-sm font-bold text-foreground mb-3 uppercase tracking-wider">Wallet</div>
                       <ConnectWalletButton />
                     </div>
                     {/* Complete Navigation Menu */}
                     <div>
-                      <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{t('nav.mainPages')}</h3>
+                      <h3 className="font-orbitron text-sm font-bold text-foreground mb-4 uppercase tracking-wider">Main Pages</h3>
                       <nav className="space-y-2">
                         {allPages.map(item => {
                       const isActive = location.pathname === item.href || item.href.startsWith('/crypto') && location.pathname.startsWith('/crypto');

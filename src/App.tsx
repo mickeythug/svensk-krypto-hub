@@ -7,7 +7,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Layout from "@/components/Layout";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Suspense, lazy, memo } from "react";
 
 // Lazy load pages för optimal bundling
@@ -32,12 +31,11 @@ import { AuthDebugOverlay } from "@/lib/authDebug";
 
 // Loading component för Suspense
 const LoadingFallback = memo(() => {
-  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-muted-foreground">{t('common.loading')}</p>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     </div>
   );

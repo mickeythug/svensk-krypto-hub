@@ -6,11 +6,9 @@ import {
   Wallet,
   Home
 } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const MobileBottomNavigation = () => {
   const location = useLocation();
-  const { t } = useLanguage();
 
   const navItems = [
     { path: "/", icon: Home, label: "Home" },

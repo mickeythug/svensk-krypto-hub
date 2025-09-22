@@ -1,13 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 import { MessageCircle, Video, Twitter } from "lucide-react";
 
 const FooterSection = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
   const socialLinks = [
     { icon: MessageCircle, name: "Telegram", link: "https://t.me/velo_sweden", color: "text-blue-400" },
     { icon: Video, name: "TikTok", link: "#", color: "text-pink-400" },
@@ -22,7 +20,7 @@ const FooterSection = () => {
         {/* Social Media Links */}
         <div className="border-t border-border pt-8 mb-8">
           <h4 className="font-orbitron font-bold text-primary text-center mb-6 tracking-wider">
-            {t('footer.followUs')}
+            FOLLOW US ON SOCIAL MEDIA
           </h4>
           
           <div className="flex flex-wrap justify-center gap-4">
@@ -49,25 +47,25 @@ const FooterSection = () => {
         <div className="border-t border-border pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-muted-foreground">
-              {t('footer.copyright')}
+              © 2024 Velo. All rights reserved.
             </div>
             
             <div className="flex space-x-6 text-sm">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                {t('footer.privacyPolicy')}
+                Privacy Policy
               </a>
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                {t('footer.termsOfService')}
+                Terms of Service
               </a>
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                {t('footer.cookies')}
+                Cookies
               </a>
             </div>
           </div>
           
           <div className="mt-6 p-4 rounded-lg bg-warning/10 border border-warning/20">
             <p className="text-xs text-center text-muted-foreground">
-              <strong>{t('footer.riskWarning')}</strong> {t('footer.riskDescription')}
+              <strong>Risk Warning:</strong> Trading cryptocurrencies involves high risks. Investments can both increase and decrease in value. Never invest more than you can afford to lose. Velo provides only educational content and is not financial advice.
             </p>
           </div>
         </div>

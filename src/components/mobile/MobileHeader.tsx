@@ -7,7 +7,6 @@ import { useState } from "react";
 import CryptoPriceTicker from '@/components/CryptoPriceTicker';
 import MemeLiveTicker from '@/pages/memepage/components/MemeLiveTicker';
 import ConnectWalletButton from '@/components/web3/ConnectWalletButton';
-import { useLanguage } from '@/contexts/LanguageContext';
 interface MobileHeaderProps {
   title: string;
   showMenu?: boolean;
@@ -20,7 +19,6 @@ const MobileHeader = ({
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [showWalletConnect, setShowWalletConnect] = useState(false);
-  const { t } = useLanguage();
 
   // Hide menu on trading pages
   const isTradingPage = location.pathname.startsWith('/crypto/');

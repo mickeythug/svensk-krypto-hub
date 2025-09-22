@@ -1,17 +1,15 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { MessageCircle, Video, Twitter, Instagram, Youtube, Users } from "lucide-react";
 
 const SocialMediaSection = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
   const socialPlatforms = [
     {
       name: "Telegram",
       icon: MessageCircle,
-      description: t('social.telegram.description'),
+      description: "Ask questions, learn, get free crypto information and help. We help each other find opportunities together!",
       link: "https://t.me/velo_sweden",
       color: "text-blue-400",
       bgColor: "bg-blue-400/10"
@@ -19,7 +17,7 @@ const SocialMediaSection = () => {
     {
       name: "TikTok",
       icon: Video,
-      description: t('social.tiktok.description'),
+      description: "Follow our latest crypto tips, analysis and educational content",
       link: "#",
       color: "text-pink-400",
       bgColor: "bg-pink-400/10"
@@ -27,7 +25,7 @@ const SocialMediaSection = () => {
     {
       name: "Twitter/X",
       icon: Twitter,
-      description: t('social.twitter.description'),
+      description: "Stay updated with the latest news and market analysis",
       link: "#",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10"
@@ -39,15 +37,15 @@ const SocialMediaSection = () => {
       <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-4'}`}>
         <div className={`text-center ${isMobile ? 'mb-8' : 'mb-16'}`}>
           <h2 className={`font-orbitron ${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} text-foreground tracking-wider`}>
-            {t('social.title')}
+            FOLLOW US EVERYWHERE
           </h2>
           <p className={`font-display ${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto ${isMobile ? 'mb-4' : 'mb-6'}`}>
-            {t('social.subtitle')}
+            We aim to become the largest crypto community in Sweden! Join our social channels where we help each other find opportunities together.
             {' '}
-            {t('social.communityGoal')}
+            A community with one goal - to grow and learn within crypto.
           </p>
           <p className={`font-display ${isMobile ? 'text-sm' : 'text-base'} text-muted-foreground/80 max-w-2xl mx-auto`}>
-            {t('social.telegramCall')}
+            Always reach out on Telegram for questions, learning and free crypto information. We help each other!
           </p>
         </div>
 
@@ -76,7 +74,7 @@ const SocialMediaSection = () => {
                     className="w-full border-muted-foreground text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-300"
                     onClick={() => window.open(platform.link, '_blank')}
                   >
-                    {t('social.followUs')}
+                    Follow us
                   </Button>
                 </div>
               </Card>
