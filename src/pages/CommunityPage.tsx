@@ -19,93 +19,90 @@ import {
   Zap
 } from 'lucide-react';
 import Layout from '@/components/Layout';
-import { useLanguage } from '@/contexts/LanguageContext';
-
 const CommunityPage = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
 
   const communityFeatures = [
     {
       icon: MessageCircle,
-      title: t('community.telegramCommunity.title'),
-      description: t('community.telegramCommunity.description'),
-      count: t('community.telegramCommunity.count'),
+      title: 'Telegram Community',
+      description: 'Active daily discussions about crypto markets and opportunities',
+      count: '5000+ Active Members',
       color: "from-blue-500 to-cyan-500"
     },
     {
       icon: Users, 
-      title: t('community.voiceChat.title'),
-      description: t('community.voiceChat.description'),
-      count: t('community.voiceChat.count'),
+      title: 'Voice Chat',
+      description: 'Weekly voice discussions with market analysis',
+      count: 'Every Sunday 8PM',
       color: "from-purple-500 to-pink-500"
     },
     {
       icon: Trophy,
-      title: t('community.memeScanning.title'), 
-      description: t('community.memeScanning.description'),
-      count: t('community.memeScanning.count'),
+      title: 'Token Scanning', 
+      description: 'Real-time meme token discovery and analysis',
+      count: 'Live 24/7 Tracking',
       color: "from-yellow-500 to-orange-500"
     },
     {
       icon: Heart,
-      title: t('community.newFriends.title'),
-      description: t('community.newFriends.description'),
-      count: t('community.newFriends.count'),
+      title: 'New Friends',
+      description: 'Connect with passionate crypto enthusiasts',
+      count: 'Daily New Connections',
       color: "from-red-500 to-pink-500"
     }
   ];
 
   const testimonials = [
     {
-      name: t('community.testimonial1.name'),
-      role: t('community.testimonial1.role'),
-      content: t('community.testimonial1.content'),
+      name: 'Alex L.',
+      role: 'Crypto Trader',
+      content: 'Amazing community with great insights and friendly members. Learned so much about crypto here!',
       rating: 5,
-      timeInCommunity: t('community.testimonial1.time'),
+      timeInCommunity: '6 months',
       avatar: "AL"
     },
     {
-      name: t('community.testimonial2.name'), 
-      role: t('community.testimonial2.role'),
-      content: t('community.testimonial2.content'),
+      name: 'Emma M.', 
+      role: 'DeFi Enthusiast',
+      content: 'The voice chats are incredibly valuable. Real discussions about market trends and opportunities.',
       rating: 5,
-      timeInCommunity: t('community.testimonial2.time'),
+      timeInCommunity: '1 year',
       avatar: "EM"
     },
     {
-      name: t('community.testimonial3.name'),
-      role: t('community.testimonial3.role'),
-      content: t('community.testimonial3.content'),
+      name: 'Marcus S.',
+      role: 'NFT Collector',
+      content: 'Found some amazing meme tokens through this community. The scanning tools are top-notch!',
       rating: 5,
-      timeInCommunity: t('community.testimonial3.time'),
+      timeInCommunity: '8 months',
       avatar: "MS"
     }
   ];
 
   const events = [
     {
-      title: t('community.events.voiceChat'),
-      time: t('community.events.voiceChatTime'),
-      participants: t('community.events.voiceChatParticipants'),
-      type: t('community.events.voiceChatType')
+      title: 'Weekly Voice Chat',
+      time: 'Every Sunday 8PM',
+      participants: '50+ Active Members',
+      type: 'Telegram Voice Chat'
     },
     {
-      title: t('community.events.memeScanning'),
-      time: t('community.events.memeScanningTime'),
-      participants: t('community.events.memeScanningParticipants'),
-      type: t('community.events.memeScanningType')
+      title: 'Meme Token Scanning',
+      time: '24/7 Live Updates',
+      participants: 'All Community Members',
+      type: 'Telegram Alerts'
     },
     {
-      title: t('community.events.qa'),
-      time: t('community.events.qaTime'),
-      participants: t('community.events.qaParticipants'),
-      type: t('community.events.qaType')
+      title: 'Q&A Support',
+      time: 'Daily Available',
+      participants: 'Community Helpers',
+      type: 'Telegram Support'
     }
   ];
 
   return (
-    <Layout title={t('community.page.title')} showTicker={false}>
+    <Layout title="Community" showTicker={false}>
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
         {/* Hero Section */}
         <div className={`relative overflow-hidden ${isMobile ? 'pt-8 pb-12' : 'pt-16 pb-20'}`}>
@@ -115,7 +112,7 @@ const CommunityPage = () => {
             <div className="text-center max-w-4xl mx-auto">
               <div className="inline-flex items-center space-x-2 bg-primary/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">{t('community.page.subtitle')}</span>
+                <span className="text-sm font-medium text-primary">Join the Community</span>
               </div>
               
               <h1 className={`font-orbitron ${isMobile ? 'text-3xl' : 'text-5xl md:text-6xl'} font-bold ${isMobile ? 'mb-4' : 'mb-6'} tracking-wider`}>
@@ -123,7 +120,7 @@ const CommunityPage = () => {
               </h1>
               
               <p className={`${isMobile ? 'text-base' : 'text-xl'} text-muted-foreground max-w-2xl mx-auto ${isMobile ? 'mb-8' : 'mb-10'} leading-relaxed`}>
-                {t('community.page.description')}
+                Join our growing crypto community and connect with fellow enthusiasts who share your passion for Web3
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -141,7 +138,7 @@ const CommunityPage = () => {
                       alt="Telegram" 
                       className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform"
                     />
-                    {t('community.joinNowFree')}
+                    Join Now - Free
                     <ExternalLink className="h-4 w-4 ml-2" />
                   </Button>
                 </a>
@@ -149,11 +146,11 @@ const CommunityPage = () => {
                 <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <Users className="h-4 w-4" />
-                    <span>{t('community.memberCount')}</span>
+                    <span>5000+ Members</span>
                   </div>
                   <div className="flex items-center space-x-1">
                     <Star className="h-4 w-4 text-yellow-500" />
-                    <span>{t('community.rating')}</span>
+                    <span>4.9/5 Rating</span>
                   </div>
                 </div>
               </div>
@@ -204,10 +201,10 @@ const CommunityPage = () => {
           <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-6'}`}>
             <div className="text-center mb-12">
               <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-4xl'} font-bold mb-4 text-primary`}>
-                {t('community.ongoingActivities')}
+                ONGOING ACTIVITIES
               </h2>
               <p className={`${isMobile ? 'text-sm' : 'text-lg'} text-muted-foreground max-w-2xl mx-auto`}>
-                {t('community.ongoingActivitiesDesc')}
+                Stay active with our regular community events and activities
               </p>
             </div>
 
@@ -249,7 +246,7 @@ const CommunityPage = () => {
           <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-6'}`}>
             <div className="text-center mb-12">
               <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-4xl'} font-bold mb-4 text-primary`}>
-                {t('community.whatMembersSay')}
+                WHAT MEMBERS SAY
               </h2>
             </div>
             
@@ -296,10 +293,10 @@ const CommunityPage = () => {
           <div className={`container mx-auto ${isMobile ? 'px-4' : 'px-6'} text-center`}>
             <div className="max-w-3xl mx-auto">
               <h2 className={`font-crypto ${isMobile ? 'text-2xl' : 'text-3xl md:text-4xl'} font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent`}>
-                {t('community.readyToJoin')}
+                READY TO JOIN?
               </h2>
               <p className={`${isMobile ? 'text-base' : 'text-lg'} text-muted-foreground mb-8 leading-relaxed`}>
-                {t('community.readyToJoinDesc')}
+                Don't miss out on the action. Join our Telegram community today and start your crypto journey with us!
               </p>
               
               <a 
@@ -316,7 +313,7 @@ const CommunityPage = () => {
                     alt="Telegram" 
                     className="h-6 w-6 mr-3 group-hover:scale-110 transition-transform"
                   />
-                  {t('community.joinTelegramCommunity')}
+                  Join Telegram Community
                   <Zap className="h-5 w-5 ml-3 group-hover:scale-110 transition-transform" />
                 </Button>
               </a>

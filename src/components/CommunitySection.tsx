@@ -3,83 +3,80 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Users, MessageCircle, BookOpen, Trophy, Star, Calendar, MapPin, Heart } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-
 const CommunitySection = () => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
   const communityFeatures = [
     {
       icon: MessageCircle,
-      title: t('community.features.telegram.title'),
-      description: t('community.features.telegram.description'),
-      count: t('community.features.telegram.count')
+      title: 'Telegram Chat',
+      description: 'Active daily discussions about crypto',
+      count: '5000+ members'
     },
     {
       icon: Users, 
-      title: t('community.features.voiceChat.title'),
-      description: t('community.features.voiceChat.description'),
-      count: t('community.features.voiceChat.count')
+      title: 'Voice Chat',
+      description: 'Weekly voice discussions',
+      count: 'Every Sunday'
     },
     {
       icon: Trophy,
-      title: t('community.features.memeScan.title'),
-      description: t('community.features.memeScan.description'),
-      count: t('community.features.memeScan.count')
+      title: 'Meme Scanner',
+      description: 'Find the next big meme coin',
+      count: 'Live tracking'
     },
     {
       icon: Heart,
-      title: t('community.features.friends.title'),
-      description: t('community.features.friends.description'),
-      count: t('community.features.friends.count')
+      title: 'New Friends',
+      description: 'Meet fellow crypto enthusiasts',
+      count: 'Daily connections'
     }
   ];
 
   const upcomingEvents = [
     {
-      title: t('community.events.voiceChat'),
-      date: t('community.events.voiceChatTime'),
+      title: 'Weekly Voice Chat',
+      date: 'Every Sunday',
       time: "20:00",
       type: "Telegram VC",
-      attendees: t('community.events.voiceChatParticipants')
+      attendees: '50+ participants'
     },
     {
-      title: t('community.events.memeScanning'), 
-      date: t('community.events.memeScanningTime'),
+      title: 'Meme Token Scanning', 
+      date: 'Daily',
       time: "24/7",
       type: "Telegram Chat",
-      attendees: t('community.events.memeScanningParticipants')
+      attendees: 'All members'
     },
     {
-      title: t('community.events.qa'),
-      date: t('community.events.qaTime'),
-      time: t('common.support'), 
+      title: 'Q&A Sessions',
+      date: 'As needed',
+      time: 'Support', 
       type: "Telegram",
-      attendees: t('community.events.qaParticipants')
+      attendees: 'Community members'
     }
   ];
 
   const testimonials = [
     {
-      name: t('community.testimonial1.name'),
-      role: t('community.testimonial1.role'),
-      content: t('community.testimonial1.content'),
+      name: 'Alex L.',
+      role: 'Crypto Trader',
+      content: 'Amazing community with great insights and friendly members. Learned so much about crypto here!',
       rating: 5,
-      timeInCommunity: t('community.testimonial1.time')
+      timeInCommunity: '6 months'
     },
     {
-      name: t('community.testimonial2.name'), 
-      role: t('community.testimonial2.role'),
-      content: t('community.testimonial2.content'),
+      name: 'Emma M.', 
+      role: 'DeFi Enthusiast',
+      content: 'The voice chats are incredibly valuable. Real discussions about market trends and opportunities.',
       rating: 5,
-      timeInCommunity: t('community.testimonial2.time')
+      timeInCommunity: '1 year'
     },
     {
-      name: t('community.testimonial3.name'),
-      role: t('community.testimonial3.role'),
-      content: t('community.testimonial3.content'),
+      name: 'Marcus S.',
+      role: 'NFT Collector',
+      content: 'Found some amazing meme tokens through this community. The scanning tools are top-notch!',
       rating: 5,
-      timeInCommunity: t('community.testimonial3.time')
+      timeInCommunity: '8 months'
     }
   ];
 
@@ -91,7 +88,7 @@ const CommunitySection = () => {
             <span className="text-white">VE</span><span className="text-[#12E19F]">LO</span><span className="text-white"> COM</span><span className="text-[#12E19F]">MUN</span><span className="text-white">ITY</span>
           </h2>
           <p className={`font-display ${isMobile ? 'text-sm px-2' : 'text-xl'} text-muted-foreground max-w-3xl mx-auto`}>
-            {t('community.page.description')}
+            Join our growing crypto community and connect with fellow enthusiasts
           </p>
         </div>
 
@@ -133,10 +130,10 @@ const CommunitySection = () => {
                   className="h-20 w-20 mx-auto mb-4"
                 />
                 <h3 className="font-orbitron text-3xl font-bold mb-4 tracking-wider">
-                  {t('community.joinTelegramCommunity')}
+                  JOIN TELEGRAM COMMUNITY
                 </h3>
                 <p className="font-display text-lg opacity-90 mb-6">
-                  {t('community.page.description')}
+                  Connect with fellow crypto enthusiasts and never miss an opportunity
                 </p>
               </div>
               
@@ -155,26 +152,26 @@ const CommunitySection = () => {
                     alt="Telegram" 
                     className="h-6 w-6 mr-3"
                   />
-                  {t('community.joinNowFree')}
+                  Join Now - Free
                 </Button>
               </a>
               
               <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm opacity-90">
                 <div>
-                  <div className="font-bold">{t('community.voiceChat.title')}</div>
-                  <div>{t('community.voiceChat.schedule')}</div>
+                  <div className="font-bold">Voice Chat</div>
+                  <div>Every Sunday</div>
                 </div>
                 <div>
-                  <div className="font-bold">{t('community.tokenScanning.title')}</div>
-                  <div>{t('community.tokenScanning.availability')}</div>
+                  <div className="font-bold">Token Scanning</div>
+                  <div>24/7 Available</div>
                 </div>
                 <div>
-                  <div className="font-bold">{t('community.qa.title')}</div>
-                  <div>{t('community.qa.schedule')}</div>
+                  <div className="font-bold">Q&A</div>
+                  <div>Daily Support</div>
                 </div>
                 <div>
-                  <div className="font-bold">{t('community.newFriends.title')}</div>
-                  <div>{t('community.newFriends.count')}</div>
+                  <div className="font-bold">New Friends</div>
+                  <div>5000+ Members</div>
                 </div>
               </div>
             </div>
@@ -184,7 +181,7 @@ const CommunitySection = () => {
         {/* Testimonials */}
         <div className="mb-16">
           <h3 className="font-orbitron text-2xl font-bold text-center mb-8 text-primary tracking-wider">
-            {t('community.whatMembersSay').toUpperCase()}
+            WHAT MEMBERS SAY
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
