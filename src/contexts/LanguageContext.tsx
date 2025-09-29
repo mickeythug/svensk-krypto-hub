@@ -95,6 +95,16 @@ const englishTranslations: Record<string, string> = {
   'news.published': 'PUBLISHED',
   'news.readTime': 'min read',
   'news.viewAll': 'View all news',
+  // Added for components
+  'news.page.description': 'Stay updated with the latest news from the crypto world',
+  'news.categories.general': 'General',
+  'news.categories.trending': 'Trending',
+  'news.readMoreLink': 'Read more',
+  'news.justNow': 'Just now',
+  'news.minutesAgo': 'minutes ago',
+  'news.hoursAgo': 'h ago',
+  'news.daysAgo': 'd ago',
+  'news.minRead': 'min read',
   
   // Market
   'market.title': 'Market Overview',
@@ -122,6 +132,29 @@ const englishTranslations: Record<string, string> = {
   'market.socialMedia': 'Social Media',
   'market.institutionalFlow': 'Institutional Flow',
   'market.technicalAnalysis': 'Technical Analysis',
+  // Added keys used in UI
+  'market.totalMarketCap': 'Total Market Cap',
+  'market.volume24h': '24h Volume',
+  'market.btcDominance': 'BTC Dominance',
+  'market.cap': 'Market Cap',
+  'market.detailedInfo': 'Detailed Info',
+  'market.aiResearchInProgress': 'AI research in progress…',
+  'market.openAIAnalyzing': 'OpenAI analyzing market data',
+  'market.fetchingRealTimeData': 'Fetching real-time data',
+  'market.analyzingTechnicalIndicators': 'Analyzing technical indicators',
+  'market.calculatingSupportResistance': 'Calculating support/resistance',
+  'market.identifyingBreakouts': 'Identifying potential breakouts',
+  'market.verifyingSentiment': 'Verifying sentiment signals',
+  'market.trend': 'trend',
+  'market.aiMarketAnalysisDefault': 'AI market analysis is not available at the moment.',
+  'market.analyzingPositiveSignals': 'Analyzing positive signals',
+  'market.analyzingRiskFactors': 'Analyzing risk factors',
+  'market.calculatingTechnicalLevels': 'Calculating technical levels',
+  'market.calculating': 'Calculating',
+  'market.alert': 'Market Alert',
+  'market.aiSummaryUnavailable': 'AI summary unavailable',
+  'market.positives': 'Positives',
+  'market.toWatch': 'To Watch',
   
   // Trading
   'trading.buy': 'Buy',
@@ -133,6 +166,20 @@ const englishTranslations: Record<string, string> = {
   'trading.limit': 'Limit',
   'trading.connectWallet': 'Connect wallet to trade',
   'trading.connectWalletToTrade': 'Connect your wallet to start trading',
+  // Added keys
+  'trading.live': 'LIVE',
+  'trading.offline': 'OFFLINE',
+  'trading.high24h': '24h High',
+  'trading.low24h': '24h Low',
+  'trading.volume': 'Volume',
+  'trading.marketCap': 'Market Cap',
+  'trading.spread': 'Spread',
+  'trading.positions': 'Positions',
+  'trading.openOrders': 'Open Orders',
+  'trading.orderHistory': 'Order History',
+  'trading.balance': 'Balance',
+  'trading.walletBalances': 'Wallet Balances',
+  'trading.connectWalletDescription': 'Connect your wallet to trade',
   
   // Default fallback for any missing keys
 };

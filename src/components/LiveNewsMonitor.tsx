@@ -95,8 +95,8 @@ const LiveNewsMonitor = () => {
     if (diff < 1) return t('news.justNow');
     if (diff < 60) return `${diff}m`;
     const hours = Math.floor(diff / 60);
-    if (hours < 24) return `${hours}h`;
-    return `${Math.floor(hours / 24)}d`;
+    if (hours < 24) return `${hours}${t('news.hoursAgo')}`;
+    return `${Math.floor(hours / 24)}${t('news.daysAgo')}`;
   };
   const getPriorityColor = (priority: LiveNewsItem['priority']) => {
     switch (priority) {
