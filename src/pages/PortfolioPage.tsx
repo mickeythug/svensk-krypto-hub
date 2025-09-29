@@ -29,7 +29,6 @@ import { useRealPortfolio } from "@/hooks/useRealPortfolio";
 import { useWalletConnection } from "@/hooks/useWalletConnection";
 import { useRealWatchlist } from "@/hooks/useRealWatchlist";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/LanguageContext";
 import MyWalletsSection from "@/components/portfolio/MyWalletsSection";
 import WalletSettingsPanel from "@/components/portfolio/WalletSettingsPanel";
 
@@ -37,7 +36,6 @@ const PortfolioPage = () => {
   const isMobile = useIsMobile();
   const [showValues, setShowValues] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
-  const { t } = useLanguage();
   
   // Real portfolio data hooks
   const { connectedWallets, primaryWallet, isLoading: walletsLoading } = useWalletConnection();
@@ -64,12 +62,12 @@ const PortfolioPage = () => {
   // Handle wallet connection errors
   const handleWalletError = () => {
     if (!primaryWallet) {
-      toast.error(t('portfolio.noWallet'), {
-        description: t('portfolio.connectWallet'),
+      toast.error('No wallet connected', {
+        description: 'Please connect your wallet first',
       });
     } else if (portfolioError) {
-      toast.error(t('portfolio.error'), {
-        description: t('portfolio.tryAgain'),
+      toast.error('Portfolio error', {
+        description: 'Please try again later',
       });
     }
   };
@@ -81,9 +79,9 @@ const PortfolioPage = () => {
         refreshPortfolio(),
         refreshPrices(),
       ]);
-      toast.success(t('portfolio.updated'));
+      toast.success('Portfolio updated');
     } catch (error) {
-      toast.error(t('portfolio.updateFailed'));
+      toast.error('Update failed');
     }
   };
 
@@ -112,12 +110,11 @@ const PortfolioPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        {/* Removed duplicate ticker - main header already includes CryptoPriceTicker */}
         <div className="container mx-auto px-4 pt-8">
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">{t('common.loading')}</p>
+              <p className="text-muted-foreground">Loading...</p>
             </div>
           </div>
         </div>
@@ -127,8 +124,7 @@ const PortfolioPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {isMobile ? <MobileHeader title={t('portfolio.title').toUpperCase()} /> : <Header />}
-      {/* Removed duplicate ticker - keeping only main header ticker */}
+      {isMobile ? <MobileHeader title="PORTFOLIO" /> : <Header />}
       
       <main className={`container mx-auto px-4 ${isMobile ? 'pt-4 pb-20' : 'pt-8 pb-20'}`}>
         {/* Header Section */}
@@ -138,7 +134,7 @@ const PortfolioPage = () => {
               <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">POR</span><span className="text-white">TFO</span><span className="text-[#12E19F]">LIO</span>
             </h1>
             <p className={`font-display ${isMobile ? 'text-sm' : 'text-lg'} text-muted-foreground`}>
-              {t('portfolio.overview')}
+              Portfolio Overview
             </p>
           </div>
           
@@ -159,7 +155,7 @@ const PortfolioPage = () => {
               disabled={isLoading}
             >
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              {!isMobile && t('portfolio.refresh')}
+              {!isMobile && 'Refresh'}
             </Button>
             
             <Button
@@ -169,7 +165,7 @@ const PortfolioPage = () => {
               className="flex items-center gap-2"
             >
               {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-              {!isMobile && (showValues ? t('portfolio.hideValues') : t('portfolio.showValues'))}
+              {!isMobile && (showValues ? 'Hide Values' : 'Show Values')}
             </Button>
             
             {!primaryWallet && (
@@ -178,7 +174,7 @@ const PortfolioPage = () => {
                 className={`flex items-center gap-2 bg-gradient-primary ${isMobile ? 'px-3' : ''}`}
               >
                 <Plus className="h-4 w-4" />
-                {!isMobile && t('wallet.connect')}
+                {!isMobile && 'Connect Wallet'}
               </Button>
             )}
           </div>
@@ -188,20 +184,20 @@ const PortfolioPage = () => {
         <div className={`${isMobile ? 'grid grid-cols-1 gap-4 mb-6' : 'grid grid-cols-1 md:grid-cols-3 gap-6 mb-8'}`}>
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-primary/10 to-accent/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-muted-foreground">{t('portfolio.totalValue')}</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">Total Value</h3>
               <Wallet className="h-5 w-5 text-primary" />
             </div>
             <div className="text-3xl font-bold text-primary mb-2">
               {formatCurrency(totalValue)}
             </div>
             <div className="text-sm text-muted-foreground">
-              {t('portfolio.overview')}
+              Portfolio Overview
             </div>
           </Card>
 
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-success/10 to-warning/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-muted-foreground">{t('portfolio.totalPnL')}</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">Total PnL</h3>
               {totalPnL >= 0 ? 
                 <TrendingUp className="h-5 w-5 text-success" /> : 
                 <TrendingDown className="h-5 w-5 text-destructive" />
@@ -217,14 +213,14 @@ const PortfolioPage = () => {
 
           <Card className={`${isMobile ? 'p-4' : 'p-6'} bg-gradient-to-br from-accent/10 to-secondary/10 border-border/30`}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-muted-foreground">{t('portfolio.holdings')}</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">Holdings</h3>
               <PieChart className="h-5 w-5 text-accent" />
             </div>
             <div className="text-3xl font-bold text-accent mb-2">
               {holdingsCount}
             </div>
             <div className="text-sm text-muted-foreground">
-              {t('common.cryptocurrencies')}
+              Cryptocurrencies
             </div>
           </Card>
         </div>
@@ -232,40 +228,25 @@ const PortfolioPage = () => {
         {/* Portfolio Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid grid-cols-5 h-12 p-1 bg-secondary/10 rounded-xl border border-border/20 w-full max-w-3xl">
-            <TabsTrigger 
-              value="overview" 
-              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
-            >
+            <TabsTrigger value="overview" className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium">
               <Wallet className="h-4 w-4" />
-              <span>{t('portfolio.overview')}</span>
+              <span>Overview</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="wallets" 
-              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
-            >
+            <TabsTrigger value="wallets" className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium">
               <Wallet className="h-4 w-4" />
-              <span>Mina Wallets</span>
+              <span>Wallets</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="watchlist" 
-              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
-            >
+            <TabsTrigger value="watchlist" className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium">
               <Star className="h-4 w-4" />
-              <span>{t('portfolio.watchlist')}</span>
+              <span>Watchlist</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="settings" 
-              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
-            >
+            <TabsTrigger value="settings" className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium">
               <Settings className="h-4 w-4" />
-              <span>Inställningar</span>
+              <span>Settings</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="analytics" 
-              className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
-            >
+            <TabsTrigger value="analytics" className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium">
               <Target className="h-4 w-4" />
-              <span>{t('trading.analysis')}</span>
+              <span>Analytics</span>
             </TabsTrigger>
           </TabsList>
 
@@ -273,305 +254,42 @@ const PortfolioPage = () => {
             {!primaryWallet ? (
               <Card className="p-12 text-center">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">{t('portfolio.noWallet')}</h3>
+                <h3 className="font-semibold text-lg mb-2">No wallet connected</h3>
                 <p className="text-muted-foreground mb-6">
-                  {t('portfolio.connectWallet')}
+                  Please connect your wallet first
                 </p>
                 <Button onClick={handleWalletError} className="bg-gradient-primary">
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('wallet.connect')}
+                  Connect Wallet
                 </Button>
               </Card>
             ) : portfolioError ? (
               <Card className="p-12 text-center">
                 <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">{t('portfolio.error')}</h3>
+                <h3 className="font-semibold text-lg mb-2">Portfolio Error</h3>
                 <p className="text-muted-foreground mb-6">
                   {portfolioError}
                 </p>
                 <Button onClick={refreshPortfolio} className="bg-gradient-primary">
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  {t('portfolio.tryAgain')}
+                  Try Again
                 </Button>
               </Card>
-            ) : portfolioData ? (
-              <div className="space-y-4">
-                {/* SOL Balance */}
-                {portfolioData.solBalance.balance > 0 && (
-                  <Card className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    <div className={`relative ${isMobile ? 'p-4' : 'p-6'} flex items-center justify-between`}>
-                      <div className="flex items-center gap-4">
-                        <div className="relative">
-                          <div className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold group-hover:scale-110 transition-transform shadow-lg`}>
-                            SOL
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} group-hover:text-primary transition-colors`}>
-                            Solana
-                          </h3>
-                          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>
-                            SOL
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="text-right">
-                        <div className={`font-semibold ${isMobile ? 'text-sm' : 'text-lg'} group-hover:text-primary transition-colors`}>
-                          {showValues ? `${portfolioData.solBalance.balance.toFixed(4)} SOL` : "••••••"}
-                        </div>
-                        <div className={`text-muted-foreground ${isMobile ? 'text-xs' : ''}`}>
-                          {formatCurrency(portfolioData.solBalance.value)}
-                        </div>
-                      </div>
-                      
-                      <div className="text-right">
-                        <div className="text-muted-foreground text-sm">
-                          @ {formatCurrency(portfolioData.solBalance.price)}
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-
-                {/* Token Balances */}
-                {portfolioData.tokenBalances.map((token) => (
-                  <Card 
-                    key={token.mint} 
-                    className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    
-                    <div className={`relative ${isMobile ? 'p-4' : 'p-6'} flex items-center justify-between`}>
-                      <div className="flex items-center gap-4">
-                        <div className="relative">
-                          {token.image ? (
-                            <img 
-                              src={token.image} 
-                              alt={token.name}
-                              className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full group-hover:scale-110 transition-transform shadow-lg`}
-                              onError={(e) => {
-                                e.currentTarget.src = '/placeholder.svg';
-                              }}
-                            />
-                          ) : (
-                            <div className={`${isMobile ? 'h-10 w-10' : 'h-12 w-12'} rounded-full bg-gradient-to-br from-primary/50 to-accent/50 flex items-center justify-center text-white font-bold text-xs group-hover:scale-110 transition-transform shadow-lg`}>
-                              {token.symbol.slice(0, 3)}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} group-hover:text-primary transition-colors`}>
-                            {token.name}
-                          </h3>
-                          <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''}`}>
-                            {token.symbol}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="text-right">
-                        <div className={`font-semibold ${isMobile ? 'text-sm' : 'text-lg'} group-hover:text-primary transition-colors`}>
-                          {showValues ? `${formatNumber(token.uiAmount)} ${token.symbol}` : "••••••"}
-                        </div>
-                        <div className={`text-muted-foreground ${isMobile ? 'text-xs' : ''}`}>
-                          {formatCurrency(token.value || 0)}
-                        </div>
-                      </div>
-                      
-                      <div className="text-right">
-                        {token.price && (
-                          <div className="text-muted-foreground text-sm">
-                            @ {formatCurrency(token.price)}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-                
-                {portfolioData.tokenBalances.length === 0 && portfolioData.solBalance.balance === 0 && (
-                  <Card className="p-12 text-center">
-                    <Wallet className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="font-semibold text-lg mb-2">{t('portfolio.noWallet')}</h3>
-                    <p className="text-muted-foreground mb-6">
-                      {t('portfolio.connectWallet')}
-                    </p>
-                  </Card>
-                )}
-              </div>
             ) : (
-              <Card className="p-12 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">{t('common.loading')}</p>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="watchlist" className="mt-6">
-            {watchlist.length > 0 ? (
-              <div className="space-y-4">
-                {/* Watchlist Table Header */}
-                <div className={`${isMobile ? 'hidden' : 'grid grid-cols-7 gap-4 p-4 bg-muted/30 rounded-lg border'}`}>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider">{t('market.name')}</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">{t('market.price')}</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">1h %</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">24h %</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">7d %</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">Market Cap</div>
-                  <div className="font-crypto text-xs text-muted-foreground uppercase tracking-wider text-right">{t('market.volume')}(24h)</div>
-                </div>
-
-                {/* Watchlist Items */}
-                {watchlist.map((item) => {
-
-                  return (
-                    <Card 
-                      key={item.id} 
-                      className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-sm hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] hover:shadow-lg"
-                    >
-                      {isMobile ? (
-                        // Mobile Layout
-                        <div className="p-4 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              {item.image ? (
-                                <img 
-                                  src={item.image} 
-                                  alt={item.name}
-                                  className="h-10 w-10 rounded-full"
-                                  onError={(e) => {
-                                    e.currentTarget.src = '/placeholder.svg';
-                                  }}
-                                />
-                              ) : (
-                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/50 to-accent/50 flex items-center justify-center text-white font-bold text-xs">
-                                  {item.symbol.slice(0, 3)}
-                                </div>
-                              )}
-                              <div>
-                                <h3 className="font-semibold text-base">{item.name}</h3>
-                                <p className="text-sm text-muted-foreground">{item.symbol.toUpperCase()}</p>
-                              </div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleWatchlist({ symbol: item.symbol, name: item.name, chain: item.chain })}
-                              className="p-2 text-yellow-500 hover:text-yellow-600"
-                            >
-                              <Star className="h-4 w-4 fill-current" />
-                            </Button>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <div className="text-muted-foreground">{t('market.price')}</div>
-                              <div className="font-semibold">{item.price ? formatCurrency(item.price) : '—'}</div>
-                            </div>
-                            <div>
-                              <div className="text-muted-foreground">24h %</div>
-                              <div className={`font-semibold ${(item.change24h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                                {item.change24h ? `${item.change24h >= 0 ? '+' : ''}${item.change24h.toFixed(2)}%` : '—'}
-                              </div>
-                            </div>
-                            <div>
-                              <div className="text-muted-foreground">Market Cap</div>
-                              <div className="font-semibold">
-                                {item.marketCap ? formatCurrency(item.marketCap) : '—'}
-                              </div>
-                            </div>
-                            <div>
-                              <div className="text-muted-foreground">{t('market.volume')} 24h</div>
-                              <div className="font-semibold">
-                                {item.volume ? formatCurrency(item.volume) : '—'}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        // Desktop Layout
-                        <div className="grid grid-cols-7 gap-4 p-4 items-center">
-                          <div className="flex items-center gap-3">
-                            {item.image ? (
-                              <img 
-                                src={item.image} 
-                                alt={item.name}
-                                className="h-8 w-8 rounded-full"
-                                onError={(e) => {
-                                  e.currentTarget.src = '/placeholder.svg';
-                                }}
-                              />
-                            ) : (
-                              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary/50 to-accent/50 flex items-center justify-center text-white font-bold text-xs">
-                                {item.symbol.slice(0, 2)}
-                              </div>
-                            )}
-                            <div>
-                              <div className="font-semibold">{item.name}</div>
-                              <div className="text-sm text-muted-foreground">{item.symbol.toUpperCase()}</div>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleWatchlist({ symbol: item.symbol, name: item.name, chain: item.chain })}
-                              className="p-1 text-yellow-500 hover:text-yellow-600 ml-2"
-                            >
-                              <Star className="h-3 w-3 fill-current" />
-                            </Button>
-                          </div>
-                          
-                          <div className="text-right font-semibold">
-                            {item.price ? formatCurrency(item.price) : '—'}
-                          </div>
-                          
-                          <div className={`text-right font-semibold ${(item.change1h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {item.change1h ? `${item.change1h >= 0 ? '+' : ''}${item.change1h.toFixed(2)}%` : '—'}
-                          </div>
-                          
-                          <div className={`text-right font-semibold ${(item.change24h || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {item.change24h ? `${item.change24h >= 0 ? '+' : ''}${item.change24h.toFixed(2)}%` : '—'}
-                          </div>
-                          
-                          <div className={`text-right font-semibold ${(item.change7d || 0) >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {item.change7d ? `${item.change7d >= 0 ? '+' : ''}${item.change7d.toFixed(2)}%` : '—'}
-                          </div>
-                          
-                          <div className="text-right font-semibold">
-                            {item.marketCap ? formatCurrency(item.marketCap) : '—'}
-                          </div>
-                          
-                          <div className="text-right font-semibold">
-                            {item.volume ? formatCurrency(item.volume) : '—'}
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  );
-                })}
+              <div className="text-center p-8">
+                <p className="text-muted-foreground">Portfolio overview will be shown here</p>
               </div>
-            ) : (
-              <Card className="p-12 text-center">
-                <Star className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">{t('portfolio.watchlist')} {t('common.empty')}</h3>
-                <p className="text-muted-foreground mb-6">
-                  {t('portfolio.startByAdding')}
-                </p>
-                <Button 
-                  onClick={() => window.location.href = '/market'}
-                  className="bg-gradient-primary"
-                >
-                  <Star className="h-4 w-4 mr-2" />
-                  {t('hero.exploreMarket')}
-                </Button>
-              </Card>
             )}
           </TabsContent>
 
           <TabsContent value="wallets" className="mt-6">
-            <MyWalletsSection showValues={showValues} />
+            <MyWalletsSection />
+          </TabsContent>
+
+          <TabsContent value="watchlist" className="mt-6">
+            <div className="text-center p-8">
+              <p className="text-muted-foreground">Watchlist will be shown here</p>
+            </div>
           </TabsContent>
 
           <TabsContent value="settings" className="mt-6">
@@ -579,17 +297,13 @@ const PortfolioPage = () => {
           </TabsContent>
 
           <TabsContent value="analytics" className="mt-6">
-            <Card className="p-8 text-center">
-              <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="font-semibold text-lg mb-2">{t('trading.analysis')} {t('common.comingSoon')}</h3>
-              <p className="text-muted-foreground">
-                {t('portfolio.workingOnAdvanced')}
-              </p>
-            </Card>
+            <div className="text-center p-8">
+              <p className="text-muted-foreground">Analytics will be shown here</p>
+            </div>
           </TabsContent>
         </Tabs>
       </main>
-      
+
       {isMobile && <MobileBottomNavigation />}
     </div>
   );

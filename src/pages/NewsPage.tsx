@@ -5,13 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, Search, Filter, Calendar, Zap, BarChart3, Globe, Flame, Bitcoin, DollarSign, ArrowLeft, ArrowRight, Star, Bookmark, AlertCircle, ChevronUp, ChevronDown, Activity, Grid3X3, List, Clock, User, ExternalLink, BookOpen, Eye } from "lucide-react";
+import { TrendingUp, TrendingDown, Search, Filter, Calendar, Zap, BarChart3, Globe, Flame, Bitcoin, DollarSign, ArrowLeft, ArrowRight, Star, Bookmark, AlertCircle, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Activity, Grid3X3, List, Clock, User, ExternalLink, BookOpen, Eye } from "lucide-react";
 import MobileHeader from "@/components/mobile/MobileHeader";
 import MobileBottomNavigation from "@/components/mobile/MobileBottomNavigation";
 import { useNavigate } from "react-router-dom";
 import { useMarketIntel } from "@/hooks/useMarketIntel";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useLanguage } from "@/contexts/LanguageContext";
 import LiveNewsMonitor from "@/components/LiveNewsMonitor";
 interface NewsArticle {
   id: string;
@@ -50,9 +49,6 @@ interface MarketData {
 const NewsPage = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const {
-    t
-  } = useLanguage();
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [filteredNews, setFilteredNews] = useState<NewsArticle[]>([]);
   const [newsCount24h, setNewsCount24h] = useState<number>(0);
@@ -99,20 +95,18 @@ const NewsPage = () => {
     return recencyBoost || hotWords && trusted;
   };
 
-  // Översättningslogik borttagen enligt begäran
-
   // SEO Setup
   useEffect(() => {
-    document.title = t('news.page.title');
+    document.title = 'Crypto News - Latest News';
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', t('news.page.description'));
+      metaDescription.setAttribute('content', 'Stay updated with the latest news from the crypto world');
     }
     const canonical = document.querySelector('link[rel="canonical"]');
     if (canonical) {
       canonical.setAttribute('href', 'https://velo.se/news');
     }
-  }, [t]);
+  }, []);
   useEffect(() => {
     let active = true;
 
@@ -170,7 +164,7 @@ const NewsPage = () => {
             url: a.url,
             readTime: Math.max(1, Math.round(desc.split(' ').length / 200)),
             views: 0,
-            author: a.author || a.source || t('news.unknown')
+            author: a.author || a.source || 'Unknown'
           } as NewsArticle;
         });
         if (!active) return;
@@ -264,22 +258,22 @@ const NewsPage = () => {
   };
   const categories = [{
     id: "all",
-    label: t('news.categories.all')
+    label: 'All'
   }, {
     id: "Bitcoin",
-    label: t('news.categories.btc')
+    label: 'Bitcoin'
   }, {
     id: "Ethereum",
-    label: t('news.categories.eth')
+    label: 'Ethereum'
   }, {
     id: "Meme Tokens",
-    label: t('news.categories.memes')
+    label: 'Meme Tokens'
   }, {
     id: "Politik",
-    label: t('news.categories.politics')
+    label: 'Politics'
   }, {
     id: "trending",
-    label: t('news.categories.trending')
+    label: 'Trending'
   }];
 
   // Helpers for compact formatting
@@ -331,12 +325,12 @@ const NewsPage = () => {
     const now = new Date();
     const date = new Date(dateString);
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    if (diffInMinutes < 1) return t('news.justNow');
-    if (diffInMinutes < 60) return `${diffInMinutes} ${t('news.minutesAgo')}`;
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
     const diffInHours = Math.floor(diffInMinutes / 60);
-    if (diffInHours < 24) return `${diffInHours}${t('news.hoursAgo')}`;
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}${t('news.daysAgo')}`;
+    if (diffInDays < 7) return `${diffInDays} days ago`;
     return date.toLocaleDateString('sv-SE');
   };
 
@@ -360,7 +354,7 @@ const NewsPage = () => {
           <div className={`${isMobile ? 'mb-8' : 'mb-12'}`}>
             {!isMobile && <Button variant="ghost" onClick={() => navigate('/')} className="mb-8 text-muted-foreground hover:text-primary text-lg group">
                  <ArrowLeft className="mr-3 h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                {t('news.backToHomepage')}
+                Back to Homepage
               </Button>}
             
             <div className={`${isMobile ? 'text-center' : 'flex flex-col lg:flex-row lg:items-start lg:justify-between'} gap-8`}>
@@ -369,8 +363,8 @@ const NewsPage = () => {
                   <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">NYH</span><span className="text-white">ETE</span><span className="text-[#12E19F]">R</span>
                 </h1>
                 <p className={`text-muted-foreground font-display ${isMobile ? 'text-sm px-2' : 'text-lg md:text-xl'} leading-relaxed ${isMobile ? 'max-w-sm mx-auto' : 'max-w-3xl'} animate-fade-in`}>
-                  {t('news.page.description')}
-                  {!isMobile && ` ${t('news.page.descriptionShort')}`}
+                  Stay updated with the latest news from the crypto world
+                  {!isMobile && ` and market insights`}
                 </p>
                 <div className={`flex ${isMobile ? 'flex-col items-center gap-2 mt-4' : 'flex-col sm:flex-row items-start sm:items-center gap-4 mt-6'} ${isMobile ? 'text-xs' : 'text-sm'} text-muted-foreground`}>
                   <div className="flex items-center">
@@ -391,12 +385,12 @@ const NewsPage = () => {
             <div className={`flex ${isMobile ? 'flex-col gap-3' : 'flex-col lg:flex-row gap-4'}`}>
               <div className="flex-1 relative">
                 <Search className={`absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground ${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} />
-                <Input placeholder={isMobile ? t('news.searchPlaceholder') : t('news.searchPlaceholderLong')} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className={`${isMobile ? 'pl-10 h-10 text-base' : 'pl-12 h-12 text-lg'} bg-secondary/50 border-border focus:border-primary transition-all duration-300 hover:bg-secondary/70 focus:bg-background`} />
+                <Input placeholder={isMobile ? 'Search news...' : 'Search news, topics, or cryptocurrencies...'} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className={`${isMobile ? 'pl-10 h-10 text-base' : 'pl-12 h-12 text-lg'} bg-secondary/50 border-border focus:border-primary transition-all duration-300 hover:bg-secondary/70 focus:bg-background`} />
               </div>
               {!isMobile && <div className="flex gap-3">
                   <Button variant="outline" onClick={() => setSortBy(sortBy === "date" ? "impact" : "date")} className="h-12 px-6 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300">
                     <Clock className="mr-2 h-4 w-4" />
-                    {sortBy === "date" ? t('news.filterBy') : t('news.filterByImpact')}
+                    {sortBy === "date" ? 'Sort by Date' : 'Sort by Impact'}
                   </Button>
                   <div className="flex border border-border rounded-lg overflow-hidden bg-secondary/50 hover:bg-secondary/70 transition-colors">
                     <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-12 px-4 rounded-none hover:bg-primary/10 transition-all duration-300">
@@ -408,383 +402,138 @@ const NewsPage = () => {
                   </div>
                 </div>}
             </div>
+
+            {/* Enhanced Mobile Categories */}
+            <div className={`${isMobile ? 'overflow-x-auto scrollbar-hide' : ''}`}>
+              <div className={`flex ${isMobile ? 'gap-2 pb-1' : 'gap-3 flex-wrap'} ${isMobile ? 'min-w-max' : ''}`}>
+                {categories.map(category => <Button key={category.id} variant={selectedCategory === category.id ? "default" : "outline"} size={isMobile ? "sm" : "default"} onClick={() => setSelectedCategory(category.id)} className={`${isMobile ? 'text-xs px-3 py-2' : 'px-4 py-2'} transition-all duration-300 hover:scale-105 ${selectedCategory === category.id ? 'bg-primary text-primary-foreground shadow-lg' : 'hover:bg-primary/10 hover:border-primary/30'}`}>
+                    {category.label}
+                  </Button>)}
+                {isMobile && <Button variant="outline" size="sm" onClick={() => setSortBy(sortBy === "date" ? "impact" : "date")} className="text-xs px-3 py-2 border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300">
+                    <Clock className="mr-1 h-3 w-3" />
+                    Sort
+                  </Button>}
+              </div>
+            </div>
           </div>
 
-          {/* Enhanced Category Tabs */}
-          <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className={`${isMobile ? 'mb-6' : 'mb-10'}`}>
-            <TabsList className={`${isMobile ? 'grid grid-cols-3 w-full h-12 p-1 gap-1' : 'grid grid-cols-3 lg:grid-cols-6 w-full h-12 p-1'} bg-secondary/50 rounded-xl hover:bg-secondary/70 transition-colors`}>
-              {categories.slice(0, isMobile ? 6 : categories.length).map(category => <TabsTrigger key={category.id} value={category.id} className={`font-sans font-black text-foreground ${isMobile ? 'text-xs tracking-wide px-2 py-2' : 'text-sm tracking-widest px-3 py-2'} data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg`}>
-                  {category.label}
-                </TabsTrigger>)}
-            </TabsList>
-            {isMobile && categories.length > 6 && <TabsList className="grid grid-cols-3 w-full h-12 p-1 gap-1 bg-secondary/50 rounded-xl hover:bg-secondary/70 transition-colors mt-2">
-                {categories.slice(6).map(category => <TabsTrigger key={category.id} value={category.id} className="font-sans font-black text-foreground text-xs tracking-wide px-2 py-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg transition-all duration-300 hover:text-primary hover:bg-primary/10 rounded-lg">
-                    {category.label}
-                  </TabsTrigger>)}
-              </TabsList>}
-          </Tabs>
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-            {/* News Content */}
-            <div className="xl:col-span-3">
-              {/* Enhanced Breaking News Banner */}
-              {news[0] && <div className="relative overflow-hidden bg-gradient-to-r from-red-600 via-red-500 to-orange-500 rounded-2xl shadow-2xl mb-8 animate-fade-in">
-                  <div className="absolute inset-0 bg-black/20"></div>
-                  <div className="relative p-8">
-                    <div className="flex items-start gap-6">
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center w-16 h-16 bg-white/20 rounded-full backdrop-blur-sm">
-                          <Flame className="h-8 w-8 text-white animate-pulse" />
-                        </div>
-                      </div>
-                      <div className="flex-1 text-white">
-                         <div className="flex items-center gap-3 mb-4">
-                           <Badge className="bg-white/30 text-white border-white/50 font-black text-sm px-4 py-1 tracking-wider backdrop-blur-sm">
-                             {t('news.latestNews')}
-                           </Badge>
-                          <span className="text-white/80 text-sm font-medium">
-                            {formatTimeAgo(news[0].publishedAt)}
-                          </span>
-                        </div>
-                        <h3 className="font-black text-2xl md:text-3xl leading-tight mb-4 text-shadow-lg">
-                          {news[0].title}
-                        </h3>
-                        <p className="text-white/90 text-lg leading-relaxed mb-6 line-clamp-2 font-medium">
-                          {news[0].summary}
-                        </p>
-                        <div className="flex items-center gap-4">
-                          {news[0].url && <Button className="bg-white text-red-600 hover:bg-white/90 font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105" onClick={() => window.open(news[0].url!, '_blank')}>
-                               {t('news.readFullArticle')}
-                               <ExternalLink className="ml-2 h-4 w-4" />
-                             </Button>}
-                           <div className="text-white/70 text-sm font-medium">
-                             {t('news.source')}: {news[0].source}
-                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>}
-
-              {/* Results Counter & Pagination Info */}
-              <div className="flex items-center justify-between mb-6">
-                 <h2 className="font-crypto text-2xl font-bold text-primary">
-                   {searchQuery ? `${t('news.searchResults')} (${filteredNews.length})` : t('news.allNews')}
-                 </h2>
-                 <div className="text-sm text-muted-foreground">
-                   {t('news.page')} {currentPage} {t('news.of')} {totalPages} | {t('news.showing')} {currentArticles.length} {t('news.of')} {filteredNews.length} {t('news.articles')}
-                 </div>
+          {/* News Content */}
+          {isLoading && news.length === 0 ? <div className="flex items-center justify-center py-20">
+              <div className="text-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p className="text-muted-foreground">Loading latest news...</p>
               </div>
+            </div> : filteredNews.length === 0 ? <Card className={`${isMobile ? 'p-8' : 'p-16'} text-center border-border/50`}>
+              <BookOpen className={`${isMobile ? 'h-12 w-12' : 'h-16 w-16'} text-muted-foreground mx-auto mb-4`} />
+              <h3 className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'} mb-2`}>No news found</h3>
+              <p className={`text-muted-foreground ${isMobile ? 'text-sm' : ''} max-w-md mx-auto`}>
+                No news articles match your current filters. Try adjusting your search or category selection.
+              </p>
+            </Card> : <>
+                {/* Enhanced News Grid/List */}
+                <div className={viewMode === "grid" ? isMobile ? 'space-y-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+                  {currentArticles.map(article => {
+                    const isGridView = viewMode === "grid";
+                    return <Card key={article.id} className={`group relative overflow-hidden transition-all duration-300 hover:shadow-glow-secondary hover:scale-[1.02] cursor-pointer bg-card/80 backdrop-blur-sm border-border/50 hover:border-primary/30 ${isGridView && !isMobile ? 'h-full' : ''}`} onClick={() => article.url && window.open(article.url, '_blank')}>
+                        {/* Trending Badge */}
+                        {article.trending && <Badge className="absolute top-3 right-3 z-10 bg-destructive/20 text-destructive border-destructive/30 text-xs px-2 py-1">
+                            <Flame className="w-3 h-3 mr-1" />
+                            Trending
+                          </Badge>}
 
-              {/* Loading State */}
-              {isLoading && <div className="space-y-4">
-                  {[1, 2, 3].map(i => <Card key={i} className="p-6 animate-pulse">
-                      <div className="space-y-3">
-                        <div className="h-4 bg-muted rounded w-3/4"></div>
-                        <div className="h-4 bg-muted rounded w-1/2"></div>
-                        <div className="h-4 bg-muted rounded w-2/3"></div>
-                      </div>
-                    </Card>)}
-                </div>}
+                        <div className={`${isGridView && !isMobile ? 'p-4' : isMobile ? 'p-4' : 'p-6'} ${isGridView ? 'flex flex-col h-full' : 'flex gap-4'}`}>
+                          {/* Article Image */}
+                          {article.imageUrl && <div className={`${isGridView ? 'w-full h-48 mb-4' : isMobile ? 'w-20 h-16' : 'w-32 h-24'} rounded-lg overflow-hidden bg-muted flex-shrink-0`}>
+                              <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onError={e => {
+                              e.currentTarget.style.display = 'none';
+                            }} />
+                            </div>}
 
-              {/* News Content - Grid/List Views */}
-              {!isLoading && <>
-                  {/* Grid View */}
-                  {viewMode === "grid" && <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                      {currentArticles.map((article, index) => <Card key={article.id} className="p-5 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer hover-scale" style={{
-                  animationDelay: `${index * 100}ms`
-                }} onClick={() => article.url ? window.open(article.url, '_blank') : undefined}>
-                           <div className="space-y-4">
-                             {/* Article Image */}
-                             <div className="relative overflow-hidden rounded-lg">
-                               <div className="aspect-video w-full bg-gradient-to-br from-primary/20 to-secondary/20">
-                                 {article.imageUrl ? <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onError={e => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                          (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                        }} /> : null}
-                                 <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 to-secondary/30 backdrop-blur-sm ${article.imageUrl ? 'hidden' : ''}`}>
-                                   <div className="text-center">
-                                     <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/20 flex items-center justify-center">
-                                       <Bitcoin className="w-8 h-8 text-primary" />
-                                     </div>
-                                     <p className="text-primary font-crypto font-bold text-sm">{t('news.cryptoNews')}</p>
-                                   </div>
-                                 </div>
-                               </div>
-                               
-                               {/* Overlay badges */}
-                               <div className="absolute top-3 left-3 flex gap-2">
-                                   
-                                   {article.trending}
-                               </div>
-                               
-                               {/* Impact badge */}
-                               <div className="absolute top-3 right-3">
-                                   
-                               </div>
-                             </div>
-                             
-                             <h3 className="font-display font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2 min-h-[3.5rem]">
-                               {article.title}
-                             </h3>
-                             
-                             <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 min-h-[4rem]">
-                               {article.summary}
-                             </p>
-
-                             <div className="flex flex-wrap gap-1">
-                               {article.tags.slice(0, 3).map((tag, tagIndex) => <Badge key={tagIndex} variant="secondary" className="text-xs hover:bg-primary/20 transition-colors">
-                                   #{tag}
-                                 </Badge>)}
-                             </div>
-                             
-                             <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border/50">
-                               <div className="flex items-center gap-4">
-                                 <div className="flex items-center">
-                                   <Clock className="h-3 w-3 mr-1" />
-                                   <span>{formatTimeAgo(article.publishedAt)}</span>
-                                 </div>
-                                 <div className="flex items-center">
-                                   <BookOpen className="h-3 w-3 mr-1" />
-                                   <span>{article.readTime} min</span>
-                                 </div>
-                               </div>
-                               <div className="flex items-center">
-                                 <User className="h-3 w-3 mr-1" />
-                                 <span className="truncate max-w-[100px]">{article.author}</span>
-                               </div>
-                             </div>
-                           </div>
-                         </Card>)}
-                     </div>}
-
-                    {/* List View - Mobile Optimized */}
-                    {viewMode === "list" && <div className={`space-y-4 animate-fade-in ${isMobile ? 'px-1' : ''}`}>
-                        {currentArticles.map((article, index) => <Card key={article.id} className={`${isMobile ? 'p-3' : 'p-4'} border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 bg-card/90 backdrop-blur-sm group cursor-pointer overflow-hidden`} style={{
-                  animationDelay: `${index * 50}ms`
-                }} onClick={() => article.url ? window.open(article.url, '_blank') : undefined}>
-                            <div className={`flex ${isMobile ? 'flex-col gap-3' : 'gap-4'}`}>
-                              {/* Article Image - Mobile Responsive */}
-                              {!isMobile && <div className="flex-shrink-0 w-32 h-24 relative overflow-hidden rounded-lg">
-                                  {article.imageUrl ? <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onError={e => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                        (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                      }} /> : null}
-                                  <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/30 to-secondary/30 ${article.imageUrl ? 'hidden' : ''}`}>
-                                    <Bitcoin className="w-6 h-6 text-primary" />
-                                  </div>
-                                </div>}
-                              
-                              {/* Mobile Image */}
-                              {isMobile && article.imageUrl && <div className="w-full h-32 relative overflow-hidden rounded-lg">
-                                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onError={e => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }} />
-                                </div>}
-                              
-                              <div className="flex-1 space-y-2 min-w-0">
-                                {/* Badges - Mobile Optimized */}
-                                <div className={`flex items-center gap-1 flex-wrap ${isMobile ? 'justify-start' : ''}`}>
-                                  <Badge className={`${getSentimentBadge(article.sentiment)} ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs px-2 py-1'}`}>
-                                    {article.sentiment === 'positive' ? '📈' : article.sentiment === 'negative' ? '📉' : '➡️'}
-                                  </Badge>
-                                  <Badge className={`${getImpactBadge(article.impact)} ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs px-2 py-1'}`}>
-                                    {article.impact === 'high' ? '🔥' : article.impact === 'medium' ? '⚡' : '💭'}
-                                  </Badge>
-                                  <Badge variant="outline" className={`${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} truncate max-w-20`}>
-                                    {article.category}
-                                  </Badge>
-                                   {article.trending && <Badge className={`bg-gradient-to-r from-orange-500 to-red-500 text-white ${isMobile ? 'text-xs px-1.5 py-0.5' : 'text-xs'} animate-pulse`}>
-                                       {t('news.hot')}
-                                     </Badge>}
-                                </div>
-                                
-                                {/* Title - Mobile Optimized */}
-                                <h3 className={`font-display font-bold ${isMobile ? 'text-base leading-tight' : 'text-xl leading-tight'} group-hover:text-primary transition-colors line-clamp-2 break-words`}>
-                                  {article.title}
-                                </h3>
-                                
-                                {/* Summary - Mobile Optimized */}
-                                <p className={`text-muted-foreground ${isMobile ? 'text-xs leading-normal' : 'text-sm leading-relaxed'} line-clamp-2 break-words`}>
-                                  {article.summary}
-                                </p>
-
-                                {/* Meta Info - Mobile Layout */}
-                                <div className={`${isMobile ? 'flex flex-col gap-2' : 'flex items-center justify-between'}`}>
-                                  <div className={`flex items-center gap-3 ${isMobile ? 'text-xs' : 'text-xs'} text-muted-foreground flex-wrap`}>
-                                    <div className="flex items-center">
-                                      <User className="h-3 w-3 mr-1 flex-shrink-0" />
-                                      <span className={`truncate ${isMobile ? 'max-w-[100px]' : 'max-w-[80px]'}`}>{article.author}</span>
-                                    </div>
-                                    <div className="flex items-center">
-                                      <Clock className="h-3 w-3 mr-1 flex-shrink-0" />
-                                      <span className="whitespace-nowrap">{formatTimeAgo(article.publishedAt)}</span>
-                                    </div>
-                                    <div className="flex items-center">
-                                      <BookOpen className="h-3 w-3 mr-1 flex-shrink-0" />
-                                      <span className="whitespace-nowrap">{article.readTime} min</span>
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Read More Button */}
-                                  <Button variant="outline" size="sm" className={`hover:bg-primary hover:text-primary-foreground shrink-0 ${isMobile ? 'w-full mt-2' : ''}`} onClick={e => {
-                          e.stopPropagation();
-                          if (article.url) window.open(article.url, '_blank');
-                        }}>
-                                     <ExternalLink className="h-3 w-3 mr-1" />
-                                     {isMobile ? t('news.readFullText') : t('news.readMoreShort')}
-                                   </Button>
-                                </div>
+                          {/* Article Content */}
+                          <div className={`flex-1 ${isGridView ? '' : 'min-w-0'}`}>
+                            {/* Article Meta */}
+                            <div className={`flex items-center ${isGridView ? 'justify-between' : 'gap-3'} mb-2 text-xs text-muted-foreground`}>
+                              <div className="flex items-center gap-2">
+                                <User className="w-3 h-3" />
+                                <span className="truncate">{article.source}</span>
+                              </div>
+                              {!isGridView && <Badge variant="outline" className={getImpactBadge(article.impact)}>
+                                  {article.impact}
+                                </Badge>}
+                              <div className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                <span>{formatTimeAgo(article.publishedAt)}</span>
                               </div>
                             </div>
-                          </Card>)}
-                     </div>}
 
-                  {/* Pagination Controls */}
-                  {filteredNews.length > articlesPerPage && <div className="flex items-center justify-center gap-4 mt-12 mb-8">
-                      <Button variant="outline" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1} className="px-6 py-3">
-                         <ArrowLeft className="mr-2 h-4 w-4" />
-                         {t('news.previousPage')}
-                       </Button>
-                      
-                      <div className="flex items-center gap-2">
-                        {/* Page numbers */}
-                        {Array.from({
-                    length: Math.min(5, totalPages)
-                  }, (_, i) => {
-                    const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-                    if (pageNum > totalPages) return null;
-                    return <Button key={pageNum} variant={currentPage === pageNum ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(pageNum)} className="w-10 h-10">
-                              {pageNum}
-                            </Button>;
+                            {/* Article Title */}
+                            <h3 className={`font-semibold ${isMobile ? 'text-sm' : isGridView ? 'text-base' : 'text-lg'} leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-3`}>
+                              {article.title}
+                            </h3>
+
+                            {/* Article Summary */}
+                            {(!isMobile || isGridView) && <p className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-sm'} leading-relaxed ${isGridView ? 'line-clamp-3 flex-1' : 'line-clamp-2'} mb-3`}>
+                                {article.summary}
+                              </p>}
+
+                            {/* Article Tags and Actions */}
+                            <div className={`flex items-center ${isGridView ? 'justify-between mt-auto' : 'gap-4'} ${isMobile ? 'text-xs' : 'text-sm'}`}>
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                {article.category && <Badge variant="secondary" className={`${isMobile ? 'text-xs px-2 py-0.5' : 'text-xs'} bg-primary/10 text-primary border-primary/30`}>
+                                    {article.category}
+                                  </Badge>}
+                                <span className={`text-muted-foreground ${isMobile ? 'text-xs' : 'text-xs'}`}>
+                                  {article.readTime} min read
+                                </span>
+                              </div>
+                              
+                              {!isMobile && <div className="flex items-center gap-3 text-muted-foreground">
+                                  <div className="flex items-center gap-1">
+                                    <Eye className="w-4 h-4" />
+                                    <span className="text-xs">{formatNumberCompact(article.views)}</span>
+                                  </div>
+                                  <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>}
+                            </div>
+                          </div>
+                        </div>
+                      </Card>;
                   })}
+                </div>
+
+                {/* Enhanced Pagination */}
+                {totalPages > 1 && <div className={`${isMobile ? 'mt-8' : 'mt-12'} flex justify-center`}>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" onClick={() => setCurrentPage(Math.max(1, currentPage - 1))} disabled={currentPage === 1} className={`${isMobile ? 'h-8 w-8 p-0' : 'h-10 px-3'} transition-all duration-300 hover:bg-primary/10 hover:border-primary/30`}>
+                        <ChevronLeft className={`${isMobile ? 'h-4 w-4' : 'h-4 w-4'}`} />
+                        {!isMobile && <span className="ml-1">Previous</span>}
+                      </Button>
+                      
+                      <div className="flex items-center gap-1">
+                        {Array.from({
+                        length: Math.min(5, totalPages)
+                      }, (_, i) => {
+                        const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                        if (page > totalPages) return null;
+                        return <Button key={page} variant={currentPage === page ? "default" : "outline"} onClick={() => setCurrentPage(page)} className={`${isMobile ? 'h-8 w-8 p-0 text-xs' : 'h-10 px-3'} transition-all duration-300 ${currentPage === page ? 'bg-primary text-primary-foreground shadow-lg' : 'hover:bg-primary/10 hover:border-primary/30'}`}>
+                            {page}
+                          </Button>;
+                      })}
                       </div>
                       
-                      <Button variant="outline" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className="px-6 py-3">
-                         {t('news.nextPage')}
-                         <ArrowRight className="ml-2 h-4 w-4" />
-                       </Button>
-                    </div>}
-
-                  {/* No Results */}
-                  {filteredNews.length === 0 && !isLoading && <Card className="p-12 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <Search className="h-12 w-12 text-muted-foreground" />
-                         <h3 className="text-xl font-semibold">{t('news.noNewsFound')}</h3>
-                         <p className="text-muted-foreground">
-                           {t('news.tryDifferentSearch')}
-                         </p>
-                         <Button variant="outline" onClick={() => {
-                    setSearchQuery("");
-                    setSelectedCategory("all");
-                  }}>
-                           {t('news.clearFilters')}
-                         </Button>
-                      </div>
-                    </Card>}
-                </>}
-            </div>
-
-            {/* Sidebar - Hidden on mobile */}
-            {!isMobile && <div className="space-y-6">
-              {/* Market Sentiment */}
-              <Card className="p-6">
-                <h3 className="font-crypto text-lg font-bold mb-6 text-primary">{t('news.marketSentiment')}</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{t('news.fearGreedIndex')}</span>
-                    <span className="font-bold text-success">{sentiment.fearGreedIndex}/100</span>
-                  </div>
-                  <Progress value={sentiment.fearGreedIndex} className="h-2" />
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{t('news.socialVolume')}</span>
-                    <span className="font-bold">{sentiment.socialVolume}%</span>
-                  </div>
-                  <Progress value={sentiment.socialVolume} className="h-2" />
-                  
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{t('news.newsVolume')}</span>
-                    <span className="font-bold">{sentiment.newsVolume}%</span>
-                  </div>
-                  <Progress value={sentiment.newsVolume} className="h-2" />
-
-                  <div className="pt-4 border-t border-border">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{t('news.trend24h')}</span>
-                      <div className={`flex items-center gap-1 ${sentiment.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
-                        {sentiment.change24h >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                        <span className="font-bold">{sentiment.change24h >= 0 ? '+' : ''}{sentiment.change24h}%</span>
-                      </div>
+                      <Button variant="outline" onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))} disabled={currentPage === totalPages} className={`${isMobile ? 'h-8 w-8 p-0' : 'h-10 px-3'} transition-all duration-300 hover:bg-primary/10 hover:border-primary/30`}>
+                        {!isMobile && <span className="mr-1">Next</span>}
+                        <ChevronRight className={`${isMobile ? 'h-4 w-4' : 'h-4 w-4'}`} />
+                      </Button>
                     </div>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Top Movers */}
-              <Card className="p-6">
-                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">{t('news.topMovers')}</h3>
-                <div className="space-y-4">
-                  {topMoversUI.map((token, index) => <div key={`${token.symbol}-${index}`} className="flex items-center justify-between p-3 rounded-lg hover:bg-secondary/50 transition-colors cursor-pointer group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full overflow-hidden bg-secondary flex items-center justify-center">
-                          <img src={token.logo} alt={token.symbol} className="w-6 h-6 object-contain" onError={e => {
-                        (e.target as HTMLImageElement).src = `data:image/svg+xml;base64,${btoa(`<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"#12E19F\"/><text x=\"12\" y=\"16\" text-anchor=\"middle\" fill=\"white\" font-size=\"8\" font-weight=\"bold\">${token.symbol.charAt(0)}</text></svg>`)}`;
-                      }} />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-sm group-hover:text-primary transition-colors">{token.symbol}</div>
-                          <div className="text-xs text-muted-foreground">{token.name}</div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className={`font-bold text-sm flex items-center gap-1 ${token.isPositive ? 'text-success' : 'text-destructive'}`}>
-                          {token.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                          {token.change}
-                        </div>
-                        <div className="text-xs text-muted-foreground">{token.price}</div>
-                      </div>
-                    </div>)}
-                </div>
-              </Card>
-
-              {/* Market Data */}
-              <Card className="p-6">
-                <h3 className="font-crypto text-xl font-bold mb-6 text-primary">{t('news.marketData')}</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">{t('news.totalMarketCap')}</span>
-                    <span className="font-mono font-bold">{marketDataUI.totalMarketCap}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">{t('news.volume24h')}</span>
-                    <span className="font-mono font-bold">{marketDataUI.totalVolume}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">{t('news.btcDominance')}</span>
-                    <span className="font-mono font-bold">{marketDataUI.btcDominance}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">{t('news.ethDominance')}</span>
-                    <span className="font-mono font-bold">{marketDataUI.ethDominance}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">{t('news.activeAddresses')}</span>
-                    <span className="font-mono font-bold">{marketDataUI.activeAddresses}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground text-sm">{t('news.defiTvl')}</span>
-                    <span className="font-mono font-bold">{marketDataUI.defiTvl}</span>
-                  </div>
-                </div>
-              </Card>
-            </div>}
-          </div>
+                  </div>}
+              </>}
         </div>
       </main>
-      
+
+      {/* Mobile Navigation */}
       {isMobile && <MobileBottomNavigation />}
     </div>;
 };
+
 export default NewsPage;

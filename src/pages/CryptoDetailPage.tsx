@@ -32,7 +32,7 @@ import ModernMobileTradingView from "@/components/mobile/ModernMobileTradingView
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCryptoData } from "@/hooks/useCryptoData";
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+
 import { useDynamicTitle } from '@/hooks/useDynamicTitle';
 
 const CryptoDetailPage = () => {
@@ -40,7 +40,7 @@ const CryptoDetailPage = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { cryptoPrices, isLoading, error } = useCryptoData();
-  const { t } = useLanguage();
+  
   
   const [refreshKey, setRefreshKey] = useState(0);
   const [showFullChart, setShowFullChart] = useState(false);
@@ -76,16 +76,16 @@ const CryptoDetailPage = () => {
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute('content', 
-          `Live ${crypto.name} (${crypto.symbol.toUpperCase()}) ${t('nav.price')}: $${crypto.price.toFixed(6)}. Trading, charts ${t('common.and')} ${t('trading.analysis')} ${t('common.for')} ${crypto.name}. ${crypto.change24h >= 0 ? '+' : ''}${crypto.change24h.toFixed(2)}% ${t('common.last24h')}.`
+          `Live ${crypto.name} (${crypto.symbol.toUpperCase()}) price: $${crypto.price.toFixed(6)}. Trading, charts and analysis for ${crypto.name}. ${crypto.change24h >= 0 ? '+' : ''}${crypto.change24h.toFixed(2)}% last 24h.`
         );
       }
     }
-  }, [crypto, t]);
+  }, [crypto]);
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 pt-4">
-        <LoadingSpinner size="lg" text={`${t('page.crypto.loadingCrypto')}`} className="py-20" />
+        <LoadingSpinner size="lg" text="Loading crypto..." className="py-20" />
       </div>
     );
   }
@@ -95,17 +95,17 @@ const CryptoDetailPage = () => {
       <div className="container mx-auto px-4 pt-4">
         <Card className="p-8 text-center border-destructive/20">
           <AlertCircle className="h-16 w-16 text-destructive mx-auto mb-4" />
-          <h1 className="font-crypto text-2xl font-bold mb-4 text-destructive">{t('page.crypto.loadingError')}</h1>
+          <h1 className="font-crypto text-2xl font-bold mb-4 text-destructive">Loading Error</h1>
           <p className="text-muted-foreground mb-6">
-            {t('page.crypto.errorDescription')}
+            Error loading cryptocurrency data
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={handleRefresh} className="flex items-center gap-2">
               <RefreshCw className="h-4 w-4" />
-              {t('page.crypto.tryAgain')}
+              Try Again
             </Button>
             <Button variant="outline" onClick={() => navigate('/')}>
-              {t('page.crypto.backToHomepage')}
+              Back to Homepage
             </Button>
           </div>
         </Card>
@@ -118,9 +118,9 @@ const CryptoDetailPage = () => {
       <div className="container mx-auto px-4 pt-4">
         <Card className="p-8 text-center">
           <Coins className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="font-crypto text-2xl font-bold mb-4">{t('page.crypto.tokenNotFound')}</h1>
+          <h1 className="font-crypto text-2xl font-bold mb-4">Token Not Found</h1>
           <p className="text-muted-foreground mb-6">
-            {t('page.crypto.tokenNotFoundDescription')} "{symbol?.toUpperCase()}".
+            Token not found description "{symbol?.toUpperCase()}".
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button onClick={() => navigate('/market')} className="flex items-center gap-2">
@@ -128,13 +128,13 @@ const CryptoDetailPage = () => {
               Search Other Tokens
             </Button>
             <Button variant="outline" onClick={() => navigate('/')}>
-              {t('page.crypto.backToHomepage')}
+              Back to Homepage
             </Button>
           </div>
           
           {/* Suggested alternatives */}
           <div className="mt-8 text-left">
-            <h3 className="font-semibold mb-4">{t('page.crypto.popularAlternatives')}</h3>
+            <h3 className="font-semibold mb-4">Popular Alternatives</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {['BTC', 'ETH', 'BNB', 'SOL'].map((altSymbol) => (
                 <Button

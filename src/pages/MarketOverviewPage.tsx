@@ -55,7 +55,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { prefetchTradingViewSymbols } from "@/hooks/useTradingViewSymbol";
 import { useWatchlist } from "@/hooks/useWatchlist";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 // Import crypto logos
 import btcLogo from "@/assets/crypto-logos/btc.png";
@@ -82,7 +81,7 @@ const MarketOverviewPage = () => {
   const { cryptoPrices, isLoading, error } = useCryptoData();
   const queryClient = useQueryClient();
   const { toggleWatchlist, isInWatchlist } = useWatchlist();
-  const { t } = useLanguage();
+  
 
   // Use real logo images from CoinGecko API
   const getCryptoLogo = (crypto: any) => {
@@ -123,11 +122,11 @@ const MarketOverviewPage = () => {
   const totalVolume = formatCurrencyCompact(intel?.overview.totalVolume24h);
   const trend24 = Number(((intel?.sentiment.trend24hPct ?? 0)).toFixed(1));
   const fearGreed = Math.round(intel?.sentiment.fearGreedIndex ?? 0);
-  const greedLabel = fearGreed >= 60 ? t('market.greed') : fearGreed <= 40 ? t('market.fear') : t('market.neutral');
+  const greedLabel = fearGreed >= 60 ? 'Greed' : fearGreed <= 40 ? 'Fear' : 'Neutral';
   const btcDom = Number(((intel?.overview.btcDominance ?? 0)).toFixed(1));
   // Simple proxy for Alt Season (no free official API): inverse of BTC dominance
   const altSeason = Math.max(0, Math.min(100, Math.round(100 - (intel?.overview.btcDominance ?? 50))));
-  const altSeasonLabel = altSeason >= 60 ? t('market.altSeason') : altSeason <= 40 ? t('market.btcSeason') : t('market.neutral');
+  const altSeasonLabel = altSeason >= 60 ? 'Alt Season' : altSeason <= 40 ? 'BTC Season' : 'Neutral';
 
   const getCurrentData = () => {
     // Use real top 100 data from CoinGecko API
@@ -294,7 +293,7 @@ const MarketOverviewPage = () => {
                 <span className="text-white">CRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white"> NE</span><span className="text-[#12E19F]">TWO</span><span className="text-white">RK </span><span className="text-[#12E19F]">MAR</span><span className="text-white">KNA</span><span className="text-[#12E19F]">D</span>
               </h1>
               <p className="font-display text-lg text-muted-foreground">
-                {t('market.description')}
+                Real-time overview of the crypto market
               </p>
             </div>
           </div>
@@ -307,7 +306,7 @@ const MarketOverviewPage = () => {
                 {/* Total Market Cap Card */}
                 <div className="bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-primary/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.totalMarketCap')}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">Total Market Cap</h3>
                     <DollarSign className="h-5 w-5 text-primary" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-primary mb-2">{totalMarketCap}</div>
@@ -317,7 +316,7 @@ const MarketOverviewPage = () => {
                 {/* Fear & Greed Index */}
                 <div className="bg-gradient-to-br from-success/10 to-warning/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-success/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.fearGreed')}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">Fear & Greed</h3>
                     <Activity className="h-5 w-5 text-success" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-success mb-2">{fearGreed}</div>
@@ -333,7 +332,7 @@ const MarketOverviewPage = () => {
                 {/* Alt Season Index */}
                 <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20 hover:border-blue-500/40 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-foreground">{t('market.altSeasonIndex')}</h3>
+                    <h3 className="text-sm font-medium text-foreground">Alt Season Index</h3>
                     <BarChart3 className="h-5 w-5 text-blue-400" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-blue-400 mb-2">{altSeason}</div>
@@ -349,7 +348,7 @@ const MarketOverviewPage = () => {
                 {/* BTC Dominance */}
                 <div className="bg-gradient-to-br from-warning/10 to-destructive/10 backdrop-blur-sm rounded-2xl p-6 border border-border/30 hover:border-warning/30 transition-all">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-muted-foreground">{t('market.btcDominance')}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground">BTC Dominance</h3>
                     <Bitcoin className="h-5 w-5 text-warning" />
                   </div>
                   <div className="text-3xl font-bold font-numbers text-warning mb-2">{btcDom}%</div>
@@ -359,7 +358,7 @@ const MarketOverviewPage = () => {
                       style={{ width: `${btcDom}%` }}
                     ></div>
                   </div>
-                  <div className="text-sm text-warning font-medium">{t('market.btcSeason')}</div>
+                  <div className="text-sm text-warning font-medium">BTC Season</div>
                 </div>
               </div>
             </div>
@@ -376,7 +375,7 @@ const MarketOverviewPage = () => {
                     <span className="text-white">KRY</span><span className="text-[#12E19F]">PTO</span><span className="text-white">VAL</span><span className="text-[#12E19F]">UTO</span><span className="text-white">R</span>
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    {t('market.showing')} {startIndex + 1}-{Math.min(endIndex, filteredData.length)} {t('market.of')} {filteredData.length} {t('market.cryptocurrencies').toLowerCase()}
+                    Showing {startIndex + 1}-{Math.min(endIndex, filteredData.length)} of {filteredData.length} cryptocurrencies
                   </p>
                 </div>
                 
@@ -385,7 +384,7 @@ const MarketOverviewPage = () => {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
-                      placeholder={t('market.search')}
+                      placeholder="Search cryptocurrencies..."
                       value={searchTerm}
                       onChange={(e) => handleSearchChange(e.target.value)}
                       className="pl-10 w-full sm:w-80 bg-background border-border/50 focus:border-primary h-11"
@@ -410,7 +409,7 @@ const MarketOverviewPage = () => {
                     </Button>
                     <Button variant="outline" className="h-11 px-6 border-border/50 hover:border-primary">
                       <Star className="h-4 w-4 mr-2" />
-                      {t('market.favorites')}
+                      Favorites
                     </Button>
                   </div>
                 </div>
@@ -425,42 +424,42 @@ const MarketOverviewPage = () => {
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <Trophy className="h-4 w-4" />
-                      <span>{t('market.top10')}</span>
+                      <span>Top 10</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="trending" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <Flame className="h-4 w-4" />
-                      <span>{t('market.trending')}</span>
+                      <span>Trending</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="meme" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <Target className="h-4 w-4" />
-                      <span>{t('market.meme')}</span>
+                      <span>Meme</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="gainers" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <TrendingUp className="h-4 w-4" />
-                      <span>{t('market.gainersShort')}</span>
+                      <span>Gainers</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="losers" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <TrendingDown className="h-4 w-4" />
-                      <span>{t('market.losersShort')}</span>
+                      <span>Losers</span>
                     </TabsTrigger>
                     <TabsTrigger 
                       value="all" 
                       className="flex items-center justify-center space-x-2 py-2 px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg font-medium"
                     >
                       <BarChart3 className="h-4 w-4" />
-                      <span>{t('market.allShort')}</span>
+                      <span>All</span>
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -479,13 +478,13 @@ const MarketOverviewPage = () => {
                     <TableHeader>
                       <TableRow className="hover:bg-transparent border-b border-border bg-muted/30">
                         <TableHead className="text-center font-semibold py-4 px-6 text-muted-foreground w-16">#</TableHead>
-                        <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">{t('market.name')}</TableHead>
-                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">{t('market.price')}</TableHead>
+                        <TableHead className="text-left font-semibold py-4 px-6 text-muted-foreground w-80">Name</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Price</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">1h %</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">24h %</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-24">7d %</TableHead>
                         <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-40">Market Cap</TableHead>
-                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">{t('market.volume')} (24h)</TableHead>
+                        <TableHead className="text-right font-semibold py-4 px-6 text-muted-foreground w-32">Volume (24h)</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -645,7 +644,7 @@ const MarketOverviewPage = () => {
                        
                        <div className="space-y-3">
                          <div className="flex justify-between items-center">
-                           <span className="text-white/80">{t('market.price')}</span>
+                           <span className="text-white/80">Price</span>
                            <span className="font-numbers font-semibold text-lg text-white">{formatPrice(crypto.price)}</span>
                          </div>
                          
@@ -696,7 +695,7 @@ const MarketOverviewPage = () => {
               <div className="bg-card border border-border border-t-0 rounded-b-xl px-6 py-4 shadow-sm mx-6">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    {t('market.showing')} <span className="font-medium text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredData.length)}</span> {t('market.of')} <span className="font-medium text-foreground">{filteredData.length}</span> {t('market.cryptocurrencies')}
+                    Showing <span className="font-medium text-foreground">{startIndex + 1}-{Math.min(endIndex, filteredData.length)}</span> of <span className="font-medium text-foreground">{filteredData.length}</span> cryptocurrencies
                   </div>
                   
                   <Pagination>
@@ -756,9 +755,9 @@ const MarketOverviewPage = () => {
           <div className="bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 p-4 border-b border-border/20">
             <div className="text-center mb-4">
               <h1 className="font-crypto text-4xl font-bold mb-2 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                {t('market.title').toUpperCase()}
+                MARKET OVERVIEW
               </h1>
-              <p className="text-muted-foreground font-medium">{t('market.liveCryptoData')}</p>
+              <p className="text-muted-foreground font-medium">Live crypto data and market analysis</p>
             </div>
           </div>
 
@@ -863,7 +862,7 @@ const MarketOverviewPage = () => {
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
-                  placeholder={t('market.search')}
+                  placeholder="Search cryptocurrencies..."
                   value={searchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10 bg-background/80 border-border/50 h-11 text-sm font-medium rounded-xl focus:border-primary/50 transition-colors"
@@ -877,9 +876,9 @@ const MarketOverviewPage = () => {
                   <TabsTrigger value="meme" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Meme</TabsTrigger>
                 </TabsList>
                 <TabsList className="grid grid-cols-3 h-11 p-1 bg-card/80 border border-border/30 rounded-xl w-full mt-2 backdrop-blur-sm">
-                  <TabsTrigger value="gainers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">{t('market.gainersShort')}</TabsTrigger>
-                  <TabsTrigger value="losers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">{t('market.losersShort')}</TabsTrigger>
-                  <TabsTrigger value="all" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">{t('market.allShort')}</TabsTrigger>
+                  <TabsTrigger value="gainers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Gainers</TabsTrigger>
+                  <TabsTrigger value="losers" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Losers</TabsTrigger>
+                  <TabsTrigger value="all" className="text-xs py-2 font-semibold rounded-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">All</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -959,7 +958,7 @@ const MarketOverviewPage = () => {
             <div className="pt-8 pb-20">
               <div className="flex items-center justify-between max-w-sm mx-auto px-4 py-4 bg-card/80 backdrop-blur-sm rounded-xl border border-border/30 shadow-sm">
                 <span className="text-xs text-muted-foreground font-medium">
-                  {t('market.showing')} {startIndex + 1}-{Math.min(endIndex, filteredData.length)} {t('market.of')} {filteredData.length}
+                  Showing {startIndex + 1}-{Math.min(endIndex, filteredData.length)} of {filteredData.length}
                 </span>
                 
                 <div className="flex items-center space-x-3">
