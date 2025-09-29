@@ -283,7 +283,7 @@ const PortfolioPage = () => {
           </TabsContent>
 
           <TabsContent value="wallets" className="mt-6">
-            <MyWalletsSection />
+            <MyWalletsSection showValues={showValues} />
           </TabsContent>
 
           <TabsContent value="watchlist" className="mt-6">
